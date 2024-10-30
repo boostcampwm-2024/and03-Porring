@@ -12,7 +12,14 @@
 
 <br>
 
-## ✨ TEAM ✨
+## ✨ We are Kolown! ✨
+
+`Kolown`은 **색깔**을 뜻하는 `Kolor`와 **자신**을 뜻하는 `Own`을 조합한 이름으로
+
+**자신만의 색깔로 시너지를 만들어내는 팀**이 되고자 하는 뜻을 담았습니다.
+
+<br>
+
 |![image](https://github.com/user-attachments/assets/52799c15-ccf4-471d-b117-f620733fb0c2)|![image](https://github.com/user-attachments/assets/90de9eb8-f2b2-4f24-aeb7-eb690b01fb12)|![image](https://github.com/user-attachments/assets/4b294d9d-fbe8-4d8d-a25b-67f9cf514e5f)|![image](https://github.com/user-attachments/assets/381559ec-5581-466a-b6fe-bd51e2cc8c46)|
 |:---:|:---:|:---:|:---:|
 |**임용수**|**배영수**|**한문휘**|**강하현**|
