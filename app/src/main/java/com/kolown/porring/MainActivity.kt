@@ -66,6 +66,54 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // Bitmap Factory 디코딩
+    // resizing
+    // 압축
+}
+
+@Composable
+fun ImagePicker() {
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+    // API 21 이상 사용: 일반 이미지 선택기
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let { imageUri = it }
+    }
+
+    // API 33 이상 사용: PhotoPicker
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri: Uri? ->
+        uri?.let { imageUri = it }
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Button(onClick = {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                // API 33 이상에서 PhotoPicker 호출
+                photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            } else {
+                // API 21 이상에서 일반 이미지 선택기 호출
+                imagePickerLauncher.launch("image/*")
+            }
+        }) {
+            Text(text = "Pick Image")
+        }
+
+        imageUri?.let {
+            AsyncImage(
+                model = it,
+                contentDescription = null
+            )
+        }
+
+    }
+
 }
 
 @Composable
