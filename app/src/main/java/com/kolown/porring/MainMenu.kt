@@ -2,7 +2,8 @@ package com.kolown.porring
 
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
-import com.bongpal.navigation.MainMenuRoute
+import com.porring.navigation.MainMenuRoute
+import com.porring.navigation.Route
 
 internal enum class MainMenu(
     @DrawableRes
@@ -28,7 +29,7 @@ internal enum class MainMenu(
     FOLLOWER(
         iconResId = R.drawable.ic_follower_24dp,
         contentDescription = "팔로우",
-        route = MainMenuRoute.Home,
+        route = MainMenuRoute.Follower,
     ),
     MY(
         iconResId = R.drawable.ic_my_24dp,
@@ -40,6 +41,15 @@ internal enum class MainMenu(
         @Composable
         fun find(predicate: @Composable (MainMenuRoute) -> Boolean): MainMenu? {
             return entries.find { predicate(it.route) }
+        }
+
+        @Composable
+        fun contains(predicate: @Composable (Route) -> Boolean): Boolean {
+            return entries
+                .mapNotNull {
+                    if (it.route == MainMenuRoute.Camera) null else it.route
+                }
+                .any { predicate(it) }
         }
     }
 }
