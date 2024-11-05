@@ -109,5 +109,11 @@ dependencies {
 
     //view system?
     implementation (libs.exoplayer.ui)
+
+    implementation(projects.feature.home)
+    implementation(projects.feature.search)
+    implementation(projects.feature.camera)
+    implementation(projects.feature.follower)
+    implementation(projects.feature.my)
 }
 
