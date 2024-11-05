@@ -15,16 +15,21 @@ composeBom = "2024.10.01"
 jetbrainsKotlinJvm = "2.0.0"
 appcompat = "1.7.0"
 material = "1.12.0"
-navigationCompose = "2.8.3"
+kspVersion = "2.0.10-1.0.24"
 
 ## Kotlin
 # https://github.com/JetBrains/kotlin
 kotlin = "2.0.0"
-kspVersion = "2.0.10-1.0.24"
 # https://github.com/Kotlin/kotlinx.serialization
 kotlinxSerializationJson = "1.7.0"
+
+## Compose
 # https://developer.android.com/jetpack/androidx/releases/compose-material3
 androidxComposeMaterial3 = "1.2.1"
+navigationCompose = "2.8.3"
+
+minSdk = "24"
+compileSdk = "34"
 
 [libraries]
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCore" }
