@@ -16,9 +16,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,7 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.AsyncImage
 import com.kolown.porring.ui.theme.PorringTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,11 +41,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val navigator: MainNavigator = rememberMainNavigator()
+
             PorringTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val modifier = Modifier.padding(innerPadding)
-                    ImagePicker()
-                }
+                MainScreen(
+                    navigator = navigator
+                )
             }
         }
     }
@@ -74,7 +72,7 @@ class MainActivity : ComponentActivity() {
 
     fun decodeSampledBitmapFromUri(
         context: Context,
-        uri: Uri
+        uri: Uri,
     ): Bitmap? {
         val options = BitmapFactory.Options().apply {
             inJustDecodeBounds = true
@@ -92,7 +90,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun calculateInSampleSize(
-        options: BitmapFactory.Options
+        options: BitmapFactory.Options,
     ): Int {
         val (height: Int, width: Int) = options.run { outHeight to outWidth }
         var inSampleSize = 1
@@ -118,7 +116,7 @@ class MainActivity : ComponentActivity() {
 fun ResizedImage(
     context: Context,
     uri: Uri,
-    decodeSampledBitmapFromResource: (Context, Uri) -> Bitmap?
+    decodeSampledBitmapFromResource: (Context, Uri) -> Bitmap?,
 ) {
     // 이 bitmap을 편집하고 업로드할 때 이 bitmap을 업로드 하면 될듯
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
@@ -182,23 +180,5 @@ fun ImagePicker() {
                 contentDescription = null,
             )
         }
-
-    }
-
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PorringTheme {
-        Greeting("Android")
     }
 }
