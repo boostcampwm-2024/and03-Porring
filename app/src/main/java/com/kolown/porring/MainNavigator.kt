@@ -9,7 +9,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.bongpal.home.navigation.navigateHome
+import com.porring.camera.navigation.navigateCamera
+import com.porring.follower.navigation.navigateFollower
+import com.porring.home.navigation.navigateHome
+import com.porring.my.navigation.navigateMy
+import com.porring.search.navigation.navigateSearch
 
 internal class MainNavigator(
     val navController: NavHostController,
@@ -18,7 +22,9 @@ internal class MainNavigator(
     val currentDestination: NavDestination?
         @Composable get() = navController.currentBackStackEntryAsState().value?.destination
     val currentMenu: MainMenu?
-        @Composable get() = MainMenu.find { m -> currentDestination?.hasRoute(m::class) == true }
+        @Composable get() = MainMenu.find { m ->
+            currentDestination?.hasRoute(m::class) == true
+        }
 
     fun navigate(menu: MainMenu) {
         val navOptions = navOptions {
@@ -30,15 +36,17 @@ internal class MainNavigator(
         }
 
         when (menu) {
-            MainMenu.HOME -> {
-                navController.navigateHome(navOptions)
-            }
-
-            MainMenu.SEARCH -> TODO()
-            MainMenu.CAMERA -> TODO()
-            MainMenu.FOLLOWER -> TODO()
-            MainMenu.MY -> TODO()
+            MainMenu.HOME -> navController.navigateHome(navOptions)
+            MainMenu.SEARCH -> navController.navigateSearch(navOptions)
+            MainMenu.CAMERA -> navController.navigateCamera(navOptions)
+            MainMenu.FOLLOWER -> navController.navigateFollower(navOptions)
+            MainMenu.MY -> navController.navigateMy(navOptions)
         }
+    }
+
+    @Composable
+    fun isShowBottomBar() = MainMenu.contains {
+        currentDestination?.hasRoute(it::class) == true
     }
 }
 
