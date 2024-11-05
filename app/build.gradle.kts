@@ -7,6 +7,9 @@ plugins {
     alias(libs.plugins.google)
 }
 
+
+
+
 android {
     buildFeatures {
         buildConfig = true
@@ -32,6 +35,7 @@ android {
                 "proguard-rules.pro",
             )
             buildConfigField("boolean", "IS_DEBUG", "true")
+
             applicationIdSuffix = ".dev"
         }
         release {
@@ -42,6 +46,7 @@ android {
 
                 )
             buildConfigField("boolean", "IS_DEBUG", "false")
+
         }
 
 
@@ -72,9 +77,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // Jetpack Compose integration
     implementation(libs.androidx.navigation.compose)
@@ -115,5 +120,8 @@ dependencies {
 
     implementation(projects.core.navigation)
     implementation(projects.feature.login)
+    implementation (libs.exoplayer.ui)
+
+    implementation(project(":feature:main"))
 }
 
