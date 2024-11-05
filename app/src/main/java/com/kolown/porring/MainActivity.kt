@@ -1,18 +1,34 @@
 package com.kolown.porring
 
+import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import coil3.compose.AsyncImage
 import com.kolown.porring.ui.theme.PorringTheme
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
+import java.io.FileOutputStream
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -30,6 +46,26 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    fun saveBitmapToCache(bitmap: Bitmap): Uri {
+        val file = File(applicationContext.cacheDir, "photo_${System.currentTimeMillis()}.jpg")
+
+        FileOutputStream(file).use { outputStream ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        }
+
+        return Uri.fromFile(file)
+    }
+
+    fun clearCacheFiles() {
+        val cacheDir = applicationContext.cacheDir
+        if (cacheDir.isDirectory) {
+            cacheDir.listFiles()?.forEach { file ->
+                file.delete()
+            }
+        }
+    }
+
 }
 
 @Composable
