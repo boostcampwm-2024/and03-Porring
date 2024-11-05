@@ -33,4 +33,6 @@ include(":feature:my")
 include(":feature:search")
 include(":feature:camera")
 include(":core:navigation")
+include(":app-test-camera")
+
 include(":feature:login")
