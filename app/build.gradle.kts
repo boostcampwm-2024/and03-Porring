@@ -1,4 +1,3 @@
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -44,7 +43,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
 
-            )
+                )
             buildConfigField("boolean", "IS_DEBUG", "false")
 
         }
@@ -72,7 +71,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -104,18 +103,18 @@ dependencies {
     implementation(libs.coil.network.okhttp)
 
     //camera x r2.19.1
-    implementation (libs.exoplayer.core)
-    implementation (libs.exoplayer.dash)
+    implementation(libs.exoplayer.core)
+    implementation(libs.exoplayer.dash)
 
     //view system?
-    implementation (libs.exoplayer.ui)
+    implementation(libs.exoplayer.ui)
 
     implementation(projects.feature.home)
     implementation(projects.feature.search)
     implementation(projects.feature.camera)
     implementation(projects.feature.follower)
     implementation(projects.feature.my)
-    
+
     implementation(projects.core.navigation)
 }
 

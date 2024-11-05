@@ -16,12 +16,15 @@ jetbrainsKotlinJvm = "2.0.0"
 appcompat = "1.7.0"
 material = "1.12.0"
 navigationCompose = "2.8.3"
+
 ## Kotlin
 # https://github.com/JetBrains/kotlin
 kotlin = "2.0.0"
 kspVersion = "2.0.10-1.0.24"
 # https://github.com/Kotlin/kotlinx.serialization
 kotlinxSerializationJson = "1.7.0"
+# https://developer.android.com/jetpack/androidx/releases/compose-material3
+androidxComposeMaterial3 = "1.2.1"
 
 [libraries]
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCore" }
@@ -52,7 +55,7 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidxComposeMaterial3" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
@@ -69,4 +72,10 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 [bundles]
-android-compose = ["androidx-activity-compose", "androidx-compose-bom", "androidx-navigation-compose"]
+android-compose = [
+    "androidx-activity-compose",
+    "androidx-compose-bom",
+    "androidx-navigation-compose",
+    "androidx-compose-material3",
+    "androidx-ui-tooling"
+]
