@@ -115,5 +115,7 @@ dependencies {
     implementation(projects.feature.camera)
     implementation(projects.feature.follower)
     implementation(projects.feature.my)
+    
+    implementation(projects.core.navigation)
 }
 
