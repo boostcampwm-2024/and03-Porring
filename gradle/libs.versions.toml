@@ -61,3 +61,5 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
 
+[bundles]
+android-compose = ["androidx-activity-compose", "androidx-compose-bom", "androidx-navigation-compose"]
