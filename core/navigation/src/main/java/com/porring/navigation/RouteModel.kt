@@ -1,4 +1,4 @@
-package com.bongpal.navigation
+package com.porring.navigation
 
 import kotlinx.serialization.Serializable
 
