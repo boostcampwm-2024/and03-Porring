@@ -109,6 +109,8 @@ dependencies {
     //view system?
     implementation(libs.exoplayer.ui)
 
+    implementation(libs.kotlinx.immutable)
+
     implementation(projects.feature.home)
     implementation(projects.feature.search)
     implementation(projects.feature.camera)
