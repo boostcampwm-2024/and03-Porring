@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
@@ -22,6 +23,7 @@ internal fun RandomImageList(
     val pagerState = rememberPagerState(pageCount = { 10 })
 
     HorizontalPager(
+        modifier = Modifier.padding(padding),
         state = pagerState
     ) { page ->
         ImageCard(page)
