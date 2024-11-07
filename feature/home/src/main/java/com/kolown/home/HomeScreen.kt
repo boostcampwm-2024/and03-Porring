@@ -1,16 +1,14 @@
 package com.kolown.home
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,30 +18,34 @@ import com.porring.home.component.RandomImageList
 @Composable
 internal fun HomeRoute(
     padding: PaddingValues = PaddingValues(),
-    onClickImage : ()->Unit,
 ) {
     HomeScreen(
-        padding = padding,
-        onClickImage = onClickImage
+        padding = padding
     )
 }
 
 @Composable
 private fun HomeScreen(
     padding: PaddingValues = PaddingValues(),
-    onClickImage: () -> Unit = {}
 ) {
-    Box(
+    Column(
         modifier = Modifier
+            .padding(horizontal = 16.dp)
             .fillMaxSize()
-            .padding(paddingValues = padding),
-        contentAlignment = Alignment.Center
+            .padding(padding),
     ) {
-        Text(text = "HomeScreen", style = MaterialTheme.typography.displayLarge,
-            modifier = Modifier.clickable {
-                onClickImage()
-            })
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp),
+        ) {
+
+        }
+        RandomImageList()
+        Spacer(Modifier.height(16.dp))
+        MainButtonGroup({}, {}, {})
     }
+
 }
 
 @Preview(showBackground = true)
