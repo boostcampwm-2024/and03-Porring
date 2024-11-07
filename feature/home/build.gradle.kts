@@ -47,5 +47,9 @@ dependencies {
 
     implementation(libs.bundles.android.compose)
 
+    //coil
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+
     implementation(projects.core.navigation)
 }
