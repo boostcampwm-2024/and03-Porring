@@ -2,7 +2,6 @@ package com.porring.home.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,16 +13,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 
 @Composable
-internal fun RandomImageList(
-    padding: PaddingValues = PaddingValues()
-) {
+internal fun RandomImageList() {
     val pagerState = rememberPagerState(pageCount = { 10 })
 
     HorizontalPager(
-        modifier = Modifier.padding(padding),
+        modifier = Modifier.padding(top = 32.dp),
         state = pagerState
     ) { page ->
         ImageCard(page)
