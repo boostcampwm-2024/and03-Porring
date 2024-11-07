@@ -7,7 +7,7 @@ import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
 import androidx.camera.core.ImageProxy
 
-object CameraFilter {
+object CpuFilter {
 
 
     fun toGrayscale(imageProxy: ImageProxy): Bitmap {

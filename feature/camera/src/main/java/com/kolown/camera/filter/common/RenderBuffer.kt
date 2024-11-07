@@ -1,4 +1,4 @@
-package com.kolown.camera.filter
+package com.kolown.camera.filter.common
 
 import android.opengl.GLES20
 import com.kolown.camera.filter.util.GLUtil
@@ -14,9 +14,12 @@ class RenderBuffer(
     /*
         textureId getter
      */
-    var texId: Int = 0
+    val texId: Int
     private var renderBufferId = 0
     private var frameBufferId = 0
+    
+    //ㅓ저희 화면 편집 -> 활용 될것 같...?
+    // bitmap ->
 
     /*
        각종 변수 및 Texture Shader 사용 위한 변수들 초기화

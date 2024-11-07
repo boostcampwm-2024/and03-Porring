@@ -28,6 +28,7 @@ import java.util.concurrent.Executors
 fun CameraScreen() {
 
 
+
     val launcherMultiplePermissions = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissionsMap ->
