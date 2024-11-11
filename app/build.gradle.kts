@@ -4,10 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google)
 }
-
-
-
 
 android {
     buildFeatures {
@@ -34,7 +32,6 @@ android {
                 "proguard-rules.pro",
             )
             buildConfigField("boolean", "IS_DEBUG", "true")
-
             applicationIdSuffix = ".dev"
         }
         release {
@@ -45,7 +42,6 @@ android {
 
                 )
             buildConfigField("boolean", "IS_DEBUG", "false")
-
         }
 
 
@@ -118,5 +114,6 @@ dependencies {
     implementation(projects.feature.my)
 
     implementation(projects.core.navigation)
+    implementation(projects.feature.login)
 }
 
