@@ -5,11 +5,13 @@ coilCompose = "3.0.0-rc02"
 datastore = "1.1.1"
 exoplayerCore = "2.19.1"
 hiltAndroid = "2.51.1"
+hiltNavigationCompose = "1.2.0"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
+kotlinxCoroutinesCore = "1.9.0"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
 composeBom = "2024.10.01"
@@ -47,6 +49,8 @@ androidx-camera-video = { module = "androidx.camera:camera-video", version.ref =
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraCore" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilCompose" }
@@ -69,6 +73,7 @@ androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }

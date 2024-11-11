@@ -20,31 +20,20 @@ fun CameraXCompose() {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current
     val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
-    var cameraViewImage = remember { Bitmap.createBitmap(1000, 1000, Bitmap.Config.ARGB_8888) }
     val cameraController = remember {
         LifecycleCameraController(context).apply {
             cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             setEnabledUseCases(CameraController.IMAGE_CAPTURE or CameraController.VIDEO_CAPTURE)
             setImageAnalysisAnalyzer(cameraExecutor) { imageProxy ->
-                Log.e("test","imageAnalyze")
-                cameraViewImage = CpuFilter.toGrayscale(imageProxy)
                 imageProxy.close()
             }
             bindToLifecycle(lifecycle)
+            isTapToFocusEnabled = true
 
         }
     }
 
 
-
-
-
-    Image(
-        bitmap = cameraViewImage.asImageBitmap(),
-        contentDescription = "",
-        modifier = Modifier.fillMaxSize()
-    )
-
-    //PreviewViewCompose(cameraController)
+    PreviewViewCompose(cameraController)
 
 }
