@@ -53,6 +53,10 @@ private fun ImageCard(
         contentAlignment = Alignment.Center
     ) {
         RandomImage()
+        FavoriteGroup(
+            modifier = Modifier.align(Alignment.TopEnd),
+            reactions = listOf(1, 2, 3, 4, 5)
+        )
         Text(
             text = "idx: $idx"
         )
