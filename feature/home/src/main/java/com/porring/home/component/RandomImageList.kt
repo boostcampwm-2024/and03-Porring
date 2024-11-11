@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -30,20 +31,24 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.kolown.model.ImageItem
 
 @Composable
-internal fun RandomImageList() {
-    val pagerState = rememberPagerState(pageCount = { 10 })
+internal fun RandomImageList(
+    pagerState: PagerState = rememberPagerState(pageCount = { 10 }),
+    imageItems: List<ImageItem> = emptyList()
+) {
     HorizontalPager(
         modifier = Modifier.padding(top = 32.dp),
         state = pagerState
     ) { page ->
-        ImageCard(page)
+        ImageCard(imageItems[page], page)
     }
 }
 
 @Composable
 private fun ImageCard(
+    imageItem: ImageItem,
     idx: Int
 ) {
     val whiteModifier = Modifier
@@ -67,21 +72,12 @@ private fun ImageCard(
             Text(
                 text = "idx: $idx"
             )
-            Column(
-                modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                CustomIconButton(
-                    whiteModifier,
-                    IconFollow,
-                    {}
-                )
-                CustomIconButton(
-                    whiteModifier,
-                    IconGallery,
-                    {}
-                )
-            }
+            IconButtonGroup(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp),
+                whiteModifier = whiteModifier
+            )
         }
         CustomIconButton(
             Modifier.align(Alignment.CenterHorizontally),
@@ -92,14 +88,38 @@ private fun ImageCard(
 }
 
 @Composable
-private fun RandomImage() {
+private fun IconButtonGroup(
+    modifier: Modifier,
+    whiteModifier: Modifier
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        CustomIconButton(
+            whiteModifier,
+            IconFollow,
+            {}
+        )
+        CustomIconButton(
+            whiteModifier,
+            IconGallery,
+            {}
+        )
+    }
+}
+
+@Composable
+private fun RandomImage(
+    imageUrl: String = "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png"
+) {
     Card(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 8.dp
         )
     ) {
         AsyncImage(
-            model = "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png",
+            model = imageUrl,
             contentDescription = null
         )
     }
