@@ -7,32 +7,38 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kolown.model.ImageItem
 import com.porring.home.component.RandomImageList
 
 @Composable
 internal fun HomeRoute(
     padding: PaddingValues = PaddingValues(),
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
+    val mainFeedImages by viewModel.mainFeedImageItems.collectAsStateWithLifecycle()
+
     HomeScreen(
-        padding = padding
+        padding = padding,
+        mainFeedImages = mainFeedImages,
     )
 }
 
 @Composable
 private fun HomeScreen(
     padding: PaddingValues = PaddingValues(),
+    mainFeedImages: List<ImageItem> = emptyList()
 ) {
+    val pagerState = rememberPagerState(pageCount = { mainFeedImages.size })
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -46,7 +52,10 @@ private fun HomeScreen(
         ) {
 
         }
-        RandomImageList()
+        RandomImageList(
+            pagerState = pagerState,
+            imageItems = mainFeedImages,
+        )
     }
 
 }
