@@ -3,16 +3,21 @@ package com.kolown.home
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.porring.home.component.MainButtonGroup
 import com.porring.home.component.RandomImageList
 
 @Composable
@@ -30,9 +35,9 @@ private fun HomeScreen(
 ) {
     Column(
         modifier = Modifier
-            .padding(horizontal = 16.dp)
             .fillMaxSize()
             .padding(padding),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
             modifier = Modifier
@@ -42,8 +47,19 @@ private fun HomeScreen(
 
         }
         RandomImageList()
-        Spacer(Modifier.height(16.dp))
-        MainButtonGroup({}, {}, {})
+        IconButton(
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .align(Alignment.CenterHorizontally),
+            onClick = {}
+        ) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = Icons.Outlined.FavoriteBorder,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
     }
 
 }

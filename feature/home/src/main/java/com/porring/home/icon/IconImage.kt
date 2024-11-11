@@ -13,11 +13,11 @@ import androidx.compose.ui.unit.dp
 
 val IconImage: ImageVector
 	get() {
-		if (_Vector != null) {
-			return _Vector!!
+		if (iconImage != null) {
+			return iconImage!!
 		}
-		_Vector = ImageVector.Builder(
-            name = "Vector",
+		iconImage = ImageVector.Builder(
+            name = "IconImage",
             defaultWidth = 23.dp,
             defaultHeight = 16.dp,
             viewportWidth = 23f,
@@ -93,7 +93,7 @@ val IconImage: ImageVector
 				close()
 			}
 		}.build()
-		return _Vector!!
+		return iconImage!!
 	}
 
-private var _Vector: ImageVector? = null
+private var iconImage: ImageVector? = null
