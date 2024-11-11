@@ -1,20 +1,14 @@
 package com.porring.home
 
-import IconHeart
-import IconLove
-import IconSmile
-import IconStar
-import IconSurprise
-import IconThumb
-import androidx.compose.ui.graphics.vector.ImageVector
+import com.kolown.home.R
 import com.kolown.model.Reactions
 
-fun Reactions.toImageVector(): ImageVector =
+fun Reactions.toImage() =
     when (this) {
-        Reactions.LOVE -> IconLove
-        Reactions.SURPRISE -> IconSurprise
-        Reactions.SMILE -> IconSmile
-        Reactions.STAR -> IconStar
-        Reactions.THUMB -> IconThumb
-        Reactions.HEART -> IconHeart
+        Reactions.LOVE -> R.drawable.img_love
+        Reactions.SURPRISE -> R.drawable.img_surprise
+        Reactions.SMILE -> R.drawable.img_smile
+        Reactions.STAR -> R.drawable.img_star
+        Reactions.THUMB -> R.drawable.img_thumb
+        Reactions.HEART -> R.drawable.img_heart
     }
