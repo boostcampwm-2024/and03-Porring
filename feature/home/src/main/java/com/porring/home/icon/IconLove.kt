@@ -11,12 +11,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
-public val IconFavorite: ImageVector
+public val IconLove: ImageVector
 	get() {
-		if (_IconFavorite != null) {
-			return _IconFavorite!!
+		if (iconLove != null) {
+			return iconLove!!
 		}
-		_IconFavorite = ImageVector.Builder(
+		iconLove = ImageVector.Builder(
             name = "IconFavorite",
             defaultWidth = 16.dp,
             defaultHeight = 16.dp,
@@ -165,7 +165,7 @@ public val IconFavorite: ImageVector
 				close()
 			}
 		}.build()
-		return _IconFavorite!!
+		return iconLove!!
 	}
 
-private var _IconFavorite: ImageVector? = null
+private var iconLove: ImageVector? = null

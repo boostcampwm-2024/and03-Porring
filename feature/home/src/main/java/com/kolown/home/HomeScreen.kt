@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.porring.home.component.FavoriteGroup
 import com.porring.home.component.RandomImageList
 
 @Composable
@@ -48,19 +47,6 @@ private fun HomeScreen(
 
         }
         RandomImageList()
-        IconButton(
-            modifier = Modifier
-                .padding(top = 16.dp)
-                .align(Alignment.CenterHorizontally),
-            onClick = {}
-        ) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                imageVector = Icons.Outlined.FavoriteBorder,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
     }
 
 }
