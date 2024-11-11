@@ -1,4 +1,4 @@
-package com.kolown.camera
+package com.kolown.camera.camera
 
 val permissions = arrayOf(
     android.Manifest.permission.CAMERA,

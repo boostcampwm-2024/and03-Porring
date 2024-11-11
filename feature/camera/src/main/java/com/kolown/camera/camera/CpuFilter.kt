@@ -1,4 +1,4 @@
-package com.kolown.camera
+package com.kolown.camera.camera
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
