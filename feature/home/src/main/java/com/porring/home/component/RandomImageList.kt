@@ -15,6 +15,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -53,6 +54,9 @@ private fun ImageCard(
     idx: Int,
     onFollowClick: (Long) -> Unit
 ) {
+    val likedImageVector =
+        if (imageItem.reactions == null) Icons.Outlined.FavoriteBorder else Icons.Outlined.Favorite
+
     Column {
         Box(
             modifier = Modifier
@@ -64,7 +68,7 @@ private fun ImageCard(
             RandomImage(imageItem.imageUrl)
             ReactionGroup(
                 modifier = Modifier.align(Alignment.TopEnd),
-                reactions = listOf(1, 2, 3, 4, 5)
+                reactions = imageItem.favoriteList
             )
             Text(
                 text = "idx: $idx"
@@ -79,12 +83,14 @@ private fun ImageCard(
         }
 
         IconButton(
-            modifier = Modifier.align(Alignment.CenterHorizontally).padding(16.dp),
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(16.dp),
             onClick = {},
         ) {
             Icon(
                 modifier = Modifier.size(24.dp),
-                imageVector = Icons.Outlined.FavoriteBorder,
+                imageVector = likedImageVector,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )

@@ -54,7 +54,7 @@ class HomeViewModel @Inject constructor(
                     "",
                     "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png",
                     "",
-                    Reactions.SMILE,
+                    null,
                     false,
                     emptyList()
                 ),
