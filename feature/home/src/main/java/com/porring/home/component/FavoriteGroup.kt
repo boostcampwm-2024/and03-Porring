@@ -39,13 +39,12 @@ private fun ReactionIcons(
     reaction: Int,
     size: Int
 ) {
-    Log.d("ReactionIcons", "ReactionIcons: $index")
-    val offset = (-16 * index + (size - 1) * 16).dp
+    val offset = (-12 * index + (size - 1) * 12).dp
     Icon(
         imageVector = Icons.Default.AccountCircle,
         contentDescription = null,
         modifier = Modifier
-            .size(48.dp)
+            .size(24.dp)
             .offset(x = offset)
             .zIndex(-index.toFloat())
             .background(
