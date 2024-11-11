@@ -36,26 +36,23 @@ import com.kolown.model.ImageItem
 @Composable
 internal fun RandomImageList(
     pagerState: PagerState = rememberPagerState(pageCount = { 10 }),
-    imageItems: List<ImageItem> = emptyList()
+    imageItems: List<ImageItem> = emptyList(),
+    onFollowClick: (Long) -> Unit = {},
 ) {
     HorizontalPager(
         modifier = Modifier.padding(top = 32.dp),
         state = pagerState
     ) { page ->
-        ImageCard(imageItems[page], page)
+        ImageCard(imageItems[page], page, onFollowClick)
     }
 }
 
 @Composable
 private fun ImageCard(
     imageItem: ImageItem,
-    idx: Int
+    idx: Int,
+    onFollowClick: (Long) -> Unit
 ) {
-    val whiteModifier = Modifier
-        .clip(CircleShape)
-        .background(Color.White)
-        .size(48.dp)
-
     Column {
         Box(
             modifier = Modifier
@@ -64,7 +61,7 @@ private fun ImageCard(
                 .aspectRatio(4f / 5f),
             contentAlignment = Alignment.Center
         ) {
-            RandomImage()
+            RandomImage(imageItem.imageUrl)
             ReactionGroup(
                 modifier = Modifier.align(Alignment.TopEnd),
                 reactions = listOf(1, 2, 3, 4, 5)
@@ -76,22 +73,35 @@ private fun ImageCard(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(16.dp),
-                whiteModifier = whiteModifier
+                imageItem,
+                onFollowClick
             )
         }
-        CustomIconButton(
-            Modifier.align(Alignment.CenterHorizontally),
-            Icons.Outlined.FavoriteBorder,
-            {}
-        )
+
+        IconButton(
+            modifier = Modifier.align(Alignment.CenterHorizontally).padding(16.dp),
+            onClick = {},
+        ) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = Icons.Outlined.FavoriteBorder,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
     }
 }
 
 @Composable
 private fun IconButtonGroup(
     modifier: Modifier,
-    whiteModifier: Modifier
+    imageItem: ImageItem,
+    onFollowClick: (Long) -> Unit
 ) {
+    val whiteModifier = Modifier
+        .clip(CircleShape)
+        .size(48.dp)
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -99,13 +109,16 @@ private fun IconButtonGroup(
         CustomIconButton(
             whiteModifier,
             IconFollow,
-            {}
-        )
+            imageItem.isFollowed
+        ) {
+            onFollowClick(imageItem.id)
+        }
         CustomIconButton(
             whiteModifier,
-            IconGallery,
-            {}
-        )
+            IconGallery
+        ) {
+
+        }
     }
 }
 
@@ -129,17 +142,18 @@ private fun RandomImage(
 private fun CustomIconButton(
     modifier: Modifier,
     imageVector: ImageVector,
+    isSelected: Boolean = false,
     onClick: () -> Unit,
 ) {
     IconButton(
-        modifier = modifier,
+        modifier = modifier.background(if (isSelected) MaterialTheme.colorScheme.primary else Color.White),
         onClick = onClick,
     ) {
         Icon(
             modifier = Modifier.size(24.dp),
             imageVector = imageVector,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary
+            tint = if (isSelected) Color.White else MaterialTheme.colorScheme.primary
         )
     }
 }

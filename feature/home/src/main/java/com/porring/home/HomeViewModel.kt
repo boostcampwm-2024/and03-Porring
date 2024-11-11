@@ -20,10 +20,57 @@ class HomeViewModel @Inject constructor(
         _mainFeedImageItems.update {
             listOf(
                 ImageItem(
-                    1, "", "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png",
-                    "", Reactions.LOVE, false, emptyList()
-                )
+                    1,
+                    "",
+                    "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png",
+                    "",
+                    Reactions.LOVE,
+                    false,
+                    listOf(
+                        Reactions.SURPRISE,
+                        Reactions.SMILE,
+                        Reactions.STAR,
+                        Reactions.THUMB,
+                        Reactions.LOVE,
+                        Reactions.HEART
+                    )
+                ),
+                ImageItem(
+                    2,
+                    "",
+                    "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png",
+                    "",
+                    Reactions.STAR,
+                    true,
+                    listOf(
+                        Reactions.SURPRISE,
+                        Reactions.SMILE,
+                        Reactions.LOVE,
+                        Reactions.HEART
+                    )
+                ),
+                ImageItem(
+                    3,
+                    "",
+                    "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png",
+                    "",
+                    Reactions.SMILE,
+                    false,
+                    emptyList()
+                ),
             )
+        }
+    }
+
+    fun followUser(id: Long) {
+        _mainFeedImageItems.update {
+            it.map { imageItem ->
+                if (imageItem.id == id) {
+                    imageItem.copy(isFollowed = !imageItem.isFollowed)
+                } else {
+                    imageItem
+                }
+            }
         }
     }
 
