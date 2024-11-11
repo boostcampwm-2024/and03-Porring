@@ -25,17 +25,20 @@ internal fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val mainFeedImages by viewModel.mainFeedImageItems.collectAsStateWithLifecycle()
+    val onFollowClick : (Long) -> Unit = { viewModel.followUser(it) }
 
     HomeScreen(
         padding = padding,
         mainFeedImages = mainFeedImages,
+        onFollowClick = onFollowClick
     )
 }
 
 @Composable
 private fun HomeScreen(
     padding: PaddingValues = PaddingValues(),
-    mainFeedImages: List<ImageItem> = emptyList()
+    mainFeedImages: List<ImageItem> = emptyList(),
+    onFollowClick: (Long) -> Unit = {},
 ) {
     val pagerState = rememberPagerState(pageCount = { mainFeedImages.size })
 
@@ -55,6 +58,7 @@ private fun HomeScreen(
         RandomImageList(
             pagerState = pagerState,
             imageItems = mainFeedImages,
+            onFollowClick = onFollowClick
         )
     }
 
