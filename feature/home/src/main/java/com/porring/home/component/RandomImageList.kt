@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -32,7 +34,6 @@ import coil3.compose.AsyncImage
 @Composable
 internal fun RandomImageList() {
     val pagerState = rememberPagerState(pageCount = { 10 })
-
     HorizontalPager(
         modifier = Modifier.padding(top = 32.dp),
         state = pagerState
@@ -45,34 +46,48 @@ internal fun RandomImageList() {
 private fun ImageCard(
     idx: Int
 ) {
-    Box(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxWidth()
-            .aspectRatio(4f / 5f),
-        contentAlignment = Alignment.Center
-    ) {
-        RandomImage()
-        ReactionGroup(
-            modifier = Modifier.align(Alignment.TopEnd),
-            reactions = listOf(1, 2, 3, 4, 5)
-        )
-        Text(
-            text = "idx: $idx"
-        )
-        Column(
-            modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+    val whiteModifier = Modifier
+        .clip(CircleShape)
+        .background(Color.White)
+        .size(48.dp)
+
+    Column {
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+                .aspectRatio(4f / 5f),
+            contentAlignment = Alignment.Center
         ) {
-            WhiteButton(
-                IconFollow,
-                {}
+            RandomImage()
+            ReactionGroup(
+                modifier = Modifier.align(Alignment.TopEnd),
+                reactions = listOf(1, 2, 3, 4, 5)
             )
-            WhiteButton(
-                IconGallery,
-                {}
+            Text(
+                text = "idx: $idx"
             )
+            Column(
+                modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                CustomIconButton(
+                    whiteModifier,
+                    IconFollow,
+                    {}
+                )
+                CustomIconButton(
+                    whiteModifier,
+                    IconGallery,
+                    {}
+                )
+            }
         }
+        CustomIconButton(
+            Modifier.align(Alignment.CenterHorizontally),
+            Icons.Outlined.FavoriteBorder,
+            {}
+        )
     }
 }
 
@@ -91,15 +106,13 @@ private fun RandomImage() {
 }
 
 @Composable
-private fun WhiteButton(
+private fun CustomIconButton(
+    modifier: Modifier,
     imageVector: ImageVector,
     onClick: () -> Unit,
 ) {
     IconButton(
-        modifier = Modifier
-            .clip(CircleShape)
-            .background(Color.White)
-            .size(48.dp),
+        modifier = modifier,
         onClick = onClick,
     ) {
         Icon(
