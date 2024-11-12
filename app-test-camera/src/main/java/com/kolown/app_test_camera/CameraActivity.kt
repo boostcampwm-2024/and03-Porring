@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kolown.app_test_camera.ui.theme.PorringTheme
-import com.kolown.camera.CameraScreen
+import com.kolown.camera.screen.CameraScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

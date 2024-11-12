@@ -1,4 +1,4 @@
-package com.kolown.camera
+package com.kolown.camera.screen
 
 import android.content.Intent
 import android.net.Uri
@@ -15,6 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.kolown.camera.camera.permissions
 import android.provider.Settings
 import android.util.Log
+import com.kolown.camera.PermissionChecker
+import com.kolown.camera.screen.component.FocusSurface
 
 
 @Composable
