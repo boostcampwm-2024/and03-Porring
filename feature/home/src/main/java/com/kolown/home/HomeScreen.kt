@@ -40,6 +40,7 @@ internal fun HomeRoute(
         mainFeedImages = mainFeedImages,
         onFollowClick = onFollowClick,
         onSelectReaction = onSelectReaction,
+        onLoadNextPage = { viewModel.loadImageItem() }
     )
 }
 
@@ -49,6 +50,7 @@ private fun HomeScreen(
     mainFeedImages: List<ImageItem> = emptyList(),
     onFollowClick: (Long) -> Unit = {},
     onSelectReaction: (Long, Reactions) -> Unit = { _, _ -> },
+    onLoadNextPage: () -> Unit = {},
 ) {
     val pagerState = rememberPagerState(pageCount = { mainFeedImages.size })
     var isReactionDialogVisible by remember { mutableStateOf(false) }
@@ -73,7 +75,8 @@ private fun HomeScreen(
             onSelectReaction = onSelectReaction,
             onChangeReactionDialogVisibility = {
                 isReactionDialogVisible = !isReactionDialogVisible
-            }
+            },
+            onLoadNextPage = onLoadNextPage
         )
     }
 
