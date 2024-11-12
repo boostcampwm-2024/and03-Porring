@@ -74,4 +74,16 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun selectReaction(id: Long, reaction: Reactions) {
+        _mainFeedImageItems.update {
+            it.map { imageItem ->
+                if (imageItem.id == id) {
+                    imageItem.copy(reactions = reaction)
+                } else {
+                    imageItem
+                }
+            }
+        }
+    }
+
 }
