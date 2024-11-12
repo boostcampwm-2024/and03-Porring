@@ -29,6 +29,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,9 +41,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen() {
-
-    val loginViewModel = LoginViewModel()
+fun LoginScreen(
+    loginViewModel: LoginViewModel = LoginViewModel()
+) {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -51,37 +52,30 @@ fun LoginScreen() {
             Toast.makeText(context, "로그인이 완료되었습니다.", Toast.LENGTH_SHORT).show()
         }
     }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(title ={})
-        }
-    ) { innerPadding ->
-        LoginContent(onClick = {
-            val token = BuildConfig.GOOGLE_CLIENT_ID
-            val googleSignInOptions = GoogleSignInOptions
-                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(token)
-                .requestEmail()
-                .build()
-            val googleSignInClient = GoogleSignIn.getClient(context, googleSignInOptions)
-            launcher.launch(googleSignInClient.signInIntent)
-        }, contentPadding = innerPadding)
-    }
+    Spacer(modifier = Modifier.height(50.dp))
+    LoginContent(onClick = {
+        val token = BuildConfig.GOOGLE_CLIENT_ID
+        val googleSignInOptions = GoogleSignInOptions
+            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(token)
+            .requestEmail()
+            .build()
+        val googleSignInClient = GoogleSignIn.getClient(context, googleSignInOptions)
+        launcher.launch(googleSignInClient.signInIntent)
+    })
 }
+
 
 @Composable
 fun LoginContent(
     onClick: () -> Unit = {},
-    contentPadding: PaddingValues
 ) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(contentPadding),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(50.dp))
+        Spacer(modifier = Modifier.height(200.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
@@ -99,12 +93,12 @@ fun LoginContent(
                 tint = Color.Unspecified
             )
         }
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(text = "✨ 순간으로 이어지는 진짜 연결의 시작 ✨", fontSize = 12.sp)
-        Spacer(modifier = Modifier.height(30.dp))
-        Text(text = "로그인/회원가입", fontSize = 14.sp, color = Color.Gray)
-        Spacer(modifier = Modifier.height(10.dp))
-        ButtonWithIcon(icon = R.drawable.logo_google, text = "구글로 시작하기", onClick = onClick)
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(text = stringResource(R.string.app_sub_title), fontSize = 12.sp)
+        Spacer(modifier = Modifier.height(40.dp))
+        Text(text = stringResource(R.string.login_singup), fontSize = 14.sp, color = Color.Gray)
+        Spacer(modifier = Modifier.height(20.dp))
+        ButtonWithIcon(icon = R.drawable.logo_google, text = stringResource(R.string.start_with_google), onClick = onClick)
     }
 }
 
@@ -133,5 +127,5 @@ fun ButtonWithIcon(
 @Composable
 @Preview(showBackground = true)
 fun PreviewLoginScreen() {
-    LoginContent(contentPadding = PaddingValues(0.dp))
+    LoginContent()
 }

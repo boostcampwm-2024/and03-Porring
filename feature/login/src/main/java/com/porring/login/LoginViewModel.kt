@@ -33,5 +33,4 @@ class LoginViewModel : ViewModel() {
             Log.e("로그인 실패",e.message.toString())
         }
     }
-
 }

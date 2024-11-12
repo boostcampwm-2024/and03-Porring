@@ -45,10 +45,9 @@ class MainActivity : ComponentActivity() {
             val navigator: MainNavigator = rememberMainNavigator()
 
             PorringTheme {
-                LoginScreen()
-//                MainScreen(
-//                    navigator = navigator
-//                )
+                MainScreen(
+                    navigator = navigator
+                )
             }
         }
     }
