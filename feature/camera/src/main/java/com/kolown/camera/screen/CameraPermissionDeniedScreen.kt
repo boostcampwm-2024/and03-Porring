@@ -1,4 +1,4 @@
-package com.kolown.camera
+package com.kolown.camera.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
