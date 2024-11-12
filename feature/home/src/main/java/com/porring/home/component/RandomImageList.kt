@@ -3,12 +3,13 @@ package com.porring.home.component
 import IconFollow
 import IconGallery
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
@@ -16,10 +17,12 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,10 +37,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.kolown.model.ImageItem
 import com.kolown.model.Reactions
 
@@ -55,7 +62,9 @@ internal fun RandomImageList(
         modifier = Modifier.padding(top = 32.dp),
         state = pagerState
     ) { page ->
-        if (page == imageItems.size - 2) { onLoadNextPage() }
+        if (page == imageItems.size - 2) {
+            onLoadNextPage()
+        }
 
         ImageCard(
             imageItems[page],
@@ -92,9 +101,6 @@ private fun ImageCard(
             ReactionGroup(
                 modifier = Modifier.align(Alignment.TopEnd),
                 reactions = imageItem.favoriteList
-            )
-            Text(
-                text = "idx: $idx"
             )
             IconButtonGroup(
                 modifier = Modifier
@@ -165,16 +171,60 @@ private fun IconButtonGroup(
 private fun RandomImage(
     imageUrl: String = "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png"
 ) {
-    Card(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
-        )
-    ) {
-        AsyncImage(
-            model = imageUrl,
-            contentDescription = null
-        )
+    var isLoading by remember { mutableStateOf(true) }
+    var isError by remember { mutableStateOf(false) }
+
+    Box {
+        Card(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 8.dp
+            )
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(imageUrl)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
+                    .build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                onLoading = {
+                    isLoading = true
+                    isError = false
+                },
+                onSuccess = {
+                    isLoading = false
+                    isError = false
+                },
+                onError = {
+                    isLoading = false
+                    isError = true
+                }
+            )
+        }
+
+        if (isLoading) {
+            CircularProgressIndicator(
+                color = Color.Gray,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(48.dp)
+            )
+        }
+
+        if (isError) {
+            Column {
+                Icon(
+                    imageVector = Icons.Default.Warning,
+                    contentDescription = null,
+                    tint = Color.Gray,
+                    modifier = Modifier.size(60.dp)
+                )
+            }
+
+        }
     }
+
 }
 
 @Composable
