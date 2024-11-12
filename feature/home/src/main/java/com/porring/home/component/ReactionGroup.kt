@@ -22,12 +22,14 @@ internal fun ReactionGroup(
     modifier: Modifier,
     reactions: List<Reactions>
 ) {
-    if (reactions.isNotEmpty()) {
+    val reactionList = reactions.distinct().sortedBy { it.ordinal }
+
+    if (reactionList.isNotEmpty()) {
         Row(
             modifier = modifier.padding(16.dp)
         ) {
-            reactions.forEachIndexed { index, reaction ->
-                ReactionIcons(index, reaction, reactions.size)
+            reactionList.forEachIndexed { index, reaction ->
+                ReactionIcons(index, reaction, reactionList.size)
             }
         }
     }
