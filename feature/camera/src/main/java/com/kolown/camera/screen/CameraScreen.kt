@@ -1,5 +1,6 @@
 package com.kolown.camera.screen
 
+import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -15,6 +16,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.kolown.camera.camera.permissions
 import android.provider.Settings
 import android.util.Log
+import androidx.compose.ui.platform.LocalView
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import com.kolown.camera.PermissionChecker
 import com.kolown.camera.screen.component.FocusSurface
 
@@ -26,7 +29,7 @@ fun CameraScreen(
     onCameraPermissionGranted: () -> Unit = {},
 ) {
     val context = LocalContext.current
-    val cameraPermissionDinedCompletely = cameraPermissionDinedProvider()
+    val activity = LocalView.current.context as android.app.Activity
     var cameraPermission by remember {
         mutableStateOf(
             PermissionChecker.checkCameraPermission(
@@ -35,7 +38,6 @@ fun CameraScreen(
         )
     }
 
-    Log.e("testing","count: $cameraPermissionDinedCompletely")
 
     val launcherMultiplePermissions = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -46,34 +48,24 @@ fun CameraScreen(
             onCameraPermissionGranted()
             cameraPermission = true
         } else {
+            if(!shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)){
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", context.packageName, null)
+                }
+                context.startActivity(intent)
+            }
             onCameraPermissionDined()
         }
+    }
+    SideEffect {
+        launcherMultiplePermissions.launch(permissions)
     }
 
     if (cameraPermission) {
         CameraXCompose()
     } else {
         CameraPermissionDeniedScreen()
-        if (!cameraPermissionDinedCompletely) {
-            SideEffect {
-                launcherMultiplePermissions.launch(permissions)
-            }
-        } else {
-            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                data = Uri.fromParts("package", context.packageName, null)
-            }
-            context.startActivity(intent)
-        }
-
     }
-
-
-//    Scaffold(modifier = Modifier.fillMaxSize()){ innerPadding ->
-//        Column(modifier = Modifier.padding(innerPadding)) {
-//
-//       }
-//    }
-
 }
 
 @Preview(showBackground = true)

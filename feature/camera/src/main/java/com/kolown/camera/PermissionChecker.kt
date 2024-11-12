@@ -7,11 +7,10 @@ import androidx.core.content.ContextCompat
 
 object PermissionChecker {
     fun checkCameraPermission(context: Context): Boolean {
-        val a = ContextCompat.checkSelfPermission(
+        return ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.CAMERA
         ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-        return a
     }
 
 }
