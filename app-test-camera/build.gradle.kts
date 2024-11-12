@@ -64,6 +64,5 @@ dependencies {
     ksp(libs.hilt.android.compiler)
 
     implementation(project(":feature:camera"))
-    implementation(project(":feature:main"))
     implementation(project(":core:data"))
 }

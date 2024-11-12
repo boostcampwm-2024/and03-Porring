@@ -26,7 +26,6 @@ firebaseBom = "33.5.1"
 
 ## Kotlin
 # https://github.com/JetBrains/kotlin
-kotlin = "2.0.0"
 # https://github.com/Kotlin/kotlinx.serialization
 kotlinxSerializationJson = "1.7.0"
 # https://github.com/Kotlin/kotlinx.collections.immutable
@@ -71,7 +70,7 @@ androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3",version.ref="androidxComposeMaterial3"}
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -100,5 +99,5 @@ android-compose = [
     "androidx-compose-bom",
     "androidx-navigation-compose",
     "androidx-compose-material3",
-    "androidx-ui-tooling"
+    "androidx-compose-ui-tooling"
 ]

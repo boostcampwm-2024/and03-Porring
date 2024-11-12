@@ -31,13 +31,12 @@ fun FocusSurface(content: @Composable () -> Unit) {
     var isVisible by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        content()
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .pointerInput(Unit) {
                     awaitPointerEventScope {
-                        while (true){
+                        while (true) {
                             val event = awaitPointerEvent()
                             val offset = event.changes.first().position
                             val x = (offset.x - 100).toInt()
@@ -48,8 +47,6 @@ fun FocusSurface(content: @Composable () -> Unit) {
                     }
                 },
         ) {
-
-
             AnimatedVisibility(
                 visible = isVisible,
                 enter = fadeIn(),
@@ -67,6 +64,8 @@ fun FocusSurface(content: @Composable () -> Unit) {
                 )
             }
         }
+
+        content()
     }
 
     LaunchedEffect(isVisible) {
