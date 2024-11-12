@@ -58,6 +58,26 @@ class HomeViewModel @Inject constructor(
                     false,
                     emptyList()
                 ),
+                ImageItem(
+                    4,
+                    "",
+                    "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png",
+                    "",
+                    Reactions.SMILE,
+                    false,
+                    listOf(
+                        Reactions.THUMB,
+                        Reactions.LOVE,
+                        Reactions.HEART,
+                        Reactions.SURPRISE,
+                        Reactions.SMILE,
+                        Reactions.STAR,
+                        Reactions.SURPRISE,
+                        Reactions.SURPRISE,
+                        Reactions.SMILE,
+                        Reactions.STAR,
+                    )
+                ),
             )
         }
     }
