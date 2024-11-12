@@ -23,6 +23,7 @@
             <option value="$PROJECT_DIR$/feature/login" />
             <option value="$PROJECT_DIR$/feature/my" />
             <option value="$PROJECT_DIR$/feature/search" />
+            <option value="$PROJECT_DIR$/feature/socialLogin" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />
