@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.bongpal.my"
+    namespace = "com.kolown.my"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {

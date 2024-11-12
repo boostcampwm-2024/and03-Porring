@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.bongpal.search"
+    namespace = "com.kolown.search"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {

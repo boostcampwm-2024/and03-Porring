@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.bongpal.follower"
+    namespace = "com.kolown.follower"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
