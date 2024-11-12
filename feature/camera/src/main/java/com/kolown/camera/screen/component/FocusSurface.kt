@@ -27,20 +27,24 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun FocusSurface(content: @Composable () -> Unit) {
-    var boxPosition by remember { mutableStateOf(IntOffset(0,0)) }
+    var boxPosition by remember { mutableStateOf(IntOffset(0, 0)) }
     var isVisible by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxSize()){
+    Box(modifier = Modifier.fillMaxSize()) {
         content()
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .pointerInput(Unit) {
-                    detectTapGestures { offset ->
-                        if(isVisible)
-                            return@detectTapGestures
-                        boxPosition = IntOffset(offset.x.toInt() - 100, offset.y.toInt() - 100) // 클릭 위치 조정
-                        isVisible = true
+                    awaitPointerEventScope {
+                        while (true){
+                            val event = awaitPointerEvent()
+                            val offset = event.changes.first().position
+                            val x = (offset.x - 100).toInt()
+                            val y = (offset.y - 100).toInt()
+                            boxPosition = IntOffset(x, y)
+                            isVisible = true
+                        }
                     }
                 },
         ) {

@@ -2,7 +2,6 @@ package com.kolown.data.repository
 
 import com.kolown.data.datasource.AppDataSource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
 
 interface AppDataRepository {
     val cameraPermissionDinedCountFlow: Flow<Int>
@@ -13,7 +12,7 @@ interface AppDataRepository {
 
 class AppDataRepositoryImpl(private val appDataSource: AppDataSource) : AppDataRepository {
     override val cameraPermissionDinedCountFlow = appDataSource.cameraPermissionDinedCountFlow
-    override val cameraPermissionDinedStateFlow = appDataSource.cameraPermissionDinedStateFlow
+    override val cameraPermissionDinedStateFlow = appDataSource.cameraPermissionDinedFlow
 
     override suspend fun resetCameraPermissionDinedCount() {
         appDataSource.resetCameraPermissionDinedCount()
