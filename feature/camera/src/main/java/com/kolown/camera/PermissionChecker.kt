@@ -5,6 +5,8 @@ import android.content.Context
 import android.util.Log
 import androidx.core.content.ContextCompat
 
+
+//common에 들어갈 예정
 object PermissionChecker {
     fun checkCameraPermission(context: Context): Boolean {
         return ContextCompat.checkSelfPermission(

@@ -32,14 +32,7 @@ class CameraActivity : ComponentActivity() {
             PorringTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
                     Box(modifier = Modifier.padding(paddingValues)) {
-                        CameraScreen(cameraPermissionDinedProvider = { cameraPermissionDinedCount },
-                            onCameraPermissionDined = {
-                                viewModel.increaseCameraPermissionDinedCount()
-                            },
-                            onCameraPermissionGranted = {
-                                viewModel.resetCameraPermissionDinedCount()
-                            }
-                        )
+                        CameraScreen()
                     }
 
                 }

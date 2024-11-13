@@ -16,18 +16,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.kolown.camera.camera.permissions
 import android.provider.Settings
 import android.util.Log
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.platform.LocalView
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import com.kolown.camera.PermissionChecker
-import com.kolown.camera.screen.component.FocusSurface
 
 
 @Composable
-fun CameraScreen(
-    cameraPermissionDinedProvider: () -> Boolean,
-    onCameraPermissionDined: () -> Unit = {},
-    onCameraPermissionGranted: () -> Unit = {},
+internal fun CameraRoute(
+    padding: PaddingValues = PaddingValues(),
 ) {
+    CameraScreen()
+}
+@Composable
+fun CameraScreen() {
     val context = LocalContext.current
     val activity = LocalView.current.context as android.app.Activity
     var cameraPermission by remember {
@@ -45,7 +47,6 @@ fun CameraScreen(
 
         val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
         if (areGranted) {
-            onCameraPermissionGranted()
             cameraPermission = true
         } else {
             if(!shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)){
@@ -54,7 +55,6 @@ fun CameraScreen(
                 }
                 context.startActivity(intent)
             }
-            onCameraPermissionDined()
         }
     }
     SideEffect {
@@ -71,7 +71,7 @@ fun CameraScreen(
 @Preview(showBackground = true)
 @Composable
 fun CameraScreenPreview() {
-    CameraScreen({ false })
+    CameraScreen()
 }
 
 
