@@ -1,4 +1,4 @@
-package com.porring.follower
+package com.kolown.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,16 +12,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-internal fun FollowerRoute(
+internal fun HomeRoute(
     padding: PaddingValues = PaddingValues(),
 ) {
-    FollowerScreen(
+    HomeScreen(
         padding = padding
     )
 }
 
 @Composable
-private fun FollowerScreen(
+private fun HomeScreen(
     padding: PaddingValues = PaddingValues(),
 ) {
     Box(
@@ -30,12 +30,12 @@ private fun FollowerScreen(
             .padding(paddingValues = padding),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "FollowerScreen", style = MaterialTheme.typography.displayLarge)
+        Text(text = "HomeScreen", style = MaterialTheme.typography.displayLarge)
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun PreviewFollowerScreen() {
-    FollowerScreen()
+private fun PreviewHomeScreen() {
+    HomeScreen()
 }

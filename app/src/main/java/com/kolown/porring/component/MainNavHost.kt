@@ -1,7 +1,5 @@
 package com.kolown.porring.component
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,11 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.kolown.porring.MainNavigator
-import com.porring.camera.navigation.cameraNavGraph
-import com.porring.follower.navigation.followerNavGraph
-import com.porring.home.navigation.homeNavGraph
-import com.porring.my.navigation.myNavGraph
-import com.porring.search.navigation.searchNavGraph
+import com.kolown.camera.navigation.cameraNavGraph
+import com.kolown.follower.navigation.followerNavGraph
+import com.kolown.home.navigation.homeNavGraph
+import com.kolown.my.navigation.myNavGraph
+import com.kolown.search.navigation.searchNavGraph
 
 @Composable
 internal fun MainNavHost(

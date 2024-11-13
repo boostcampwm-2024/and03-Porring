@@ -1,22 +1,22 @@
-package com.porring.my.navigation
+package com.kolown.camera.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.porring.my.MyRoute
+import com.porring.camera.CameraRoute
 import com.porring.navigation.MainMenuRoute
 
-fun NavController.navigateMy(navOptions: NavOptions) {
-    navigate(MainMenuRoute.My, navOptions)
+fun NavController.navigateCamera(navOptions: NavOptions) {
+    navigate(MainMenuRoute.Camera, navOptions)
 }
 
-fun NavGraphBuilder.myNavGraph(
+fun NavGraphBuilder.cameraNavGraph(
     padding: PaddingValues,
 ) {
-    composable<MainMenuRoute.My> {
-        MyRoute(
+    composable<MainMenuRoute.Camera> {
+        CameraRoute(
             padding = padding
         )
     }
