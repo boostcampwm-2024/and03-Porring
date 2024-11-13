@@ -18,7 +18,7 @@ android {
         buildConfig = true
     }
 
-    namespace = "com.app.login"
+    namespace = "com.kolown.login"
     compileSdk = 34
 
     defaultConfig {
