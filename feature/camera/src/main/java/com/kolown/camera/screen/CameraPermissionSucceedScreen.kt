@@ -50,52 +50,49 @@ fun CameraXCompose() {
         }
     }
 
-    FocusSurface{
-        Box(modifier = Modifier.fillMaxSize()) {
-            PreviewViewCompose(cameraController)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp) // 높이 지정
-                    .background(Color.Black.copy(alpha = 0.6f)) // 반투명한 색상
-                    .align(Alignment.TopCenter),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                IconButton(onClick = {
-                    val nowSelector = cameraController.cameraSelector
-                    if (nowSelector == CameraSelector.DEFAULT_BACK_CAMERA)
-                        cameraController.cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
-                    else
-                        cameraController.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-                }, modifier = Modifier.size(50.dp)) {
-                    Icon(
-                        modifier = Modifier.fillMaxSize(),
-                        contentDescription = "",
-                        imageVector = Icons.Default.Face
-                    )
+    Box(modifier = Modifier.fillMaxSize()) {
+        PreviewViewCompose(cameraController)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp) // 높이 지정
+                .background(Color.Black.copy(alpha = 0.6f)) // 반투명한 색상
+                .align(Alignment.TopCenter),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            IconButton(onClick = {
+                val nowSelector = cameraController.cameraSelector
+                if (nowSelector == CameraSelector.DEFAULT_BACK_CAMERA)
+                    cameraController.cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+                else
+                    cameraController.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            }, modifier = Modifier.size(50.dp)) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    contentDescription = "",
+                    imageVector = Icons.Default.Face
+                )
 
-                }
             }
+        }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp) // 높이 지정
-                    .background(Color.Black.copy(alpha = 0.6f)) // 반투명한 색상
-                    .align(Alignment.BottomCenter)
-                    .padding(20.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                CaptureButton {
-                    cameraController.takePhoto(context) {
-                        // 사진 촬영 후 처리
-                    }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp) // 높이 지정
+                .background(Color.Black.copy(alpha = 0.6f)) // 반투명한 색상
+                .align(Alignment.BottomCenter)
+                .padding(20.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            CaptureButton {
+                cameraController.takePhoto(context) {
+                    // 사진 촬영 후 처리
                 }
             }
         }
     }
-
 
 
 }

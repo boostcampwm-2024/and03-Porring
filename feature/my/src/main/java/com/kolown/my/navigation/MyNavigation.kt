@@ -1,22 +1,22 @@
-package com.porring.follower.navigation
+package com.kolown.my.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.porring.follower.FollowerRoute
+import com.kolown.my.MyRoute
 import com.porring.navigation.MainMenuRoute
 
-fun NavController.navigateFollower(navOptions: NavOptions) {
-    navigate(MainMenuRoute.Follower, navOptions)
+fun NavController.navigateMy(navOptions: NavOptions) {
+    navigate(MainMenuRoute.My, navOptions)
 }
 
-fun NavGraphBuilder.followerNavGraph(
+fun NavGraphBuilder.myNavGraph(
     padding: PaddingValues,
 ) {
-    composable<MainMenuRoute.Follower> {
-        FollowerRoute(
+    composable<MainMenuRoute.My> {
+        MyRoute(
             padding = padding
         )
     }

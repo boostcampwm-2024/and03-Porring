@@ -1,4 +1,4 @@
-package com.porring.search
+package com.kolown.follower
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,16 +12,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-internal fun SearchRoute(
+internal fun FollowerRoute(
     padding: PaddingValues = PaddingValues(),
 ) {
-    SearchScreen(
+    FollowerScreen(
         padding = padding
     )
 }
 
 @Composable
-private fun SearchScreen(
+private fun FollowerScreen(
     padding: PaddingValues = PaddingValues(),
 ) {
     Box(
@@ -30,12 +30,12 @@ private fun SearchScreen(
             .padding(paddingValues = padding),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "SearchScreen", style = MaterialTheme.typography.displayLarge)
+        Text(text = "FollowerScreen", style = MaterialTheme.typography.displayLarge)
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun PreviewSearchScreen() {
-    SearchScreen()
+private fun PreviewFollowerScreen() {
+    FollowerScreen()
 }

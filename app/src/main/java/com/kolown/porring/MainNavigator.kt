@@ -9,11 +9,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.porring.camera.navigation.navigateCamera
-import com.porring.follower.navigation.navigateFollower
-import com.porring.home.navigation.navigateHome
-import com.porring.my.navigation.navigateMy
-import com.porring.search.navigation.navigateSearch
+import com.kolown.camera.navigation.navigateCamera
+import com.kolown.follower.navigation.navigateFollower
+import com.kolown.home.navigation.navigateHome
+import com.kolown.my.navigation.navigateMy
+import com.kolown.search.navigation.navigateSearch
 
 internal class MainNavigator(
     val navController: NavHostController,

@@ -1,4 +1,4 @@
-package com.porring.camera
+package com.kolown.search
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,16 +12,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-internal fun CameraRoute(
+internal fun SearchRoute(
     padding: PaddingValues = PaddingValues(),
 ) {
-    CameraScreen(
+    SearchScreen(
         padding = padding
     )
 }
 
 @Composable
-private fun CameraScreen(
+private fun SearchScreen(
     padding: PaddingValues = PaddingValues(),
 ) {
     Box(
@@ -30,12 +30,12 @@ private fun CameraScreen(
             .padding(paddingValues = padding),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "CameraScreen", style = MaterialTheme.typography.displayLarge)
+        Text(text = "SearchScreen", style = MaterialTheme.typography.displayLarge)
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun PreviewCameraScreen() {
-    CameraScreen()
+private fun PreviewSearchScreen() {
+    SearchScreen()
 }
