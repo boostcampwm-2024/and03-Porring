@@ -6,7 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.kolown.follower.FollowerRoute
-import com.porring.navigation.MainMenuRoute
+import com.kolown.navigation.MainMenuRoute
 
 fun NavController.navigateFollower(navOptions: NavOptions) {
     navigate(MainMenuRoute.Follower, navOptions)
