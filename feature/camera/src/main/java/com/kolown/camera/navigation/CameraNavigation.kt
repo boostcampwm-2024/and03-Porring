@@ -5,7 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.porring.camera.CameraRoute
+import com.kolown.camera.screen.CameraRoute
 import com.porring.navigation.MainMenuRoute
 
 fun NavController.navigateCamera(navOptions: NavOptions) {

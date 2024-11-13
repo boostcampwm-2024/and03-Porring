@@ -38,7 +38,7 @@ fun CameraController.takePhoto(
 
             override fun onError(exception: ImageCaptureException) {
                 super.onError(exception)
-                Log.e("Camera", "Couldn't take photo: ", exception)
+                Log.e("testing", "Couldn't take photo: ", exception)
             }
         }
     )

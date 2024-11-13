@@ -1,6 +1,5 @@
-package com.kolown.camera
+package com.kolown.camera.screen.component
 
-import android.util.Log
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.animation.AnimatedVisibility
@@ -8,7 +7,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -22,6 +20,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEvent
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -34,6 +34,8 @@ fun PreviewViewCompose(cameraController: LifecycleCameraController) {
 
     var boxPosition by remember { mutableStateOf(IntOffset(0, 0)) }
     var isVisible by remember { mutableStateOf(false) }
+    var isZoomAction = remember { false }
+    var zoomActionCount = remember { 0 }
 
     AndroidView(
         modifier = Modifier
@@ -42,11 +44,27 @@ fun PreviewViewCompose(cameraController: LifecycleCameraController) {
                 awaitPointerEventScope {
                     while (true) {
                         val event = awaitPointerEvent()
-                        val offset = event.changes.first().position
-                        val x = (offset.x - 100).toInt()
-                        val y = (offset.y - 100).toInt()
-                        boxPosition = IntOffset(x, y)
-                        isVisible = true
+                        val type = event.type
+                        if(!isZoomAction){
+                            isZoomAction = event.changes.size > 1
+                            zoomActionCount = event.changes.size
+                        }
+                        if (type == PointerEventType.Release) {
+                            if (isZoomAction) {
+                                zoomActionCount -= 1
+                                if(zoomActionCount == 0){
+                                    isZoomAction = false
+                                }
+                                continue
+                            }
+                            val offset = event.changes.first().position
+                            val x = (offset.x - 100).toInt()
+                            val y = (offset.y - 100).toInt()
+                            boxPosition = IntOffset(x, y)
+                            isVisible = true
+                            isZoomAction = false
+                        }
+
                     }
                 }
             },
@@ -64,8 +82,8 @@ fun PreviewViewCompose(cameraController: LifecycleCameraController) {
 
     AnimatedVisibility(
         visible = isVisible,
-        enter = fadeIn(),
-        exit = fadeOut()
+        enter = fadeIn(),//visible이 false에서 true로 바뀔 때, Trigger되는 애니메이션
+        exit = fadeOut()//visible이 true에서 false로 바뀔 때, Trigger되는 애니메이션
     ) {
         Box(
             modifier = Modifier
