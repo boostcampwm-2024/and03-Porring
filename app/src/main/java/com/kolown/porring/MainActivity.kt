@@ -13,9 +13,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.kolown.porring.ui.theme.PorringTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,9 +47,10 @@ class MainActivity : ComponentActivity() {
             val navigator: MainNavigator = rememberMainNavigator()
 
             PorringTheme {
-                MainScreen(
-                    navigator = navigator
-                )
+                ImagePicker()
+//                MainScreen(
+//                    navigator = navigator
+//                )
             }
         }
     }
@@ -143,30 +147,16 @@ fun ResizedImage(
 fun ImagePicker() {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
-    // API 21 이상 사용: 일반 이미지 선택기
-    val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let { imageUri = it }
-    }
 
-    // API 33 이상 사용: PhotoPicker
-    val photoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia()
-    ) { uri: Uri? ->
-        uri?.let { imageUri = it }
-    }
 
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        Spacer(Modifier.height(100.dp))
         Button(onClick = {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            } else {
-                imagePickerLauncher.launch("image/*")
-            }
+
         }) {
             Text(text = "Pick Image")
         }

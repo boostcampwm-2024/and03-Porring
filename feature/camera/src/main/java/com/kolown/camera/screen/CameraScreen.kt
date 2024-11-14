@@ -19,6 +19,7 @@ import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.platform.LocalView
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kolown.camera.PermissionChecker
 
 
@@ -29,7 +30,9 @@ internal fun CameraRoute(
     CameraScreen()
 }
 @Composable
-fun CameraScreen() {
+fun CameraScreen(
+    viewModel:CameraScreenViewModel = hiltViewModel()
+) {
     val context = LocalContext.current
     val activity = LocalView.current.context as android.app.Activity
     var cameraPermission by remember {
@@ -62,7 +65,7 @@ fun CameraScreen() {
     }
 
     if (cameraPermission) {
-        CameraXCompose()
+        CameraXCompose(viewModel)
     } else {
         CameraPermissionDeniedScreen()
     }

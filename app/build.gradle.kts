@@ -36,7 +36,7 @@ android {
             )
             buildConfigField("boolean", "IS_DEBUG", "true")
 
-            applicationIdSuffix = ".dev"
+            //applicationIdSuffix = ".dev"
         }
         release {
             isMinifyEnabled = true
@@ -121,6 +121,12 @@ dependencies {
     implementation(projects.core.navigation)
     implementation(projects.feature.login)
     implementation (libs.exoplayer.ui)
+
+    implementation(projects.core.data)
+    implementation(projects.core.domain)
+    implementation(projects.core.model)
+    implementation(projects.core.common)
+    implementation(projects.feature.camera)
 
 }
 
