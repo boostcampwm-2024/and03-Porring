@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.video)
     implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.extension)
 
     //compose
 //    implementation(platform(libs.androidx.compose.bom))
@@ -72,6 +73,7 @@ dependencies {
 
     //hilt
     implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.android.compiler)
 
     implementation(project(":core:data"))

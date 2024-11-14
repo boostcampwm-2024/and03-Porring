@@ -1,5 +1,10 @@
 package com.kolown.camera.screen
 
+import android.net.Uri
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
@@ -21,19 +26,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.kolown.camera.R
+import com.kolown.camera.getImagePickerLauncher
 import com.kolown.camera.screen.component.PreviewViewCompose
 import com.kolown.camera.screen.component.CaptureButton
 import com.kolown.camera.takePhoto
 import java.util.concurrent.Executors
 
 @Composable
-fun CameraXCompose() {
+fun CameraXCompose(viewModel: CameraScreenViewModel) {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current
     val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
+
+    val imagePickerLauncher= getImagePickerLauncher()
+
     val cameraController = remember {
         LifecycleCameraController(context).apply {
             //어떤 카메라를 사용할 지 선택한다.
@@ -90,10 +102,51 @@ fun CameraXCompose() {
         ) {
             CaptureButton {
                 cameraController.takePhoto(context) {
-                    // 사진 촬영 후 처리
+                    viewModel.saveBitmapToCache(it)
                 }
             }
+            IconButton(
+                modifier = Modifier.size(32.dp).align(Alignment.CenterEnd),
+
+                onClick = {
+                    imagePickerLauncher.launch {
+                        it?.let {
+                            viewModel.setUri(it)
+                        }?:run {
+                            //
+                        }
+
+                    }
+
+            }) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    contentDescription = "",
+                    imageVector = ImageVector.vectorResource(R.drawable.icon_album)
+                )
+            }
         }
+
+
+        // API 21 이상 사용: 일반 이미지 선택기
+//        val imagePickerLauncher = rememberLauncherForActivityResult(
+//            contract = ActivityResultContracts.GetContent()
+//        ) { uri: Uri? ->
+//            uri?.let { imageUri = it }
+//        }
+//
+//        // API 33 이상 사용: PhotoPicker
+//        val photoPickerLauncher = rememberLauncherForActivityResult(
+//            contract = ActivityResultContracts.PickVisualMedia()
+//        ) { uri: Uri? ->
+//            uri?.let { imageUri = it }
+//        }
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//            photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+//        } else {
+//            imagePickerLauncher.launch("image/*")
+//        }
     }
 
 

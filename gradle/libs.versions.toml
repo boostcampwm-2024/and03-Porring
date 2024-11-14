@@ -46,6 +46,7 @@ androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "
 androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraCore" }
 androidx-camera-video = { module = "androidx.camera:camera-video", version.ref = "cameraCore" }
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraCore" }
+androidx-camera-extension={module="androidx.camera:camera-extensions", version.ref="cameraCore"}
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
