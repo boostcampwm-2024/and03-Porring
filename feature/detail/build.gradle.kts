@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.app.detail"
+    namespace = "com.kolown.detail"
     compileSdk = 34
 
     defaultConfig {
