@@ -1,6 +1,5 @@
-package com.porring.home
+package com.kolown.home
 
-import com.kolown.home.R
 import com.kolown.model.Reactions
 
 fun Reactions.toImage() =
