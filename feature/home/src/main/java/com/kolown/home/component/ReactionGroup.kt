@@ -1,4 +1,4 @@
-package com.porring.home.component
+package com.kolown.home.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import com.kolown.model.Reactions
-import com.porring.home.toImage
+import com.kolown.home.toImage
 
 @Composable
 internal fun ReactionGroup(

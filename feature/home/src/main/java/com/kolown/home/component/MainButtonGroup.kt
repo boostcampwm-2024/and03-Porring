@@ -1,4 +1,4 @@
-package com.porring.home.component
+package com.kolown.home.component
 
 import IconImage
 import androidx.compose.foundation.layout.Arrangement
