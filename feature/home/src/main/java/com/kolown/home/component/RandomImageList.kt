@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -52,7 +53,8 @@ internal fun RandomImageList(
     onFollowClick: (Long) -> Unit = {},
     onSelectReaction: (Long, Reactions) -> Unit = { _, _ -> },
     onChangeReactionDialogVisibility: () -> Unit = {},
-    onLoadNextPage: () -> Unit = {}
+    onLoadNextPage: () -> Unit = {},
+    onClickImage: () -> Unit = {}
 ) {
     HorizontalPager(
         modifier = Modifier.padding(top = 32.dp),
@@ -68,7 +70,8 @@ internal fun RandomImageList(
             isReactionDialogVisible,
             onFollowClick,
             { reaction -> onSelectReaction(imageItems[page].id, reaction) },
-            onChangeReactionDialogVisibility
+            onChangeReactionDialogVisibility,
+            onClickImage
         )
     }
 }
@@ -80,7 +83,8 @@ private fun ImageCard(
     isReactionDialogVisible: Boolean,
     onFollowClick: (Long) -> Unit,
     onSelectReaction: (Reactions) -> Unit,
-    onChangeReactionDialogVisibility: () -> Unit
+    onChangeReactionDialogVisibility: () -> Unit,
+    onClickImage: () -> Unit
 ) {
     val likedImageVector =
         if (imageItem.reactions == null) Icons.Outlined.FavoriteBorder else Icons.Outlined.Favorite
@@ -93,7 +97,10 @@ private fun ImageCard(
                 .aspectRatio(4f / 5f),
             contentAlignment = Alignment.Center
         ) {
-            RandomImage(imageItem.imageUrl)
+            RandomImage(
+                imageItem.imageUrl,
+                onClickImage
+            )
             ReactionGroup(
                 modifier = Modifier.align(Alignment.TopEnd),
                 reactions = imageItem.favoriteList
@@ -165,16 +172,19 @@ private fun IconButtonGroup(
 
 @Composable
 private fun RandomImage(
-    imageUrl: String = "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png"
+    imageUrl: String = "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png",
+    onClickImage: () -> Unit
 ) {
     var isLoading by remember { mutableStateOf(true) }
     var isError by remember { mutableStateOf(false) }
 
     Box {
         Card(
+            modifier = Modifier.fillMaxSize(),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 8.dp
-            )
+            ),
+            onClick = onClickImage
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)

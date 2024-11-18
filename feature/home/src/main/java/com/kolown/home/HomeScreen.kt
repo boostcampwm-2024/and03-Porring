@@ -32,6 +32,7 @@ import com.kolown.home.component.RandomImageList
 internal fun HomeRoute(
     padding: PaddingValues = PaddingValues(),
     viewModel: HomeViewModel = hiltViewModel(),
+    onClickImage: () -> Unit = {}
 ) {
     val mainFeedImages by viewModel.mainFeedImageItems.collectAsStateWithLifecycle()
     val onFollowClick: (Long) -> Unit = { viewModel.followUser(it) }
@@ -43,7 +44,8 @@ internal fun HomeRoute(
         mainFeedImages = mainFeedImages,
         onFollowClick = onFollowClick,
         onSelectReaction = onSelectReaction,
-        onLoadNextPage = { viewModel.loadImageItem() }
+        onLoadNextPage = { viewModel.loadImageItem() },
+        onClickImage = onClickImage
     )
 }
 
@@ -54,6 +56,7 @@ private fun HomeScreen(
     onFollowClick: (Long) -> Unit = {},
     onSelectReaction: (Long, Reactions) -> Unit = { _, _ -> },
     onLoadNextPage: () -> Unit = {},
+    onClickImage: () -> Unit = {}
 ) {
     val pagerState = rememberPagerState(pageCount = { mainFeedImages.size })
     var isReactionDialogVisible by remember { mutableStateOf(false) }
@@ -79,7 +82,8 @@ private fun HomeScreen(
             onChangeReactionDialogVisibility = {
                 isReactionDialogVisible = !isReactionDialogVisible
             },
-            onLoadNextPage = onLoadNextPage
+            onLoadNextPage = onLoadNextPage,
+            onClickImage = onClickImage
         )
         Spacer(modifier = Modifier
             .fillMaxWidth()
