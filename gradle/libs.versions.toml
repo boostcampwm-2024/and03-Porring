@@ -4,6 +4,7 @@ cameraCore = "1.4.0"
 coilCompose = "3.0.0-rc02"
 datastore = "1.1.1"
 exoplayerCore = "2.19.1"
+foundation = "1.7.5"
 hiltAndroid = "2.51.1"
 hiltAndroidVersion = "2.35.1"
 hiltNavigationCompose = "1.2.0"
@@ -52,6 +53,7 @@ androidx-camera-extension={module="androidx.camera:camera-extensions", version.r
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+androidx-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "foundation" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }

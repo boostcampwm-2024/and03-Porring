@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.kolown.data.datasource.FakeGalleryDataSource
+import com.kolown.data.datasource.GalleryDataSource
 import com.kolown.data.datasource.GalleryPagingDataSource
 import com.kolown.model.Gallery
 import com.kolown.model.GalleryThumbnail
@@ -14,13 +15,12 @@ import kotlin.random.Random
 interface GalleryRepository {
     suspend fun getGalleryThumbnailList(userId: Long, page: Int): Result<List<GalleryThumbnail>>
     suspend fun getGallery(id: Long): Result<Gallery>
-    suspend fun getGalleryThumbnailPagingFlow(userId: Long): Flow<PagingData<GalleryThumbnail>>
+    fun getGalleryThumbnailPagingFlow(userId: Long): Flow<PagingData<GalleryThumbnail>>
 }
 
-class FakeGalleryRepository @Inject constructor(
-    private val dataSourceFake: FakeGalleryDataSource,
-) :
-    GalleryRepository {
+class GalleryRepositoryImpl @Inject constructor(
+    private val dataSourceFake: GalleryDataSource,
+) : GalleryRepository {
     override suspend fun getGalleryThumbnailList(
         userId: Long,
         page: Int,
@@ -37,7 +37,7 @@ class FakeGalleryRepository @Inject constructor(
         return dataSourceFake.getGallery(id)
     }
 
-    override suspend fun getGalleryThumbnailPagingFlow(userId: Long): Flow<PagingData<GalleryThumbnail>> {
+    override fun getGalleryThumbnailPagingFlow(userId: Long): Flow<PagingData<GalleryThumbnail>> {
         return Pager(config = PagingConfig(
             pageSize = PAGE_SIZE,
             enablePlaceholders = false,

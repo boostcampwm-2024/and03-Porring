@@ -1,7 +1,8 @@
 package com.kolown.data.di
 
 import com.kolown.data.datasource.FakeGalleryDataSource
-import com.kolown.data.repository.FakeGalleryRepository
+import com.kolown.data.datasource.GalleryDataSource
+import com.kolown.data.repository.GalleryRepositoryImpl
 import com.kolown.data.repository.GalleryRepository
 import dagger.Module
 import dagger.Provides
@@ -13,10 +14,11 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class RepositoryModule {
+
+    @Fake
     @Provides
     @Singleton
-    @Fake
-    fun provideGalleryRepository(@Fake dataSource: FakeGalleryDataSource): GalleryRepository {
-        return FakeGalleryRepository(dataSource)
+    fun provideGalleryRepositoryFake(@Fake dataSource: GalleryDataSource): GalleryRepository {
+        return GalleryRepositoryImpl(dataSource)
     }
 }
