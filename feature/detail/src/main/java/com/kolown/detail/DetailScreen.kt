@@ -61,6 +61,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.app.detail.R
 import com.kolown.model.ImageItem
 
 @Composable
