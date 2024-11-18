@@ -23,10 +23,10 @@ class FakeGalleryDataSource : GalleryDataSource {
         page: Int,
     ): Result<List<GalleryThumbnail>> {
         delay(if (test == 0) 500 else 5000)
-        test++
-        if (Random.nextInt(4) == 3) {
+        if (Random.nextInt(4) == 3 && test!=0) {
             return Result.failure(Exception())
         }
+        test++
         return Result.success(MockDataProvider.getRandomGalleryThumbnailList())
     }
 
