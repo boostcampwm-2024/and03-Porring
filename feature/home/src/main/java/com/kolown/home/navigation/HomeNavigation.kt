@@ -15,12 +15,12 @@ fun NavController.navigateHome(navOptions: NavOptions) {
 
 fun NavGraphBuilder.homeNavGraph(
     padding: PaddingValues,
-    onClickImage: ()->Unit
+    onClickImage: () -> Unit
 ) {
     composable<MainMenuRoute.Home> {
         HomeRoute(
             padding = padding,
-            onClickImage=onClickImage
+            onClickImage = onClickImage
         )
     }
 }
