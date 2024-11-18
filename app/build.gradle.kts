@@ -117,6 +117,7 @@ dependencies {
     implementation(projects.feature.camera)
     implementation(projects.feature.follower)
     implementation(projects.feature.my)
+    implementation(projects.feature.detail)
 
     implementation(projects.core.navigation)
     implementation(projects.feature.login)

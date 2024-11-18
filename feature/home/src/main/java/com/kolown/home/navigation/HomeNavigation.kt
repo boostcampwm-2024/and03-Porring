@@ -1,6 +1,7 @@
 package com.kolown.home.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.internal.composableLambdaN
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -14,10 +15,12 @@ fun NavController.navigateHome(navOptions: NavOptions) {
 
 fun NavGraphBuilder.homeNavGraph(
     padding: PaddingValues,
+    onClickImage: ()->Unit
 ) {
     composable<MainMenuRoute.Home> {
         HomeRoute(
-            padding = padding
+            padding = padding,
+            onClickImage=onClickImage
         )
     }
 }
