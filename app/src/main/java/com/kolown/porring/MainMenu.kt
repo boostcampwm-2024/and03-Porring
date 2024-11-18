@@ -7,7 +7,7 @@ import com.kolown.navigation.Route
 
 internal enum class MainMenu(
     @DrawableRes
-    val iconResId: Int,
+    val iconResId: Int? = null,
     val contentDescription: String,
     val route: MainMenuRoute,
 ) {
@@ -35,6 +35,10 @@ internal enum class MainMenu(
         iconResId = R.drawable.ic_my_24dp,
         contentDescription = "마이",
         route = MainMenuRoute.My,
+    ),
+    UPLOAD(
+        contentDescription = "업로드",
+        route = MainMenuRoute.Upload,
     );
 
     companion object {

@@ -15,6 +15,7 @@ import com.kolown.follower.navigation.navigateFollower
 import com.kolown.home.navigation.navigateHome
 import com.kolown.my.navigation.navigateMy
 import com.kolown.search.navigation.navigateSearch
+import com.kolown.upload.navigation.navigateUpload
 
 internal class MainNavigator(
     val navController: NavHostController,
@@ -42,6 +43,7 @@ internal class MainNavigator(
             MainMenu.CAMERA -> navController.navigateCamera(navOptions)
             MainMenu.FOLLOWER -> navController.navigateFollower(navOptions)
             MainMenu.MY -> navController.navigateMy(navOptions)
+            MainMenu.UPLOAD -> navController.navigateUpload(navOptions)
         }
     }
 

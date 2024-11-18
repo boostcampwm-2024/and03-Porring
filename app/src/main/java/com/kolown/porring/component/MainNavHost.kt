@@ -15,6 +15,7 @@ import com.kolown.follower.navigation.followerNavGraph
 import com.kolown.home.navigation.homeNavGraph
 import com.kolown.my.navigation.myNavGraph
 import com.kolown.search.navigation.searchNavGraph
+import com.kolown.upload.navigation.uploadNavGraph
 
 @Composable
 internal fun MainNavHost(
@@ -51,6 +52,10 @@ internal fun MainNavHost(
             )
 
             detailNavGraph(
+                padding = padding
+            )
+
+            uploadNavGraph(
                 padding = padding
             )
         }

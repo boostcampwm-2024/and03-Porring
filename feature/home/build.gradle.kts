@@ -48,10 +48,6 @@ dependencies {
 
     implementation(libs.bundles.android.compose)
 
-    //coil
-    implementation(libs.coil.compose)
-    implementation(libs.coil.network.okhttp)
-
     //hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
