@@ -1,6 +1,7 @@
 package com.kolown.data.mock
 
 import com.kolown.model.Gallery
+import com.kolown.model.GalleryThumbnail
 import com.kolown.model.Post
 
 object MockDataProvider {
@@ -61,12 +62,23 @@ object MockDataProvider {
         description = getRandomDescription()
     )
 
-    fun getRandomPostList(): List<Post> = getRandomList {
+    fun getRandomGalleryThumbnail() = GalleryThumbnail(
+        galleryId = getRandomId(),
+        imageUrl = getRandomImageUrl(),
+        description = getRandomDescription()
+    )
+
+    fun getRandomPostList() = getRandomList {
         getRandomPost()
     }
 
-    fun getRandomGalleryList(): List<Gallery> = getRandomList(20,20) {
+    fun getRandomGalleryList() = getRandomList(20, 20) {
         getRandomGallery()
+    }
+
+
+    fun getRandomGalleryThumbnailList() = getRandomList(20, 20) {
+        getRandomGalleryThumbnail()
     }
 
     private inline fun <reified T> getRandomList(
