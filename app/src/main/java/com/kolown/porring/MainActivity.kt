@@ -47,10 +47,9 @@ class MainActivity : ComponentActivity() {
             val navigator: MainNavigator = rememberMainNavigator()
 
             PorringTheme {
-                ImagePicker()
-//                MainScreen(
-//                    navigator = navigator
-//                )
+                MainScreen(
+                    navigator = navigator
+                )
             }
         }
     }
