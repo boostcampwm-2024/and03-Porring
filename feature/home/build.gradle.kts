@@ -59,4 +59,5 @@ dependencies {
 
     implementation(projects.core.navigation)
     implementation(projects.core.model)
+    implementation(projects.core.data)
 }
