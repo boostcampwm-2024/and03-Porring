@@ -1,4 +1,4 @@
-package com.porring.home
+package com.porring.detail
 
 import android.app.Activity
 import android.content.Context
@@ -13,14 +13,20 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsIgnoringVisibility
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -31,6 +37,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -45,6 +52,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,7 +72,7 @@ internal fun DetailRoute(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun DetailScreen() {
     val view = LocalView.current
@@ -74,6 +82,7 @@ fun DetailScreen() {
     Scaffold(
         topBar = {
             TopAppBar(
+                windowInsets = WindowInsets.statusBarsIgnoringVisibility,
                 title = {},
                 navigationIcon = {
                     if (!isConcentrateMode.value) Icon(
@@ -102,7 +111,8 @@ fun DetailScreen() {
             onDoubleTab = {
                 isConcentrateMode.value = true
                 requestFullScreen(view)
-            }
+            },
+            tagList = listOf("풍경", "등산", "가을산")
         ) else {
             ConcentrateModeContent(
                 padding = padding,
@@ -125,6 +135,7 @@ fun DetailContent(
     padding: PaddingValues,
     imageUrl: String = "https://img.freepik.com/free-photo/symmetrical-clouds-covered-blue-sky_198523-5.jpg",
     imageDescription: String,
+    tagList: List<String> = emptyList(),
     onDoubleTab: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -154,9 +165,16 @@ fun DetailContent(
         Text(
             text = imageDescription,
             modifier = Modifier
-                .padding(vertical = 16.dp, horizontal = 10.dp),
+                .padding(vertical = 8.dp, horizontal = 10.dp),
             color = Color.White,
             fontSize = 16.sp
+        )
+        val tags = tagList.joinToString(", ") { "#$it" }
+        Text(
+            text = tags,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+            style = MaterialTheme.typography.labelLarge,
+            color = Color(0xFF8D8D8D)
         )
         Row(
             modifier = Modifier
@@ -232,7 +250,6 @@ fun requestFullScreen(view: View) {
     // !! should be safe here since the view is part of an Activity
     val window = view.context.getActivity()!!.window
     val insetController = WindowCompat.getInsetsController(window, view)
-
     insetController.systemBarsBehavior =
         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     insetController.hide(
@@ -245,7 +262,6 @@ fun showSystembar(view: View) {
     // !! should be safe here since the view is part of an Activity
     val window = view.context.getActivity()!!.window
     val insetController = WindowCompat.getInsetsController(window, view)
-
     insetController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
     insetController.show(
         WindowInsetsCompat.Type.statusBars() or
@@ -267,6 +283,7 @@ fun DetailScreenPreview() {
         padding = PaddingValues(0.dp),
         imageUrl = "https://www.adobe.com/content/dam/cc/us/en/creative-cloud/photography/discover/landscape-photography/CODERED_B1_landscape_P2d_714x348.jpg.img.jpg",
         imageDescription = "집으로 가는 길 풍경 좋다",
-        onDoubleTab = {}
+        onDoubleTab = {},
+        tagList = listOf("풍경", "등산", "가을산")
     )
 }

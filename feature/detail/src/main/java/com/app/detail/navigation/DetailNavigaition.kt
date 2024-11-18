@@ -5,8 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.porring.home.DetailRoute
-import com.porring.navigation.MainMenuRoute
+import com.porring.detail.DetailRoute
 
 const val DETAIL_ROUTE = "detail_route"
 
