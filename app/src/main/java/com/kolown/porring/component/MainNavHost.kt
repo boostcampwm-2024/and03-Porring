@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
+import com.app.detail.navigation.detailNavGraph
 import com.kolown.porring.MainNavigator
 import com.kolown.camera.navigation.cameraNavGraph
 import com.kolown.follower.navigation.followerNavGraph
@@ -29,7 +30,8 @@ internal fun MainNavHost(
             startDestination = navigator.startDestination,
         ) {
             homeNavGraph(
-                padding = padding
+                padding = padding,
+                onClickImage = { navigator.navigateToDetail() }
             )
 
             searchNavGraph(
@@ -45,6 +47,10 @@ internal fun MainNavHost(
             )
 
             myNavGraph(
+                padding = padding
+            )
+
+            detailNavGraph(
                 padding = padding
             )
         }

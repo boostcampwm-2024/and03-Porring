@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.kolown.home"
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    namespace = "com.app.detail"
+    compileSdk = 34
 
     defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt()
+        minSdk = 24
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -44,8 +44,7 @@ dependencies {
     //coil
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
-
     implementation(libs.bundles.android.compose)
-
     implementation(projects.core.navigation)
+
 }
