@@ -21,6 +21,7 @@ appcompat = "1.7.0"
 material = "1.12.0"
 kspVersion = "2.0.10-1.0.24"
 google = "4.4.2"
+pagingCompose = "3.3.4"
 playServicesAuth = "21.2.0"
 firebaseAuth = "23.1.0"
 firebaseBom = "33.5.1"
@@ -53,6 +54,8 @@ androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "d
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
+androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "pagingCompose" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilCompose" }
 exoplayer-core = { module = "com.google.android.exoplayer:exoplayer-core", version.ref = "exoplayerCore" }

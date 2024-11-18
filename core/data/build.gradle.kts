@@ -55,5 +55,8 @@ dependencies {
     //datastore
     implementation(libs.androidx.datastore.preferences)
 
+    //paging
+    implementation(libs.androidx.paging.runtime)
+
 }
 
