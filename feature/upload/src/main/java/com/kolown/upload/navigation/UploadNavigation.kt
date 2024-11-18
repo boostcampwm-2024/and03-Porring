@@ -8,7 +8,7 @@ import androidx.navigation.compose.composable
 import com.kolown.navigation.MainMenuRoute
 import com.kolown.upload.UploadRoute
 
-fun NavController.navigateUpload(navOptions: NavOptions) {
+fun NavController.navigateUpload(navOptions: NavOptions? = null) {
     navigate(MainMenuRoute.Upload, navOptions)
 }
 

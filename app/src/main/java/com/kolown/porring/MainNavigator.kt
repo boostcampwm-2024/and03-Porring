@@ -43,10 +43,10 @@ internal class MainNavigator(
             MainMenu.CAMERA -> navController.navigateCamera(navOptions)
             MainMenu.FOLLOWER -> navController.navigateFollower(navOptions)
             MainMenu.MY -> navController.navigateMy(navOptions)
-            MainMenu.UPLOAD -> navController.navigateUpload(navOptions)
         }
     }
 
+    fun navigateToUpload() = navController.navigateUpload()
     fun navigateToDetail() = navController.navigateToDetail()
 
     @Composable
