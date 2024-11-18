@@ -19,4 +19,7 @@ sealed interface MainMenuRoute: Route {
 
     @Serializable
     data object My: MainMenuRoute
+
+    @Serializable
+    data object Upload: MainMenuRoute
 }
