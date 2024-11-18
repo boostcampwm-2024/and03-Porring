@@ -1,4 +1,4 @@
-package com.app.detail
+package com.kolown.detail
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
