@@ -1,10 +1,11 @@
 package com.kolown.porring.di
 
 import android.content.Context
-import com.kolown.data.repository.FakeRandomDetailRepositoryImpl
+import com.kolown.data.repository.FakeImageRepository
+import com.kolown.data.repository.FakeImageRepositoryImpl
 import com.kolown.data.repository.ImageCacheRepository
 import com.kolown.data.repository.ImageCacheRepositoryImpl
-import com.kolown.data.repository.RandomDetailRepository
+import com.kolown.data.repository.ImageRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,11 +27,12 @@ class ImageCacheModule {
 
 @Module
 @InstallIn(SingletonComponent::class)
-class RandomDetailModule {
+class ImageModule {
+    @FakeImageRepository
     @Provides
     @Singleton
-    fun provideRandomDetailRepository(): RandomDetailRepository {
-        return FakeRandomDetailRepositoryImpl()
+    fun provideFakeImageRepository(): ImageRepository {
+        return FakeImageRepositoryImpl()
     }
 }
 
