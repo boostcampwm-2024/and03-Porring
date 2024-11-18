@@ -36,7 +36,7 @@ android {
             )
             buildConfigField("boolean", "IS_DEBUG", "true")
 
-            //applicationIdSuffix = ".dev"
+            applicationIdSuffix = ".dev"
         }
         release {
             isMinifyEnabled = true

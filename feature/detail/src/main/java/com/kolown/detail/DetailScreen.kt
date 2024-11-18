@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsIgnoringVisibility
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -58,40 +60,56 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.app.detail.R
 import com.kolown.model.ImageItem
 
 @Composable
 internal fun DetailRoute(
     padding: PaddingValues = PaddingValues(),
+    detailViewModel: DetailViewModel = hiltViewModel()
 ) {
-    Reels()
-}
-
-@Composable
-fun Reels() {
+    val detailItems = detailViewModel.imageItems.collectAsStateWithLifecycle()
     val pagerState = rememberPagerState(
         initialPage = 0,
         pageCount = {
-        10
-    })
-    val isScrollEnabled = remember { mutableStateOf(true) }
+            5
+        })
+    LaunchedEffect(true) {
+        detailViewModel.getItem(0)
+    }
+    Reels(
+        padding = padding,
+        items = detailItems.value,
+        pagerState = pagerState
+    )
+}
 
-    VerticalPager(
-        state = pagerState,
-        userScrollEnabled = isScrollEnabled.value
-    ) { page ->
-        // Our page content
-        DetailScreen(
-            imageItem = ImageItem(),
-            page = page,
-            onDoubleTab = {
-                isScrollEnabled.value = it
-            }
-        )
+@Composable
+fun Reels(
+    padding: PaddingValues,
+    items: List<ImageItem>,
+    pagerState: PagerState
+) {
+    val isScrollEnabled = remember { mutableStateOf(true) }
+    if (items.isNotEmpty()) {
+        VerticalPager(
+            state = pagerState,
+            userScrollEnabled = isScrollEnabled.value,
+            contentPadding = padding
+        ) { page ->
+            // Our page content
+            DetailScreen(
+                imageItem = items[page],
+                page = page,
+                onDoubleTab = {
+                    isScrollEnabled.value = it
+                }
+            )
+        }
     }
 }
 
@@ -140,7 +158,6 @@ fun DetailScreen(
             imageUrl = imageItem.imageUrl,
             imageDescription = "퇴근하고 집가는 풍경 좋다",
             onDoubleTab = {
-                Log.e("페이지 테스트", page.toString())
                 isConcentrateMode.value = true
                 requestFullScreen(view)
             },
