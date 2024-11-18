@@ -16,8 +16,8 @@ import javax.inject.Singleton
 @Module
 class DataSourceModule {
     @Fake
-    @Provides
     @Singleton
+    @Provides
     fun provideFakeGalleryDataSource(): GalleryDataSource {
         return FakeGalleryDataSource()
     }
