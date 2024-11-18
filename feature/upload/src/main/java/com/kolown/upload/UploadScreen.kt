@@ -2,6 +2,7 @@ package com.kolown.upload
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -123,12 +124,17 @@ private fun CategoryGroup(
 ) {
     FlowRow(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         categoryItems.forEach { item ->
             CategoryChip(item = item) { }
         }
-        AddChipButton { }
+        AddChipButton {
+            if (categoryItems.size < 6) {
+                // todo Chip이 6개보다 적은 경우에만 Chip 추가
+            }
+        }
     }
 }
 
@@ -137,49 +143,59 @@ private fun CategoryChip(
     item: String,
     onRemove: () -> Unit
 ) {
-    InputChip(
-        selected = false,
-        onClick = onRemove,
-        label = {
-            Text(
-                text = item,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        },
-        trailingIcon = {
-            Icon(
-                modifier = Modifier.size(18.dp),
-                imageVector = Icons.Outlined.Clear,
-                contentDescription = "trailing icon"
-            )
-        }
-    )
+    Box(
+        modifier = Modifier.height(32.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        InputChip(
+            selected = false,
+            onClick = onRemove,
+            label = {
+                Text(
+                    text = item,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            trailingIcon = {
+                Icon(
+                    modifier = Modifier.size(18.dp),
+                    imageVector = Icons.Outlined.Clear,
+                    contentDescription = "trailing icon"
+                )
+            }
+        )
+    }
 }
 
 @Composable
 private fun AddChipButton(
     onClick: () -> Unit
 ) {
-    IconButton(
-        modifier = Modifier.size(32.dp),
-        onClick = onClick
+    Box(
+        modifier = Modifier.height(32.dp),
+        contentAlignment = Alignment.Center
     ) {
-        Card(
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(24.dp),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-            colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+        IconButton(
+            modifier = Modifier.size(32.dp).align(Alignment.Center),
+            onClick = onClick
         ) {
-            Icon(
-                modifier = Modifier.padding(3.dp),
-                imageVector = Icons.Outlined.Add,
-                contentDescription = "trailing icon",
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
+            Card(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(24.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+            ) {
+                Icon(
+                    modifier = Modifier.padding(3.dp),
+                    imageVector = Icons.Outlined.Add,
+                    contentDescription = "trailing icon",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
 
+        }
     }
 }
 
@@ -222,7 +238,11 @@ private fun DescriptionTextField(
             disabledContainerColor = Color.Transparent
         ),
         value = imageDescription,
-        onValueChange = onDescriptionChange,
+        onValueChange = {
+            if (it.length <= 20) {
+                onDescriptionChange(it)
+            }
+        },
         placeholder = { Text(text = "설명 추가...", style = MaterialTheme.typography.bodyLarge) },
         trailingIcon = { TextFieldResetButton { onDescriptionChange("") } }
     )
