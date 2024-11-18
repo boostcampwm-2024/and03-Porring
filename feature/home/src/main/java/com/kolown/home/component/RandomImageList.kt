@@ -53,20 +53,14 @@ internal fun RandomImageList(
     onFollowClick: (Long) -> Unit = {},
     onSelectReaction: (Long, Reactions) -> Unit = { _, _ -> },
     onChangeReactionDialogVisibility: () -> Unit = {},
-    onLoadNextPage: () -> Unit = {},
     onClickImage: () -> Unit = {}
 ) {
     HorizontalPager(
         modifier = Modifier.padding(top = 32.dp),
         state = pagerState
     ) { page ->
-        if (page == imageItems.size - 2) {
-            onLoadNextPage()
-        }
-
         ImageCard(
             imageItems[page],
-            page,
             isReactionDialogVisible,
             onFollowClick,
             { reaction -> onSelectReaction(imageItems[page].id, reaction) },
@@ -79,7 +73,6 @@ internal fun RandomImageList(
 @Composable
 private fun ImageCard(
     imageItem: ImageItem,
-    idx: Int,
     isReactionDialogVisible: Boolean,
     onFollowClick: (Long) -> Unit,
     onSelectReaction: (Reactions) -> Unit,
