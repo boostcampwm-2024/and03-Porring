@@ -1,8 +1,15 @@
 package com.porring.home
 
-import android.util.Log
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.view.View
+import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.background
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,13 +20,12 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -28,22 +34,24 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.ImageLoader
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import coil3.compose.AsyncImage
-import coil3.compose.AsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.app.detail.R
@@ -59,14 +67,26 @@ internal fun DetailRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen() {
+    val view = LocalView.current
+    val isConcentrateMode = remember {
+        mutableStateOf(false)
+    }
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {},
                 navigationIcon = {
-                    Icon(
+                    if (!isConcentrateMode.value) Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                         contentDescription = "뒤로 가기",
+                        tint = Color.White
+                    )
+                },
+                actions = {
+                    if (isConcentrateMode.value) Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = null,
+                        modifier = Modifier.clickable { isConcentrateMode.value = false },
                         tint = Color.White
                     )
                 },
@@ -75,49 +95,61 @@ fun DetailScreen() {
         },
         containerColor = Color.Black
     ) { padding ->
-        DetailContent(
+        if (!isConcentrateMode.value) DetailContent(
             padding = padding,
             imageUrl = "https://img.freepik.com/free-photo/symmetrical-clouds-covered-blue-sky_198523-5.jpg",
-            imageDescription = "퇴근하고 집가는 풍경 좋다"
-        )
+            imageDescription = "퇴근하고 집가는 풍경 좋다",
+            onDoubleTab = {
+                isConcentrateMode.value = true
+                requestFullScreen(view)
+            }
+        ) else {
+            ConcentrateModeContent(
+                padding = padding,
+                imageUrl = "https://img.freepik.com/free-photo/symmetrical-clouds-covered-blue-sky_198523-5.jpg"
+            )
+        }
+    }
+    BackHandler {
+        if (isConcentrateMode.value) {
+            isConcentrateMode.value = false
+            showSystembar(view = view)
+        }
     }
 }
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DetailContent(
     padding: PaddingValues,
-    imageUrl : String = "https://img.freepik.com/free-photo/symmetrical-clouds-covered-blue-sky_198523-5.jpg",
-    imageDescription: String
+    imageUrl: String = "https://img.freepik.com/free-photo/symmetrical-clouds-covered-blue-sky_198523-5.jpg",
+    imageDescription: String,
+    onDoubleTab: () -> Unit
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(padding),
+        verticalArrangement = Arrangement.Center
     ) {
         AsyncImage(
-            model =  ImageRequest.Builder(LocalContext.current)
+            model = ImageRequest.Builder(LocalContext.current)
                 .data(imageUrl)
                 .crossfade(true)
                 .build(),
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(4f / 5f),
+                .aspectRatio(4f / 5f)
+                .combinedClickable(
+                    indication = null,
+                    interactionSource = interactionSource,
+                    onClick = {},
+                    onDoubleClick = { onDoubleTab() }
+                ),
             contentDescription = "",
             contentScale = ContentScale.Crop,
-            onState = { state ->
-                when (state) {
-                    is AsyncImagePainter.State.Success -> {
-                        Log.d("이미지  로드","Image Load Success")
-                    }
-
-                    is AsyncImagePainter.State.Error -> {
-                        Log.d("이미지  로드","${state.result.throwable.message}")
-                    }
-
-                    else -> {}
-                }
-            },
         )
         Text(
             text = imageDescription,
@@ -144,7 +176,32 @@ fun DetailContent(
                 DetailButton(id = R.drawable.ic_detail_follow, buttonText = "팔로우")
             }
         }
+    }
+}
 
+
+@Composable
+fun ConcentrateModeContent(
+    padding: PaddingValues,
+    imageUrl: String
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(padding),
+    ) {
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(imageUrl)
+                .crossfade(true)
+                .build(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(4f / 5f)
+                .align(Alignment.Center),
+            contentDescription = "",
+            contentScale = ContentScale.Crop,
+        )
     }
 }
 
@@ -171,12 +228,45 @@ fun DetailButton(
     }
 }
 
+fun requestFullScreen(view: View) {
+    // !! should be safe here since the view is part of an Activity
+    val window = view.context.getActivity()!!.window
+    val insetController = WindowCompat.getInsetsController(window, view)
+
+    insetController.systemBarsBehavior =
+        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    insetController.hide(
+        WindowInsetsCompat.Type.statusBars() or
+                WindowInsetsCompat.Type.navigationBars()
+    )
+}
+
+fun showSystembar(view: View) {
+    // !! should be safe here since the view is part of an Activity
+    val window = view.context.getActivity()!!.window
+    val insetController = WindowCompat.getInsetsController(window, view)
+
+    insetController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
+    insetController.show(
+        WindowInsetsCompat.Type.statusBars() or
+                WindowInsetsCompat.Type.navigationBars()
+    )
+}
+
+
+fun Context.getActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.getActivity()
+    else -> null
+}
+
 @Preview(showBackground = true, backgroundColor = 0xFF000000)
 @Composable
 fun DetailScreenPreview() {
     DetailContent(
         padding = PaddingValues(0.dp),
         imageUrl = "https://www.adobe.com/content/dam/cc/us/en/creative-cloud/photography/discover/landscape-photography/CODERED_B1_landscape_P2d_714x348.jpg.img.jpg",
-        imageDescription = "집으로 가는 길 풍경 좋다"
+        imageDescription = "집으로 가는 길 풍경 좋다",
+        onDoubleTab = {}
     )
 }
