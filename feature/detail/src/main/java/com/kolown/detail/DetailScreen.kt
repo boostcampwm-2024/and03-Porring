@@ -3,6 +3,7 @@ package com.kolown.detail
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.util.Log
 import android.view.View
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
@@ -25,6 +26,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsIgnoringVisibility
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
@@ -58,18 +61,47 @@ import androidx.core.view.WindowInsetsControllerCompat
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.kolown.model.ImageItem
 
 @Composable
 internal fun DetailRoute(
     padding: PaddingValues = PaddingValues(),
 ) {
-    DetailScreen()
+    Reels()
+}
+
+@Composable
+fun Reels() {
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        pageCount = {
+        10
+    })
+    val isScrollEnabled = remember { mutableStateOf(true) }
+
+    VerticalPager(
+        state = pagerState,
+        userScrollEnabled = isScrollEnabled.value
+    ) { page ->
+        // Our page content
+        DetailScreen(
+            imageItem = ImageItem(),
+            page = page,
+            onDoubleTab = {
+                isScrollEnabled.value = it
+            }
+        )
+    }
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun DetailScreen() {
+fun DetailScreen(
+    imageItem: ImageItem,
+    page: Int,
+    onDoubleTab: (Boolean) -> Unit
+) {
     val view = LocalView.current
     val isConcentrateMode = remember {
         mutableStateOf(false)
@@ -90,7 +122,10 @@ fun DetailScreen() {
                     if (isConcentrateMode.value) Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = null,
-                        modifier = Modifier.clickable { isConcentrateMode.value = false },
+                        modifier = Modifier.clickable {
+                            isConcentrateMode.value = false
+                            onDoubleTab(true)
+                        },
                         tint = Color.White
                     )
                 },
@@ -101,26 +136,31 @@ fun DetailScreen() {
     ) { padding ->
         if (!isConcentrateMode.value) DetailContent(
             padding = padding,
-            imageUrl = "https://img.freepik.com/free-photo/symmetrical-clouds-covered-blue-sky_198523-5.jpg",
+            imageUrl = imageItem.imageUrl,
             imageDescription = "퇴근하고 집가는 풍경 좋다",
             onDoubleTab = {
+                Log.e("페이지 테스트", page.toString())
                 isConcentrateMode.value = true
                 requestFullScreen(view)
             },
             tagList = listOf("풍경", "등산", "가을산")
         ) else {
+            onDoubleTab(false)
             ConcentrateModeContent(
+                page = page,
                 padding = padding,
-                imageUrl = "https://img.freepik.com/free-photo/symmetrical-clouds-covered-blue-sky_198523-5.jpg"
+                imageUrl = imageItem.imageUrl
             )
+            BackHandler(enabled = true) {
+                if (isConcentrateMode.value) {
+                    isConcentrateMode.value = false
+                    onDoubleTab(true)
+                    showSystembar(view = view)
+                }
+            }
         }
     }
-    BackHandler {
-        if (isConcentrateMode.value) {
-            isConcentrateMode.value = false
-            showSystembar(view = view)
-        }
-    }
+
 }
 
 
@@ -128,7 +168,7 @@ fun DetailScreen() {
 @Composable
 fun DetailContent(
     padding: PaddingValues,
-    imageUrl: String = "https://img.freepik.com/free-photo/symmetrical-clouds-covered-blue-sky_198523-5.jpg",
+    imageUrl: String,
     imageDescription: String,
     tagList: List<String> = emptyList(),
     onDoubleTab: () -> Unit
@@ -192,12 +232,13 @@ fun DetailContent(
     }
 }
 
-
 @Composable
 fun ConcentrateModeContent(
+    page: Int,
     padding: PaddingValues,
     imageUrl: String
 ) {
+    Log.e("이미지 url", imageUrl)
     Box(
         modifier = Modifier
             .fillMaxSize()
