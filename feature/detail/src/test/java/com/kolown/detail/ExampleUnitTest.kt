@@ -1,4 +1,4 @@
-package com.app.detail
+package com.kolown.detail
 
 import org.junit.Test
 
