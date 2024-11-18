@@ -13,7 +13,7 @@ fun NavController.navigateUpload(navOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.uploadNavGraph(
-    imgUrl: String,
+    imgUrl: String = "",
     padding: PaddingValues
 ) {
     composable<MainMenuRoute.Upload> {
