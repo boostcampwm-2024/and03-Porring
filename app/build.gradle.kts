@@ -118,6 +118,7 @@ dependencies {
     implementation(projects.feature.follower)
     implementation(projects.feature.my)
     implementation(projects.feature.detail)
+    implementation(projects.feature.upload)
 
     implementation(projects.core.navigation)
     implementation(projects.feature.login)
@@ -127,7 +128,6 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.model)
     implementation(projects.core.common)
-    implementation(projects.feature.camera)
 
 }
 
