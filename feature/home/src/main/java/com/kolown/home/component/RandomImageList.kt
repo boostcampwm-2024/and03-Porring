@@ -3,6 +3,7 @@ package com.kolown.home.component
 import IconFollow
 import IconGallery
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -180,6 +181,7 @@ private fun RandomImage(
             onClick = onClickImage
         ) {
             AsyncImage(
+                modifier = Modifier.fillMaxSize(),
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(imageUrl)
                     .diskCachePolicy(CachePolicy.ENABLED)
