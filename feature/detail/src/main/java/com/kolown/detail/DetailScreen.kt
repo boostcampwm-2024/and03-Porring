@@ -12,10 +12,13 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.stopScroll
+import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
@@ -48,12 +51,16 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -184,7 +191,6 @@ fun DetailScreen(
             tagList = listOf("풍경", "등산", "가을산")
         ) else {
             ConcentrateModeContent(
-                page = page,
                 padding = padding,
                 imageUrl = imageItem.imageUrl
             )
@@ -302,16 +308,35 @@ fun DetailContent(
 
 @Composable
 fun ConcentrateModeContent(
-    page: Int,
     padding: PaddingValues,
     imageUrl: String
 ) {
-    Log.e("이미지 url", imageUrl)
-    Box(
+    var scale by remember {
+        mutableStateOf(1f)
+    }
+    var offset by remember {
+        mutableStateOf(Offset.Zero)
+    }
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .padding(padding),
     ) {
+        val state = rememberTransformableState { zoomChange, panChange, rotationChange ->
+            scale = (scale * zoomChange).coerceIn(1f, 5f)
+
+            val extraWidth = (scale - 1) * constraints.maxWidth
+            val extraHeight = (scale - 1) * constraints.maxHeight
+
+            //이동할 수 있는 최대 거리
+            val maxX = extraWidth / 2
+            val maxY = extraHeight / 2
+
+            offset = Offset(
+                x = (offset.x + scale * panChange.x).coerceIn(-maxX, maxX),
+                y = (offset.y + scale * panChange.y).coerceIn(-maxY, maxY)
+            )
+        }
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(imageUrl)
@@ -320,7 +345,14 @@ fun ConcentrateModeContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(4f / 5f)
-                .align(Alignment.Center),
+                .align(Alignment.Center)
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                    translationX = offset.x
+                    translationY = offset.y
+                }
+                .transformable(state),
             contentDescription = "",
             contentScale = ContentScale.Crop,
         )
