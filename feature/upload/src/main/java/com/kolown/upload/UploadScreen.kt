@@ -1,71 +1,60 @@
 package com.kolown.upload
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.kolown.upload.component.CategoryGroup
 
 @Composable
 internal fun UploadRoute(
+    viewModel: UploadViewModel = hiltViewModel(),
     imgUrl: String,
     padding: PaddingValues
 ) {
+    val description by viewModel.description.collectAsStateWithLifecycle()
+    val categoryItems by viewModel.categoryItems.collectAsStateWithLifecycle()
+
     UploadScreen(
         imgUrl,
-        padding = padding
+        padding = padding,
+        description,
+        viewModel::changeDescription,
+        categoryItems,
+        viewModel::addCategory,
+        viewModel::removeCategory,
+        viewModel::changeCategoryName
     )
 }
 
@@ -73,6 +62,12 @@ internal fun UploadRoute(
 internal fun UploadScreen(
     imgUrl: String = "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png",
     padding: PaddingValues = PaddingValues(),
+    description: String = "",
+    changeDescription: (String) -> Unit = {},
+    categoryItems: List<String> = emptyList(),
+    addCategory: () -> Unit = {},
+    removeCategory: (String) -> Unit = {},
+    changeCategoryName: (Int, String) -> Unit = { _, _ -> }
 ) {
     Column(
         modifier = Modifier
@@ -84,7 +79,13 @@ internal fun UploadScreen(
             imgUrl = imgUrl,
             modifier = Modifier
                 .weight(1f)
-                .fillMaxSize()
+                .fillMaxSize(),
+            description,
+            changeDescription,
+            categoryItems,
+            addCategory,
+            removeCategory,
+            changeCategoryName
         )
         Button(
             modifier = Modifier
@@ -107,13 +108,18 @@ internal fun UploadScreen(
 @Composable
 private fun UploadContent(
     imgUrl: String,
-    modifier: Modifier
+    modifier: Modifier,
+    description: String,
+    changeDescription: (String) -> Unit,
+    categoryItems: List<String>,
+    addCategory: () -> Unit,
+    removeCategory: (String) -> Unit,
+    changeCategoryName: (Int, String) -> Unit
 ) {
     Column(
         modifier = modifier.verticalScroll(rememberScrollState())
     ) {
         val ratio = 4f / 5f // todo 이후에 가로 이미지를 지원할 때는 분기처리 필요
-        var imageDescription by remember { mutableStateOf("") }
         val horizontalModifier = Modifier
             .padding(horizontal = 40.dp)
             .fillMaxWidth()
@@ -125,9 +131,7 @@ private fun UploadContent(
             contentDescription = null
         )
         Spacer(modifier = Modifier.height(20.dp))
-        DescriptionTextField(horizontalModifier, imageDescription) {
-            imageDescription = it
-        }
+        DescriptionTextField(horizontalModifier, description, changeDescription)
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             modifier = Modifier.padding(horizontal = 56.dp),
@@ -136,7 +140,13 @@ private fun UploadContent(
             color = Color.Red
         )
         Spacer(modifier = Modifier.height(50.dp))
-        CategoryGroup(modifier = horizontalModifier, categoryItems = listOf("커피 한잔", "캠핑", "감성 가득"))
+        CategoryGroup(
+            modifier = horizontalModifier,
+            categoryItems = categoryItems,
+            addCategory = addCategory,
+            removeCategory = removeCategory,
+            changeCategoryName = changeCategoryName
+        )
         Spacer(modifier = Modifier.height(100.dp))
     }
 }
