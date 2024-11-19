@@ -15,8 +15,16 @@ import com.kolown.app_test_camera.di.ImageCacheModule_ProvideImageCacheRepositor
 import com.kolown.camera.screen.CameraScreenViewModel;
 import com.kolown.camera.screen.CameraScreenViewModel_HiltModules;
 import com.kolown.data.datasource.AppDataSource;
+import com.kolown.data.datasource.GalleryDataSource;
+import com.kolown.data.di.DataSourceModule;
+import com.kolown.data.di.DataSourceModule_ProvideFakeGalleryDataSourceFactory;
+import com.kolown.data.di.RepositoryModule;
+import com.kolown.data.di.RepositoryModule_ProvideGalleryRepositoryFakeFactory;
 import com.kolown.data.repository.AppDataRepository;
+import com.kolown.data.repository.GalleryRepository;
 import com.kolown.data.repository.ImageCacheRepository;
+import com.kolown.my.MyViewModel;
+import com.kolown.my.MyViewModel_HiltModules;
 import dagger.hilt.android.ActivityRetainedLifecycle;
 import dagger.hilt.android.ViewModelLifecycle;
 import dagger.hilt.android.internal.builders.ActivityComponentBuilder;
@@ -65,7 +73,11 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
 
     private ApplicationContextModule applicationContextModule;
 
+    private DataSourceModule dataSourceModule;
+
     private ImageCacheModule imageCacheModule;
+
+    private RepositoryModule repositoryModule;
 
     private Builder() {
     }
@@ -80,8 +92,18 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
       return this;
     }
 
+    public Builder dataSourceModule(DataSourceModule dataSourceModule) {
+      this.dataSourceModule = Preconditions.checkNotNull(dataSourceModule);
+      return this;
+    }
+
     public Builder imageCacheModule(ImageCacheModule imageCacheModule) {
       this.imageCacheModule = Preconditions.checkNotNull(imageCacheModule);
+      return this;
+    }
+
+    public Builder repositoryModule(RepositoryModule repositoryModule) {
+      this.repositoryModule = Preconditions.checkNotNull(repositoryModule);
       return this;
     }
 
@@ -90,10 +112,16 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
         this.appDataModule = new AppDataModule();
       }
       Preconditions.checkBuilderRequirement(applicationContextModule, ApplicationContextModule.class);
+      if (dataSourceModule == null) {
+        this.dataSourceModule = new DataSourceModule();
+      }
       if (imageCacheModule == null) {
         this.imageCacheModule = new ImageCacheModule();
       }
-      return new SingletonCImpl(appDataModule, applicationContextModule, imageCacheModule);
+      if (repositoryModule == null) {
+        this.repositoryModule = new RepositoryModule();
+      }
+      return new SingletonCImpl(appDataModule, applicationContextModule, dataSourceModule, imageCacheModule, repositoryModule);
     }
   }
 
@@ -392,7 +420,7 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
 
     @Override
     public Map<Class<?>, Boolean> getViewModelKeys() {
-      return LazyClassKeyMap.<Boolean>of(MapBuilder.<String, Boolean>newMapBuilder(2).put(LazyClassKeyProvider.com_kolown_camera_screen_CameraScreenViewModel, CameraScreenViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_kolown_app_test_camera_MainViewModel, MainViewModel_HiltModules.KeyModule.provide()).build());
+      return LazyClassKeyMap.<Boolean>of(MapBuilder.<String, Boolean>newMapBuilder(3).put(LazyClassKeyProvider.com_kolown_camera_screen_CameraScreenViewModel, CameraScreenViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_kolown_app_test_camera_MainViewModel, MainViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_kolown_my_MyViewModel, MyViewModel_HiltModules.KeyModule.provide()).build());
     }
 
     @Override
@@ -416,11 +444,16 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
 
       static String com_kolown_camera_screen_CameraScreenViewModel = "com.kolown.camera.screen.CameraScreenViewModel";
 
+      static String com_kolown_my_MyViewModel = "com.kolown.my.MyViewModel";
+
       @KeepFieldType
       MainViewModel com_kolown_app_test_camera_MainViewModel2;
 
       @KeepFieldType
       CameraScreenViewModel com_kolown_camera_screen_CameraScreenViewModel2;
+
+      @KeepFieldType
+      MyViewModel com_kolown_my_MyViewModel2;
     }
   }
 
@@ -434,6 +467,8 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
     private Provider<CameraScreenViewModel> cameraScreenViewModelProvider;
 
     private Provider<MainViewModel> mainViewModelProvider;
+
+    private Provider<MyViewModel> myViewModelProvider;
 
     private ViewModelCImpl(SingletonCImpl singletonCImpl,
         ActivityRetainedCImpl activityRetainedCImpl, SavedStateHandle savedStateHandleParam,
@@ -450,11 +485,12 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
         final ViewModelLifecycle viewModelLifecycleParam) {
       this.cameraScreenViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
       this.mainViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
+      this.myViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
     }
 
     @Override
     public Map<Class<?>, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(2).put(LazyClassKeyProvider.com_kolown_camera_screen_CameraScreenViewModel, ((Provider) cameraScreenViewModelProvider)).put(LazyClassKeyProvider.com_kolown_app_test_camera_MainViewModel, ((Provider) mainViewModelProvider)).build());
+      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(3).put(LazyClassKeyProvider.com_kolown_camera_screen_CameraScreenViewModel, ((Provider) cameraScreenViewModelProvider)).put(LazyClassKeyProvider.com_kolown_app_test_camera_MainViewModel, ((Provider) mainViewModelProvider)).put(LazyClassKeyProvider.com_kolown_my_MyViewModel, ((Provider) myViewModelProvider)).build());
     }
 
     @Override
@@ -464,15 +500,20 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
+      static String com_kolown_camera_screen_CameraScreenViewModel = "com.kolown.camera.screen.CameraScreenViewModel";
+
       static String com_kolown_app_test_camera_MainViewModel = "com.kolown.app_test_camera.MainViewModel";
 
-      static String com_kolown_camera_screen_CameraScreenViewModel = "com.kolown.camera.screen.CameraScreenViewModel";
+      static String com_kolown_my_MyViewModel = "com.kolown.my.MyViewModel";
+
+      @KeepFieldType
+      CameraScreenViewModel com_kolown_camera_screen_CameraScreenViewModel2;
 
       @KeepFieldType
       MainViewModel com_kolown_app_test_camera_MainViewModel2;
 
       @KeepFieldType
-      CameraScreenViewModel com_kolown_camera_screen_CameraScreenViewModel2;
+      MyViewModel com_kolown_my_MyViewModel2;
     }
 
     private static final class SwitchingProvider<T> implements Provider<T> {
@@ -501,6 +542,9 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
 
           case 1: // com.kolown.app_test_camera.MainViewModel 
           return (T) new MainViewModel(singletonCImpl.provideAppDataProvider.get());
+
+          case 2: // com.kolown.my.MyViewModel 
+          return (T) new MyViewModel(singletonCImpl.provideGalleryRepositoryFakeProvider.get());
 
           default: throw new AssertionError(id);
         }
@@ -584,6 +628,10 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
 
     private final AppDataModule appDataModule;
 
+    private final RepositoryModule repositoryModule;
+
+    private final DataSourceModule dataSourceModule;
+
     private final SingletonCImpl singletonCImpl = this;
 
     private Provider<ImageCacheRepository> provideImageCacheRepositoryProvider;
@@ -592,23 +640,33 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
 
     private Provider<AppDataRepository> provideAppDataProvider;
 
+    private Provider<GalleryDataSource> provideFakeGalleryDataSourceProvider;
+
+    private Provider<GalleryRepository> provideGalleryRepositoryFakeProvider;
+
     private SingletonCImpl(AppDataModule appDataModuleParam,
         ApplicationContextModule applicationContextModuleParam,
-        ImageCacheModule imageCacheModuleParam) {
+        DataSourceModule dataSourceModuleParam, ImageCacheModule imageCacheModuleParam,
+        RepositoryModule repositoryModuleParam) {
       this.imageCacheModule = imageCacheModuleParam;
       this.applicationContextModule = applicationContextModuleParam;
       this.appDataModule = appDataModuleParam;
-      initialize(appDataModuleParam, applicationContextModuleParam, imageCacheModuleParam);
+      this.repositoryModule = repositoryModuleParam;
+      this.dataSourceModule = dataSourceModuleParam;
+      initialize(appDataModuleParam, applicationContextModuleParam, dataSourceModuleParam, imageCacheModuleParam, repositoryModuleParam);
 
     }
 
     @SuppressWarnings("unchecked")
     private void initialize(final AppDataModule appDataModuleParam,
         final ApplicationContextModule applicationContextModuleParam,
-        final ImageCacheModule imageCacheModuleParam) {
+        final DataSourceModule dataSourceModuleParam, final ImageCacheModule imageCacheModuleParam,
+        final RepositoryModule repositoryModuleParam) {
       this.provideImageCacheRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<ImageCacheRepository>(singletonCImpl, 0));
       this.providesAppDataSourceProvider = DoubleCheck.provider(new SwitchingProvider<AppDataSource>(singletonCImpl, 2));
       this.provideAppDataProvider = DoubleCheck.provider(new SwitchingProvider<AppDataRepository>(singletonCImpl, 1));
+      this.provideFakeGalleryDataSourceProvider = DoubleCheck.provider(new SwitchingProvider<GalleryDataSource>(singletonCImpl, 4));
+      this.provideGalleryRepositoryFakeProvider = DoubleCheck.provider(new SwitchingProvider<GalleryRepository>(singletonCImpl, 3));
     }
 
     @Override
@@ -652,6 +710,12 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
 
           case 2: // com.kolown.data.datasource.AppDataSource 
           return (T) AppDataModule_ProvidesAppDataSourceFactory.providesAppDataSource(singletonCImpl.appDataModule, ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 3: // @com.kolown.data.di.Fake com.kolown.data.repository.GalleryRepository 
+          return (T) RepositoryModule_ProvideGalleryRepositoryFakeFactory.provideGalleryRepositoryFake(singletonCImpl.repositoryModule, singletonCImpl.provideFakeGalleryDataSourceProvider.get());
+
+          case 4: // @com.kolown.data.di.Fake com.kolown.data.datasource.GalleryDataSource 
+          return (T) DataSourceModule_ProvideFakeGalleryDataSourceFactory.provideFakeGalleryDataSource(singletonCImpl.dataSourceModule);
 
           default: throw new AssertionError(id);
         }
