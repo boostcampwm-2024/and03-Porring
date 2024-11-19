@@ -11,21 +11,20 @@ import java.io.FileOutputStream
 import javax.inject.Inject
 
 interface ImageCacheRepository {
-    suspend fun saveBitmapToCache(bitmap: Bitmap): Uri?
+    suspend fun saveBitmapToCache(bitmap: Bitmap, format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG, quality: Int = 100): Uri?
     suspend fun clearCacheFiles()
     suspend fun decodeSampledBitmapFromUri(uri: Uri): Bitmap?
-
 }
 
 class ImageCacheRepositoryImpl @Inject constructor(private val applicationContext: Context) :
     ImageCacheRepository {
-    override suspend fun saveBitmapToCache(bitmap: Bitmap): Uri? {
+    override suspend fun saveBitmapToCache(bitmap: Bitmap, format: Bitmap.CompressFormat, quality: Int): Uri? {
         return try {
             val file = File(applicationContext.cacheDir, "photo_${System.currentTimeMillis()}.jpg")
 
             withContext(Dispatchers.IO) {
                 FileOutputStream(file).use { outputStream ->
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)   // todo 상수 변환 필요
+                    bitmap.compress(format, quality, outputStream)
                 }
             }
 
@@ -34,8 +33,6 @@ class ImageCacheRepositoryImpl @Inject constructor(private val applicationContex
             e.printStackTrace()
             null
         }
-
-
     }
 
     override suspend fun clearCacheFiles() {
