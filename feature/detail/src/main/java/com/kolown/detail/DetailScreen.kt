@@ -65,6 +65,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.kolown.detail.component.FollowDialog
 import com.kolown.detail.component.ReactionDialog
 import com.kolown.model.ImageItem
 
@@ -195,6 +196,8 @@ fun DetailContent(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isReactionVisible = remember { mutableStateOf(false) }
+    val isFollowDialogVisible = remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -245,18 +248,18 @@ fun DetailContent(
                         imageVector = Icons.Outlined.FavoriteBorder,
                         tint = Color(0xFF00BBFF),
                         contentDescription = "",
-                        modifier = Modifier.clickable { 
+                        modifier = Modifier.clickable {
                             isReactionVisible.value = true
                         }
                     )
                     Row {
-                        DetailButton(id = R.drawable.ic_detail_gallary, buttonText = "갤러리")
+                        DetailButton(onClick = {}, id = R.drawable.ic_detail_gallary, buttonText = "갤러리")
                         Spacer(modifier = Modifier.width(10.dp))
-                        DetailButton(id = R.drawable.ic_detail_follow, buttonText = "팔로우")
+                        DetailButton(onClick = {isFollowDialogVisible.value = true}, id = R.drawable.ic_detail_follow, buttonText = "팔로우")
                     }
                 }
             }
-            if(isReactionVisible.value) ReactionDialog(
+            if (isReactionVisible.value) ReactionDialog(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(16.dp),
@@ -264,10 +267,14 @@ fun DetailContent(
                 onClick = {
                     isReactionVisible.value = !isReactionVisible.value
                 },
-                onDismiss = {isReactionVisible.value = false}
+                onDismiss = { isReactionVisible.value = false }
             )
         }
     }
+    if (isFollowDialogVisible.value)
+        FollowDialog(
+            onClickCancel = { isFollowDialogVisible.value = false }
+        )
 }
 
 @Composable
@@ -300,11 +307,12 @@ fun ConcentrateModeContent(
 
 @Composable
 fun DetailButton(
+    onClick : () -> Unit,
     @DrawableRes id: Int,
     buttonText: String
 ) {
     Button(
-        onClick = {},
+        onClick = onClick,
         modifier = Modifier
             .wrapContentSize(),
         shape = RoundedCornerShape(10.dp),
