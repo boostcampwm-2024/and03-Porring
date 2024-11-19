@@ -44,9 +44,6 @@ internal fun HomeRoute(
     onClickImage: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val onFollowClick: (Long) -> Unit = { viewModel.followUser(it) }
-    val onSelectReaction: (Long, Reactions) -> Unit =
-        { id, reaction -> viewModel.selectReaction(id, reaction) }
 
     when (uiState) {
         is UiState.Failure -> {
@@ -71,8 +68,8 @@ internal fun HomeRoute(
             HomeScreen(
                 padding = padding,
                 mainFeedImages = images,
-                onFollowClick = onFollowClick,
-                onSelectReaction = onSelectReaction,
+                onFollowClick = viewModel::followUser,
+                onSelectReaction = viewModel::selectReaction,
                 onClickImage = onClickImage
             )
         }
