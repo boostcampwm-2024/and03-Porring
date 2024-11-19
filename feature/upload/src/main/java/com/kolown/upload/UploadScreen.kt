@@ -56,6 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.kolown.upload.component.CategoryGroup
 
 @Composable
 internal fun UploadRoute(
@@ -73,19 +74,50 @@ internal fun UploadScreen(
     imgUrl: String = "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png",
     padding: PaddingValues = PaddingValues(),
 ) {
-    val ratio = 4f / 5f // todo 이후에 가로 이미지를 지원할 때는 분기처리 필요
-    var imageDescription by remember { mutableStateOf("") }
-    val horizontalModifier = Modifier
-        .padding(horizontal = 40.dp)
-        .fillMaxWidth()
-
     Column(
         modifier = Modifier
             .padding(padding)
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
     ) {
         UploadTopAppBar()
+        UploadContent(
+            imgUrl = imgUrl,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxSize()
+        )
+        Button(
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .fillMaxWidth()
+                .height(40.dp),
+            onClick = {},
+            shape = RoundedCornerShape(10.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+        ) {
+            Text(
+                text = "올리기",
+                color = Color.White,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+}
+
+@Composable
+private fun UploadContent(
+    imgUrl: String,
+    modifier: Modifier
+) {
+    Column(
+        modifier = modifier.verticalScroll(rememberScrollState())
+    ) {
+        val ratio = 4f / 5f // todo 이후에 가로 이미지를 지원할 때는 분기처리 필요
+        var imageDescription by remember { mutableStateOf("") }
+        val horizontalModifier = Modifier
+            .padding(horizontal = 40.dp)
+            .fillMaxWidth()
+
         Spacer(modifier = Modifier.height(16.dp))
         AsyncImage(
             modifier = horizontalModifier.aspectRatio(ratio),
@@ -106,118 +138,6 @@ internal fun UploadScreen(
         Spacer(modifier = Modifier.height(50.dp))
         CategoryGroup(modifier = horizontalModifier, categoryItems = listOf("커피 한잔", "캠핑", "감성 가득"))
         Spacer(modifier = Modifier.height(100.dp))
-        Button(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth()
-                .height(40.dp),
-            onClick = {},
-            shape = RoundedCornerShape(10.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-        ) {
-            Text(
-                text = "올리기",
-                color = Color.White,
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
-    }
-
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun CategoryGroup(
-    modifier: Modifier = Modifier,
-    categoryItems: List<String> = emptyList()
-) {
-    FlowRow(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        categoryItems.forEach { item ->
-            CategoryChip(item = item) { }
-        }
-        AddChipButton {
-            if (categoryItems.size < 6) {
-                // todo Chip이 6개보다 적은 경우에만 Chip 추가
-            }
-        }
-    }
-}
-
-@Composable
-private fun CategoryChip(
-    item: String,
-    onRemove: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .height(32.dp)
-            .border(
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant),
-                shape = RoundedCornerShape(8.dp)
-            )
-            .background(Color.Transparent)
-            .padding(start = 12.dp, end = 8.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Row(
-            modifier = Modifier.background(Color.Transparent),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            BasicTextField(
-                value = item,
-                onValueChange = {},
-                textStyle = MaterialTheme.typography.labelLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                modifier = Modifier.width(IntrinsicSize.Min)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            IconButton(
-                onClick = onRemove,
-                modifier = Modifier.size(18.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Clear,
-                    contentDescription = "Remove item",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun AddChipButton(
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier.height(32.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        IconButton(
-            modifier = Modifier
-                .size(32.dp)
-                .align(Alignment.Center),
-            onClick = onClick
-        ) {
-            Card(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(24.dp),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-            ) {
-                Icon(
-                    modifier = Modifier.padding(3.dp),
-                    imageVector = Icons.Outlined.Add,
-                    contentDescription = "trailing icon",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-
-        }
     }
 }
 
