@@ -65,6 +65,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.kolown.detail.component.ReactionDialog
 import com.kolown.model.ImageItem
 
 @Composable
@@ -77,7 +78,8 @@ internal fun DetailRoute(
         initialPage = 0,
         pageCount = {
             5
-        })
+        }
+    )
     LaunchedEffect(true) {
         detailViewModel.getItem(0)
     }
@@ -92,7 +94,7 @@ internal fun DetailRoute(
 fun Reels(
     padding: PaddingValues,
     items: List<ImageItem>,
-    pagerState: PagerState
+    pagerState: PagerState,
 ) {
     val isScrollEnabled = remember { mutableStateOf(true) }
     if (items.isNotEmpty()) {
@@ -160,10 +162,10 @@ fun DetailScreen(
             onDoubleTab = {
                 isConcentrateMode.value = true
                 requestFullScreen(view)
+                onDoubleTab(false)
             },
             tagList = listOf("풍경", "등산", "가을산")
         ) else {
-            onDoubleTab(false)
             ConcentrateModeContent(
                 page = page,
                 padding = padding,
@@ -192,6 +194,7 @@ fun DetailContent(
     onDoubleTab: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
+    val isReactionVisible = remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -215,37 +218,54 @@ fun DetailContent(
             contentDescription = "",
             contentScale = ContentScale.Crop,
         )
-        Text(
-            text = imageDescription,
-            modifier = Modifier
-                .padding(vertical = 8.dp, horizontal = 10.dp),
-            color = Color.White,
-            fontSize = 16.sp
-        )
-        val tags = tagList.joinToString(", ") { "#$it" }
-        Text(
-            text = tags,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
-            style = MaterialTheme.typography.labelLarge,
-            color = Color(0xFF8D8D8D)
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.FavoriteBorder,
-                tint = Color(0xFF00BBFF),
-                contentDescription = ""
-            )
-            Row {
-                DetailButton(id = R.drawable.ic_detail_gallary, buttonText = "갤러리")
-                Spacer(modifier = Modifier.width(10.dp))
-                DetailButton(id = R.drawable.ic_detail_follow, buttonText = "팔로우")
+        Box {
+            Column {
+                Text(
+                    text = imageDescription,
+                    modifier = Modifier
+                        .padding(vertical = 8.dp, horizontal = 10.dp),
+                    color = Color.White,
+                    fontSize = 16.sp
+                )
+                val tags = tagList.joinToString(", ") { "#$it" }
+                Text(
+                    text = tags,
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = Color(0xFF8D8D8D)
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.FavoriteBorder,
+                        tint = Color(0xFF00BBFF),
+                        contentDescription = "",
+                        modifier = Modifier.clickable { 
+                            isReactionVisible.value = true
+                        }
+                    )
+                    Row {
+                        DetailButton(id = R.drawable.ic_detail_gallary, buttonText = "갤러리")
+                        Spacer(modifier = Modifier.width(10.dp))
+                        DetailButton(id = R.drawable.ic_detail_follow, buttonText = "팔로우")
+                    }
+                }
             }
+            if(isReactionVisible.value) ReactionDialog(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(16.dp),
+                selectedReaction = null,
+                onClick = {
+                    isReactionVisible.value = !isReactionVisible.value
+                },
+                onDismiss = {isReactionVisible.value = false}
+            )
         }
     }
 }
