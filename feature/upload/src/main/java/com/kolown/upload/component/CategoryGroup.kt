@@ -83,7 +83,11 @@ private fun CategoryChip(
         ) {
             BasicTextField(
                 value = item,
-                onValueChange = { onEdit(it) },
+                onValueChange = {
+                    if (it.length <= 10) {
+                        onEdit(it)
+                    }
+                },
                 textStyle = MaterialTheme.typography.labelLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                 modifier = Modifier.width(IntrinsicSize.Min)
             )
