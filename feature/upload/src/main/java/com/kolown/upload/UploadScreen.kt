@@ -183,12 +183,13 @@ private fun DescriptionTextField(
     onDescriptionChange: (String) -> Unit
 ) {
     TextField(
-        modifier = modifier.height(56.dp),
+        modifier = modifier,
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent,
             disabledContainerColor = Color.Transparent
         ),
+        maxLines = 2,
         value = imageDescription,
         onValueChange = {
             if (it.length <= 20) {
