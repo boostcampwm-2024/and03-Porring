@@ -36,19 +36,25 @@ import androidx.compose.ui.unit.dp
 @Composable
 internal fun CategoryGroup(
     modifier: Modifier = Modifier,
-    categoryItems: List<String> = emptyList()
+    categoryItems: List<String> = emptyList(),
+    addCategory: () -> Unit,
+    removeCategory: (String) -> Unit,
+    changeCategoryName: (Int, String) -> Unit
 ) {
     FlowRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        categoryItems.forEach { item ->
-            CategoryChip(item = item) { }
+        categoryItems.forEachIndexed { idx, item ->
+            CategoryChip(
+                item = item,
+                onRemove = removeCategory,
+                onEdit = { changeCategoryName(idx, it) })
         }
         AddChipButton {
             if (categoryItems.size < 6) {
-                // todo Chip이 6개보다 적은 경우에만 Chip 추가
+                addCategory()
             }
         }
     }
@@ -57,7 +63,8 @@ internal fun CategoryGroup(
 @Composable
 private fun CategoryChip(
     item: String,
-    onRemove: () -> Unit
+    onRemove: (String) -> Unit,
+    onEdit: (String) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -76,13 +83,13 @@ private fun CategoryChip(
         ) {
             BasicTextField(
                 value = item,
-                onValueChange = {},
+                onValueChange = { onEdit(it) },
                 textStyle = MaterialTheme.typography.labelLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                 modifier = Modifier.width(IntrinsicSize.Min)
             )
             Spacer(modifier = Modifier.width(8.dp))
             IconButton(
-                onClick = onRemove,
+                onClick = { onRemove(item) },
                 modifier = Modifier.size(18.dp)
             ) {
                 Icon(
