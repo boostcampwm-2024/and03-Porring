@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.kolown.app_test_camera.app-test-camera-mergeDebugResources-77:/values-w320dp-land-v13/values-w320dp-land-v13.xml",
+            "outputFile": "com.kolown.app_test_camera.app-test-camera-mergeDebugResources-82:/values-w320dp-land-v13/values-w320dp-land-v13.xml",
             "map": [
                 {
-                    "source": "/Users/moonhwihan/.gradle/caches/8.9/transforms/c77fab7bb15ee872eb0c2c984052ba2f/transformed/material-1.12.0/res/values-w320dp-land-v13/values-w320dp-land-v13.xml",
+                    "source": "/Users/moonhwihan/.gradle/caches/8.9/transforms/e3f4323bcc1a04f32fd4190f2a86019a/transformed/material-1.12.0/res/values-w320dp-land-v13/values-w320dp-land-v13.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",

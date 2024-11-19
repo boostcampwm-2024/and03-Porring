@@ -3,6 +3,7 @@ package com.kolown.data.mock
 import com.kolown.model.Gallery
 import com.kolown.model.GalleryThumbnail
 import com.kolown.model.Post
+import com.kolown.model.Tag
 
 object MockDataProvider {
     private val imageUrlList = listOf(
@@ -33,6 +34,15 @@ object MockDataProvider {
         "태환"
     )
 
+    private val tagNameList = listOf(
+        "더미 태그 풍경",
+        "더미 태그 인물",
+        "더미 태그 여행",
+        "더미 태그 겨율",
+        "매우 긴 태그 매우 긴 태그 매우 긴 태그 매우 긴 태그 매우 긴 태그 매우 긴 태그 매우 긴 태그 매우 긴 태그 매우 긴 태그 매우 긴 태그 매우 긴 태그 매우 긴 태그"
+    )
+
+
     fun getRandomName(): String {
         return nameList.random()
     }
@@ -47,6 +57,17 @@ object MockDataProvider {
 
     fun getRandomImageUrl(): String {
         return imageUrlList.random()
+    }
+
+    fun getRandomTagName(): String {
+        return tagNameList.random()
+    }
+
+    fun getRandomTag(): Tag {
+        return Tag(
+            id = getRandomId(),
+            name = getRandomTagName()
+        )
     }
 
     fun getRandomGallery() = Gallery(
@@ -79,6 +100,13 @@ object MockDataProvider {
 
     fun getRandomGalleryThumbnailList() = getRandomList(20, 20) {
         getRandomGalleryThumbnail()
+    }
+
+    fun getTagByName(name: String) = tagNameList.filter { it == name }.map {
+        Tag(
+            id = getRandomId(),
+            name = it
+        )
     }
 
     private inline fun <reified T> getRandomList(

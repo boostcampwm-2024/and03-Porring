@@ -3,6 +3,9 @@ package com.kolown.app_test_camera;
 import com.kolown.app_test_camera.di.AppDataModule;
 import com.kolown.app_test_camera.di.ImageCacheModule;
 import com.kolown.camera.screen.CameraScreenViewModel_HiltModules;
+import com.kolown.data.di.DataSourceModule;
+import com.kolown.data.di.RepositoryModule;
+import com.kolown.my.MyViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -122,8 +125,10 @@ public final class CameraTestApplication_HiltComponents {
           ApplicationContextModule.class,
           ActivityRetainedCBuilderModule.class,
           ServiceCBuilderModule.class,
+          DataSourceModule.class,
           HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,
-          ImageCacheModule.class
+          ImageCacheModule.class,
+          RepositoryModule.class
       }
   )
   @Singleton
@@ -151,7 +156,8 @@ public final class CameraTestApplication_HiltComponents {
           ViewModelCBuilderModule.class,
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
-          MainViewModel_HiltModules.KeyModule.class
+          MainViewModel_HiltModules.KeyModule.class,
+          MyViewModel_HiltModules.KeyModule.class
       }
   )
   @ActivityRetainedScoped
@@ -189,7 +195,8 @@ public final class CameraTestApplication_HiltComponents {
       modules = {
           CameraScreenViewModel_HiltModules.BindsModule.class,
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
-          MainViewModel_HiltModules.BindsModule.class
+          MainViewModel_HiltModules.BindsModule.class,
+          MyViewModel_HiltModules.BindsModule.class
       }
   )
   @ViewModelScoped

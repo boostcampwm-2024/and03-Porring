@@ -1,11 +1,13 @@
 package com.kolown.data.di
 
-import com.kolown.data.repository.GalleryRepository
+import com.kolown.data.datasource.FakeGalleryDataSource
+import com.kolown.data.datasource.GalleryDataSource
+import com.kolown.data.repository.FakeTagRepository
 import com.kolown.data.repository.GalleryRepositoryImpl
-import com.kolown.data.repository.PostRepository
-import com.kolown.data.repository.PostRepositoryImpl
-import dagger.Binds
+import com.kolown.data.repository.GalleryRepository
+import com.kolown.data.repository.TagRepository
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -13,16 +15,19 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class RepositoryModule {
+class RepositoryModule {
 
-    @Binds
+    @Fake
+    @Provides
     @Singleton
-    abstract fun provideGalleryRepositoryFake(
-        galleryRepositoryImpl: GalleryRepositoryImpl
-    ): GalleryRepository
+    fun provideGalleryRepositoryFake(@Fake dataSource: GalleryDataSource): GalleryRepository {
+        return GalleryRepositoryImpl(dataSource)
+    }
 
-    @Binds
-    abstract fun providePostRepository(
-        postRepository: PostRepositoryImpl
-    ): PostRepository
+    @Fake
+    @Provides
+    @Singleton
+    fun provideTagRepositoryFake(): TagRepository {
+        return FakeTagRepository()
+    }
 }
