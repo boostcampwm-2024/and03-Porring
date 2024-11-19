@@ -2,6 +2,7 @@ package com.kolown.data.repository
 
 import com.kolown.model.ImageItem
 import com.kolown.model.Reactions
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Qualifier
@@ -97,7 +98,12 @@ class FakeImageRepositoryImpl : ImageRepository {
     )
 
     override fun getItemByPage(currentPage: Int): Flow<List<ImageItem>> = flow {
+        delay(1000)
+        emit(mockData.subList(currentPage * 3, (currentPage + 1) * 3))
+        delay(2000)
         emit(mockData.subList(currentPage * 5, (currentPage + 1) * 5))
+        delay(3000)
+        throw Exception("테스트")
     }
 
     override fun getItems(): Flow<List<ImageItem>> = flow {

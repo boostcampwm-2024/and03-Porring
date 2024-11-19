@@ -3,13 +3,16 @@ package com.kolown.detail
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.os.Build
 import android.util.Log
 import android.view.View
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.stopScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,6 +48,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -68,43 +72,54 @@ import coil3.request.crossfade
 import com.kolown.detail.component.FollowDialog
 import com.kolown.detail.component.ReactionDialog
 import com.kolown.model.ImageItem
+import com.kolown.model.UiState
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 internal fun DetailRoute(
     padding: PaddingValues = PaddingValues(),
     detailViewModel: DetailViewModel = hiltViewModel()
 ) {
-    val detailItems = detailViewModel.imageItems.collectAsStateWithLifecycle()
-    val pagerState = rememberPagerState(
-        initialPage = 0,
-        pageCount = {
-            5
-        }
-    )
+    val uiState = detailViewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(true) {
         detailViewModel.getItem(0)
     }
-    Reels(
-        padding = padding,
-        items = detailItems.value,
-        pagerState = pagerState
-    )
+    when (uiState.value) {
+        is UiState.Loading -> LoadingDetailScreen()
+        else -> {
+            val pagerState = rememberPagerState(
+                initialPage = 0,
+                pageCount = {
+                    if (uiState.value is UiState.Failure) detailViewModel.getPagingItem().size + 1
+                    else detailViewModel.getPagingItem().size
+                },
+            )
+            Reels(
+                padding = padding,
+                items = detailViewModel.getPagingItem(),
+                pagerState = pagerState
+            )
+        }
+    }
 }
+
 
 @Composable
 fun Reels(
     padding: PaddingValues,
     items: List<ImageItem>,
-    pagerState: PagerState,
+    pagerState: PagerState
 ) {
     val isScrollEnabled = remember { mutableStateOf(true) }
-    if (items.isNotEmpty()) {
-        VerticalPager(
-            state = pagerState,
-            userScrollEnabled = isScrollEnabled.value,
-            contentPadding = padding
-        ) { page ->
-            // Our page content
+    Log.e("페이지 카운트", pagerState.currentPage.toString())
+    VerticalPager(
+        state = pagerState,
+        userScrollEnabled = isScrollEnabled.value,
+        contentPadding = padding
+    ) { page ->
+        // Our page content
+        if (page < items.size) {
+            // 정상 상태일 때
             DetailScreen(
                 imageItem = items[page],
                 page = page,
@@ -112,7 +127,8 @@ fun Reels(
                     isScrollEnabled.value = it
                 }
             )
-        }
+            //에러 났을 때(ex.Network Error)
+        } else LoadingDetailScreen()
     }
 }
 
@@ -181,7 +197,6 @@ fun DetailScreen(
             }
         }
     }
-
 }
 
 
@@ -253,9 +268,17 @@ fun DetailContent(
                         }
                     )
                     Row {
-                        DetailButton(onClick = {}, id = R.drawable.ic_detail_gallary, buttonText = "갤러리")
+                        DetailButton(
+                            onClick = {},
+                            id = R.drawable.ic_detail_gallary,
+                            buttonText = "갤러리"
+                        )
                         Spacer(modifier = Modifier.width(10.dp))
-                        DetailButton(onClick = {isFollowDialogVisible.value = true}, id = R.drawable.ic_detail_follow, buttonText = "팔로우")
+                        DetailButton(
+                            onClick = { isFollowDialogVisible.value = true },
+                            id = R.drawable.ic_detail_follow,
+                            buttonText = "팔로우"
+                        )
                     }
                 }
             }
@@ -307,7 +330,7 @@ fun ConcentrateModeContent(
 
 @Composable
 fun DetailButton(
-    onClick : () -> Unit,
+    onClick: () -> Unit,
     @DrawableRes id: Int,
     buttonText: String
 ) {
