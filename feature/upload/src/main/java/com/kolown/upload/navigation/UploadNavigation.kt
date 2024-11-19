@@ -18,7 +18,7 @@ fun NavGraphBuilder.uploadNavGraph(
 ) {
     composable<MainMenuRoute.Upload> {
         UploadRoute(
-            imgUrl = imgUrl,
+            imgUri = imgUrl,
             padding = padding
         )
     }
