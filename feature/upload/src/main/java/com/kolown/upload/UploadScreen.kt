@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,14 +41,18 @@ import com.kolown.upload.component.CategoryGroup
 @Composable
 internal fun UploadRoute(
     viewModel: UploadViewModel = hiltViewModel(),
-    imgUrl: String,
+    imgUri: String,
     padding: PaddingValues
 ) {
     val description by viewModel.description.collectAsStateWithLifecycle()
     val categoryItems by viewModel.categoryItems.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.getUriWebP(imgUri)
+    }
+
     UploadScreen(
-        imgUrl,
+        imgUri,
         padding = padding,
         description,
         viewModel::changeDescription,
@@ -60,7 +65,7 @@ internal fun UploadRoute(
 
 @Composable
 internal fun UploadScreen(
-    imgUrl: String = "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png",
+    imgUri: String = "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png",
     padding: PaddingValues = PaddingValues(),
     description: String = "",
     changeDescription: (String) -> Unit = {},
@@ -76,7 +81,7 @@ internal fun UploadScreen(
     ) {
         UploadTopAppBar()
         UploadContent(
-            imgUrl = imgUrl,
+            imgUri = imgUri,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxSize(),
@@ -107,7 +112,7 @@ internal fun UploadScreen(
 
 @Composable
 private fun UploadContent(
-    imgUrl: String,
+    imgUri: String,
     modifier: Modifier,
     description: String,
     changeDescription: (String) -> Unit,
@@ -127,7 +132,7 @@ private fun UploadContent(
         Spacer(modifier = Modifier.height(16.dp))
         AsyncImage(
             modifier = horizontalModifier.aspectRatio(ratio),
-            model = imgUrl,
+            model = imgUri,
             contentDescription = null
         )
         Spacer(modifier = Modifier.height(20.dp))
