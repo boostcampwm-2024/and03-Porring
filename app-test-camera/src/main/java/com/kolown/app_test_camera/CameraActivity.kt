@@ -18,6 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kolown.app_test_camera.ui.theme.PorringTheme
 import com.kolown.camera.screen.CameraScreen
 import com.kolown.my.MyScreen
+import com.kolown.search.SearchScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -32,7 +33,7 @@ class CameraActivity : ComponentActivity() {
             viewModel.cameraPermissionDinedStateFlow.collectAsStateWithLifecycle(false, this)
             PorringTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
-                    MyScreen(paddingValues)
+                    SearchScreen(paddingValues)
 
                 }
             }

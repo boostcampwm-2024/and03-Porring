@@ -1,5 +1,6 @@
 package com.kolown.data.mock
 
+import android.util.Log
 import com.kolown.model.Gallery
 import com.kolown.model.GalleryThumbnail
 import com.kolown.model.Post
@@ -102,11 +103,15 @@ object MockDataProvider {
         getRandomGalleryThumbnail()
     }
 
-    fun getTagByName(name: String) = tagNameList.filter { it == name }.map {
-        Tag(
-            id = getRandomId(),
-            name = it
-        )
+    fun getTagByName(name: String): List<Tag> {
+        val a = tagNameList.filter { name in it }.map {
+            Tag(
+                id = getRandomId(),
+                name = it
+            )
+        }
+        Log.e("test", "source: $a")
+        return a
     }
 
     private inline fun <reified T> getRandomList(

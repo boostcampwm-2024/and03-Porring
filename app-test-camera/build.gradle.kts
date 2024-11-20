@@ -66,4 +66,5 @@ dependencies {
     implementation(project(":feature:camera"))
     implementation(project(":core:data"))
     implementation(projects.feature.my)
+    implementation(projects.feature.search)
 }
