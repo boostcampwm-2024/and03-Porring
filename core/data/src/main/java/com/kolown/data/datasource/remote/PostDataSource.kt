@@ -44,7 +44,7 @@ class PostDataSourceImpl @Inject constructor() : PostDataSource {
     override suspend fun getRandomPost(uid: String, count: Int): Result<List<PostModel>> {
         val randomValue = (0..Long.MAX_VALUE).random()
 
-        return kotlin.runCatching {
+        return runCatching {
             val fetchPosts: suspend (Long) -> List<PostModel> = { key ->
                 postCollection
                     .whereNotEqualTo("authorId", uid)
