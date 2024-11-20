@@ -26,23 +26,10 @@ class CameraScreenViewModel @Inject constructor(
         _uri.value = uri
     }
 
-    fun clearCacheFiles() {
-        viewModelScope.launch(Dispatchers.IO) {
-            imageCacheRepository.clearCacheFiles()
-        }
-    }
-
     fun saveBitmapToCache(bitmap: Bitmap) {
         viewModelScope.launch(Dispatchers.IO) {
             _uri.value = imageCacheRepository.saveBitmapToCache(bitmap)
         }
     }
-
-    fun decodeSampledBitmapFromUri(uri: Uri) {
-        viewModelScope.launch(Dispatchers.IO) {
-            imageCacheRepository.decodeSampledBitmapFromUri(uri)
-        }
-    }
-
 
 }
