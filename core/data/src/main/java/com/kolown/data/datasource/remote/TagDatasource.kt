@@ -12,7 +12,7 @@ import javax.inject.Inject
 interface TagDatasource {
     suspend fun uploadPostTags(tagIds: List<String>, postId: String)
     suspend fun uploadTags(tags: List<String>): Result<List<String>>
-    suspend fun getPostTag(postId: String): Result<List<Any>>
+    suspend fun getPostTag(postId: String): Result<List<TagModel>>
 }
 
 class TagDataSourceImpl @Inject constructor() : TagDatasource {

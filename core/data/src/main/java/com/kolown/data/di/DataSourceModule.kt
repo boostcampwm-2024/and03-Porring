@@ -6,6 +6,8 @@ import com.kolown.data.datasource.remote.ImageDataSource
 import com.kolown.data.datasource.remote.ImageDataSourceImpl
 import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.data.datasource.remote.PostDataSourceImpl
+import com.kolown.data.datasource.remote.ReactionDataSource
+import com.kolown.data.datasource.remote.ReactionDataSourceImpl
 import com.kolown.data.datasource.remote.TagDataSourceImpl
 import com.kolown.data.datasource.remote.TagDatasource
 import dagger.Binds
@@ -38,4 +40,9 @@ abstract class DataSourceModule {
     abstract fun provideTagDataSource(
         tagDataSource: TagDataSourceImpl
     ): TagDatasource
+
+    @Binds
+    abstract fun provideReactionDataSource(
+        reactionDataSource: ReactionDataSourceImpl
+    ): ReactionDataSource
 }

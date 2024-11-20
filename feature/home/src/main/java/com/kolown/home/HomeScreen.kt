@@ -34,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kolown.home.component.RandomImageList
 import com.kolown.model.ImageItem
+import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.model.UiState
 
@@ -48,7 +49,7 @@ internal fun HomeRoute(
     when (uiState) {
         is UiState.Failure -> {
             val error = (uiState as UiState.Failure).error
-            Log.d("HomeRoute", "HomeRoute: $error")
+            Log.e("HomeRoute", "HomeRoute: $error")
             ErrorScreen(padding)
         }
 
@@ -64,12 +65,12 @@ internal fun HomeRoute(
         }
 
         is UiState.Success -> {
-            val images = (uiState as UiState.Success<List<ImageItem>>).data
+            val images = (uiState as UiState.Success<List<PostContentModel>>).data
             HomeScreen(
                 padding = padding,
                 mainFeedImages = images,
-                onFollowClick = viewModel::followUser,
-                onSelectReaction = viewModel::selectReaction,
+//                onFollowClick = viewModel::followUser,
+//                onSelectReaction = viewModel::selectReaction,
                 onClickImage = onClickImage
             )
         }
@@ -81,9 +82,9 @@ internal fun HomeRoute(
 @Composable
 private fun HomeScreen(
     padding: PaddingValues = PaddingValues(),
-    mainFeedImages: List<ImageItem> = emptyList(),
-    onFollowClick: (Long) -> Unit = {},
-    onSelectReaction: (Long, Reactions) -> Unit = { _, _ -> },
+    mainFeedImages: List<PostContentModel> = emptyList(),
+    onFollowClick: (String) -> Unit = {},
+    onSelectReaction: (String, Reactions) -> Unit = { _, _ -> },
     onClickImage: () -> Unit = {}
 ) {
     val pagerState = rememberPagerState(pageCount = { mainFeedImages.size })

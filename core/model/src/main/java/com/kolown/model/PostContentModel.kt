@@ -7,6 +7,6 @@ data class PostContentModel(
     val description: String,
     val tags: List<String>,
     val isFollower: Boolean,
-    val reactions: List<Reactions>,
-    val myReaction: Reactions? = null
+    val reactions: List<ReactionModel>,
+    val myReaction: ReactionModel? = null
 )
