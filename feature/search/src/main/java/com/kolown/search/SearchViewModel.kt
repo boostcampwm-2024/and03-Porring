@@ -36,7 +36,6 @@ class SearchViewModel @Inject constructor(
         .filter { it.isNotBlank() }
         .distinctUntilChanged() //같은거 반응 안함.(근데 stateflow라 어차피 반응 안할듯?)
         .flatMapLatest {
-            Log.e("test","query: $it")
             tagRepository.getTagePageFlow(it)
         }.cachedIn(viewModelScope)
 

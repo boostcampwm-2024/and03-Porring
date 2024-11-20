@@ -444,13 +444,16 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
+      static String com_kolown_my_MyViewModel = "com.kolown.my.MyViewModel";
+
       static String com_kolown_search_SearchViewModel = "com.kolown.search.SearchViewModel";
 
       static String com_kolown_camera_screen_CameraScreenViewModel = "com.kolown.camera.screen.CameraScreenViewModel";
 
       static String com_kolown_app_test_camera_MainViewModel = "com.kolown.app_test_camera.MainViewModel";
 
-      static String com_kolown_my_MyViewModel = "com.kolown.my.MyViewModel";
+      @KeepFieldType
+      MyViewModel com_kolown_my_MyViewModel2;
 
       @KeepFieldType
       SearchViewModel com_kolown_search_SearchViewModel2;
@@ -460,9 +463,6 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
 
       @KeepFieldType
       MainViewModel com_kolown_app_test_camera_MainViewModel2;
-
-      @KeepFieldType
-      MyViewModel com_kolown_my_MyViewModel2;
     }
   }
 
@@ -512,22 +512,22 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
+      static String com_kolown_app_test_camera_MainViewModel = "com.kolown.app_test_camera.MainViewModel";
+
       static String com_kolown_search_SearchViewModel = "com.kolown.search.SearchViewModel";
 
       static String com_kolown_camera_screen_CameraScreenViewModel = "com.kolown.camera.screen.CameraScreenViewModel";
 
-      static String com_kolown_app_test_camera_MainViewModel = "com.kolown.app_test_camera.MainViewModel";
-
       static String com_kolown_my_MyViewModel = "com.kolown.my.MyViewModel";
+
+      @KeepFieldType
+      MainViewModel com_kolown_app_test_camera_MainViewModel2;
 
       @KeepFieldType
       SearchViewModel com_kolown_search_SearchViewModel2;
 
       @KeepFieldType
       CameraScreenViewModel com_kolown_camera_screen_CameraScreenViewModel2;
-
-      @KeepFieldType
-      MainViewModel com_kolown_app_test_camera_MainViewModel2;
 
       @KeepFieldType
       MyViewModel com_kolown_my_MyViewModel2;

@@ -42,6 +42,7 @@ navigationCompose = "2.8.3"
 
 minSdk = "24"
 compileSdk = "34"
+uiGraphicsAndroid = "1.7.2"
 
 [libraries]
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCore" }
