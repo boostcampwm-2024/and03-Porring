@@ -2,6 +2,7 @@ package com.kolown.data.repository
 
 import com.kolown.data.datasource.ImageDataSource
 import com.kolown.data.datasource.PostDataSource
+import java.io.IOException
 import javax.inject.Inject
 
 interface PostRepository {
@@ -21,9 +22,13 @@ class PostRepositoryImpl @Inject constructor(
     ): Result<Unit> {
         return runCatching {
             // Image File Upload & get Image Uri
-            val imageUri = imageDataSource.getImageUrl(authorId, fileUri).getOrThrow()
+            val imageUri = imageDataSource.getImageUrl(authorId, fileUri).getOrElse {
+                throw IOException("이미지 업로드 실패")
+            }
             // post Upload to Firestore & get postId
-            val postId = postDataSource.uploadPost(authorId, imageUri, description).getOrThrow()
+            val postId = postDataSource.uploadPost(authorId, imageUri, description).getOrElse {
+                throw IOException("게시물 업로드 실패")
+            }
         }
     }
 
