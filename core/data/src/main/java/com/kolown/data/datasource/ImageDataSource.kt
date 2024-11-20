@@ -9,20 +9,20 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 interface ImageDataSource {
-    suspend fun getImageUrl(authorId: String, fileUri: String): Result<String>
+    suspend fun getImageUrl(authorId: String, fileUri: Uri): Result<String>
 }
 
 class ImageDataSourceImpl : ImageDataSource {
     private val storage by lazy { Firebase.storage }
 
-    override suspend fun getImageUrl(authorId: String, fileUri: String): Result<String> {
+    override suspend fun getImageUrl(authorId: String, fileUri: Uri): Result<String> {
         return uploadImage(authorId.toRefName(), fileUri)
     }
 
-    private suspend fun uploadImage(path: String, uri: String): Result<String> {
+    private suspend fun uploadImage(path: String, uri: Uri): Result<String> {
         return kotlin.runCatching {
             storage.reference.child(path).let { imgRef ->
-                imgRef.putFile(Uri.parse(uri)).await()
+                imgRef.putFile(uri).await()
                 imgRef.downloadUrl.await().toString()
             }
         }
