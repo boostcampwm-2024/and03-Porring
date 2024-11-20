@@ -2,6 +2,7 @@ package com.kolown.upload
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kolown.data.repository.ImageCacheRepository
@@ -35,6 +36,7 @@ class UploadViewModel @Inject constructor(
 
     fun changeCategoryName(index: Int, name: String) {
         val newList = _categoryItems.value.toMutableList()
+
         newList[index] = name
         _categoryItems.value = newList
     }
@@ -48,11 +50,13 @@ class UploadViewModel @Inject constructor(
             var retries = 0
             val maxRetries = 3
             var bitmap: Bitmap? = null
+
             while (retries < maxRetries) {
                 bitmap = repository.decodeSampledBitmapFromUri(Uri.parse(uri))
                 if (bitmap != null) break
                 retries++
             }
+
             bitmap?.let {
                 webPUri.value = repository.saveBitmapToCache(it, Bitmap.CompressFormat.WEBP, 80)
             }
@@ -66,10 +70,10 @@ class UploadViewModel @Inject constructor(
                     fileUri = it,
                     description = description.value,
                     tags = categoryItems.value
-                )
+                ).getOrElse {
+                    Log.d("UploadViewModel", "uploadPost: $it")
+                }
             }
-
         }
     }
-
 }

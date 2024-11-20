@@ -59,7 +59,8 @@ internal fun UploadRoute(
         categoryItems,
         viewModel::addCategory,
         viewModel::removeCategory,
-        viewModel::changeCategoryName
+        viewModel::changeCategoryName,
+        viewModel::uploadPost
     )
 }
 
@@ -72,7 +73,8 @@ internal fun UploadScreen(
     categoryItems: List<String> = emptyList(),
     addCategory: () -> Unit = {},
     removeCategory: (String) -> Unit = {},
-    changeCategoryName: (Int, String) -> Unit = { _, _ -> }
+    changeCategoryName: (Int, String) -> Unit = { _, _ -> },
+    uploadPost: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -97,7 +99,7 @@ internal fun UploadScreen(
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .fillMaxWidth()
                 .height(40.dp),
-            onClick = {},
+            onClick = uploadPost,
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
