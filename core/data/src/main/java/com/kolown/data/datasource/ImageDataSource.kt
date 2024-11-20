@@ -7,12 +7,13 @@ import kotlinx.coroutines.tasks.await
 import java.security.MessageDigest
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
 interface ImageDataSource {
     suspend fun getImageUrl(authorId: String, fileUri: Uri): Result<String>
 }
 
-class ImageDataSourceImpl : ImageDataSource {
+class ImageDataSourceImpl @Inject constructor() : ImageDataSource {
     private val storage by lazy { Firebase.storage }
 
     override suspend fun getImageUrl(authorId: String, fileUri: Uri): Result<String> {

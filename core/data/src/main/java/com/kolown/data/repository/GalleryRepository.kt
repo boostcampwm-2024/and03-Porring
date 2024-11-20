@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.kolown.data.datasource.GalleryDataSource
 import com.kolown.data.datasource.GalleryPagingDataSource
+import com.kolown.data.di.Fake
 import com.kolown.model.Gallery
 import com.kolown.model.GalleryThumbnail
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +19,7 @@ interface GalleryRepository {
 }
 
 class GalleryRepositoryImpl @Inject constructor(
+    @Fake
     private val dataSource: GalleryDataSource,
 ) : GalleryRepository {
     override suspend fun getGalleryThumbnailList(

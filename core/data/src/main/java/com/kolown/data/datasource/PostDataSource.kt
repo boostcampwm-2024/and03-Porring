@@ -5,12 +5,13 @@ import com.google.firebase.ktx.Firebase
 import com.kolown.data.remote.PostDto
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
+import javax.inject.Inject
 
 interface PostDataSource {
     suspend fun uploadPost(authorId: String, imageUri: String, description: String): Result<String>
 }
 
-class PostDataSourceImpl : PostDataSource {
+class PostDataSourceImpl @Inject constructor() : PostDataSource {
     private val postCollection = Firebase.firestore.collection("post")
 
     override suspend fun uploadPost(

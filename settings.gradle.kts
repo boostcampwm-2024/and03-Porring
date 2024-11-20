@@ -23,9 +23,14 @@ dependencyResolutionManagement {
 rootProject.name = "Porring"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":app")
+include(":app-test-camera")
+
 include(":core:model")
 include(":core:data")
 include(":core:domain")
+include(":core:common")
+include(":core:navigation")
+
 include(":feature:main")
 include(":feature:home")
 include(":feature:follower")
@@ -33,8 +38,5 @@ include(":feature:my")
 include(":feature:search")
 include(":feature:camera")
 include(":feature:login")
-include(":core:navigation")
-include(":app-test-camera")
-include(":core:common")
 include(":feature:detail")
 include(":feature:upload")
