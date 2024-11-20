@@ -2,14 +2,13 @@ package com.kolown.data.repository
 
 import android.net.Uri
 import android.util.Log
-import com.kolown.data.datasource.ImageDataSource
-import com.kolown.data.datasource.PostDataSource
-import com.kolown.data.datasource.TagDatasource
+import com.kolown.data.datasource.remote.ImageDataSource
+import com.kolown.data.datasource.remote.PostDataSource
+import com.kolown.data.datasource.remote.TagDatasource
 import com.kolown.model.PostContentModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject

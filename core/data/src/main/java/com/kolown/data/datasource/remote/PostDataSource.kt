@@ -1,4 +1,4 @@
-package com.kolown.data.datasource
+package com.kolown.data.datasource.remote
 
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore

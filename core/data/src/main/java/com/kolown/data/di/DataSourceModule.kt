@@ -2,15 +2,14 @@ package com.kolown.data.di
 
 import com.kolown.data.datasource.GalleryDataSource
 import com.kolown.data.datasource.FakeGalleryDataSource
-import com.kolown.data.datasource.ImageDataSource
-import com.kolown.data.datasource.ImageDataSourceImpl
-import com.kolown.data.datasource.PostDataSource
-import com.kolown.data.datasource.PostDataSourceImpl
-import com.kolown.data.datasource.TagDataSourceImpl
-import com.kolown.data.datasource.TagDatasource
+import com.kolown.data.datasource.remote.ImageDataSource
+import com.kolown.data.datasource.remote.ImageDataSourceImpl
+import com.kolown.data.datasource.remote.PostDataSource
+import com.kolown.data.datasource.remote.PostDataSourceImpl
+import com.kolown.data.datasource.remote.TagDataSourceImpl
+import com.kolown.data.datasource.remote.TagDatasource
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
