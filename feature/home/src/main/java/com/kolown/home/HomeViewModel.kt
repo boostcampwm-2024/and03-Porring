@@ -43,7 +43,7 @@ class HomeViewModel @Inject constructor(
 //        }
 //    }
 //
-//    fun selectReaction(id: Long, reaction: Reactions) {
+    fun selectReaction(postId: String, reaction: Reactions) {
 //        if (_uiState.value is UiState.Success) {
 //            val items = (_uiState.value as UiState.Success).data
 //            _uiState.value = UiState.Success(
@@ -56,7 +56,8 @@ class HomeViewModel @Inject constructor(
 //                }
 //            )
 //        }
-//    }
+
+    }
 
     private fun loadImageItem() {
         viewModelScope.launch {
