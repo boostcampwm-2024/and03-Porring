@@ -30,6 +30,7 @@ include(":core:data")
 include(":core:domain")
 include(":core:common")
 include(":core:navigation")
+include(":core:designsystem")
 
 include(":feature:main")
 include(":feature:home")

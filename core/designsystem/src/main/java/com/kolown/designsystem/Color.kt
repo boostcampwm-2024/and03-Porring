@@ -1,0 +1,16 @@
+package com.kolown.designsystem
+
+import androidx.compose.ui.graphics.Color
+
+val Background = Color(0xFFFFFFFF)
+val BackgroundDark = Color(0xFF020316)
+val Primary = Color(0xFF598AFF)
+val PrimaryDark = Color(0xFF00BBFF)
+val PrimaryUnActive = Color(0xFFB9C2FA)
+val PrimaryContainerDark = Color(0xFF151D37)
+val OutlineVariant = Color(0xFFE2CBFF)
+val Error = Color(0xFFFF568A)
+val Surface = Color(0xFFF8F9FF)
+val Surface2 = Color(0xFFEAEEFF)
+val Gary = Color(0xFF8D8D8D)
+val PrimaryUnActiveDark = Color(0xFF8D8D8D)
