@@ -46,7 +46,7 @@ internal class MainNavigator(
         }
     }
 
-    fun navigateToUpload() = navController.navigateUpload()
+    fun navigateToUpload(imgUri: String) = navController.navigateUpload(imgUri)
     fun navigateToDetail() = navController.navigateToDetail()
 
     @Composable

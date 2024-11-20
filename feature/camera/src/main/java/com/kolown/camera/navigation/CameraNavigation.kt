@@ -13,10 +13,12 @@ fun NavController.navigateCamera(navOptions: NavOptions) {
 }
 
 fun NavGraphBuilder.cameraNavGraph(
+    navigateToUpload: (String) -> Unit = {},
     padding: PaddingValues,
 ) {
     composable<MainMenuRoute.Camera> {
         CameraRoute(
+            navigateToUpload = navigateToUpload,
             padding = padding
         )
     }

@@ -40,6 +40,7 @@ internal fun MainNavHost(
             )
 
             cameraNavGraph(
+                navigateToUpload = { navigator.navigateToUpload(it) },
                 padding = padding
             )
 
