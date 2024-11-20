@@ -85,12 +85,12 @@ internal fun UploadScreen(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxSize(),
-            description,
-            changeDescription,
-            categoryItems,
-            addCategory,
-            removeCategory,
-            changeCategoryName
+            description = description,
+            changeDescription = changeDescription,
+            categoryItems = categoryItems,
+            addCategory = addCategory,
+            removeCategory = removeCategory,
+            changeCategoryName = changeCategoryName
         )
         Button(
             modifier = Modifier
