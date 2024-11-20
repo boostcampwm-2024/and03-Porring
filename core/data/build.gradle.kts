@@ -26,6 +26,8 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -44,13 +46,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-
     //hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
-
-
-
 
     //datastore
     implementation(libs.androidx.datastore.preferences)
@@ -58,5 +56,11 @@ dependencies {
     //paging
     implementation(libs.androidx.paging.runtime)
 
+    // firebase
+    implementation(platform(libs.google.firebase.bom))
+    implementation(libs.google.firebase.firestore)
+    implementation(libs.google.firebase.storage)
+
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }
 
