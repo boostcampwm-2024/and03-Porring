@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kolown.data.repository.ImageCacheRepository
+import com.kolown.data.repository.PostRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UploadViewModel @Inject constructor(
-    private val repository: ImageCacheRepository
+    private val repository: ImageCacheRepository,
+    private val postRepository: PostRepository
 ) : ViewModel() {
     private val _description = MutableStateFlow("")
     val description = _description.asStateFlow()
@@ -21,7 +23,7 @@ class UploadViewModel @Inject constructor(
     private val _categoryItems = MutableStateFlow<List<String>>(emptyList())
     val categoryItems = _categoryItems.asStateFlow()
 
-    val webPUri = MutableStateFlow<Uri?>(null)
+    private val webPUri = MutableStateFlow<Uri?>(null)
 
     fun changeDescription(description: String) {
         _description.value = description
@@ -54,6 +56,19 @@ class UploadViewModel @Inject constructor(
             bitmap?.let {
                 webPUri.value = repository.saveBitmapToCache(it, Bitmap.CompressFormat.WEBP, 80)
             }
+        }
+    }
+
+    fun uploadPost() {
+        viewModelScope.launch {
+            webPUri.value?.let {
+                postRepository.uploadPost(
+                    fileUri = it,
+                    description = description.value,
+                    tags = categoryItems.value
+                )
+            }
+
         }
     }
 
