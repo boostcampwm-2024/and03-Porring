@@ -38,7 +38,12 @@ internal class MainNavigator(
         }
 
         when (menu) {
-            MainMenu.HOME -> navController.navigateHome(navOptions)
+            MainMenu.HOME -> navController.navigateHome(navOptions {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    inclusive = true
+                }
+                launchSingleTop = true
+            })
             MainMenu.SEARCH -> navController.navigateSearch(navOptions)
             MainMenu.CAMERA -> navController.navigateCamera(navOptions)
             MainMenu.FOLLOWER -> navController.navigateFollower(navOptions)
