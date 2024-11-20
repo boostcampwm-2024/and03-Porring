@@ -7,15 +7,16 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 interface TagDatasource {
-    suspend fun uploadTags(tags: List<String>, postId: String)
+    suspend fun uploadPostTags(tagIds: List<String>, postId: String)
+    suspend fun uploadTags(tags: List<String>): Result<List<String>>
 }
 
 class TagDataSourceImpl @Inject constructor() : TagDatasource {
     private val postTagCollection = Firebase.firestore.collection("postTag")
     private val tagCollection = Firebase.firestore.collection("tag")
 
-    override suspend fun uploadTags(tags: List<String>, postId: String) {
-        tags.toTagIds().forEach { tagId ->
+    override suspend fun uploadPostTags(tagIds: List<String>, postId: String) {
+        tagIds.forEach { tagId ->
             val uploadData = mapOf(
                 "postId" to postId,
                 "tagId" to tagId
@@ -30,25 +31,27 @@ class TagDataSourceImpl @Inject constructor() : TagDatasource {
         }
     }
 
-    private suspend fun List<String>.toTagIds(): List<String> {
-        return this.map { tag ->
-            // tag name이 존재하면 그 tag의 id를 반환
-            if (tagCollection.contains("tagName", tag).getOrThrow()) {
-                tagCollection
-                    .whereEqualTo("tagName", tag)
-                    .get()
-                    .await()
-                    .first()
-                    .data["tagId"].toString()
-            } else {
-                // 존재하지 않으면 tag를 추가해서 id 반환
-                tagCollection
-                    .add(mapOf("tagName" to tag))
-                    .await()
-                    .let {
-                        it.update("tagId", "tag-${it.id}")
-                        "tag-${it.id}"
-                    }
+    override suspend fun uploadTags(tags: List<String>): Result<List<String>> {
+        return runCatching {
+            tags.map { tag ->
+                // tag name이 존재하면 그 tag의 id를 반환
+                if (tagCollection.contains("tagName", tag).getOrThrow()) {
+                    tagCollection
+                        .whereEqualTo("tagName", tag)
+                        .get()
+                        .await()
+                        .first()
+                        .data["tagId"].toString()
+                } else {
+                    // 존재하지 않으면 tag를 추가해서 id 반환
+                    tagCollection
+                        .add(mapOf("tagName" to tag))
+                        .await()
+                        .let {
+                            it.update("tagId", "tag-${it.id}")
+                            "tag-${it.id}"
+                        }
+                }
             }
         }
     }

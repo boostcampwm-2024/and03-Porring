@@ -22,7 +22,6 @@ abstract class RepositoryModule {
     ): GalleryRepository
 
     @Binds
-    @Singleton
     abstract fun providePostRepository(
         postRepository: PostRepositoryImpl
     ): PostRepository

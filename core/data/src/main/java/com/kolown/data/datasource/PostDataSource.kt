@@ -8,7 +8,8 @@ import java.time.LocalDateTime
 import javax.inject.Inject
 
 interface PostDataSource {
-    suspend fun uploadPost(authorId: String, imageUri: String, description: String): Result<String>
+    suspend fun uploadPost(authorId: String, description: String): Result<String>
+    suspend fun updateImageUrl(documentId: String, imageUrl: String)
 }
 
 class PostDataSourceImpl @Inject constructor() : PostDataSource {
@@ -16,13 +17,11 @@ class PostDataSourceImpl @Inject constructor() : PostDataSource {
 
     override suspend fun uploadPost(
         authorId: String,
-        imageUri: String,
         description: String
     ): Result<String> {
         return runCatching {
             val upload = PostDto(
                 authorId = authorId,
-                imageUrl = imageUri,
                 description = description,
                 registerAt = LocalDateTime.now().toString(),
             )
@@ -31,5 +30,9 @@ class PostDataSourceImpl @Inject constructor() : PostDataSource {
                 "post-${documentReference.id}"
             }
         }
+    }
+
+    override suspend fun updateImageUrl(documentId: String, imageUrl: String) {
+        postCollection.document(documentId).update("imageUrl", imageUrl)
     }
 }
