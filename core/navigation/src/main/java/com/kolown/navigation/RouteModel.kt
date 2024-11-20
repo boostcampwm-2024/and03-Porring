@@ -2,7 +2,10 @@ package com.kolown.navigation
 
 import kotlinx.serialization.Serializable
 
-sealed interface Route
+sealed interface Route {
+    @Serializable
+    data class Upload(val imgUri: String): MainMenuRoute
+}
 
 sealed interface MainMenuRoute: Route {
     @Serializable
@@ -19,7 +22,4 @@ sealed interface MainMenuRoute: Route {
 
     @Serializable
     data object My: MainMenuRoute
-
-    @Serializable
-    data object Upload: MainMenuRoute
 }

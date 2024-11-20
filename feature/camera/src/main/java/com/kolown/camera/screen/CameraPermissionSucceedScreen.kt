@@ -1,10 +1,5 @@
 package com.kolown.camera.screen
 
-import android.net.Uri
-import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
@@ -22,6 +17,7 @@ import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,20 +27,31 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kolown.camera.R
 import com.kolown.camera.getImagePickerLauncher
-import com.kolown.camera.screen.component.PreviewViewCompose
 import com.kolown.camera.screen.component.CaptureButton
+import com.kolown.camera.screen.component.PreviewViewCompose
 import com.kolown.camera.takePhoto
 import java.util.concurrent.Executors
 
 @Composable
-fun CameraXCompose(viewModel: CameraScreenViewModel) {
+fun CameraXCompose(
+    viewModel: CameraScreenViewModel,
+    navigateToUpload: (String) -> Unit = {}
+) {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current
     val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
 
-    val imagePickerLauncher= getImagePickerLauncher()
+    val imagePickerLauncher = getImagePickerLauncher()
+
+    val uri = viewModel.uri.collectAsStateWithLifecycle()
+    LaunchedEffect(uri.value) {
+        uri.value?.let {
+            navigateToUpload(it.toString())
+        }
+    }
 
     val cameraController = remember {
         LifecycleCameraController(context).apply {
@@ -106,19 +113,21 @@ fun CameraXCompose(viewModel: CameraScreenViewModel) {
                 }
             }
             IconButton(
-                modifier = Modifier.size(32.dp).align(Alignment.CenterEnd),
+                modifier = Modifier
+                    .size(32.dp)
+                    .align(Alignment.CenterEnd),
 
                 onClick = {
                     imagePickerLauncher.launch {
                         it?.let {
                             viewModel.setUri(it)
-                        }?:run {
+                        } ?: run {
                             //
                         }
 
                     }
 
-            }) {
+                }) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
                     contentDescription = "",
