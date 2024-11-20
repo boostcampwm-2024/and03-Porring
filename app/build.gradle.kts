@@ -36,7 +36,6 @@ android {
             )
             buildConfigField("boolean", "IS_DEBUG", "true")
 
-            applicationIdSuffix = ".dev"
         }
         release {
             isMinifyEnabled = true
@@ -52,6 +51,8 @@ android {
 
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -129,5 +130,6 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.common)
 
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }
 
