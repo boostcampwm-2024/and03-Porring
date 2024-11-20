@@ -25,12 +25,14 @@ import com.kolown.camera.PermissionChecker
 
 @Composable
 internal fun CameraRoute(
+    navigateToUpload: (String) -> Unit = {},
     padding: PaddingValues = PaddingValues(),
 ) {
-    CameraScreen()
+    CameraScreen(navigateToUpload = navigateToUpload)
 }
 @Composable
 fun CameraScreen(
+    navigateToUpload: (String) -> Unit = {},
     viewModel:CameraScreenViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -65,7 +67,7 @@ fun CameraScreen(
     }
 
     if (cameraPermission) {
-        CameraXCompose(viewModel)
+        CameraXCompose(viewModel, navigateToUpload)
     } else {
         CameraPermissionDeniedScreen()
     }
