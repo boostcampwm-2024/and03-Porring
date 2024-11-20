@@ -1,4 +1,4 @@
-package com.kolown.data.datasource
+package com.kolown.data.datasource.remote
 
 import android.net.Uri
 import com.google.firebase.ktx.Firebase

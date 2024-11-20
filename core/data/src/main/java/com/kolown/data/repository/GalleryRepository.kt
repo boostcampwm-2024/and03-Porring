@@ -4,7 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.kolown.data.datasource.GalleryDataSource
-import com.kolown.data.datasource.GalleryPagingDataSource
+import com.kolown.data.datasource.paging.GalleryPagingDataSource
 import com.kolown.data.di.Fake
 import com.kolown.model.Gallery
 import com.kolown.model.GalleryThumbnail
