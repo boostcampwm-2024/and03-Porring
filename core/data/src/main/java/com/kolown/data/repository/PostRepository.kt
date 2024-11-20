@@ -5,6 +5,7 @@ import android.util.Log
 import com.kolown.data.datasource.ImageDataSource
 import com.kolown.data.datasource.PostDataSource
 import com.kolown.data.datasource.TagDatasource
+import com.kolown.model.PostContentModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -15,6 +16,7 @@ import javax.inject.Inject
 
 interface PostRepository {
     suspend fun uploadPost(fileUri: Uri, description: String, tags: List<String>): Result<Unit>
+    suspend fun getRandomPostList(count: Int): Result<List<PostContentModel>>
 }
 
 class PostRepositoryImpl @Inject constructor(
@@ -59,6 +61,13 @@ class PostRepositoryImpl @Inject constructor(
                 }
             }
         }
+    }
+
+    override suspend fun getRandomPostList(count: Int): Result<List<PostContentModel>> {
+        val posts = postDataSource.getRandomPost(authorId, count).getOrElse {
+            throw IOException("게시물 불러오기 실패")
+        }
+        return Result.failure(IOException("게시물 불러오기 실패"))
     }
 
     private suspend fun updateImageUrl(postId: String, fileUri: Uri) {
