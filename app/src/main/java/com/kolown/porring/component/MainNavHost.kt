@@ -13,7 +13,9 @@ import com.kolown.porring.MainNavigator
 import com.kolown.camera.navigation.cameraNavGraph
 import com.kolown.follower.navigation.followerNavGraph
 import com.kolown.home.navigation.homeNavGraph
+import com.kolown.home.navigation.navigateHome
 import com.kolown.my.navigation.myNavGraph
+import com.kolown.porring.MainMenu
 import com.kolown.search.navigation.searchNavGraph
 import com.kolown.upload.navigation.uploadNavGraph
 
@@ -40,7 +42,7 @@ internal fun MainNavHost(
             )
 
             cameraNavGraph(
-                navigateToUpload = { navigator.navigateToUpload(it) },
+                navigateToUpload = { imgUri -> navigator.navigateToUpload(imgUri) },
                 padding = padding
             )
 
@@ -57,6 +59,7 @@ internal fun MainNavHost(
             )
 
             uploadNavGraph(
+                navigateToHome = { navigator.navigate(MainMenu.HOME) },
                 padding = padding
             )
         }

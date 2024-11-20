@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kolown.data.repository.ImageCacheRepository
 import com.kolown.data.repository.PostRepository
+import com.kolown.model.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +24,9 @@ class UploadViewModel @Inject constructor(
 
     private val _categoryItems = MutableStateFlow<List<String>>(emptyList())
     val categoryItems = _categoryItems.asStateFlow()
+
+    private val _uiState = MutableStateFlow<UiState<Boolean>>(UiState.Loading)
+    val uiState = _uiState.asStateFlow()
 
     private val webPUri = MutableStateFlow<Uri?>(null)
 
@@ -65,12 +69,16 @@ class UploadViewModel @Inject constructor(
 
     fun uploadPost() {
         viewModelScope.launch {
+            _uiState.value = UiState.Loading
             webPUri.value?.let {
                 postRepository.uploadPost(
                     fileUri = it,
                     description = description.value,
                     tags = categoryItems.value
-                ).getOrElse {
+                ).onSuccess {
+                    _uiState.value = UiState.Success(true)
+                }.onFailure { error ->
+                    _uiState.value = UiState.Failure(error)
                     Log.d("UploadViewModel", "uploadPost: $it")
                 }
             }

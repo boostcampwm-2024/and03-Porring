@@ -1,5 +1,6 @@
 package com.kolown.upload
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -30,37 +31,50 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.kolown.model.UiState
 import com.kolown.upload.component.CategoryGroup
 
 @Composable
 internal fun UploadRoute(
     viewModel: UploadViewModel = hiltViewModel(),
     imgUri: String,
-    padding: PaddingValues
+    padding: PaddingValues,
+    navigateToHome: () -> Unit
 ) {
     val description by viewModel.description.collectAsStateWithLifecycle()
     val categoryItems by viewModel.categoryItems.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(uiState) {
+        when(uiState) {
+            is UiState.Failure -> Toast.makeText(context, "업로드 실패", Toast.LENGTH_SHORT).show()
+            UiState.Loading -> Toast.makeText(context, "업로드 중입니다.", Toast.LENGTH_SHORT).show()
+            is UiState.Success -> navigateToHome()
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.getUriWebP(imgUri)
     }
 
     UploadScreen(
-        imgUri,
+        imgUri = imgUri,
         padding = padding,
-        description,
-        viewModel::changeDescription,
-        categoryItems,
-        viewModel::addCategory,
-        viewModel::removeCategory,
-        viewModel::changeCategoryName,
-        viewModel::uploadPost
+        description = description,
+        changeDescription = viewModel::changeDescription,
+        categoryItems = categoryItems,
+        addCategory = viewModel::addCategory,
+        removeCategory = viewModel::removeCategory,
+        changeCategoryName = viewModel::changeCategoryName,
+        uploadPost = viewModel::uploadPost,
     )
 }
 
@@ -74,7 +88,7 @@ internal fun UploadScreen(
     addCategory: () -> Unit = {},
     removeCategory: (String) -> Unit = {},
     changeCategoryName: (Int, String) -> Unit = { _, _ -> },
-    uploadPost: () -> Unit = {}
+    uploadPost: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier

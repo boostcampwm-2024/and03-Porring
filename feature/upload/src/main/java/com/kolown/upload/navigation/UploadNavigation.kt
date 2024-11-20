@@ -15,13 +15,16 @@ fun NavController.navigateUpload(imgUri: String, navOptions: NavOptions? = null)
 }
 
 fun NavGraphBuilder.uploadNavGraph(
+    navigateToHome: () -> Unit,
     padding: PaddingValues
 ) {
     composable<Route.Upload> { navBackStackEntry ->
         val imgUri = navBackStackEntry.toRoute<Route.Upload>().imgUri
+
         UploadRoute(
             imgUri = imgUri,
-            padding = padding
+            padding = padding,
+            navigateToHome = navigateToHome
         )
     }
 }
