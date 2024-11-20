@@ -1,6 +1,7 @@
 package com.kolown.upload
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -52,6 +53,10 @@ internal fun UploadRoute(
     val categoryItems by viewModel.categoryItems.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    BackHandler {
+        navigateToHome()
+    }
 
     LaunchedEffect(uiState) {
         when(uiState) {
