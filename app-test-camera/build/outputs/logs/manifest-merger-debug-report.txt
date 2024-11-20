@@ -6,6 +6,7 @@ INJECTED from /Users/moonhwihan/2024BoostCampMembership/GroupProject/app-test-ca
 INJECTED from /Users/moonhwihan/2024BoostCampMembership/GroupProject/app-test-camera/src/main/AndroidManifest.xml:2:1-30:12
 MERGED from [:feature:camera] /Users/moonhwihan/2024BoostCampMembership/GroupProject/feature/camera/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:2:1-7:12
 MERGED from [:feature:my] /Users/moonhwihan/2024BoostCampMembership/GroupProject/feature/my/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:2:1-7:12
+MERGED from [:feature:search] /Users/moonhwihan/2024BoostCampMembership/GroupProject/feature/search/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:2:1-7:12
 MERGED from [:core:domain] /Users/moonhwihan/2024BoostCampMembership/GroupProject/core/domain/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:2:1-7:12
 MERGED from [:core:data] /Users/moonhwihan/2024BoostCampMembership/GroupProject/core/data/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.hilt:hilt-navigation-compose:1.2.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/ce252d72ea1aeb12c1b0e8029dd0ccf3/transformed/hilt-navigation-compose-1.2.0/AndroidManifest.xml:2:1-7:12
@@ -210,6 +211,8 @@ MERGED from [:feature:camera] /Users/moonhwihan/2024BoostCampMembership/GroupPro
 MERGED from [:feature:camera] /Users/moonhwihan/2024BoostCampMembership/GroupProject/feature/camera/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
 MERGED from [:feature:my] /Users/moonhwihan/2024BoostCampMembership/GroupProject/feature/my/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
 MERGED from [:feature:my] /Users/moonhwihan/2024BoostCampMembership/GroupProject/feature/my/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
+MERGED from [:feature:search] /Users/moonhwihan/2024BoostCampMembership/GroupProject/feature/search/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
+MERGED from [:feature:search] /Users/moonhwihan/2024BoostCampMembership/GroupProject/feature/search/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
 MERGED from [:core:domain] /Users/moonhwihan/2024BoostCampMembership/GroupProject/core/domain/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
 MERGED from [:core:domain] /Users/moonhwihan/2024BoostCampMembership/GroupProject/core/domain/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
 MERGED from [:core:data] /Users/moonhwihan/2024BoostCampMembership/GroupProject/core/data/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44

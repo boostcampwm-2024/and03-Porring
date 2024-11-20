@@ -1,5 +1,6 @@
 package com.kolown.search
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +12,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
 
 @Composable
 internal fun SearchRoute(
@@ -33,36 +37,47 @@ internal fun SearchRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SearchScreen(
+fun SearchScreen(
     padding: PaddingValues = PaddingValues(),
-    viewModel: SearchViewModel= hiltViewModel(),
+    viewModel: SearchViewModel = hiltViewModel(),
 ) {
 
-    val searchText by viewModel.searchText.collectAsStateWithLifecycle("")
+    val searchResultTag = viewModel.searchResult.collectAsLazyPagingItems()
+    val searchText by viewModel.searchQuery.collectAsStateWithLifecycle()
+
     var isSearchingActivated by remember { mutableStateOf(false) }
+//    LaunchedEffect(searchResultTag){
+//        searchResultTag.refresh()
+//    }
 
     SearchBar(
-        query = searchText,//text showed on SearchBar
-        onQueryChange = {
-
-        }, //update the value of searchText
-        onSearch = {},//viewModel::onSearchTextChange, //the callback to be invoked when the input service triggers the ImeAction.Search action
-        active = isSearchingActivated, //whether the user is searching or not
-        onActiveChange = {isSearchingActivated=true}, //the callback to be invoked when this search bar's active state is changed
+        query = searchText,
+        onQueryChange = viewModel::setSearchQuery,
+        onSearch = {},
+        active = isSearchingActivated,
+        onActiveChange = {
+            isSearchingActivated = true
+        }, //the callback to be invoked when this search bar's active state is changed
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        LazyColumn {
-            items(countriesList) { country ->
-                Text(
-                    text = country,
-                    modifier = Modifier.padding(
-                        start = 8.dp,
-                        top = 4.dp,
-                        end = 8.dp,
-                        bottom = 4.dp)
-                )
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            Log.e("test","search Result tag: ${searchResultTag.itemCount}")
+            items(searchResultTag.itemCount) { index ->
+                searchResultTag[index]?.let {
+                    Log.e("test","search result: ${it.name}")
+                    Text(
+                        text = it.name,
+                        modifier = Modifier.padding(
+                            start = 8.dp,
+                            top = 4.dp,
+                            end = 8.dp,
+                            bottom = 4.dp
+                        )
+                    )
+                }
+
             }
         }
     }
