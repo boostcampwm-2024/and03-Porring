@@ -4,12 +4,13 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
 interface TagDatasource {
     suspend fun uploadTags(tags: List<String>, postId: String)
 }
 
-class TagDataSourceImpl : TagDatasource {
+class TagDataSourceImpl @Inject constructor() : TagDatasource {
     private val postTagCollection = Firebase.firestore.collection("postTag")
     private val tagCollection = Firebase.firestore.collection("tag")
 

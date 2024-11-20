@@ -4,6 +4,7 @@ import com.kolown.data.mock.MockDataProvider
 import com.kolown.model.Gallery
 import com.kolown.model.GalleryThumbnail
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 import kotlin.random.Random
 
 interface GalleryDataSource {
@@ -11,7 +12,7 @@ interface GalleryDataSource {
     suspend fun getGallery(id: Long): Result<Gallery>
 }
 
-class FakeGalleryDataSource : GalleryDataSource {
+class FakeGalleryDataSource @Inject constructor() : GalleryDataSource {
     private var test = 0
     override suspend fun getGallery(id: Long): Result<Gallery> {
         delay(500)
