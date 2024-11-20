@@ -13,7 +13,7 @@ import javax.inject.Inject
 interface PostDataSource {
     suspend fun uploadPost(authorId: String, description: String): Result<String>
     suspend fun updateImageUrl(documentId: String, imageUrl: String)
-    suspend fun getRandomPost(uid: String, count: Int): Result<List<Any>>
+    suspend fun getRandomPost(uid: String, count: Int): Result<List<PostModel>>
 }
 
 class PostDataSourceImpl @Inject constructor() : PostDataSource {

@@ -44,15 +44,16 @@ import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import com.kolown.model.ImageItem
+import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 
 @Composable
 internal fun RandomImageList(
     pagerState: PagerState = rememberPagerState(pageCount = { 10 }),
-    imageItems: List<ImageItem> = emptyList(),
+    imageItems: List<PostContentModel> = emptyList(),
     isReactionDialogVisible: Boolean = false,
-    onFollowClick: (Long) -> Unit = {},
-    onSelectReaction: (Long, Reactions) -> Unit = { _, _ -> },
+    onFollowClick: (String) -> Unit = {},
+    onSelectReaction: (String, Reactions) -> Unit = { _, _ -> },
     onChangeReactionDialogVisibility: () -> Unit = {},
     onClickImage: () -> Unit = {}
 ) {
@@ -64,7 +65,7 @@ internal fun RandomImageList(
             imageItems[page],
             isReactionDialogVisible,
             onFollowClick,
-            { reaction -> onSelectReaction(imageItems[page].id, reaction) },
+            { reaction -> onSelectReaction(imageItems[page].authorId, reaction) },
             onChangeReactionDialogVisibility,
             onClickImage
         )
@@ -73,15 +74,15 @@ internal fun RandomImageList(
 
 @Composable
 private fun ImageCard(
-    imageItem: ImageItem,
+    imageItem: PostContentModel,
     isReactionDialogVisible: Boolean,
-    onFollowClick: (Long) -> Unit,
+    onFollowClick: (String) -> Unit,
     onSelectReaction: (Reactions) -> Unit,
     onChangeReactionDialogVisibility: () -> Unit,
     onClickImage: () -> Unit
 ) {
     val likedImageVector =
-        if (imageItem.reactions == null) Icons.Outlined.FavoriteBorder else Icons.Outlined.Favorite
+        if (imageItem.myReaction == null) Icons.Outlined.FavoriteBorder else Icons.Outlined.Favorite
 
     Column {
         Box(
@@ -97,7 +98,7 @@ private fun ImageCard(
             )
             ReactionGroup(
                 modifier = Modifier.align(Alignment.TopEnd),
-                reactions = imageItem.favoriteList
+                reactions = imageItem.reactions.mapNotNull { it.reaction }
             )
             IconButtonGroup(
                 modifier = Modifier
@@ -137,8 +138,8 @@ private fun ImageCard(
 @Composable
 private fun IconButtonGroup(
     modifier: Modifier,
-    imageItem: ImageItem,
-    onFollowClick: (Long) -> Unit
+    imageItem: PostContentModel,
+    onFollowClick: (String) -> Unit
 ) {
     val whiteModifier = Modifier
         .clip(CircleShape)
@@ -151,9 +152,9 @@ private fun IconButtonGroup(
         CustomIconButton(
             whiteModifier,
             IconFollow,
-            imageItem.isFollowed
+            imageItem.isFollower
         ) {
-            onFollowClick(imageItem.id)
+//            onFollowClick(imageItem.authorId)
         }
         CustomIconButton(
             whiteModifier,
