@@ -25,19 +25,16 @@ abstract class DataSourceModule {
         galleryDataSource: FakeGalleryDataSource
     ): GalleryDataSource
 
-    @Singleton
     @Binds
     abstract fun provideImageDataSource(
         imageDataSource: ImageDataSourceImpl
     ): ImageDataSource
 
-    @Singleton
     @Binds
     abstract fun providePostDataSource(
         postDataSource: PostDataSourceImpl
     ): PostDataSource
 
-    @Singleton
     @Binds
     abstract fun provideTagDataSource(
         tagDataSource: TagDataSourceImpl

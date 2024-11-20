@@ -77,9 +77,10 @@ class UploadViewModel @Inject constructor(
                     tags = categoryItems.value
                 ).onSuccess {
                     _uiState.value = UiState.Success(true)
+                    Log.w("UploadTime", "uploadPost success")
                 }.onFailure { error ->
                     _uiState.value = UiState.Failure(error)
-                    Log.d("UploadViewModel", "uploadPost: $it")
+                    Log.w("UploadTime", "uploadPost failure : $error")
                 }
             }
         }
