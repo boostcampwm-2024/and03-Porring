@@ -1,6 +1,6 @@
 package com.kolown.data.remote
 
-import com.kolown.data.randomValue
+import com.kolown.data.Util.randomValue
 import com.kolown.model.PostModel
 
 data class PostDto(
