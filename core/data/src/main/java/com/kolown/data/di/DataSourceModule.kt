@@ -8,8 +8,8 @@ import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.data.datasource.remote.PostDataSourceImpl
 import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.ReactionDataSourceImpl
-import com.kolown.data.datasource.remote.TagDataSourceImpl
 import com.kolown.data.datasource.remote.TagDataSource
+import com.kolown.data.datasource.remote.TagDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

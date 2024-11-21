@@ -90,7 +90,7 @@ private fun RowScope.MainBottomBarItem(
         Icon(
             imageVector = ImageVector.vectorResource(menu.iconResId),
             contentDescription = menu.contentDescription,
-            tint = if (selected) Color.Blue else Color.DarkGray,
+            tint = if (selected || menu == MainMenu.CAMERA) Color(0xFF598AFF) else Color(0XFFB9C2FA),
             modifier = Modifier.size(
                 if (menu == MainMenu.CAMERA) 48.dp else 24.dp
             )
@@ -99,7 +99,7 @@ private fun RowScope.MainBottomBarItem(
         if (menu != MainMenu.CAMERA) {
             Text(
                 text = menu.contentDescription,
-                color = if (selected) Color.Blue else Color.DarkGray,
+                color = if (selected) Color(0xFF598AFF) else Color(0XFFB9C2FA),
                 style = MaterialTheme.typography.labelMedium
             )
         }

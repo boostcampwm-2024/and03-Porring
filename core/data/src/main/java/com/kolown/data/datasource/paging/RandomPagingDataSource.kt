@@ -5,7 +5,6 @@ import androidx.paging.PagingState
 import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.TagDataSource
-import com.kolown.data.randomValue
 import com.kolown.model.PostContentModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope

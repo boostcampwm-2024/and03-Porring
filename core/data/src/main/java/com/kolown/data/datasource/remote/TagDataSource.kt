@@ -4,17 +4,18 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.kolown.data.remote.TagDto
-import com.kolown.data.remote.toTagModelimport com.kolown.model.TagModel
+import com.kolown.data.remote.toTagModel
+import com.kolown.model.TagModel
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-interface TagDatasource {
+interface TagDataSource {
     suspend fun uploadPostTags(tagIds: List<String>, postId: String)
     suspend fun uploadTags(tags: List<String>): Result<List<String>>
     suspend fun getPostTag(postId: String): Result<List<TagModel>>
 }
 
-class TagDataSourceImpl @Inject constructor() : TagDatasource {
+class TagDataSourceImpl @Inject constructor() : TagDataSource {
     private val postTagCollection = Firebase.firestore.collection("postTag")
     private val tagCollection = Firebase.firestore.collection("tag")
 
