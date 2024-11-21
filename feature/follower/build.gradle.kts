@@ -45,4 +45,6 @@ dependencies {
     implementation(libs.bundles.android.compose)
 
     implementation(projects.core.navigation)
+
+    implementation(libs.coil.compose)
 }
