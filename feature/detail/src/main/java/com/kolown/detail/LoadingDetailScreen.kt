@@ -75,7 +75,6 @@ fun LoadingDetailScreen() {
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LoadingDetailContent(
     padding: PaddingValues,

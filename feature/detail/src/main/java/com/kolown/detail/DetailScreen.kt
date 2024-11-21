@@ -101,15 +101,17 @@ internal fun DetailRoute(
             val pagerState = rememberPagerState(
                 initialPage = 0,
                 pageCount = {
-                    pagingItems.itemCount
+                    pagingItems.itemCount + 1
                 }
             )
             DetailPager(
+                firstItem = detailViewModel.getPagingItem(),
                 padding = padding,
                 items = pagingItems,
                 pagerState = pagerState
             )
         }
+
         is UiState.Failure -> {}
     }
 }
@@ -117,6 +119,7 @@ internal fun DetailRoute(
 
 @Composable
 fun DetailPager(
+    firstItem: PostContentModel,
     padding: PaddingValues,
     items: LazyPagingItems<PostContentModel>,
     pagerState: PagerState
@@ -129,9 +132,17 @@ fun DetailPager(
         contentPadding = padding
     ) { page ->
         // Our page content
-        if (page < items.itemCount) {
-            // 정상 상태일 때
-            items[page]?.let {
+        // 정상 상태일 때
+        if (page == 0) {
+            DetailScreen(
+                imageItem = firstItem,
+                page = page,
+                onDoubleTab = {
+                    isScrollEnabled.value = it
+                }
+            )
+        } else {
+            items[page-1]?.let {
                 DetailScreen(
                     imageItem = it,
                     page = page,
@@ -140,8 +151,8 @@ fun DetailPager(
                     }
                 )
             }
-            //에러 났을 때(ex.Network Error)
-        } else LoadingDetailScreen()
+        }
+        //에러 났을 때(ex.Network Error)
     }
 }
 
