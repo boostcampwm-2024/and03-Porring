@@ -7,6 +7,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.kolown.home.HomeRoute
+import com.kolown.model.PostContentModel
 import com.kolown.navigation.MainMenuRoute
 
 fun NavController.navigateHome(navOptions: NavOptions) {
@@ -15,7 +16,7 @@ fun NavController.navigateHome(navOptions: NavOptions) {
 
 fun NavGraphBuilder.homeNavGraph(
     padding: PaddingValues,
-    onClickImage: () -> Unit
+    onClickImage: (PostContentModel) -> Unit
 ) {
     composable<MainMenuRoute.Home> {
         HomeRoute(

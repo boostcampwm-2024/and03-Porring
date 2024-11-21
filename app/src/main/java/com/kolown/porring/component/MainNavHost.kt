@@ -1,5 +1,7 @@
 package com.kolown.porring.component
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,6 +21,7 @@ import com.kolown.porring.MainMenu
 import com.kolown.search.navigation.searchNavGraph
 import com.kolown.upload.navigation.uploadNavGraph
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 internal fun MainNavHost(
     modifier: Modifier = Modifier,
@@ -34,7 +37,9 @@ internal fun MainNavHost(
         ) {
             homeNavGraph(
                 padding = padding,
-                onClickImage = { navigator.navigateToDetail() }
+                onClickImage = {
+                    postContentModel -> navigator.navigateToDetail(postContentModel)
+                }
             )
 
             searchNavGraph(

@@ -1,13 +1,12 @@
 package com.kolown.navigation
 
+import com.kolown.model.PostContentModel
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 sealed interface Route {
     @Serializable
     data class Upload(val imgUri: String): MainMenuRoute
-//
-//    @Serializable
-//    data class Detail(val postContent : PostContentModel) : Route
 }
 
 sealed interface MainMenuRoute: Route {
@@ -25,4 +24,10 @@ sealed interface MainMenuRoute: Route {
 
     @Serializable
     data object My: MainMenuRoute
+}
+
+
+sealed interface AppRoute: Route {
+    @Serializable
+    data class Detail(val postContentModel : PostContentModel) : AppRoute
 }
