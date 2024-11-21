@@ -2,6 +2,7 @@ package com.kolown.data.datasource
 
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.kolown.data.remote.UserDto
 import javax.inject.Inject
 
 interface UserDataSource {

@@ -5,6 +5,7 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.kolown.data.remote.UserDto
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Named
@@ -39,8 +40,3 @@ class AuthDataSourceImpl @Inject constructor() : AuthDataSource {
         return auth.currentUser != null
     }
 }
-
-data class UserDto(
-    val userId: String = "",
-    val email: String = "",
-)
