@@ -24,7 +24,6 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     @Fake
     private val tagRepository: TagRepository,
-    @Fake
     private val postRepository: PostRepository
 
 ) : ViewModel() {
