@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="string_use_after_login">로그인 후 서비스 이용이 가능합니다</string>
+    <string name="string_move_to_login">로그인 화면으로 이동</string>
+</resources>
