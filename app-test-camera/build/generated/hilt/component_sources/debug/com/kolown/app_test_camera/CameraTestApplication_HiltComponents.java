@@ -4,7 +4,9 @@ import com.kolown.app_test_camera.di.AppDataModule;
 import com.kolown.app_test_camera.di.ImageCacheModule;
 import com.kolown.camera.screen.CameraScreenViewModel_HiltModules;
 import com.kolown.data.di.DataSourceModule;
+import com.kolown.data.di.FirebaseModule;
 import com.kolown.data.di.RepositoryModule;
+import com.kolown.data.di.RepositoryModuleProvides;
 import com.kolown.my.MyViewModel_HiltModules;
 import com.kolown.search.SearchViewModel_HiltModules;
 import dagger.Binds;
@@ -127,9 +129,11 @@ public final class CameraTestApplication_HiltComponents {
           ActivityRetainedCBuilderModule.class,
           ServiceCBuilderModule.class,
           DataSourceModule.class,
+          FirebaseModule.class,
           HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,
           ImageCacheModule.class,
-          RepositoryModule.class
+          RepositoryModule.class,
+          RepositoryModuleProvides.class
       }
   )
   @Singleton

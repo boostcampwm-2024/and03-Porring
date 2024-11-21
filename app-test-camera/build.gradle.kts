@@ -30,6 +30,8 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -67,4 +69,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(projects.feature.my)
     implementation(projects.feature.search)
+
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+
 }

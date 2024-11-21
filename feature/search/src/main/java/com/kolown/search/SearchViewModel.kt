@@ -57,7 +57,7 @@ class SearchViewModel @Inject constructor(
         it != null
     }.flatMapLatest { tag ->
         tag?.let {
-            postRepository.getPostPageFlow(it)
+            postRepository.getRandomDetailPostList()
         } ?: run {
             flow {}
         }

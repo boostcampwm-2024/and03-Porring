@@ -12,6 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyViewModel @Inject constructor(
+    @Fake
     private val galleryRepository: GalleryRepository
 ) : ViewModel() {
     val galleryFlow = galleryRepository.getGalleryThumbnailPagingFlow(1).cachedIn(viewModelScope)

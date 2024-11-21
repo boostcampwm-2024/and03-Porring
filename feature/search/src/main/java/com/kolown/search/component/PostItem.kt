@@ -11,9 +11,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.kolown.model.Post
+import com.kolown.model.PostContentModel
 
 @Composable
-fun PostItem(post: Post) {
+fun PostItem(post: PostContentModel) {
     AsyncImage(
         modifier = Modifier
             .fillMaxWidth()
