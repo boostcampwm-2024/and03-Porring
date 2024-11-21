@@ -13,27 +13,27 @@ internal enum class MainMenu(
 ) {
     HOME(
         iconResId = R.drawable.ic_home_24dp,
-        contentDescription = "홈",
+        contentDescription = "Home",
         route = MainMenuRoute.Home,
     ),
     SEARCH(
         iconResId = R.drawable.ic_search_24dp,
-        contentDescription = "검색",
+        contentDescription = "Search",
         route = MainMenuRoute.Search,
     ),
     CAMERA(
         iconResId = R.drawable.ic_add_circle_48dp,
-        contentDescription = "촬영",
+        contentDescription = "Camera",
         route = MainMenuRoute.Camera,
     ),
     FOLLOWER(
         iconResId = R.drawable.ic_follower_24dp,
-        contentDescription = "팔로우",
+        contentDescription = "Follow",
         route = MainMenuRoute.Follower,
     ),
     MY(
         iconResId = R.drawable.ic_my_24dp,
-        contentDescription = "마이",
+        contentDescription = "My",
         route = MainMenuRoute.My,
     );
 

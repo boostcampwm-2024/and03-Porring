@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import com.kolown.detail.navigation.detailNavGraph
 import com.kolown.porring.MainNavigator
@@ -29,7 +30,7 @@ internal fun MainNavHost(
     padding: PaddingValues,
 ) {
     Box(
-        modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceDim)
+        modifier = modifier.fillMaxSize().background(Color.White)
     ) {
         NavHost(
             navController = navigator.navController,
