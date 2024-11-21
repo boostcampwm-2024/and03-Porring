@@ -42,7 +42,7 @@ import com.kolown.model.UiState
 internal fun HomeRoute(
     padding: PaddingValues = PaddingValues(),
     viewModel: HomeViewModel = hiltViewModel(),
-    onClickImage: () -> Unit = {}
+    onClickImage: (PostContentModel) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -85,7 +85,7 @@ private fun HomeScreen(
     mainFeedImages: List<PostContentModel> = emptyList(),
     onFollowClick: (String) -> Unit = {},
     onSelectReaction: (String, Reactions) -> Unit = { _, _ -> },
-    onClickImage: () -> Unit = {}
+    onClickImage: (PostContentModel) -> Unit = {}
 ) {
     val pagerState = rememberPagerState(pageCount = { mainFeedImages.size })
     var isReactionDialogVisible by remember { mutableStateOf(false) }

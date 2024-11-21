@@ -13,6 +13,7 @@ import com.kolown.camera.navigation.navigateCamera
 import com.kolown.detail.navigation.navigateToDetail
 import com.kolown.follower.navigation.navigateFollower
 import com.kolown.home.navigation.navigateHome
+import com.kolown.model.PostContentModel
 import com.kolown.my.navigation.navigateMy
 import com.kolown.search.navigation.navigateSearch
 import com.kolown.upload.navigation.navigateUpload
@@ -52,7 +53,7 @@ internal class MainNavigator(
     }
 
     fun navigateToUpload(imgUri: String) = navController.navigateUpload(imgUri)
-    fun navigateToDetail() = navController.navigateToDetail()
+    fun navigateToDetail(postContentModel : PostContentModel) = navController.navigateToDetail(postContentModel)
 
     @Composable
     fun isShowBottomBar() = MainMenu.contains {

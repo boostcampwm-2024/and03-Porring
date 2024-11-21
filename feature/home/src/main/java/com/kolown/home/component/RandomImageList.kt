@@ -55,7 +55,7 @@ internal fun RandomImageList(
     onFollowClick: (String) -> Unit = {},
     onSelectReaction: (String, Reactions) -> Unit = { _, _ -> },
     onChangeReactionDialogVisibility: () -> Unit = {},
-    onClickImage: () -> Unit = {}
+    onClickImage: (PostContentModel) -> Unit = {}
 ) {
     HorizontalPager(
         modifier = Modifier.padding(top = 32.dp),
@@ -79,7 +79,7 @@ private fun ImageCard(
     onFollowClick: (String) -> Unit,
     onSelectReaction: (Reactions) -> Unit,
     onChangeReactionDialogVisibility: () -> Unit,
-    onClickImage: () -> Unit
+    onClickImage: (PostContentModel) -> Unit
 ) {
     val likedImageVector =
         if (imageItem.myReaction == null) Icons.Outlined.FavoriteBorder else Icons.Outlined.Favorite
@@ -94,7 +94,7 @@ private fun ImageCard(
         ) {
             RandomImage(
                 imageItem.imageUrl,
-                onClickImage
+                onClickImage = {onClickImage(imageItem)}
             )
             ReactionGroup(
                 modifier = Modifier.align(Alignment.TopEnd),
