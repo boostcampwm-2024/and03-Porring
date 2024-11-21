@@ -4,6 +4,8 @@ import com.kolown.data.datasource.AuthDataSource
 import com.kolown.data.datasource.AuthDataSourceImpl
 import com.kolown.data.datasource.FakeGalleryDataSource
 import com.kolown.data.datasource.GalleryDataSource
+import com.kolown.data.datasource.UserDataSource
+import com.kolown.data.datasource.UserDataSourceImpl
 import com.kolown.data.datasource.remote.ImageDataSource
 import com.kolown.data.datasource.remote.ImageDataSourceImpl
 import com.kolown.data.datasource.remote.PostDataSource
@@ -54,4 +56,9 @@ abstract class DataSourceModule {
     abstract fun provideAuthDatsSource(
         authDataSource: AuthDataSourceImpl,
     ): AuthDataSource
+
+    @Binds
+    abstract fun provideUserDataSource(
+        userDataSource: UserDataSourceImpl,
+    ): UserDataSource
 }
