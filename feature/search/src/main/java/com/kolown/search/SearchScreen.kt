@@ -1,6 +1,8 @@
 package com.kolown.search
 
 import android.util.Log
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
@@ -25,11 +32,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.kolown.search.component.PostHeader
+import com.kolown.search.component.PostItem
+import com.kolown.search.component.TagItem
 import com.kolown.search.component.TagSearchBar
 
 @Composable
@@ -49,42 +61,15 @@ fun SearchScreen(
 ) {
 
     val searchResultTag = viewModel.searchResult.collectAsLazyPagingItems()
+    val searchResultPost = viewModel.resultPostList.collectAsLazyPagingItems()
+    val tag by viewModel.tag.collectAsStateWithLifecycle()
     val searchText by viewModel.searchQuery.collectAsStateWithLifecycle()
+    var focusState by remember { mutableStateOf(false) }
 
-    var isSearchingActivated by remember { mutableStateOf(false) }
-//    LaunchedEffect(searchResultTag){
-//        searchResultTag.refresh()
-//    }
-
-//    SearchBar(
-//        query = searchText,
-//        onQueryChange = viewModel::setSearchQuery,
-//        onSearch = {},
-//        active = isSearchingActivated,
-//        onActiveChange = {
-//            isSearchingActivated = true
-//        }, //the callback to be invoked when this search bar's active state is changed
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(16.dp)
-//    ) {
-//        LazyColumn(modifier = Modifier.fillMaxSize()) {
-//            items(searchResultTag.itemCount) { index ->
-//                searchResultTag[index]?.let {
-//                    Text(
-//                        text = it.name,
-//                        modifier = Modifier.padding(
-//                            start = 8.dp,
-//                            top = 4.dp,
-//                            end = 8.dp,
-//                            bottom = 4.dp
-//                        )
-//                    )
-//                }
-//
-//            }
-//        }
-//    }
+    val focusManager = LocalFocusManager.current
+    LaunchedEffect(focusState) {
+        if (!focusState) focusManager.clearFocus()
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -93,17 +78,65 @@ fun SearchScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        TagSearchBar(modifier = Modifier
-            .fillMaxWidth().height(54.dp), text = "무니") {
-
-        }
-        Box(
+        TagSearchBar(
             modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Yellow),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = "SearchScreen", style = MaterialTheme.typography.displayLarge)
+                .fillMaxWidth()
+                .padding(16.dp)
+                .height(54.dp),
+            text = searchText,
+            onValueChange = viewModel::setSearchQuery,
+            onFocusChange = {
+                focusState = it
+            },
+            focusState = focusState,
+            onBackButtonClicked = {
+                focusState = false
+            }
+        )
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyVerticalGrid(
+                modifier = Modifier
+                    .fillMaxSize(),
+                columns = GridCells.Fixed(3),
+                contentPadding = PaddingValues(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                item (span = {GridItemSpan(3)}){
+                    tag?.let {
+                        PostHeader(it)
+                    } ?: run {
+                        Log.e("test", "tag is null")
+                    }
+
+                }
+
+                items(searchResultPost.itemCount) { index ->
+                    searchResultPost[index]?.let { post ->
+                        PostItem(post)
+                    }
+                }
+            }
+
+            LazyColumn(
+                modifier = Modifier
+                    .background(Color.White)
+                    .animateContentSize()
+                    .height(if (focusState) 800.dp else 0.dp)
+                    .fillMaxWidth()
+
+            ) {
+
+
+                items(searchResultTag.itemCount) { index ->
+                    searchResultTag[index]?.let { tag ->
+                        TagItem(tag) {
+                            viewModel.setTag(it)
+                            focusState = false
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -113,3 +146,65 @@ fun SearchScreen(
 private fun PreviewSearchScreen() {
     SearchScreen()
 }
+
+@Composable
+fun ExpandableColumnExample() {
+    // 상태: 확장 여부
+    var isExpanded by remember { mutableStateOf(false) }
+
+    // 확장 높이 애니메이션
+    val animatedHeight by animateDpAsState(targetValue = if (isExpanded) 200.dp else 0.dp)
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        // 첫 번째 Custom Composable
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .zIndex(1f) // zIndex를 높여 두 번째 Box 위로 렌더링
+                .background(Color.Gray)
+        ) {
+            Column {
+                Text(
+                    text = "Click the button below to expand",
+                    modifier = Modifier.padding(16.dp),
+                    color = Color.White
+                )
+                Button(
+                    onClick = { isExpanded = !isExpanded },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Text(text = if (isExpanded) "Collapse" else "Expand")
+                }
+
+                // 애니메이션 확장 Box
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(animatedHeight)
+                        .background(Color.Blue)
+                ) {
+                    Text(
+                        text = "Expanded Content",
+                        color = Color.White,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
+        }
+
+        // 두 번째 Composable
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp)
+                .background(Color.Green)
+        ) {
+            Text(
+                text = "Second Composable",
+                modifier = Modifier.align(Alignment.Center),
+                color = Color.White
+            )
+        }
+    }
+}
+
