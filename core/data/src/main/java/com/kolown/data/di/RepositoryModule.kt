@@ -1,10 +1,13 @@
 package com.kolown.data.di
 
 import com.kolown.data.datasource.FakeGalleryDataSource
+import com.kolown.data.datasource.FakePostDataSource
 import com.kolown.data.datasource.GalleryDataSource
+import com.kolown.data.repository.FakePostRepository
 import com.kolown.data.repository.FakeTagRepository
 import com.kolown.data.repository.GalleryRepositoryImpl
 import com.kolown.data.repository.GalleryRepository
+import com.kolown.data.repository.PostRepository
 import com.kolown.data.repository.TagRepository
 import dagger.Module
 import dagger.Provides
@@ -29,5 +32,12 @@ class RepositoryModule {
     @Singleton
     fun provideTagRepositoryFake(): TagRepository {
         return FakeTagRepository()
+    }
+
+    @Fake
+    @Provides
+    @Singleton
+    fun provideFakePostRepository(): PostRepository {
+        return FakePostRepository(FakePostDataSource())
     }
 }

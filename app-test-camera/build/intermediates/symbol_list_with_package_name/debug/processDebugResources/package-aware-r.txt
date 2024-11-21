@@ -2965,6 +2965,7 @@ drawable ic_mtrl_chip_checked_circle
 drawable ic_mtrl_chip_close_circle
 drawable ic_search_black_24
 drawable icon_album
+drawable icon_arrow_back
 drawable icon_capture
 drawable indeterminate_static
 drawable m3_avd_hide_password

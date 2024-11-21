@@ -4,7 +4,7 @@
             "outputFile": "com.kolown.app_test_camera.test.app-test-camera-mergeDebugAndroidTestResources-35:/values-v18/values-v18.xml",
             "map": [
                 {
-                    "source": "/Users/moonhwihan/.gradle/caches/8.9/transforms/27f47c9d92f8678d5598b81a9b870397/transformed/core-1.6.1/res/values-v18/values.xml",
+                    "source": "/Users/moonhwihan/.gradle/caches/8.9/transforms/fc66a5dc3089a6d755b9f2061e3705e4/transformed/core-1.6.1/res/values-v18/values.xml",
                     "from": {
                         "startLines": "4,12",
                         "startColumns": "0,0",

@@ -45,6 +45,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.androidx.compose.ui.graphics)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
+
+    implementation(libs.bundles.android.compose)
 
 }

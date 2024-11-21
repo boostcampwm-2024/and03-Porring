@@ -23,25 +23,25 @@
 15-->/Users/moonhwihan/2024BoostCampMembership/GroupProject/app-test-camera/src/main/AndroidManifest.xml:7:22-64
 16
 17    <queries>
-17-->[androidx.camera:camera-extensions:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/844ed2452ffc4ccb8ba75379b3d86bc8/transformed/camera-extensions-1.4.0/AndroidManifest.xml:22:5-26:15
+17-->[androidx.camera:camera-extensions:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/a0d3ae4df0a7b6903c65ac2b831b869b/transformed/camera-extensions-1.4.0/AndroidManifest.xml:22:5-26:15
 18        <intent>
-18-->[androidx.camera:camera-extensions:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/844ed2452ffc4ccb8ba75379b3d86bc8/transformed/camera-extensions-1.4.0/AndroidManifest.xml:23:9-25:18
+18-->[androidx.camera:camera-extensions:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/a0d3ae4df0a7b6903c65ac2b831b869b/transformed/camera-extensions-1.4.0/AndroidManifest.xml:23:9-25:18
 19            <action android:name="androidx.camera.extensions.action.VENDOR_ACTION" />
-19-->[androidx.camera:camera-extensions:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/844ed2452ffc4ccb8ba75379b3d86bc8/transformed/camera-extensions-1.4.0/AndroidManifest.xml:24:13-86
-19-->[androidx.camera:camera-extensions:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/844ed2452ffc4ccb8ba75379b3d86bc8/transformed/camera-extensions-1.4.0/AndroidManifest.xml:24:21-83
+19-->[androidx.camera:camera-extensions:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/a0d3ae4df0a7b6903c65ac2b831b869b/transformed/camera-extensions-1.4.0/AndroidManifest.xml:24:13-86
+19-->[androidx.camera:camera-extensions:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/a0d3ae4df0a7b6903c65ac2b831b869b/transformed/camera-extensions-1.4.0/AndroidManifest.xml:24:21-83
 20        </intent>
 21    </queries>
 22
 23    <permission
-23-->[androidx.core:core:1.13.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/5d5b39e9d8de4ef08a3dfa292441a5e9/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+23-->[androidx.core:core:1.13.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/8547d4af11b1078c73532a30a800cd00/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
 24        android:name="com.kolown.app_test_camera.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-24-->[androidx.core:core:1.13.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/5d5b39e9d8de4ef08a3dfa292441a5e9/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+24-->[androidx.core:core:1.13.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/8547d4af11b1078c73532a30a800cd00/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
 25        android:protectionLevel="signature" />
-25-->[androidx.core:core:1.13.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/5d5b39e9d8de4ef08a3dfa292441a5e9/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+25-->[androidx.core:core:1.13.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/8547d4af11b1078c73532a30a800cd00/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
 26
 27    <uses-permission android:name="com.kolown.app_test_camera.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-27-->[androidx.core:core:1.13.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/5d5b39e9d8de4ef08a3dfa292441a5e9/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
-27-->[androidx.core:core:1.13.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/5d5b39e9d8de4ef08a3dfa292441a5e9/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+27-->[androidx.core:core:1.13.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/8547d4af11b1078c73532a30a800cd00/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+27-->[androidx.core:core:1.13.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/8547d4af11b1078c73532a30a800cd00/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
 28
 29    <application
 29-->/Users/moonhwihan/2024BoostCampMembership/GroupProject/app-test-camera/src/main/AndroidManifest.xml:9:5-28:19
@@ -50,7 +50,7 @@
 31        android:allowBackup="true"
 31-->/Users/moonhwihan/2024BoostCampMembership/GroupProject/app-test-camera/src/main/AndroidManifest.xml:11:9-35
 32        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-32-->[androidx.core:core:1.13.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/5d5b39e9d8de4ef08a3dfa292441a5e9/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
+32-->[androidx.core:core:1.13.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/8547d4af11b1078c73532a30a800cd00/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
 33        android:debuggable="true"
 34        android:extractNativeLibs="false"
 35        android:icon="@mipmap/ic_launcher"
@@ -86,104 +86,104 @@
 50            </intent-filter>
 51        </activity>
 52        <activity
-52-->[androidx.compose.ui:ui-tooling-android:1.7.5] /Users/moonhwihan/.gradle/caches/8.9/transforms/8de5f54f1fe5084e9a24caffbc40e378/transformed/ui-tooling-release/AndroidManifest.xml:23:9-25:39
+52-->[androidx.compose.ui:ui-tooling-android:1.7.5] /Users/moonhwihan/.gradle/caches/8.9/transforms/6ca733a3d234265c1d06b9935b55f383/transformed/ui-tooling-release/AndroidManifest.xml:23:9-25:39
 53            android:name="androidx.compose.ui.tooling.PreviewActivity"
-53-->[androidx.compose.ui:ui-tooling-android:1.7.5] /Users/moonhwihan/.gradle/caches/8.9/transforms/8de5f54f1fe5084e9a24caffbc40e378/transformed/ui-tooling-release/AndroidManifest.xml:24:13-71
+53-->[androidx.compose.ui:ui-tooling-android:1.7.5] /Users/moonhwihan/.gradle/caches/8.9/transforms/6ca733a3d234265c1d06b9935b55f383/transformed/ui-tooling-release/AndroidManifest.xml:24:13-71
 54            android:exported="true" />
-54-->[androidx.compose.ui:ui-tooling-android:1.7.5] /Users/moonhwihan/.gradle/caches/8.9/transforms/8de5f54f1fe5084e9a24caffbc40e378/transformed/ui-tooling-release/AndroidManifest.xml:25:13-36
+54-->[androidx.compose.ui:ui-tooling-android:1.7.5] /Users/moonhwihan/.gradle/caches/8.9/transforms/6ca733a3d234265c1d06b9935b55f383/transformed/ui-tooling-release/AndroidManifest.xml:25:13-36
 55        <activity
-55-->[androidx.compose.ui:ui-test-manifest:1.7.5] /Users/moonhwihan/.gradle/caches/8.9/transforms/6c71abd878f9a39bb724c41dc3250090/transformed/ui-test-manifest-1.7.5/AndroidManifest.xml:23:9-25:39
+55-->[androidx.compose.ui:ui-test-manifest:1.7.5] /Users/moonhwihan/.gradle/caches/8.9/transforms/cbf7ca913916a038652601d3def55401/transformed/ui-test-manifest-1.7.5/AndroidManifest.xml:23:9-25:39
 56            android:name="androidx.activity.ComponentActivity"
-56-->[androidx.compose.ui:ui-test-manifest:1.7.5] /Users/moonhwihan/.gradle/caches/8.9/transforms/6c71abd878f9a39bb724c41dc3250090/transformed/ui-test-manifest-1.7.5/AndroidManifest.xml:24:13-63
+56-->[androidx.compose.ui:ui-test-manifest:1.7.5] /Users/moonhwihan/.gradle/caches/8.9/transforms/cbf7ca913916a038652601d3def55401/transformed/ui-test-manifest-1.7.5/AndroidManifest.xml:24:13-63
 57            android:exported="true" />
-57-->[androidx.compose.ui:ui-test-manifest:1.7.5] /Users/moonhwihan/.gradle/caches/8.9/transforms/6c71abd878f9a39bb724c41dc3250090/transformed/ui-test-manifest-1.7.5/AndroidManifest.xml:25:13-36
+57-->[androidx.compose.ui:ui-test-manifest:1.7.5] /Users/moonhwihan/.gradle/caches/8.9/transforms/cbf7ca913916a038652601d3def55401/transformed/ui-test-manifest-1.7.5/AndroidManifest.xml:25:13-36
 58
 59        <uses-library
-59-->[androidx.camera:camera-extensions:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/844ed2452ffc4ccb8ba75379b3d86bc8/transformed/camera-extensions-1.4.0/AndroidManifest.xml:29:9-31:40
+59-->[androidx.camera:camera-extensions:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/a0d3ae4df0a7b6903c65ac2b831b869b/transformed/camera-extensions-1.4.0/AndroidManifest.xml:29:9-31:40
 60            android:name="androidx.camera.extensions.impl"
-60-->[androidx.camera:camera-extensions:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/844ed2452ffc4ccb8ba75379b3d86bc8/transformed/camera-extensions-1.4.0/AndroidManifest.xml:30:13-59
+60-->[androidx.camera:camera-extensions:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/a0d3ae4df0a7b6903c65ac2b831b869b/transformed/camera-extensions-1.4.0/AndroidManifest.xml:30:13-59
 61            android:required="false" />
-61-->[androidx.camera:camera-extensions:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/844ed2452ffc4ccb8ba75379b3d86bc8/transformed/camera-extensions-1.4.0/AndroidManifest.xml:31:13-37
+61-->[androidx.camera:camera-extensions:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/a0d3ae4df0a7b6903c65ac2b831b869b/transformed/camera-extensions-1.4.0/AndroidManifest.xml:31:13-37
 62
 63        <service
-63-->[androidx.camera:camera-camera2:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/fb432e0c0a54b1fa8fd73bf528cea822/transformed/camera-camera2-1.4.0/AndroidManifest.xml:24:9-33:19
+63-->[androidx.camera:camera-camera2:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/142d067988c57e88e15cd9c574d83bc0/transformed/camera-camera2-1.4.0/AndroidManifest.xml:24:9-33:19
 64            android:name="androidx.camera.core.impl.MetadataHolderService"
-64-->[androidx.camera:camera-camera2:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/fb432e0c0a54b1fa8fd73bf528cea822/transformed/camera-camera2-1.4.0/AndroidManifest.xml:25:13-75
+64-->[androidx.camera:camera-camera2:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/142d067988c57e88e15cd9c574d83bc0/transformed/camera-camera2-1.4.0/AndroidManifest.xml:25:13-75
 65            android:enabled="false"
-65-->[androidx.camera:camera-camera2:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/fb432e0c0a54b1fa8fd73bf528cea822/transformed/camera-camera2-1.4.0/AndroidManifest.xml:26:13-36
+65-->[androidx.camera:camera-camera2:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/142d067988c57e88e15cd9c574d83bc0/transformed/camera-camera2-1.4.0/AndroidManifest.xml:26:13-36
 66            android:exported="false" >
-66-->[androidx.camera:camera-camera2:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/fb432e0c0a54b1fa8fd73bf528cea822/transformed/camera-camera2-1.4.0/AndroidManifest.xml:27:13-37
+66-->[androidx.camera:camera-camera2:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/142d067988c57e88e15cd9c574d83bc0/transformed/camera-camera2-1.4.0/AndroidManifest.xml:27:13-37
 67            <meta-data
-67-->[androidx.camera:camera-camera2:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/fb432e0c0a54b1fa8fd73bf528cea822/transformed/camera-camera2-1.4.0/AndroidManifest.xml:30:13-32:89
+67-->[androidx.camera:camera-camera2:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/142d067988c57e88e15cd9c574d83bc0/transformed/camera-camera2-1.4.0/AndroidManifest.xml:30:13-32:89
 68                android:name="androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER"
-68-->[androidx.camera:camera-camera2:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/fb432e0c0a54b1fa8fd73bf528cea822/transformed/camera-camera2-1.4.0/AndroidManifest.xml:31:17-103
+68-->[androidx.camera:camera-camera2:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/142d067988c57e88e15cd9c574d83bc0/transformed/camera-camera2-1.4.0/AndroidManifest.xml:31:17-103
 69                android:value="androidx.camera.camera2.Camera2Config$DefaultProvider" />
-69-->[androidx.camera:camera-camera2:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/fb432e0c0a54b1fa8fd73bf528cea822/transformed/camera-camera2-1.4.0/AndroidManifest.xml:32:17-86
+69-->[androidx.camera:camera-camera2:1.4.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/142d067988c57e88e15cd9c574d83bc0/transformed/camera-camera2-1.4.0/AndroidManifest.xml:32:17-86
 70        </service>
 71
 72        <provider
-72-->[androidx.emoji2:emoji2:1.3.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/f8973cd2e2a70ee58cdae1b570e64ece/transformed/emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
+72-->[androidx.emoji2:emoji2:1.3.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/3db6ac873ee2e0c043919d61dc81ec02/transformed/emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
 73            android:name="androidx.startup.InitializationProvider"
-73-->[androidx.emoji2:emoji2:1.3.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/f8973cd2e2a70ee58cdae1b570e64ece/transformed/emoji2-1.3.0/AndroidManifest.xml:25:13-67
+73-->[androidx.emoji2:emoji2:1.3.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/3db6ac873ee2e0c043919d61dc81ec02/transformed/emoji2-1.3.0/AndroidManifest.xml:25:13-67
 74            android:authorities="com.kolown.app_test_camera.androidx-startup"
-74-->[androidx.emoji2:emoji2:1.3.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/f8973cd2e2a70ee58cdae1b570e64ece/transformed/emoji2-1.3.0/AndroidManifest.xml:26:13-68
+74-->[androidx.emoji2:emoji2:1.3.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/3db6ac873ee2e0c043919d61dc81ec02/transformed/emoji2-1.3.0/AndroidManifest.xml:26:13-68
 75            android:exported="false" >
-75-->[androidx.emoji2:emoji2:1.3.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/f8973cd2e2a70ee58cdae1b570e64ece/transformed/emoji2-1.3.0/AndroidManifest.xml:27:13-37
+75-->[androidx.emoji2:emoji2:1.3.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/3db6ac873ee2e0c043919d61dc81ec02/transformed/emoji2-1.3.0/AndroidManifest.xml:27:13-37
 76            <meta-data
-76-->[androidx.emoji2:emoji2:1.3.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/f8973cd2e2a70ee58cdae1b570e64ece/transformed/emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
+76-->[androidx.emoji2:emoji2:1.3.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/3db6ac873ee2e0c043919d61dc81ec02/transformed/emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
 77                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-77-->[androidx.emoji2:emoji2:1.3.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/f8973cd2e2a70ee58cdae1b570e64ece/transformed/emoji2-1.3.0/AndroidManifest.xml:30:17-75
+77-->[androidx.emoji2:emoji2:1.3.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/3db6ac873ee2e0c043919d61dc81ec02/transformed/emoji2-1.3.0/AndroidManifest.xml:30:17-75
 78                android:value="androidx.startup" />
-78-->[androidx.emoji2:emoji2:1.3.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/f8973cd2e2a70ee58cdae1b570e64ece/transformed/emoji2-1.3.0/AndroidManifest.xml:31:17-49
+78-->[androidx.emoji2:emoji2:1.3.0] /Users/moonhwihan/.gradle/caches/8.9/transforms/3db6ac873ee2e0c043919d61dc81ec02/transformed/emoji2-1.3.0/AndroidManifest.xml:31:17-49
 79            <meta-data
-79-->[androidx.lifecycle:lifecycle-process:2.8.7] /Users/moonhwihan/.gradle/caches/8.9/transforms/140d35f30af95b4f26edd8c8e0341ea9/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:29:13-31:52
+79-->[androidx.lifecycle:lifecycle-process:2.8.7] /Users/moonhwihan/.gradle/caches/8.9/transforms/cee96306b92f916c75e7e4a39e019ec3/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:29:13-31:52
 80                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-80-->[androidx.lifecycle:lifecycle-process:2.8.7] /Users/moonhwihan/.gradle/caches/8.9/transforms/140d35f30af95b4f26edd8c8e0341ea9/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:30:17-78
+80-->[androidx.lifecycle:lifecycle-process:2.8.7] /Users/moonhwihan/.gradle/caches/8.9/transforms/cee96306b92f916c75e7e4a39e019ec3/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:30:17-78
 81                android:value="androidx.startup" />
-81-->[androidx.lifecycle:lifecycle-process:2.8.7] /Users/moonhwihan/.gradle/caches/8.9/transforms/140d35f30af95b4f26edd8c8e0341ea9/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:31:17-49
+81-->[androidx.lifecycle:lifecycle-process:2.8.7] /Users/moonhwihan/.gradle/caches/8.9/transforms/cee96306b92f916c75e7e4a39e019ec3/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:31:17-49
 82            <meta-data
-82-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:29:13-31:52
+82-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:29:13-31:52
 83                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-83-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:30:17-85
+83-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:30:17-85
 84                android:value="androidx.startup" />
-84-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:31:17-49
+84-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:31:17-49
 85        </provider>
 86
 87        <receiver
-87-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:34:9-52:20
+87-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:34:9-52:20
 88            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-88-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:35:13-76
+88-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:35:13-76
 89            android:directBootAware="false"
-89-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:36:13-44
+89-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:36:13-44
 90            android:enabled="true"
-90-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:37:13-35
+90-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:37:13-35
 91            android:exported="true"
-91-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:38:13-36
+91-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:38:13-36
 92            android:permission="android.permission.DUMP" >
-92-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:39:13-57
+92-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:39:13-57
 93            <intent-filter>
-93-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:40:13-42:29
+93-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:40:13-42:29
 94                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-94-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:41:17-91
-94-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:41:25-88
+94-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:41:17-91
+94-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:41:25-88
 95            </intent-filter>
 96            <intent-filter>
-96-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:43:13-45:29
+96-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:43:13-45:29
 97                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-97-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:44:17-85
-97-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:44:25-82
+97-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:44:17-85
+97-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:44:25-82
 98            </intent-filter>
 99            <intent-filter>
-99-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:46:13-48:29
+99-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:46:13-48:29
 100                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-100-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:47:17-88
-100-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:47:25-85
+100-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:47:17-88
+100-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:47:25-85
 101            </intent-filter>
 102            <intent-filter>
-102-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:49:13-51:29
+102-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:49:13-51:29
 103                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-103-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:50:17-95
-103-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/15b40e4993bccd51e28da3b266adb084/transformed/profileinstaller-1.4.1/AndroidManifest.xml:50:25-92
+103-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:50:17-95
+103-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/moonhwihan/.gradle/caches/8.9/transforms/2d733d95f35f9a0eae6cb7f91791841f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:50:25-92
 104            </intent-filter>
 105        </receiver>
 106    </application>

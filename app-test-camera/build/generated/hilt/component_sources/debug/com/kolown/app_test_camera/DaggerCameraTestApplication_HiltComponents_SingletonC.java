@@ -19,11 +19,13 @@ import com.kolown.data.datasource.GalleryDataSource;
 import com.kolown.data.di.DataSourceModule;
 import com.kolown.data.di.DataSourceModule_ProvideFakeGalleryDataSourceFactory;
 import com.kolown.data.di.RepositoryModule;
+import com.kolown.data.di.RepositoryModule_ProvideFakePostRepositoryFactory;
 import com.kolown.data.di.RepositoryModule_ProvideGalleryRepositoryFakeFactory;
 import com.kolown.data.di.RepositoryModule_ProvideTagRepositoryFakeFactory;
 import com.kolown.data.repository.AppDataRepository;
 import com.kolown.data.repository.GalleryRepository;
 import com.kolown.data.repository.ImageCacheRepository;
+import com.kolown.data.repository.PostRepository;
 import com.kolown.data.repository.TagRepository;
 import com.kolown.my.MyViewModel;
 import com.kolown.my.MyViewModel_HiltModules;
@@ -514,23 +516,23 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
     private static final class LazyClassKeyProvider {
       static String com_kolown_app_test_camera_MainViewModel = "com.kolown.app_test_camera.MainViewModel";
 
+      static String com_kolown_my_MyViewModel = "com.kolown.my.MyViewModel";
+
       static String com_kolown_search_SearchViewModel = "com.kolown.search.SearchViewModel";
 
       static String com_kolown_camera_screen_CameraScreenViewModel = "com.kolown.camera.screen.CameraScreenViewModel";
 
-      static String com_kolown_my_MyViewModel = "com.kolown.my.MyViewModel";
-
       @KeepFieldType
       MainViewModel com_kolown_app_test_camera_MainViewModel2;
+
+      @KeepFieldType
+      MyViewModel com_kolown_my_MyViewModel2;
 
       @KeepFieldType
       SearchViewModel com_kolown_search_SearchViewModel2;
 
       @KeepFieldType
       CameraScreenViewModel com_kolown_camera_screen_CameraScreenViewModel2;
-
-      @KeepFieldType
-      MyViewModel com_kolown_my_MyViewModel2;
     }
 
     private static final class SwitchingProvider<T> implements Provider<T> {
@@ -564,7 +566,7 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
           return (T) new MyViewModel(singletonCImpl.provideGalleryRepositoryFakeProvider.get());
 
           case 3: // com.kolown.search.SearchViewModel 
-          return (T) new SearchViewModel(singletonCImpl.provideTagRepositoryFakeProvider.get());
+          return (T) new SearchViewModel(singletonCImpl.provideTagRepositoryFakeProvider.get(), singletonCImpl.provideFakePostRepositoryProvider.get());
 
           default: throw new AssertionError(id);
         }
@@ -666,6 +668,8 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
 
     private Provider<TagRepository> provideTagRepositoryFakeProvider;
 
+    private Provider<PostRepository> provideFakePostRepositoryProvider;
+
     private SingletonCImpl(AppDataModule appDataModuleParam,
         ApplicationContextModule applicationContextModuleParam,
         DataSourceModule dataSourceModuleParam, ImageCacheModule imageCacheModuleParam,
@@ -690,6 +694,7 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
       this.provideFakeGalleryDataSourceProvider = DoubleCheck.provider(new SwitchingProvider<GalleryDataSource>(singletonCImpl, 4));
       this.provideGalleryRepositoryFakeProvider = DoubleCheck.provider(new SwitchingProvider<GalleryRepository>(singletonCImpl, 3));
       this.provideTagRepositoryFakeProvider = DoubleCheck.provider(new SwitchingProvider<TagRepository>(singletonCImpl, 5));
+      this.provideFakePostRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<PostRepository>(singletonCImpl, 6));
     }
 
     @Override
@@ -742,6 +747,9 @@ public final class DaggerCameraTestApplication_HiltComponents_SingletonC {
 
           case 5: // @com.kolown.data.di.Fake com.kolown.data.repository.TagRepository 
           return (T) RepositoryModule_ProvideTagRepositoryFakeFactory.provideTagRepositoryFake(singletonCImpl.repositoryModule);
+
+          case 6: // @com.kolown.data.di.Fake com.kolown.data.repository.PostRepository 
+          return (T) RepositoryModule_ProvideFakePostRepositoryFactory.provideFakePostRepository(singletonCImpl.repositoryModule);
 
           default: throw new AssertionError(id);
         }

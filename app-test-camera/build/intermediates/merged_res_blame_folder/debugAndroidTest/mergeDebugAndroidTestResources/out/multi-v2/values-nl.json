@@ -4,24 +4,7 @@
             "outputFile": "com.kolown.app_test_camera.test.app-test-camera-mergeDebugAndroidTestResources-35:/values-nl/values-nl.xml",
             "map": [
                 {
-                    "source": "/Users/moonhwihan/.gradle/caches/8.9/transforms/98a1c8348b89ff9fb0afec78b3b1bfac/transformed/core-1.13.1/res/values-nl/values-nl.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,157,259,359,459,566,670,789",
-                        "endColumns": "101,101,99,99,106,103,118,100",
-                        "endOffsets": "152,254,354,454,561,665,784,885"
-                    },
-                    "to": {
-                        "startLines": "2,3,4,5,6,7,8,24",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "105,207,309,409,509,616,720,2102",
-                        "endColumns": "101,101,99,99,106,103,118,100",
-                        "endOffsets": "202,304,404,504,611,715,834,2198"
-                    }
-                },
-                {
-                    "source": "/Users/moonhwihan/.gradle/caches/8.9/transforms/c8808a206090d88730c668cab21bd8aa/transformed/ui-release/res/values-nl/values-nl.xml",
+                    "source": "/Users/moonhwihan/.gradle/caches/8.9/transforms/dc5a695bfeb4b96e1bfa52f0c1322bd5/transformed/ui-release/res/values-nl/values-nl.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -35,6 +18,23 @@
                         "startOffsets": "839,931,1014,1111,1210,1295,1371,1467,1554,1643,1724,1807,1884,1959,2031,2203,2287,2357",
                         "endColumns": "91,82,96,98,84,75,95,86,88,80,82,76,74,71,70,83,69,119",
                         "endOffsets": "926,1009,1106,1205,1290,1366,1462,1549,1638,1719,1802,1879,1954,2026,2097,2282,2352,2472"
+                    }
+                },
+                {
+                    "source": "/Users/moonhwihan/.gradle/caches/8.9/transforms/8547d4af11b1078c73532a30a800cd00/transformed/core-1.13.1/res/values-nl/values-nl.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,157,259,359,459,566,670,789",
+                        "endColumns": "101,101,99,99,106,103,118,100",
+                        "endOffsets": "152,254,354,454,561,665,784,885"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,8,24",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "105,207,309,409,509,616,720,2102",
+                        "endColumns": "101,101,99,99,106,103,118,100",
+                        "endOffsets": "202,304,404,504,611,715,834,2198"
                     }
                 }
             ]
