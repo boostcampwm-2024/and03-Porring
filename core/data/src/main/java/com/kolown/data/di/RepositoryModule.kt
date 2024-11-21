@@ -21,7 +21,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
 
-    @Fake
     @Binds
     @Singleton
     abstract fun provideFakePostRepository(postRepositoryImpl: PostRepositoryImpl): PostRepository
