@@ -1,5 +1,8 @@
 package com.kolown.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class PostContentModel(
     val authorId: String,
     val imageUrl: String,

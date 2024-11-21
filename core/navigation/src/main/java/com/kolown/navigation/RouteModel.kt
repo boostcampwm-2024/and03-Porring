@@ -5,6 +5,9 @@ import kotlinx.serialization.Serializable
 sealed interface Route {
     @Serializable
     data class Upload(val imgUri: String): MainMenuRoute
+//
+//    @Serializable
+//    data class Detail(val postContent : PostContentModel) : Route
 }
 
 sealed interface MainMenuRoute: Route {
