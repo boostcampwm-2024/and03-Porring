@@ -1,23 +1,13 @@
 package com.kolown.data.di
 
-<<<<<<< HEAD
-import com.kolown.data.datasource.FakeGalleryDataSource
-import com.kolown.data.datasource.FakePostDataSource
-import com.kolown.data.datasource.GalleryDataSource
-import com.kolown.data.repository.FakeTagRepository
-=======
 import com.kolown.data.repository.AuthRepository
 import com.kolown.data.repository.AuthRepositoryImpl
-import com.kolown.data.repository.GalleryRepository
->>>>>>> c581db5 (Feat: auth repository)
-import com.kolown.data.repository.GalleryRepositoryImpl
-import com.kolown.data.repository.GalleryRepository
 import com.kolown.data.repository.PostRepository
 import com.kolown.data.repository.PostRepositoryImpl
-import com.kolown.data.repository.TagRepository
+import com.kolown.data.repository.UserRepository
+import com.kolown.data.repository.UserRepositoryImpl
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -40,4 +30,9 @@ abstract class RepositoryModule {
     abstract fun provideAuthRepository(
         authRepository: AuthRepositoryImpl,
     ): AuthRepository
+
+    @Binds
+    abstract fun provideUserRepository(
+        userRepository: UserRepositoryImpl,
+    ): UserRepository
 }
