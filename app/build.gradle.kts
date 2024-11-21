@@ -89,6 +89,7 @@ dependencies {
     //hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     //camera(with optional)
     implementation(libs.androidx.camera.core)
@@ -123,7 +124,7 @@ dependencies {
 
     implementation(projects.core.navigation)
     implementation(projects.feature.login)
-    implementation (libs.exoplayer.ui)
+    implementation(libs.exoplayer.ui)
 
     implementation(projects.core.data)
     implementation(projects.core.domain)
