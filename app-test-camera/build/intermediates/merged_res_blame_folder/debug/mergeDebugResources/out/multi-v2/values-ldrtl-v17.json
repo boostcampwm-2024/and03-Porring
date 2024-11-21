@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.kolown.app_test_camera.app-test-camera-mergeDebugResources-82:/values-ldrtl-v17/values-ldrtl-v17.xml",
+            "outputFile": "com.kolown.app_test_camera.app-test-camera-mergeDebugResources-85:/values-ldrtl-v17/values-ldrtl-v17.xml",
             "map": [
                 {
-                    "source": "/Users/moonhwihan/.gradle/caches/8.9/transforms/5f8b48143831166dfb8fe2b155891cef/transformed/material-1.12.0/res/values-ldrtl-v17/values-ldrtl-v17.xml",
+                    "source": "/Users/moonhwihan/.gradle/caches/8.9/transforms/f7234a97590cf63eaa54b6b02905bab7/transformed/material-1.12.0/res/values-ldrtl-v17/values-ldrtl-v17.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",
