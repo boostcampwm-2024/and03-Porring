@@ -9,7 +9,7 @@ import com.kolown.data.datasource.remote.PostDataSourceImpl
 import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.ReactionDataSourceImpl
 import com.kolown.data.datasource.remote.TagDataSourceImpl
-import com.kolown.data.datasource.remote.TagDatasource
+import com.kolown.data.datasource.remote.TagDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -39,7 +39,7 @@ abstract class DataSourceModule {
     @Binds
     abstract fun provideTagDataSource(
         tagDataSource: TagDataSourceImpl
-    ): TagDatasource
+    ): TagDataSource
 
     @Binds
     abstract fun provideReactionDataSource(
