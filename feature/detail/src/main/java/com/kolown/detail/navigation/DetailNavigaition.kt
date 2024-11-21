@@ -1,5 +1,7 @@
 package com.kolown.detail.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -11,10 +13,11 @@ const val DETAIL_ROUTE = "detail_route"
 
 fun NavController.navigateToDetail(navOptions: NavOptions? = null) = navigate(DETAIL_ROUTE,navOptions)
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.detailNavGraph(
     padding: PaddingValues
 ){
-    composable(route = DETAIL_ROUTE) {
+    composable<DETAIL_ROUTE> {
         DetailRoute(padding=padding)
     }
 }
