@@ -1,11 +1,12 @@
-import java.io.FileInputStream
 import org.jetbrains.kotlin.konan.properties.Properties
+import java.io.FileInputStream
 
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 var properties = Properties()
@@ -36,8 +37,12 @@ android {
                 "proguard-rules.pro"
             )
         }
-        debug{
-            buildConfigField("String", "GOOGLE_CLIENT_ID", properties.getProperty("google_cient_id"))
+        debug {
+            buildConfigField(
+                "String",
+                "GOOGLE_CLIENT_ID",
+                properties.getProperty("google_cient_id")
+            )
         }
     }
     compileOptions {
@@ -50,6 +55,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.data)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -58,8 +64,12 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.bundles.android.compose)
-    implementation(libs.google.firebase.auth)
-    implementation(libs.google.play.services.auth)
-    implementation(libs.google.firebase.bom)
 
+    //hilt
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    ksp(libs.hilt.android.compiler)
+
+    implementation(libs.androidx.credentials)
+    implementation(libs.google.android.googleid)
 }

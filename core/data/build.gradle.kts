@@ -38,10 +38,10 @@ android {
 
 dependencies {
 
+    api(projects.core.model)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    api(projects.core.model)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -60,7 +60,13 @@ dependencies {
     implementation(platform(libs.google.firebase.bom))
     implementation(libs.google.firebase.firestore)
     implementation(libs.google.firebase.storage)
+    implementation(libs.google.firebase.auth)
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    implementation(libs.androidx.credentials)
+    implementation(libs.google.play.services.auth)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.google.android.googleid)
 }
 

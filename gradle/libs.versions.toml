@@ -40,6 +40,9 @@ kotlinxImmutable = "0.3.8"
 androidxComposeMaterial3 = "1.2.1"
 navigationCompose = "2.8.3"
 
+credentials = "1.3.0"
+googleid = "1.1.1"
+
 minSdk = "24"
 compileSdk = "34"
 uiGraphicsAndroid = "1.7.2"
@@ -94,6 +97,11 @@ google-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref
 google-play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 google-firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
 google-firebase-storage = { group = "com.google.firebase", name = "firebase-storage" }
+
+## credentials
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
+androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
+google-android-googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
