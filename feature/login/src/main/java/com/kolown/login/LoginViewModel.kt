@@ -1,36 +1,38 @@
 package com.kolown.login
 
-import android.util.Log
-import androidx.activity.result.ActivityResult
+import androidx.credentials.Credential
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
+import androidx.lifecycle.viewModelScope
+import com.kolown.data.repository.AuthRepository
+import com.kolown.data.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel : ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
+) : ViewModel() {
+    private var _loginEnd = MutableSharedFlow<Boolean>()
+    val loginLoading = _loginEnd.asSharedFlow()
 
-    fun googleLogin(
-        activityResult : ActivityResult,
-        onSuccess : () -> Unit
-    ) {
-        try {
-            val account = GoogleSignIn
-                .getSignedInAccountFromIntent(activityResult.data)
-                .getResult(ApiException::class.java)
-            val credential = GoogleAuthProvider.getCredential(account.idToken,null)
-            FirebaseAuth.getInstance().signInWithCredential(credential)
-                .addOnCompleteListener { task ->
-                    if(task.isSuccessful) {
-                        onSuccess()
-                        //토큰
-                        val token = account.idToken
-                        //사용자 이메일
-                        val uid = task.result.user?.uid
-                    }
+    fun handleSignIn(credential: Credential) {
+        viewModelScope.launch {
+            val result = authRepository.signInWithCredential(credential)
+
+            when {
+                result.isSuccess -> {
+                    _loginEnd.emit(true)
+                    userRepository.createUserData()
                 }
-        } catch (e:Exception){
-            Log.e("로그인 실패",e.message.toString())
+
+                result.isFailure -> {
+                    _loginEnd.emit(false)
+                }
+            }
         }
     }
 }
