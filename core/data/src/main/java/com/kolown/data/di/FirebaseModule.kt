@@ -1,6 +1,6 @@
 package com.kolown.data.di
 
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import com.kolown.data.service.FirebaseService
 import com.kolown.data.service.FirebaseServiceImpl
 import dagger.Module
@@ -13,6 +13,6 @@ import dagger.hilt.components.SingletonComponent
 object FirebaseModule {
     @Provides
     fun provideFirebaseService(): FirebaseService {
-        return FirebaseServiceImpl(FirebaseFirestore.getInstance())
+        return FirebaseServiceImpl(Firebase)
     }
 }

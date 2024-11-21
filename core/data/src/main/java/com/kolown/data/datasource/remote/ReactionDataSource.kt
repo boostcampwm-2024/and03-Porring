@@ -1,9 +1,8 @@
 package com.kolown.data.datasource.remote
 
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.kolown.data.remote.ReactionDto
 import com.kolown.data.remote.toReactionModel
+import com.kolown.data.service.FirebaseService
 import com.kolown.model.ReactionModel
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -12,9 +11,10 @@ interface ReactionDataSource {
     suspend fun getReactionByPostId(postId: String): Result<List<ReactionModel>>
 }
 
-class ReactionDataSourceImpl @Inject constructor() : ReactionDataSource {
-    private val db = Firebase.firestore
-    private val reactionCollection = db.collection("reaction")
+class ReactionDataSourceImpl @Inject constructor(
+    firebaseService: FirebaseService
+) : ReactionDataSource {
+    private val reactionCollection = firebaseService.getCollection("reaction")
 
     override suspend fun getReactionByPostId(postId: String): Result<List<ReactionModel>> {
         return kotlin.runCatching {
