@@ -2,15 +2,20 @@ package com.kolown.data.repository
 
 import android.net.Uri
 import android.util.Log
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.kolown.data.datasource.paging.RandomPagingDataSource
 import com.kolown.data.datasource.remote.ImageDataSource
 import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.data.datasource.remote.ReactionDataSource
-import com.kolown.data.datasource.remote.TagDatasource
+import com.kolown.data.datasource.remote.TagDataSource
 import com.kolown.model.PostContentModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
@@ -18,13 +23,15 @@ import javax.inject.Inject
 interface PostRepository {
     suspend fun uploadPost(fileUri: Uri, description: String, tags: List<String>): Result<Unit>
     suspend fun getRandomPostList(count: Int): Result<List<PostContentModel>>
+    suspend fun getRandomDetailPostList(): Flow<PagingData<PostContentModel>>
 }
 
 class PostRepositoryImpl @Inject constructor(
     private val imageDataSource: ImageDataSource,
     private val postDataSource: PostDataSource,
-    private val tagDataSource: TagDatasource,
-    private val reactionDataSource: ReactionDataSource
+    private val tagDataSource: TagDataSource,
+    private val reactionDataSource: ReactionDataSource,
+    private val randomPagingDataSource: RandomPagingDataSource
 ) : PostRepository {
     private val authorId = "user-1feIeEN3rMh4ZY7YpQKxDfnKGvi2"
 
@@ -105,12 +112,23 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getRandomDetailPostList() : Flow<PagingData<PostContentModel>> {
+        return Pager(
+            config = PagingConfig(pageSize = DETAIL_PER_PAGE, enablePlaceholders = false),
+            pagingSourceFactory = { randomPagingDataSource }
+        ).flow
+    }
+
     private suspend fun updateImageUrl(postId: String, fileUri: Uri) {
         val documentId = postId.substringAfter("-")
         val imageUrl = imageDataSource.getImageUrl(authorId, fileUri).getOrElse {
             throw IOException("이미지 업로드 실패")
         }
         postDataSource.updateImageUrl(documentId, imageUrl)
+    }
+
+    companion object {
+        const val DETAIL_PER_PAGE = 1
     }
 
 }

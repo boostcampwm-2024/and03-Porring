@@ -26,7 +26,7 @@ class LoginViewModel : ViewModel() {
                         //토큰
                         val token = account.idToken
                         //사용자 이메일
-                        val email = task.result.user?.uid
+                        val uid = task.result.user?.uid
                     }
                 }
         } catch (e:Exception){

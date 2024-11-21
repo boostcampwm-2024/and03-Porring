@@ -73,13 +73,18 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.kolown.detail.component.FollowDialog
 import com.kolown.detail.component.ReactionDialog
 import com.kolown.model.ImageItem
+import com.kolown.model.PostContentModel
 import com.kolown.model.UiState
+import kotlinx.coroutines.flow.Flow
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -88,33 +93,32 @@ internal fun DetailRoute(
     detailViewModel: DetailViewModel = hiltViewModel()
 ) {
     val uiState = detailViewModel.uiState.collectAsStateWithLifecycle()
-    LaunchedEffect(true) {
-        detailViewModel.getItem(0)
-    }
-    when (uiState.value) {
+    val state = uiState.value
+    when (state) {
         is UiState.Loading -> LoadingDetailScreen()
-        else -> {
+        is UiState.Success -> {
+            val pagingItems = state.data.collectAsLazyPagingItems()
             val pagerState = rememberPagerState(
                 initialPage = 0,
                 pageCount = {
-                    if (uiState.value is UiState.Failure) detailViewModel.getPagingItem().size + 1
-                    else detailViewModel.getPagingItem().size
-                },
+                    pagingItems.itemCount
+                }
             )
-            Reels(
+            DetailPager(
                 padding = padding,
-                items = detailViewModel.getPagingItem(),
+                items = pagingItems,
                 pagerState = pagerState
             )
         }
+        is UiState.Failure -> {}
     }
 }
 
 
 @Composable
-fun Reels(
+fun DetailPager(
     padding: PaddingValues,
-    items: List<ImageItem>,
+    items: LazyPagingItems<PostContentModel>,
     pagerState: PagerState
 ) {
     val isScrollEnabled = remember { mutableStateOf(true) }
@@ -125,15 +129,17 @@ fun Reels(
         contentPadding = padding
     ) { page ->
         // Our page content
-        if (page < items.size) {
+        if (page < items.itemCount) {
             // 정상 상태일 때
-            DetailScreen(
-                imageItem = items[page],
-                page = page,
-                onDoubleTab = {
-                    isScrollEnabled.value = it
-                }
-            )
+            items[page]?.let {
+                DetailScreen(
+                    imageItem = it,
+                    page = page,
+                    onDoubleTab = {
+                        isScrollEnabled.value = it
+                    }
+                )
+            }
             //에러 났을 때(ex.Network Error)
         } else LoadingDetailScreen()
     }
@@ -143,7 +149,7 @@ fun Reels(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun DetailScreen(
-    imageItem: ImageItem,
+    imageItem: PostContentModel,
     page: Int,
     onDoubleTab: (Boolean) -> Unit
 ) {
@@ -182,13 +188,13 @@ fun DetailScreen(
         if (!isConcentrateMode.value) DetailContent(
             padding = padding,
             imageUrl = imageItem.imageUrl,
-            imageDescription = "퇴근하고 집가는 풍경 좋다",
+            imageDescription = imageItem.description,
             onDoubleTab = {
                 isConcentrateMode.value = true
                 requestFullScreen(view)
                 onDoubleTab(false)
             },
-            tagList = listOf("풍경", "등산", "가을산")
+            tagList = imageItem.tags
         ) else {
             ConcentrateModeContent(
                 padding = padding,

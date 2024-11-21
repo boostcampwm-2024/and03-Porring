@@ -5,11 +5,16 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.kolown.data.repository.FakeImageRepository
 import com.kolown.data.repository.ImageRepository
+import com.kolown.data.repository.PostRepository
 import com.kolown.model.ImageItem
+import com.kolown.model.PostContentModel
 import com.kolown.model.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,38 +28,26 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
-    @FakeImageRepository
-    private val imageRepository  : ImageRepository
+    private val postRepository  : PostRepository
 ): ViewModel() {
 
-    private val _uiState = MutableStateFlow<UiState<List<ImageItem>>>(UiState.Loading)
+    private val _uiState = MutableStateFlow<UiState<Flow<PagingData<PostContentModel>>>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
     private var _items =  emptyList<ImageItem>()
 
+    init {
+        getItem()
+    }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun getItem(currentPage: Int) {
+    fun getItem() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             try {
-                imageRepository.getItemByPage(currentPage)
-                    .catch { e ->
-                        _uiState.value = UiState.Failure(e)
-                        Log.e("익셉션1",e.message.toString())
-                        delay(Duration.ofSeconds(4))
-                        _uiState.value = UiState.Success(_items+_items+_items+_items)
-                        _items = _items+_items+_items
-                    }
-                    .collect { items ->
-                        val currentItems = (_uiState.value as? UiState.Success<List<ImageItem>>)?.data ?: emptyList()
-                        val updatedItems = currentItems + items
-                        _uiState.value = UiState.Success(updatedItems)
-                        _items = updatedItems
-                    }
+                val pagingData = postRepository.getRandomDetailPostList().cachedIn(viewModelScope)
+                _uiState.value = UiState.Success(pagingData)
             } catch (e: Exception) {
                 _uiState.value = UiState.Failure(e)
-                Log.e("익셉션2",e.message.toString())
             }
         }
     }

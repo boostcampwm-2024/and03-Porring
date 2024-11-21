@@ -1,5 +1,7 @@
 package com.kolown.data.datasource.remote
 
+import android.app.DownloadManager
+import android.util.Log
 import com.google.firebase.firestore.Query
 import com.kolown.data.remote.PostDto
 import com.kolown.data.remote.toPostModel
@@ -13,6 +15,7 @@ interface PostDataSource {
     suspend fun uploadPost(authorId: String, description: String): Result<String>
     suspend fun updateImageUrl(documentId: String, imageUrl: String)
     suspend fun getRandomPost(uid: String, count: Int): Result<List<PostModel>>
+    suspend fun getRandomPost(uid: String, page: Long, perPage: Long): Result<List<PostModel>>
 }
 
 class PostDataSourceImpl @Inject constructor(
@@ -61,6 +64,23 @@ class PostDataSourceImpl @Inject constructor(
             val result = fetchPosts(randomValue)
 
             if (result.size > count) result else fetchPosts(0)
+        }
+    }
+
+    override suspend fun getRandomPost(uid: String, page: Long, perPage: Long): Result<List<PostModel>> {
+        return kotlin.runCatching {
+            val fetchPosts: suspend (Long) -> List<PostModel> = { key ->
+                postCollection
+                    .whereNotEqualTo("authorId", uid)
+                    .whereGreaterThan("random$randomType", key)
+                    .orderBy("random$randomType", Query.Direction.ASCENDING)
+                    .limit(perPage)
+                    .get()
+                    .await()
+                    .map { it.toObject(PostDto::class.java).toPostModel(randomType) }
+            }
+
+            fetchPosts(page).ifEmpty { fetchPosts(0) }
         }
     }
 }
