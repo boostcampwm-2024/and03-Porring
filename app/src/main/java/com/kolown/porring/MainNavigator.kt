@@ -13,6 +13,7 @@ import com.kolown.camera.navigation.navigateCamera
 import com.kolown.detail.navigation.navigateToDetail
 import com.kolown.follower.navigation.navigateFollower
 import com.kolown.home.navigation.navigateHome
+import com.kolown.login.navigation.navigateLogin
 import com.kolown.model.PostContentModel
 import com.kolown.my.navigation.navigateMy
 import com.kolown.search.navigation.navigateSearch
@@ -45,6 +46,7 @@ internal class MainNavigator(
                 }
                 launchSingleTop = true
             })
+
             MainMenu.SEARCH -> navController.navigateSearch(navOptions)
             MainMenu.CAMERA -> navController.navigateCamera(navOptions)
             MainMenu.FOLLOWER -> navController.navigateFollower(navOptions)
@@ -53,7 +55,15 @@ internal class MainNavigator(
     }
 
     fun navigateToUpload(imgUri: String) = navController.navigateUpload(imgUri)
-    fun navigateToDetail(postContentModel : PostContentModel) = navController.navigateToDetail(postContentModel)
+
+    fun navigateToDetail(postContentModel: PostContentModel) =
+        navController.navigateToDetail(postContentModel)
+
+    fun navigateToLogin() = navController.navigateLogin()
+
+    fun popBackStack() {
+        navController.popBackStack()
+    }
 
     @Composable
     fun isShowBottomBar() = MainMenu.contains {
