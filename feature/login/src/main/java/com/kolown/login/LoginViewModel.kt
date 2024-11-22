@@ -17,7 +17,7 @@ class LoginViewModel @Inject constructor(
     private val userRepository: UserRepository,
 ) : ViewModel() {
     private var _loginEnd = MutableSharedFlow<Boolean>()
-    val loginLoading = _loginEnd.asSharedFlow()
+    val loginEnd = _loginEnd.asSharedFlow()
 
     fun handleSignIn(credential: Credential) {
         viewModelScope.launch {
