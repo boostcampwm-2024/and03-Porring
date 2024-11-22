@@ -1,12 +1,13 @@
 package com.kolown.data.datasource.remote
 
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.kolown.data.remote.TagDto
 import com.kolown.data.remote.toTagModel
 import com.kolown.data.service.FirebaseService
 import com.kolown.model.TagModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -17,7 +18,7 @@ interface TagDataSource {
 }
 
 class TagDataSourceImpl @Inject constructor(
-    firebaseService: FirebaseService
+    firebaseService: FirebaseService,
 ) : TagDataSource {
     private val postTagCollection = firebaseService.getCollection("postTag")
     private val tagCollection = firebaseService.getCollection("tag")
@@ -71,12 +72,16 @@ class TagDataSourceImpl @Inject constructor(
                 .await()
                 .map { it.data["tagId"].toString() }
 
-            tagIds.flatMap { tagId ->
-                tagCollection
-                    .whereEqualTo("tagId", tagId)
-                    .get()
-                    .await()
-                    .map { it.toObject(TagDto::class.java).toTagModel() }
+            coroutineScope {
+                tagIds.map { tagId ->
+                    async {
+                        tagCollection
+                            .whereEqualTo("tagId", tagId)
+                            .get()
+                            .await()
+                            .map { it.toObject(TagDto::class.java).toTagModel() }.first()
+                    }
+                }.awaitAll()
             }
         }
     }
