@@ -52,7 +52,7 @@ fun LoginRoute(
 
     LaunchedEffect(true) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            loginViewModel.loginLoading.collect { loginComplete ->
+            loginViewModel.loginEnd.collect { loginComplete ->
                 if (loginComplete) {
                     updateLoginState()
                     popBackStack()
