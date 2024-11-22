@@ -14,6 +14,7 @@ interface AuthDataSource {
     suspend fun signInWithCredential(credential: CustomCredential): Result<Unit>
     fun getUserInfo(): UserDto
     fun checkUserLoggedIn(): Boolean
+    fun logout(): Result<Unit>
 }
 
 @Named("google")
@@ -38,5 +39,11 @@ class AuthDataSourceImpl @Inject constructor() : AuthDataSource {
 
     override fun checkUserLoggedIn(): Boolean {
         return auth.currentUser != null
+    }
+
+    override fun logout(): Result<Unit> {
+        return kotlin.runCatching {
+            auth.signOut()
+        }
     }
 }
