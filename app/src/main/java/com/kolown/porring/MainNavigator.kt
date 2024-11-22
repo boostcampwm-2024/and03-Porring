@@ -17,6 +17,7 @@ import com.kolown.login.navigation.navigateLogin
 import com.kolown.model.PostContentModel
 import com.kolown.my.navigation.navigateMy
 import com.kolown.search.navigation.navigateSearch
+import com.kolown.setting.navigation.navigateSetting
 import com.kolown.upload.navigation.navigateUpload
 
 internal class MainNavigator(
@@ -60,6 +61,8 @@ internal class MainNavigator(
         navController.navigateToDetail(postContentModel)
 
     fun navigateToLogin() = navController.navigateLogin()
+
+    fun navigateToSetting() = navController.navigateSetting()
 
     fun popBackStack() {
         navController.popBackStack()
