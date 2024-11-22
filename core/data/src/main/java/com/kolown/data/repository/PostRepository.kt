@@ -1,7 +1,6 @@
 package com.kolown.data.repository
 
 import android.net.Uri
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -14,6 +13,7 @@ import com.kolown.model.PostContentModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -31,16 +31,15 @@ class PostRepositoryImpl @Inject constructor(
     private val postDataSource: PostDataSource,
     private val tagDataSource: TagDataSource,
     private val reactionDataSource: ReactionDataSource,
-    private val randomPagingDataSource: RandomPagingDataSource
+    private val randomPagingDataSource: RandomPagingDataSource,
 ) : PostRepository {
     private val authorId = "user-1feIeEN3rMh4ZY7YpQKxDfnKGvi2"
 
     override suspend fun uploadPost(
         fileUri: Uri,
         description: String,
-        tags: List<String>
+        tags: List<String>,
     ): Result<Unit> {
-        val time = System.currentTimeMillis()
         return runCatching {
             CoroutineScope(Dispatchers.IO).launch {
                 // post Upload to Firestore & get postId
@@ -56,23 +55,21 @@ class PostRepositoryImpl @Inject constructor(
                 }
 
                 val (postId, tagIds) = postIdDeferred.await() to tagIdsDeferred.await()
-                Log.d("UploadTime", "uploadSuccess: ${System.currentTimeMillis() - time}")
 
                 // todo 실패했을때 처리 필요
                 launch {
                     tagDataSource.uploadPostTags(tagIds, postId)
-                    Log.d("UploadTime", "tagtime: ${System.currentTimeMillis() - time}")
                 }
 
                 launch {
                     updateImageUrl(postId, fileUri)
-                    Log.d("UploadTime", "urltime: ${System.currentTimeMillis() - time}")
                 }
             }
         }
     }
 
     override suspend fun getRandomPostList(count: Int): Result<List<PostContentModel>> {
+
         return runCatching {
             val mockAuthorId = "mock"
 
@@ -82,17 +79,21 @@ class PostRepositoryImpl @Inject constructor(
             val (tags, reactions) = coroutineScope {
                 val tagsDeferred = async {
                     posts.map {
-                        tagDataSource.getPostTag(it.postId).getOrElse {
-                            throw IOException("태그 불러오기 실패")
+                        async {
+                            tagDataSource.getPostTag(it.postId).getOrElse {
+                                throw IOException("태그 불러오기 실패")
+                            }
                         }
-                    }
+                    }.awaitAll()
                 }
                 val reactionsDeferred = async {
                     posts.map {
-                        reactionDataSource.getReactionByPostId(it.postId).getOrElse {
-                            throw IOException("리액션 불러오기 실패")
+                        async {
+                            reactionDataSource.getReactionByPostId(it.postId).getOrElse {
+                                throw IOException("리액션 불러오기 실패")
+                            }
                         }
-                    }
+                    }.awaitAll()
                 }
 
                 tagsDeferred.await() to reactionsDeferred.await()
@@ -112,7 +113,7 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getRandomDetailPostList() : Flow<PagingData<PostContentModel>> {
+    override suspend fun getRandomDetailPostList(): Flow<PagingData<PostContentModel>> {
         return Pager(
             config = PagingConfig(pageSize = DETAIL_PER_PAGE, enablePlaceholders = false),
             pagingSourceFactory = { randomPagingDataSource }
