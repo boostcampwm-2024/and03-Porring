@@ -13,10 +13,12 @@ fun NavController.navigateMy(navOptions: NavOptions) {
 }
 
 fun NavGraphBuilder.myNavGraph(
+    navigateToSetting: () -> Unit,
     padding: PaddingValues,
 ) {
     composable<MainMenuRoute.My> {
         MyRoute(
+            navigateToSetting = navigateToSetting,
             padding = padding
         )
     }

@@ -30,17 +30,20 @@ import com.kolown.my.component.PageItemFooter
 
 @Composable
 internal fun MyRoute(
+    navigateToSetting: () -> Unit,
     padding: PaddingValues = PaddingValues(),
 ) {
     MyScreen(
+        navigateToSetting = navigateToSetting,
         padding = padding
     )
 }
 
 @Composable
 fun MyScreen(
+    navigateToSetting: () -> Unit = {},
     padding: PaddingValues = PaddingValues(),
-    viewModel: MyViewModel = hiltViewModel()
+    viewModel: MyViewModel = hiltViewModel(),
 ) {
 
     val width = LocalConfiguration.current.screenWidthDp.dp / 2
@@ -50,10 +53,14 @@ fun MyScreen(
     LaunchedEffect(pagingItems) {
         listState.scrollToItem(0)
     }
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(padding)) {
-        MyAppBar()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)
+    ) {
+        MyAppBar(
+            onSettingClicked = navigateToSetting
+        )
         LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Fixed(2),
             modifier = Modifier
@@ -63,21 +70,21 @@ fun MyScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalItemSpacing = 8.dp,
             content = {
-
                 items(pagingItems.itemCount) { index ->
                     pagingItems[index]?.let {
                         GalleryItem(it, width)
                     }
                 }
-                if(pagingItems.loadState.append !is LoadState.NotLoading){
+
+                if (pagingItems.loadState.append !is LoadState.NotLoading) {
                     item(key = "", span = StaggeredGridItemSpan.FullLine) {
                         PageItemFooter(loadState = pagingItems.loadState.append) {
                             pagingItems.retry()
                         }
                     }
                 }
-
-            })
+            }
+        )
     }
 
 }
