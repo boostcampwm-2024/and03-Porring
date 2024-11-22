@@ -5,10 +5,13 @@ import kotlinx.serialization.Serializable
 
 sealed interface Route {
     @Serializable
-    data class Upload(val imgUri: String) : MainMenuRoute
+    data class Upload(val imgUri: String) : Route
 
     @Serializable
     data object Login : Route
+
+    @Serializable
+    data object Setting : Route
 }
 
 sealed interface MainMenuRoute : Route {

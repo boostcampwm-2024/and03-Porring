@@ -1,0 +1,24 @@
+package com.kolown.setting.navigation
+
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
+import com.kolown.navigation.Route
+import com.kolown.setting.SettingRoute
+
+fun NavController.navigateSetting() {
+    navigate(Route.Setting)
+}
+
+fun NavGraphBuilder.settingNavGraph(
+    popBackStack: () -> Unit,
+    padding: PaddingValues,
+) {
+    composable<Route.Setting> {
+        SettingRoute(
+            popBackStack = popBackStack,
+            padding = padding
+        )
+    }
+}

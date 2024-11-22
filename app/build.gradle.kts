@@ -121,6 +121,8 @@ dependencies {
     implementation(projects.feature.my)
     implementation(projects.feature.detail)
     implementation(projects.feature.upload)
+    implementation(projects.feature.setting)
+
 
     implementation(projects.core.navigation)
     implementation(projects.feature.login)
