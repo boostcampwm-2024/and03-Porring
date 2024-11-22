@@ -1,47 +1,79 @@
 package com.kolown.setting
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
+import com.kolown.setting.component.MenuDivider
+import com.kolown.setting.component.SettingTopAppBar
+import com.kolown.setting.component.TextLabel
+import com.kolown.setting.component.TextMenu
 
 @Composable
 internal fun SettingRoute(
     popBackStack: () -> Unit,
+    updateLoginState: () -> Unit,
+    settingViewModel: SettingViewModel = hiltViewModel(),
     padding: PaddingValues,
 ) {
+    val lifecycle = LocalLifecycleOwner.current
+
+    LaunchedEffect(true) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            settingViewModel.logoutEnd.collect { logoutComplete ->
+                if (logoutComplete) {
+                    updateLoginState()
+                    popBackStack()
+                }
+            }
+        }
+    }
+
     SettingScreen(
-        padding = padding
+        clickLogout = settingViewModel::logout,
+        popBackStack = popBackStack, padding = padding
     )
 }
 
 @Composable
 private fun SettingScreen(
+    clickLogout: () -> Unit = {},
     popBackStack: () -> Unit = {},
     padding: PaddingValues = PaddingValues(),
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(padding),
-        contentAlignment = Alignment.Center
+    Column(
+        modifier = Modifier.fillMaxSize().padding(padding),
     ) {
-        IconButton(
-            onClick = { popBackStack() }
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = null
-            )
-        }
-        Text(text = "SettingScreen")
+        SettingTopAppBar(popBackStack)
+
+        TextLabel(stringResource(R.string.string_label_use_porring))
+
+        TextMenu(stringResource(R.string.string_menu_show_my_reaction))
+        TextMenu(stringResource(R.string.string_menu_notify))
+
+        MenuDivider()
+
+        TextLabel(stringResource(R.string.string_label_manage_account))
+        TextMenu(stringResource(R.string.string_menu_user_info))
+
+        MenuDivider()
+
+        TextMenu(
+            title = stringResource(R.string.string_menu_logout),
+            color = Color.Red,
+            onClick = clickLogout
+        )
+        TextMenu(
+            title = stringResource(R.string.string_menu_dropout_user), color = Color.Red
+        )
     }
 }
