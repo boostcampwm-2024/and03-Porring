@@ -10,6 +10,7 @@ import javax.inject.Named
 interface AuthRepository {
     suspend fun signInWithCredential(credential: Credential): Result<Unit>
     fun checkUserLoggedIn(): Boolean
+    fun logout(): Result<Unit>
 }
 
 class AuthRepositoryImpl @Inject constructor(
@@ -31,6 +32,10 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun checkUserLoggedIn(): Boolean {
         return googleAuthDataSource.checkUserLoggedIn()
+    }
+
+    override fun logout(): Result<Unit> {
+        return googleAuthDataSource.logout()
     }
 }
 
