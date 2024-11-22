@@ -1,6 +1,6 @@
 *.iml
-.gradle
-.idea/*
+/.gradle
+/.idea
 /local.properties
 /.kotlin
 /.idea/*
@@ -17,4 +17,5 @@
 .cxx
 local.properties
 google-services.json
-app-test-camera/*
+app-test-camera
+.gitignore
