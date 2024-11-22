@@ -13,11 +13,13 @@ fun NavController.navigateSetting() {
 
 fun NavGraphBuilder.settingNavGraph(
     popBackStack: () -> Unit,
+    updateLoginState: () -> Unit,
     padding: PaddingValues,
 ) {
     composable<Route.Setting> {
         SettingRoute(
             popBackStack = popBackStack,
+            updateLoginState = updateLoginState,
             padding = padding
         )
     }

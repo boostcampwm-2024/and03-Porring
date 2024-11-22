@@ -82,6 +82,7 @@ internal fun MainNavHost(
 
             settingNavGraph(
                 popBackStack = navigator::popBackStack,
+                updateLoginState = updateLoginState,
                 padding = padding
             )
         }
