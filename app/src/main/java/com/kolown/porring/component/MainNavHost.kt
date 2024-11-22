@@ -61,6 +61,7 @@ internal fun MainNavHost(
             )
 
             myNavGraph(
+                navigateToSetting = navigator::navigateToSetting,
                 padding = padding
             )
 
