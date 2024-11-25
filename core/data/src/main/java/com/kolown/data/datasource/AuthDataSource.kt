@@ -33,10 +33,8 @@ class AuthDataSourceImpl @Inject constructor() : AuthDataSource {
     }
 
     override fun getUserId(): String {
-        //에러 나서 임시로 변경
-        val currentUser = "auth.currentUser"
-
-        return currentUser
+        val currentUser = auth.currentUser ?: throw Exception("로그인 안 됨")
+        return "user-${currentUser.uid}"
     }
 
     override fun getUserInfo(): UserDto {
