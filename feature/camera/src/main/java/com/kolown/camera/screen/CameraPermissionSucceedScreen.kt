@@ -125,15 +125,10 @@ fun CameraXCompose(
                     .align(Alignment.CenterEnd),
 
                 onClick = {
-                    Log.d("이미지:onClick", "Selected image URI: $uri")
-
-                    imagePickerLauncher.launch {
-                        Log.d("이미지:picker", "Selected image URI: $uri")
+                    imagePickerLauncher.launch { it ->
                         it?.let {
-                            Log.e("이미지 클릭2", it.toString())
                             viewModel.setUri(it)
                         } ?: run {
-                            Log.e("이미지 클릭5", it.toString())
                         }
                     }
                 }) {
