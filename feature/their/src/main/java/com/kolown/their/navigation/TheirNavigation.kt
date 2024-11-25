@@ -7,7 +7,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kolown.navigation.MainMenuRoute
-import com.kolown.navigation.Route
 import com.kolown.their.TheirRoute
 
 fun NavController.navigateTheir(authorId: String, navOptions: NavOptions? = null) {
@@ -17,6 +16,7 @@ fun NavController.navigateTheir(authorId: String, navOptions: NavOptions? = null
 fun NavGraphBuilder.theirNavGraph(
     isLoggedIn: Boolean,
     navigateToLogin: () -> Unit,
+    popBackStack: () -> Unit,
     padding: PaddingValues,
 ) {
     composable<MainMenuRoute.Their> { navBackStackEntry ->
@@ -24,6 +24,7 @@ fun NavGraphBuilder.theirNavGraph(
         TheirRoute(
             isLoggedIn = isLoggedIn,
             navigateToLogin = navigateToLogin,
+            popBackStack = popBackStack,
             padding = padding,
             followerId = followerId
         )

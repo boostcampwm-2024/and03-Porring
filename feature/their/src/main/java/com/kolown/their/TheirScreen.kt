@@ -28,6 +28,7 @@ import com.kolown.their.component.TheirAppBar
 internal fun TheirRoute(
     isLoggedIn: Boolean,
     navigateToLogin: () -> Unit,
+    popBackStack: () -> Unit,
     padding: PaddingValues = PaddingValues(),
     followerId: String,
     viewModel: TheirViewModel = hiltViewModel(),
@@ -41,8 +42,9 @@ internal fun TheirRoute(
     TheirScreen(
         isLoggedIn = isLoggedIn,
         navigateToLogin = navigateToLogin,
+        popBackStack = popBackStack,
         padding = padding,
-        followerName
+        followerName = followerName.value
     )
 }
 
@@ -50,6 +52,7 @@ internal fun TheirRoute(
 fun TheirScreen(
     isLoggedIn: Boolean = false,
     navigateToLogin: () -> Unit = {},
+    popBackStack: () -> Unit = {},
     padding: PaddingValues = PaddingValues(),
     followerName: String = "",
     viewModel: TheirViewModel = hiltViewModel()
@@ -69,6 +72,7 @@ fun TheirScreen(
                 .padding(padding)
         ) {
             TheirAppBar(
+                popBackStack = popBackStack,
                 followerName = followerName
             )
             LazyVerticalStaggeredGrid(
