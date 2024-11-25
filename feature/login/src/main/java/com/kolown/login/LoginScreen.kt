@@ -65,13 +65,11 @@ fun LoginRoute(
     LoginScreen(
         onClickGoogleLogin = {
             CoroutineScope(Dispatchers.Main).launch {
-                getCredential(LoginPlatform.Google, context).getOrThrow().let {
+                getCredential(LoginPlatform.Google, context).getOrNull()?.let {
                     loginViewModel.handleSignIn(it)
                 }
             }
-        },
-        popBackStack = popBackStack,
-        padding = padding
+        }, popBackStack = popBackStack, padding = padding
     )
 }
 
@@ -82,22 +80,15 @@ fun LoginScreen(
     padding: PaddingValues = PaddingValues(),
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(padding),
+        modifier = Modifier.fillMaxSize().padding(padding),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp)
-                .padding(end = 16.dp),
+            modifier = Modifier.fillMaxWidth().height(52.dp).padding(end = 16.dp),
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(
-                onClick = { popBackStack() }
-            ) {
+            IconButton(onClick = { popBackStack() }) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(R.string.string_close_button)
@@ -147,8 +138,7 @@ fun ButtonWithIcon(
         shape = RoundedCornerShape(2.dp),
         elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 2.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color.White,
-            contentColor = Color.Gray
+            containerColor = Color.White, contentColor = Color.Gray
         )
     ) {
         Icon(painter = painterResource(icon), contentDescription = null, tint = Color.Unspecified)

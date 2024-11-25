@@ -61,6 +61,8 @@ internal fun MainNavHost(
             )
 
             myNavGraph(
+                isLoggedIn = isLoggedIn,
+                navigateToLogin = navigator::navigateToLogin,
                 navigateToSetting = navigator::navigateToSetting,
                 padding = padding
             )
