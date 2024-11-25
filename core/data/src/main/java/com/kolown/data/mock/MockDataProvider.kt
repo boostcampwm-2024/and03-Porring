@@ -1,6 +1,7 @@
 package com.kolown.data.mock
 
 import android.util.Log
+import com.kolown.model.FollowerThumbnail
 import com.kolown.model.Gallery
 import com.kolown.model.GalleryThumbnail
 import com.kolown.model.Post
@@ -41,6 +42,69 @@ object MockDataProvider {
         "더미 태그 여행",
         "더미 태그 겨율",
         "매우 긴 태그 매우 긴 태그 매우 긴 태그 매우 긴 태그 매우 긴 태그 매우 긴 태그 매우 긴 태그 매우 긴 태그 매우 긴 태그 매우 긴 태그 매우 긴 태그 매우 긴 태그"
+    )
+
+    private val followers = listOf(
+        FollowerThumbnail(
+            id = "1",
+            followerName = "하현",
+            images = listOf(
+                "https://cdn.pixabay.com/photo/2023/02/01/10/37/sunset-7760143_1280.jpg",
+                "https://img.freepik.com/free-photo/beautiful-morning-pang-ung-lake-pang-ung-mae-hong-son-province-thailand_335224-935.jpg",
+                "https://png.pngtree.com/thumb_back/fh260/background/20220313/pngtree-photography-of-night-scenery-of-galaxy-starry-sky-image_1000896.jpg",
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvm8rWyVx0xDvA6ZdRGM1a6UWlrqyLdhNaQM3Prrj5rvHV8MX4Ms3tQbERS3HXO4DFns0&usqp=CAU"
+            )
+        ),
+        FollowerThumbnail(
+            id = "2",
+            followerName = "용수",
+            images = listOf(
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvm8rWyVx0xDvA6ZdRGM1a6UWlrqyLdhNaQM3Prrj5rvHV8MX4Ms3tQbERS3HXO4DFns0&usqp=CAU",
+                "https://cdn.pixabay.com/photo/2023/02/01/10/37/sunset-7760143_1280.jpg",
+                "https://img.freepik.com/free-photo/beautiful-morning-pang-ung-lake-pang-ung-mae-hong-son-province-thailand_335224-935.jpg",
+                "https://png.pngtree.com/thumb_back/fh260/background/20220313/pngtree-photography-of-night-scenery-of-galaxy-starry-sky-image_1000896.jpg"
+            )
+        ),
+        FollowerThumbnail(
+            id = "1",
+            followerName = "문휘",
+            images = listOf(
+                "https://cdn.pixabay.com/photo/2023/02/01/10/37/sunset-7760143_1280.jpg",
+                "https://png.pngtree.com/thumb_back/fh260/background/20220313/pngtree-photography-of-night-scenery-of-galaxy-starry-sky-image_1000896.jpg",
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvm8rWyVx0xDvA6ZdRGM1a6UWlrqyLdhNaQM3Prrj5rvHV8MX4Ms3tQbERS3HXO4DFns0&usqp=CAU",
+                "https://img.freepik.com/free-photo/beautiful-morning-pang-ung-lake-pang-ung-mae-hong-son-province-thailand_335224-935.jpg"
+            )
+        ),
+        FollowerThumbnail(
+            id = "1",
+            followerName = "영수",
+            images = listOf(
+                "https://png.pngtree.com/thumb_back/fh260/background/20220313/pngtree-photography-of-night-scenery-of-galaxy-starry-sky-image_1000896.jpg",
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvm8rWyVx0xDvA6ZdRGM1a6UWlrqyLdhNaQM3Prrj5rvHV8MX4Ms3tQbERS3HXO4DFns0&usqp=CAU",
+                "https://img.freepik.com/free-photo/beautiful-morning-pang-ung-lake-pang-ung-mae-hong-son-province-thailand_335224-935.jpg",
+                "https://cdn.pixabay.com/photo/2023/02/01/10/37/sunset-7760143_1280.jpg"
+            )
+        ),
+        FollowerThumbnail(
+            id = "2",
+            followerName = "아이비",
+            images = listOf(
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvm8rWyVx0xDvA6ZdRGM1a6UWlrqyLdhNaQM3Prrj5rvHV8MX4Ms3tQbERS3HXO4DFns0&usqp=CAU",
+                "https://cdn.pixabay.com/photo/2023/02/01/10/37/sunset-7760143_1280.jpg",
+                "https://img.freepik.com/free-photo/beautiful-morning-pang-ung-lake-pang-ung-mae-hong-son-province-thailand_335224-935.jpg",
+                "https://png.pngtree.com/thumb_back/fh260/background/20220313/pngtree-photography-of-night-scenery-of-galaxy-starry-sky-image_1000896.jpg"
+            )
+        ),
+        FollowerThumbnail(
+            id = "2",
+            followerName = "JK",
+            images = listOf(
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvm8rWyVx0xDvA6ZdRGM1a6UWlrqyLdhNaQM3Prrj5rvHV8MX4Ms3tQbERS3HXO4DFns0&usqp=CAU",
+                "https://cdn.pixabay.com/photo/2023/02/01/10/37/sunset-7760143_1280.jpg",
+                "https://img.freepik.com/free-photo/beautiful-morning-pang-ung-lake-pang-ung-mae-hong-son-province-thailand_335224-935.jpg",
+                "https://png.pngtree.com/thumb_back/fh260/background/20220313/pngtree-photography-of-night-scenery-of-galaxy-starry-sky-image_1000896.jpg"
+            )
+        ),
     )
 
 
@@ -114,6 +178,8 @@ object MockDataProvider {
         Log.e("test", "source: $a")
         return a
     }
+
+    fun getFollowerAlbums() = followers
 
     private inline fun <reified T> getRandomList(
         min: Int = 1,
