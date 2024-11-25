@@ -11,6 +11,7 @@ import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.TagDataSource
 import com.kolown.model.PostContentModel
+import com.kolown.model.Reactions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -26,6 +27,8 @@ interface PostRepository {
     suspend fun uploadPost(fileUri: Uri, description: String, tags: List<String>): Result<Unit>
     suspend fun getRandomPostList(count: Int): Result<List<PostContentModel>>
     suspend fun getRandomDetailPostList(): Flow<PagingData<PostContentModel>>
+    suspend fun reactPost(postId: String, reaction: Reactions): Result<Unit>
+    suspend fun removePostReaction(postId: String): Result<Unit>
 }
 
 class PostRepositoryImpl @Inject constructor(
@@ -75,9 +78,9 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun getRandomPostList(count: Int): Result<List<PostContentModel>> {
 
         return runCatching {
-            val authorId = googleAuthDataSource.getUserId()
+            val currentUserId = googleAuthDataSource.getUserId()
 
-            val posts = postDataSource.getRandomPost(authorId, count).getOrElse {
+            val posts = postDataSource.getRandomPost(currentUserId, count).getOrElse {
                 throw IOException("게시물 불러오기 실패")
             }
             val (tags, reactions) = coroutineScope {
@@ -105,13 +108,15 @@ class PostRepositoryImpl @Inject constructor(
 
             posts.mapIndexed { index, postModel ->
                 PostContentModel(
+                    postId = postModel.postId,
                     authorId = postModel.authorId,
                     imageUrl = postModel.imageUrl,
                     registerAt = postModel.registerAt,
                     description = postModel.description,
                     tags = tags[index].map { it.tagName },
                     isFollower = false,
-                    reactions = reactions[index]
+                    reactions = reactions[index].mapNotNull { it.reaction },
+                    myReaction = reactions[index].find { it.userId == currentUserId }?.reaction
                 )
             }
         }
@@ -132,6 +137,29 @@ class PostRepositoryImpl @Inject constructor(
             throw IOException("이미지 업로드 실패")
         }
         postDataSource.updateImageUrl(documentId, imageUrl)
+    }
+
+    override suspend fun reactPost(postId: String, reaction: Reactions): Result<Unit> {
+        return kotlin.runCatching {
+            val currentUserId = googleAuthDataSource.getUserId()
+
+            reactionDataSource.updatePostReaction(
+                userId = currentUserId,
+                postId = postId,
+                reaction = reaction
+            )
+        }
+    }
+
+    override suspend fun removePostReaction(postId: String): Result<Unit> {
+        return kotlin.runCatching {
+            val currentUserId = googleAuthDataSource.getUserId()
+
+            reactionDataSource.removePostReaction(
+                userId = currentUserId,
+                postId = postId,
+            )
+        }
     }
 
     companion object {

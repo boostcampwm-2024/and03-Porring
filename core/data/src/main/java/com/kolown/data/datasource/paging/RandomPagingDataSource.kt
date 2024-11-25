@@ -59,13 +59,14 @@ class RandomPagingDataSource @Inject constructor(
         return LoadResult.Page(
             data = posts.mapIndexed { index, postModel ->
                 PostContentModel(
+                    postId = postModel.postId,
                     authorId = postModel.authorId,
                     imageUrl = postModel.imageUrl,
                     registerAt = postModel.registerAt,
                     description = postModel.description,
                     tags = tags[index].map { it.tagName },
                     isFollower = false,
-                    reactions = reactions[index]
+                    reactions = reactions[index].mapNotNull { it.reaction }
                 )
             },
             prevKey = if (page == randomSeed) null else posts.lastOrNull()?.random,
