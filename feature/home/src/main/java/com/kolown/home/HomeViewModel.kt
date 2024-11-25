@@ -31,21 +31,21 @@ class HomeViewModel @Inject constructor(
         loadImageItem()
     }
 
-    //    fun followUser(id: String) {
-//        if (_uiState.value is UiState.Success) {
-//            val items = (_uiState.value as UiState.Success).data
-//            _uiState.value = UiState.Success(
-//                items.map { imageItem ->
-//                    if (imageItem.id == id) {
-//                        imageItem.copy(isFollowed = !imageItem.isFollowed)
-//                    } else {
-//                        imageItem
-//                    }
-//                }
-//            )
-//        }
-//    }
-//
+    fun followUser(id: String, name: String) {
+        postRepository.followUser(id, name)
+            .onEach {
+                currentItems = currentItems.map {
+                    if (it.authorId == id) {
+                        it.copy(isFollower = !it.isFollower)
+                    } else {
+                        it
+                    }
+                }
+                _uiState.update { UiState.Success(currentItems) }
+            }
+            .launchIn(viewModelScope)
+    }
+
 
     fun selectReaction(postId: String, reaction: Reactions) {
         val currentReaction = currentItems.find { it.postId == postId }?.myReaction
@@ -77,13 +77,13 @@ class HomeViewModel @Inject constructor(
 
     private fun loadImageItem() {
         postRepository.getRandomPostList(10)
-            .onStart { _uiState.value = UiState.Loading }
+            .onStart { _uiState.update { UiState.Loading } }
             .map { items ->
                 currentItems = items
                 UiState.Success(items)
             }
-            .catch { e -> _uiState.value = UiState.Failure(e) }
-            .onEach { newState -> _uiState.value = newState }
+            .catch { e -> _uiState.update { UiState.Failure(e) } }
+            .onEach { newState -> _uiState.update { newState } }
             .launchIn(viewModelScope)
     }
 }

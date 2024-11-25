@@ -10,6 +10,7 @@ import com.kolown.data.datasource.remote.ImageDataSource
 import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.TagDataSource
+import com.kolown.data.datasource.remote.FollowDataSource
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import kotlinx.coroutines.CoroutineScope
@@ -31,6 +32,7 @@ interface PostRepository {
     suspend fun getRandomDetailPostList(): Flow<PagingData<PostContentModel>>
     suspend fun reactPost(postId: String, reaction: Reactions): Result<Unit>
     suspend fun removePostReaction(postId: String): Result<Unit>
+    fun followUser(followerId: String, followerName: String): Flow<Unit>
 }
 
 class PostRepositoryImpl @Inject constructor(
@@ -40,6 +42,7 @@ class PostRepositoryImpl @Inject constructor(
     private val reactionDataSource: ReactionDataSource,
     private val randomPagingDataSource: RandomPagingDataSource,
     @Named("google") private val googleAuthDataSource: AuthDataSource,
+    private val followDataSource: FollowDataSource
 ) : PostRepository {
 
     override suspend fun uploadPost(
@@ -162,6 +165,23 @@ class PostRepositoryImpl @Inject constructor(
                 postId = postId,
             )
         }
+    }
+
+    override fun followUser(
+        followerId: String,
+        followerName: String
+    ): Flow<Unit> = flow {
+        val currentUserId = googleAuthDataSource.getUserId()
+
+        followDataSource.uploadFollow(
+            userId = currentUserId,
+            followerId = followerId,
+            followerName = followerName
+        )
+
+        emit(Unit)
+    }.catch { e ->
+        throw e
     }
 
     companion object {
