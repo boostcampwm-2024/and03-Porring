@@ -46,6 +46,8 @@ googleid = "1.1.1"
 minSdk = "24"
 compileSdk = "34"
 uiGraphicsAndroid = "1.7.2"
+exifinterface = "1.3.6"
+exifinterfaceVersion = "1.3.7"
 
 [libraries]
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCore" }
@@ -102,6 +104,8 @@ google-firebase-storage = { group = "com.google.firebase", name = "firebase-stor
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
 google-android-googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
+androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
+exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterfaceVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
