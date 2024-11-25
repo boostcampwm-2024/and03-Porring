@@ -23,35 +23,29 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsIgnoringVisibility
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -72,18 +66,18 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.kolown.detail.component.DetailTopAppBar
 import com.kolown.detail.component.FollowDialog
 import com.kolown.detail.component.ReactionDialog
-import com.kolown.model.ImageItem
+import com.kolown.detail.component.ReactionGroup
 import com.kolown.model.PostContentModel
+import com.kolown.model.Reactions
 import com.kolown.model.UiState
-import kotlinx.coroutines.flow.Flow
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -275,25 +269,20 @@ fun ReelsContent(
                     color = Color(0xFF8D8D8D)
                 )
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 10.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.FavoriteBorder,
+                        imageVector = if(imageItem.myReaction == null )Icons.Outlined.FavoriteBorder else Icons.Default.Favorite,
                         tint = Color(0xFF00BBFF),
                         contentDescription = "",
                         modifier = Modifier.clickable {
                             isReactionVisible.value = true
-                        }
-                    )
+                        })
                     Row {
                         DetailButton(
-                            onClick = {},
-                            id = R.drawable.ic_detail_gallary,
-                            buttonText = "갤러리"
+                            onClick = {}, id = R.drawable.ic_detail_gallary, buttonText = "갤러리"
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         DetailButton(

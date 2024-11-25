@@ -22,6 +22,7 @@ import com.kolown.model.Reactions
 
 @Composable
 internal fun ReactionDialog(
+    refreshPage: () -> Unit,
     modifier: Modifier = Modifier,
     imageItem: PostContentModel,
     selectedReaction: (PostContentModel, Reactions) -> Unit,
@@ -45,8 +46,9 @@ internal fun ReactionDialog(
                     didIReact = imageItem.myReaction == it,
                     reaction = it,
                     onClick = { reaction ->
-                        onClick(reaction)
+                        selectedReaction(imageItem, reaction)
                         onDismiss()
+                        refreshPage()
                     }
                 )
             }

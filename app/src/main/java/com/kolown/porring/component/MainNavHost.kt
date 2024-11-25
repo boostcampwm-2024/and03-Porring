@@ -70,6 +70,7 @@ internal fun MainNavHost(
             )
 
             detailNavGraph(
+                popBackStack = navigator::popBackStack,
                 padding = padding
             )
 
