@@ -4,16 +4,15 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.os.Build
-import android.util.Log
 import android.view.View
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.rememberTransformableState
-import androidx.compose.foundation.gestures.stopScroll
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -89,26 +88,30 @@ import kotlinx.coroutines.flow.Flow
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 internal fun DetailRoute(
+    popBackStack: () -> Unit,
     padding: PaddingValues = PaddingValues(),
-    detailViewModel: DetailViewModel = hiltViewModel()
+    detailViewModel: DetailViewModel = hiltViewModel(),
 ) {
+    var isReelsMode by remember { mutableStateOf(true) }
     val uiState = detailViewModel.uiState.collectAsStateWithLifecycle()
     val state = uiState.value
+
     when (state) {
         is UiState.Loading -> LoadingDetailScreen()
         is UiState.Success -> {
             val pagingItems = state.data.collectAsLazyPagingItems()
-            val pagerState = rememberPagerState(
-                initialPage = 0,
-                pageCount = {
-                    pagingItems.itemCount + 1
-                }
-            )
-            DetailPager(
+            val pagerState =
+                rememberPagerState(initialPage = 0) { pagingItems.itemCount + 1 }
+
+            DetailScreen(
+                popBackStack = popBackStack,
+                onSelectReaction = detailViewModel::selectReaction,
+                viewModeChange = { isReelsMode = it },
+                isReelsMode = isReelsMode,
                 firstItem = detailViewModel.getPagingItem(),
-                padding = padding,
-                items = pagingItems,
-                pagerState = pagerState
+                pagingItems = pagingItems,
+                pagerState = pagerState,
+                padding = padding
             )
         }
 
@@ -116,107 +119,101 @@ internal fun DetailRoute(
     }
 }
 
+@Composable
+fun DetailScreen(
+    popBackStack: () -> Unit = {},
+    onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
+    viewModeChange: (Boolean) -> Unit = {},
+    isReelsMode: Boolean = true,
+    firstItem: PostContentModel,
+    pagingItems: LazyPagingItems<PostContentModel>,
+    pagerState: PagerState,
+    padding: PaddingValues = PaddingValues(),
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xff151D37))
+            .padding(padding)
+    ) {
+        DetailContent(
+            onSelectReaction = onSelectReaction,
+            viewModeChange = viewModeChange,
+            isReelsMode = isReelsMode,
+            pagingItems = pagingItems,
+            pagerState = pagerState,
+            firstItem = firstItem
+        )
+
+        if (isReelsMode) {
+            DetailTopAppBar(popBackStack)
+        }
+    }
+}
+
 
 @Composable
-fun DetailPager(
+fun DetailContent(
+    onSelectReaction: (PostContentModel, Reactions) -> Unit,
+    viewModeChange: (Boolean) -> Unit,
+    isReelsMode: Boolean,
+    pagingItems: LazyPagingItems<PostContentModel>,
+    pagerState: PagerState,
     firstItem: PostContentModel,
-    padding: PaddingValues,
-    items: LazyPagingItems<PostContentModel>,
-    pagerState: PagerState
 ) {
-    val isScrollEnabled = remember { mutableStateOf(true) }
-    Log.e("페이지 카운트", pagerState.currentPage.toString())
     VerticalPager(
+        modifier = Modifier.fillMaxSize(),
         state = pagerState,
-        userScrollEnabled = isScrollEnabled.value,
-        contentPadding = padding
+        userScrollEnabled = isReelsMode,
     ) { page ->
         // Our page content
         // 정상 상태일 때
-        if (page == 0) {
-            DetailScreen(
-                imageItem = firstItem,
-                page = page,
-                onDoubleTab = {
-                    isScrollEnabled.value = it
-                }
-            )
-        } else {
-            items[page-1]?.let {
-                DetailScreen(
-                    imageItem = it,
-                    page = page,
-                    onDoubleTab = {
-                        isScrollEnabled.value = it
-                    }
-                )
-            }
-        }
-        //에러 났을 때(ex.Network Error)
+        val imageItem = if (page == 0) firstItem else pagingItems[page - 1] ?: return@VerticalPager
+
+        DetailItem(
+            onSelectReaction = onSelectReaction,
+            imageItem = imageItem,
+            onDoubleTab = viewModeChange
+        )
     }
+
+    //todo: 에러 났을 때(ex.Network Error)
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun DetailScreen(
+fun DetailItem(
+    refreshPage: () -> Unit = {},
+    onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
-    page: Int,
-    onDoubleTab: (Boolean) -> Unit
+    onDoubleTab: (Boolean) -> Unit,
 ) {
     val view = LocalView.current
     val isConcentrateMode = remember {
         mutableStateOf(false)
     }
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                windowInsets = WindowInsets.statusBarsIgnoringVisibility,
-                title = {},
-                navigationIcon = {
-                    if (!isConcentrateMode.value) Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                        contentDescription = "뒤로 가기",
-                        tint = Color.White
-                    )
-                },
-                actions = {
-                    if (isConcentrateMode.value) Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = null,
-                        modifier = Modifier.clickable {
-                            isConcentrateMode.value = false
-                            onDoubleTab(true)
-                        },
-                        tint = Color.White
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black)
-            )
-        },
-        containerColor = Color.Black
-    ) { padding ->
-        if (!isConcentrateMode.value) DetailContent(
-            padding = padding,
-            imageUrl = imageItem.imageUrl,
-            imageDescription = imageItem.description,
+
+    if (!isConcentrateMode.value) {
+        ReelsContent(
+            refreshPage = refreshPage,
+            onSelectReaction = onSelectReaction,
+            imageItem = imageItem,
             onDoubleTab = {
                 isConcentrateMode.value = true
                 requestFullScreen(view)
                 onDoubleTab(false)
             },
-            tagList = imageItem.tags
-        ) else {
-            ConcentrateModeContent(
-                padding = padding,
-                imageUrl = imageItem.imageUrl
-            )
-            BackHandler(enabled = true) {
-                if (isConcentrateMode.value) {
-                    isConcentrateMode.value = false
-                    onDoubleTab(true)
-                    showSystembar(view = view)
-                }
+        )
+    } else {
+        ConcentrateContent(
+            imageUrl = imageItem.imageUrl
+        )
+        BackHandler(enabled = true) {
+            if (isConcentrateMode.value) {
+                isConcentrateMode.value = false
+                onDoubleTab(true)
+                showSystembar(view = view)
             }
         }
     }
@@ -225,50 +222,52 @@ fun DetailScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DetailContent(
-    padding: PaddingValues,
-    imageUrl: String,
-    imageDescription: String,
-    tagList: List<String> = emptyList(),
-    onDoubleTab: () -> Unit
+fun ReelsContent(
+    refreshPage: () -> Unit,
+    onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
+    imageItem: PostContentModel,
+    onDoubleTab: () -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isReactionVisible = remember { mutableStateOf(false) }
     val isFollowDialogVisible = remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(padding),
-        verticalArrangement = Arrangement.Center
+        modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center
     ) {
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(imageUrl)
+            model = ImageRequest.Builder(LocalContext.current).data(imageItem.imageUrl)
                 .crossfade(true)
                 .build(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(4f / 5f)
-                .combinedClickable(
-                    indication = null,
+            modifier = Modifier.fillMaxWidth().aspectRatio(4f / 5f)
+                .combinedClickable(indication = null,
                     interactionSource = interactionSource,
                     onClick = {},
-                    onDoubleClick = { onDoubleTab() }
-                ),
+                    onDoubleClick = { onDoubleTab() }),
             contentDescription = "",
             contentScale = ContentScale.Crop,
         )
         Box {
             Column {
-                Text(
-                    text = imageDescription,
+                Row(
                     modifier = Modifier
-                        .padding(vertical = 8.dp, horizontal = 10.dp),
-                    color = Color.White,
-                    fontSize = 16.sp
-                )
-                val tags = tagList.joinToString(", ") { "#$it" }
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = imageItem.description,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(vertical = 8.dp, horizontal = 10.dp),
+                        color = Color.White,
+                        fontSize = 16.sp
+                    )
+                    ReactionGroup(
+                        modifier = Modifier.wrapContentWidth(),
+                        reactions = imageItem.reactions
+                    )
+                }
+                val tags = imageItem.tags.joinToString(", ") { "#$it" }
                 Text(
                     text = tags,
                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
@@ -305,28 +304,26 @@ fun DetailContent(
                     }
                 }
             }
-            if (isReactionVisible.value) ReactionDialog(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(16.dp),
-                selectedReaction = null,
-                onClick = {
-                    isReactionVisible.value = !isReactionVisible.value
-                },
-                onDismiss = { isReactionVisible.value = false }
-            )
+            if (isReactionVisible.value) {
+                ReactionDialog(
+                    refreshPage = refreshPage,
+                    imageItem = imageItem,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(16.dp),
+                    selectedReaction = onSelectReaction,
+                    onDismiss = { isReactionVisible.value = false })
+            }
         }
     }
-    if (isFollowDialogVisible.value)
-        FollowDialog(
-            onClickCancel = { isFollowDialogVisible.value = false }
-        )
+    if (isFollowDialogVisible.value) FollowDialog(onClickCancel = {
+        isFollowDialogVisible.value = false
+    })
 }
 
 @Composable
-fun ConcentrateModeContent(
-    padding: PaddingValues,
-    imageUrl: String
+fun ConcentrateContent(
+    imageUrl: String,
 ) {
     var scale by remember {
         mutableStateOf(1f)
@@ -335,9 +332,7 @@ fun ConcentrateModeContent(
         mutableStateOf(Offset.Zero)
     }
     BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(padding),
+        modifier = Modifier.fillMaxSize(),
     ) {
         val state = rememberTransformableState { zoomChange, panChange, rotationChange ->
             scale = (scale * zoomChange).coerceIn(1f, 5f)
@@ -355,21 +350,15 @@ fun ConcentrateModeContent(
             )
         }
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(imageUrl)
-                .crossfade(true)
+            model = ImageRequest.Builder(LocalContext.current).data(imageUrl).crossfade(true)
                 .build(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(4f / 5f)
-                .align(Alignment.Center)
+            modifier = Modifier.fillMaxWidth().aspectRatio(4f / 5f).align(Alignment.Center)
                 .graphicsLayer {
                     scaleX = scale
                     scaleY = scale
                     translationX = offset.x
                     translationY = offset.y
-                }
-                .transformable(state),
+                }.transformable(state),
             contentDescription = "",
             contentScale = ContentScale.Crop,
         )
@@ -381,19 +370,16 @@ fun ConcentrateModeContent(
 fun DetailButton(
     onClick: () -> Unit,
     @DrawableRes id: Int,
-    buttonText: String
+    buttonText: String,
 ) {
     Button(
         onClick = onClick,
-        modifier = Modifier
-            .wrapContentSize(),
+        modifier = Modifier.wrapContentSize(),
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF151D37))
     ) {
         Icon(
-            painter = painterResource(id = id),
-            contentDescription = null,
-            tint = Color(0xFF00BBFF)
+            painter = painterResource(id = id), contentDescription = null, tint = Color(0xFF00BBFF)
         )
         Spacer(modifier = Modifier.width(10.dp))
         Text(text = buttonText, color = Color(0xFF00BBFF))
@@ -407,8 +393,7 @@ fun requestFullScreen(view: View) {
     insetController.systemBarsBehavior =
         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     insetController.hide(
-        WindowInsetsCompat.Type.statusBars() or
-                WindowInsetsCompat.Type.navigationBars()
+        WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
     )
 }
 
@@ -418,8 +403,7 @@ fun showSystembar(view: View) {
     val insetController = WindowCompat.getInsetsController(window, view)
     insetController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
     insetController.show(
-        WindowInsetsCompat.Type.statusBars() or
-                WindowInsetsCompat.Type.navigationBars()
+        WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
     )
 }
 
@@ -433,11 +417,9 @@ fun Context.getActivity(): Activity? = when (this) {
 @Preview(showBackground = true, backgroundColor = 0xFF000000)
 @Composable
 fun DetailScreenPreview() {
-    DetailContent(
-        padding = PaddingValues(0.dp),
-        imageUrl = "https://www.adobe.com/content/dam/cc/us/en/creative-cloud/photography/discover/landscape-photography/CODERED_B1_landscape_P2d_714x348.jpg.img.jpg",
-        imageDescription = "집으로 가는 길 풍경 좋다",
-        onDoubleTab = {},
-        tagList = listOf("풍경", "등산", "가을산")
-    )
+//    DetailContent(
+//        padding = PaddingValues(0.dp),
+//        imageItem = PostContentModel(""),
+//        onDoubleTab = {},
+//    )
 }

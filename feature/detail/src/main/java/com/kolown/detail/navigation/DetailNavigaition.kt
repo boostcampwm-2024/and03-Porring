@@ -29,7 +29,8 @@ val PostType = object : NavType<PostContentModel>(isNullableAllowed = false) {
         bundle.putString(key, Json.encodeToString(PostContentModel.serializer(), value))
     }
 
-    override fun serializeAsValue(value: PostContentModel): String  = Uri.encode(Json.encodeToString<PostContentModel>(value))
+    override fun serializeAsValue(value: PostContentModel): String =
+        Uri.encode(Json.encodeToString<PostContentModel>(value))
 }
 
 fun NavController.navigateToDetail(postContentModel: PostContentModel) {
@@ -38,11 +39,15 @@ fun NavController.navigateToDetail(postContentModel: PostContentModel) {
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.detailNavGraph(
-    padding: PaddingValues
+    popBackStack: () -> Unit,
+    padding: PaddingValues,
 ) {
     composable<AppRoute.Detail>(
         typeMap = mapOf(typeOf<PostContentModel>() to PostType),
     ) {
-        DetailRoute(padding = padding)
+        DetailRoute(
+            popBackStack = popBackStack,
+            padding = padding
+        )
     }
 }
