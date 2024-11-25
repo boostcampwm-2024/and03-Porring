@@ -9,6 +9,11 @@ import com.kolown.model.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -71,19 +76,14 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadImageItem() {
-        viewModelScope.launch {
-            _uiState.value = UiState.Loading
-            try {
-                postRepository.getRandomPostList(10).onSuccess { items ->
-                    currentItems = items
-                    _uiState.value = UiState.Success(currentItems.toList())
-                }.onFailure { e ->
-                    // 실패하면 다시 불러오는 로직 실행
-                    _uiState.value = UiState.Failure(e)
-                }
-            } catch (e: Exception) {
-                _uiState.value = UiState.Failure(e)
+        postRepository.getRandomPostList(10)
+            .onStart { _uiState.value = UiState.Loading }
+            .map { items ->
+                currentItems = items
+                UiState.Success(items)
             }
-        }
+            .catch { e -> _uiState.value = UiState.Failure(e) }
+            .onEach { newState -> _uiState.value = newState }
+            .launchIn(viewModelScope)
     }
 }
