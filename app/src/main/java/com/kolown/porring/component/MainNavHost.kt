@@ -43,7 +43,8 @@ internal fun MainNavHost(
                 padding = padding,
                 onClickImage = { postContentModel ->
                     navigator.navigateToDetail(postContentModel)
-                }
+                },
+                navigateToTheir = navigator::navigateToTheir
             )
 
             searchNavGraph(
