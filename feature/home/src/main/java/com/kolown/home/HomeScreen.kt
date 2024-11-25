@@ -69,7 +69,7 @@ internal fun HomeRoute(
             HomeScreen(
                 padding = padding,
                 mainFeedImages = images,
-//                onFollowClick = viewModel::followUser,
+                onFollowClick = viewModel::followUser,
                 onSelectReaction = viewModel::selectReaction,
                 onClickImage = onClickImage
             )
@@ -83,7 +83,7 @@ internal fun HomeRoute(
 private fun HomeScreen(
     padding: PaddingValues = PaddingValues(),
     mainFeedImages: List<PostContentModel> = emptyList(),
-    onFollowClick: (String) -> Unit = {},
+    onFollowClick: (String, String) -> Unit = {id, name ->},
     onSelectReaction: (String, Reactions) -> Unit = { _, _ -> },
     onClickImage: (PostContentModel) -> Unit = {}
 ) {

@@ -52,7 +52,7 @@ internal fun RandomImageList(
     pagerState: PagerState = rememberPagerState(pageCount = { 10 }),
     imageItems: List<PostContentModel> = emptyList(),
     isReactionDialogVisible: Boolean = false,
-    onFollowClick: (String) -> Unit = {},
+    onFollowClick: (String, String) -> Unit = {id, name ->},
     onSelectReaction: (String, Reactions) -> Unit = { _, _ -> },
     onChangeReactionDialogVisibility: () -> Unit = {},
     onClickImage: (PostContentModel) -> Unit = {}
@@ -64,7 +64,7 @@ internal fun RandomImageList(
         ImageCard(
             imageItems[page],
             isReactionDialogVisible,
-            { onFollowClick("test") },
+            onFollowClick,
             { reaction -> onSelectReaction(imageItems[page].postId, reaction) },
             onChangeReactionDialogVisibility,
             onClickImage
@@ -76,7 +76,7 @@ internal fun RandomImageList(
 private fun ImageCard(
     imageItem: PostContentModel,
     isReactionDialogVisible: Boolean,
-    onFollowClick: () -> Unit,
+    onFollowClick: (String, String) -> Unit,
     onSelectReaction: (Reactions) -> Unit,
     onChangeReactionDialogVisibility: () -> Unit,
     onClickImage: (PostContentModel) -> Unit
@@ -140,7 +140,10 @@ private fun ImageCard(
         }
         if(isFollowDialogVisible.value) {
             FollowDialog(
-                onClickCancel = { isFollowDialogVisible.value = false }
+                onClickCancel = { isFollowDialogVisible.value = false },
+                onClickConfirm = { name ->
+                    onFollowClick(imageItem.authorId, name)
+                }
             )
         }
     }
