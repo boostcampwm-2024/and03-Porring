@@ -20,6 +20,7 @@ import com.kolown.porring.MainMenu
 import com.kolown.porring.MainNavigator
 import com.kolown.search.navigation.searchNavGraph
 import com.kolown.setting.navigation.settingNavGraph
+import com.kolown.their.navigation.theirNavGraph
 import com.kolown.upload.navigation.uploadNavGraph
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -85,6 +86,12 @@ internal fun MainNavHost(
             settingNavGraph(
                 popBackStack = navigator::popBackStack,
                 updateLoginState = updateLoginState,
+                padding = padding
+            )
+
+            theirNavGraph(
+                isLoggedIn = isLoggedIn,
+                navigateToLogin = navigator::navigateToLogin,
                 padding = padding
             )
         }

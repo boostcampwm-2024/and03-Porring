@@ -29,6 +29,9 @@ sealed interface MainMenuRoute : Route {
 
     @Serializable
     data object My : MainMenuRoute
+
+    @Serializable
+    data class Their(val authorId: String) : MainMenuRoute
 }
 
 
