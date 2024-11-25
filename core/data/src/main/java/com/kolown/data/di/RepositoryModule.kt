@@ -2,6 +2,8 @@ package com.kolown.data.di
 
 import com.kolown.data.repository.AuthRepository
 import com.kolown.data.repository.AuthRepositoryImpl
+import com.kolown.data.repository.FollowerRepository
+import com.kolown.data.repository.FollowerRepositoryImpl
 import com.kolown.data.repository.PostRepository
 import com.kolown.data.repository.PostRepositoryImpl
 import com.kolown.data.repository.UserRepository
@@ -29,4 +31,9 @@ abstract class RepositoryModule {
     abstract fun provideUserRepository(
         userRepository: UserRepositoryImpl,
     ): UserRepository
+
+    @Binds
+    abstract fun provideFollowRepository(
+        followRepository: FollowerRepositoryImpl,
+    ): FollowerRepository
 }
