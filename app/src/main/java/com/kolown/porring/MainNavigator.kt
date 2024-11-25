@@ -18,6 +18,7 @@ import com.kolown.model.PostContentModel
 import com.kolown.my.navigation.navigateMy
 import com.kolown.search.navigation.navigateSearch
 import com.kolown.setting.navigation.navigateSetting
+import com.kolown.their.navigation.navigateTheir
 import com.kolown.upload.navigation.navigateUpload
 
 internal class MainNavigator(
@@ -54,6 +55,8 @@ internal class MainNavigator(
             MainMenu.MY -> navController.navigateMy(navOptions)
         }
     }
+
+    fun navigateToTheir(authorId: String) = navController.navigateTheir(authorId)
 
     fun navigateToUpload(imgUri: String) = navController.navigateUpload(imgUri)
 
