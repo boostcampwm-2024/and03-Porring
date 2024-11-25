@@ -3,6 +3,7 @@ package com.kolown.camera
 import android.media.Image
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -40,6 +41,7 @@ class ImagePickerLauncher {
         imagePickerProvider: @Composable ((Uri?) -> Unit) -> ManagedActivityResultLauncher<String, Uri?>,
         photoPickerProvider: @Composable ((Uri?) -> Unit) -> ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>
     ) {
+        Log.d("이미지:provide", "Selected image URI: $")
         imagePickerLauncher = imagePickerProvider(onSucceed)
         photoPickerLauncher = photoPickerProvider(onSucceed)
 
@@ -47,7 +49,11 @@ class ImagePickerLauncher {
 
 
     fun launch(onFinished: (Uri?) -> Unit) {
-        onSucceed = onFinished
+        onSucceed = { uri ->
+            // URI를 로그로 출력
+            Log.d("이미지:launch", "Selected image URI: $uri")
+            onFinished(uri)
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             photoPickerLauncher?.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         } else {
