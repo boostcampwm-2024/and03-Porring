@@ -70,6 +70,7 @@ internal fun HomeRoute(
                 padding = padding,
                 mainFeedImages = images,
                 onFollowClick = viewModel::followUser,
+                onUnfollowClick = viewModel::unFollowUser,
                 onSelectReaction = viewModel::selectReaction,
                 onClickImage = onClickImage
             )
@@ -83,7 +84,8 @@ internal fun HomeRoute(
 private fun HomeScreen(
     padding: PaddingValues = PaddingValues(),
     mainFeedImages: List<PostContentModel> = emptyList(),
-    onFollowClick: (String, String) -> Unit = {id, name ->},
+    onFollowClick: (String, String) -> Unit = {_, _ ->},
+    onUnfollowClick: (String) -> Unit = {},
     onSelectReaction: (String, Reactions) -> Unit = { _, _ -> },
     onClickImage: (PostContentModel) -> Unit = {}
 ) {
@@ -107,6 +109,7 @@ private fun HomeScreen(
             imageItems = mainFeedImages,
             isReactionDialogVisible = isReactionDialogVisible,
             onFollowClick = onFollowClick,
+            onUnfollowClick = onUnfollowClick,
             onSelectReaction = onSelectReaction,
             onChangeReactionDialogVisibility = {
                 isReactionDialogVisible = !isReactionDialogVisible

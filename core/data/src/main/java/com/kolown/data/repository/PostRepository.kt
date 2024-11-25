@@ -1,6 +1,7 @@
 package com.kolown.data.repository
 
 import android.net.Uri
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -33,6 +34,7 @@ interface PostRepository {
     suspend fun reactPost(postId: String, reaction: Reactions): Result<Unit>
     suspend fun removePostReaction(postId: String): Result<Unit>
     fun followUser(followerId: String, followerName: String): Flow<Unit>
+    suspend fun unFollowUser(followerId: String): Flow<Boolean>
 }
 
 class PostRepositoryImpl @Inject constructor(
@@ -186,5 +188,18 @@ class PostRepositoryImpl @Inject constructor(
 
     companion object {
         const val DETAIL_PER_PAGE = 2
+    }
+
+    override suspend fun unFollowUser(
+        followerId: String
+    ): Flow<Boolean> = flow {
+        val currentUserId = googleAuthDataSource.getUserId()
+
+        followDataSource.removeFollow(
+            userId = currentUserId,
+            followerId = followerId
+        ).collect { success ->
+            emit(success)
+        }
     }
 }

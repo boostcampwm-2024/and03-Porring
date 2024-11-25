@@ -53,6 +53,7 @@ internal fun RandomImageList(
     imageItems: List<PostContentModel> = emptyList(),
     isReactionDialogVisible: Boolean = false,
     onFollowClick: (String, String) -> Unit = {id, name ->},
+    onUnfollowClick: (String) -> Unit = {},
     onSelectReaction: (String, Reactions) -> Unit = { _, _ -> },
     onChangeReactionDialogVisibility: () -> Unit = {},
     onClickImage: (PostContentModel) -> Unit = {}
@@ -65,6 +66,7 @@ internal fun RandomImageList(
             imageItems[page],
             isReactionDialogVisible,
             onFollowClick,
+            onUnfollowClick,
             { reaction -> onSelectReaction(imageItems[page].postId, reaction) },
             onChangeReactionDialogVisibility,
             onClickImage
@@ -77,6 +79,7 @@ private fun ImageCard(
     imageItem: PostContentModel,
     isReactionDialogVisible: Boolean,
     onFollowClick: (String, String) -> Unit,
+    onUnfollowClick: (String) -> Unit,
     onSelectReaction: (Reactions) -> Unit,
     onChangeReactionDialogVisibility: () -> Unit,
     onClickImage: (PostContentModel) -> Unit
@@ -106,13 +109,13 @@ private fun ImageCard(
                     .align(Alignment.BottomEnd)
                     .padding(16.dp),
                 imageItem,
-                {
-                    isFollowDialogVisible.value = !isFollowDialogVisible.value
-                    if(isFollowDialogVisible.value) {
-                        // todo follow 취소하는 함수 추가
-                    }
+            ) {
+                if(imageItem.isFollower) {
+                    onUnfollowClick(imageItem.authorId)
+                } else {
+                    isFollowDialogVisible.value = true
                 }
-            )
+            }
             if (isReactionDialogVisible) {
                 ReactionDialog(
                     modifier = Modifier
