@@ -31,6 +31,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.kolown.designsystem.Primary
+import com.kolown.designsystem.PrimaryUnActive
 import com.kolown.porring.MainMenu
 import com.kolown.porring.ui.theme.PorringTheme
 import kotlinx.collections.immutable.PersistentList
@@ -90,7 +92,7 @@ private fun RowScope.MainBottomBarItem(
         Icon(
             imageVector = ImageVector.vectorResource(menu.iconResId),
             contentDescription = menu.contentDescription,
-            tint = if (selected || menu == MainMenu.CAMERA) Color(0xFF598AFF) else Color(0XFFB9C2FA),
+            tint = if (selected || menu == MainMenu.CAMERA) Primary else PrimaryUnActive,
             modifier = Modifier.size(
                 if (menu == MainMenu.CAMERA) 48.dp else 24.dp
             )
@@ -99,7 +101,7 @@ private fun RowScope.MainBottomBarItem(
         if (menu != MainMenu.CAMERA) {
             Text(
                 text = menu.contentDescription,
-                color = if (selected) Color(0xFF598AFF) else Color(0XFFB9C2FA),
+                color = if (selected) Primary else PrimaryUnActive,
                 style = MaterialTheme.typography.labelMedium
             )
         }

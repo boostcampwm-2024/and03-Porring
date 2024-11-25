@@ -33,24 +33,14 @@ class HomeViewModel @Inject constructor(
     }
 
     fun followUser(id: String, name: String) {
+        updateFollow(id)
         postRepository.followUser(id, name)
-            .onEach {
-                updateFollow(id)
-            }
-            .launchIn(viewModelScope)
     }
 
     fun unFollowUser(id: String) {
         viewModelScope.launch {
+            updateFollow(id)
             postRepository.unFollowUser(id)
-                .catch {
-                    Log.e("FollowTest", "unFollowUser: $it")
-                }
-                .collect { success ->
-                    if(success) {
-                        updateFollow(id)
-                    }
-                }
         }
     }
 

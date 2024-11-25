@@ -3,7 +3,6 @@ package com.kolown.home.component
 import IconFollow
 import IconGallery
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,7 +24,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
-import com.kolown.model.ImageItem
+import com.kolown.designsystem.Primary
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 
@@ -52,7 +50,7 @@ internal fun RandomImageList(
     pagerState: PagerState = rememberPagerState(pageCount = { 10 }),
     imageItems: List<PostContentModel> = emptyList(),
     isReactionDialogVisible: Boolean = false,
-    onFollowClick: (String, String) -> Unit = {id, name ->},
+    onFollowClick: (String, String) -> Unit = { id, name -> },
     onUnfollowClick: (String) -> Unit = {},
     onSelectReaction: (String, Reactions) -> Unit = { _, _ -> },
     onChangeReactionDialogVisibility: () -> Unit = {},
@@ -98,7 +96,7 @@ private fun ImageCard(
         ) {
             RandomImage(
                 imageItem.imageUrl,
-                onClickImage = {onClickImage(imageItem)}
+                onClickImage = { onClickImage(imageItem) }
             )
             ReactionGroup(
                 modifier = Modifier.align(Alignment.TopEnd),
@@ -110,7 +108,7 @@ private fun ImageCard(
                     .padding(16.dp),
                 imageItem,
             ) {
-                if(imageItem.isFollower) {
+                if (imageItem.isFollower) {
                     onUnfollowClick(imageItem.authorId)
                 } else {
                     isFollowDialogVisible.value = true
@@ -138,10 +136,10 @@ private fun ImageCard(
                 modifier = Modifier.size(24.dp),
                 imageVector = likedImageVector,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
+                tint = Primary
             )
         }
-        if(isFollowDialogVisible.value) {
+        if (isFollowDialogVisible.value) {
             FollowDialog(
                 onClickCancel = { isFollowDialogVisible.value = false },
                 onClickConfirm = { name ->
@@ -254,14 +252,14 @@ private fun CustomIconButton(
     onClick: () -> Unit,
 ) {
     IconButton(
-        modifier = modifier.background(if (isSelected) MaterialTheme.colorScheme.primary else Color.White),
+        modifier = modifier.background(if (isSelected) Primary else Color.White),
         onClick = onClick,
     ) {
         Icon(
             modifier = Modifier.size(24.dp),
             imageVector = imageVector,
             contentDescription = null,
-            tint = if (isSelected) Color.White else MaterialTheme.colorScheme.primary
+            tint = if (isSelected) Color.White else Primary
         )
     }
 }
