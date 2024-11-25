@@ -27,7 +27,6 @@ interface ImageCacheRepository {
         format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
         quality: Int = 100
     ): Uri?
-
     suspend fun clearCacheFiles()
     suspend fun decodeSampledBitmapFromUri(uri: Uri): Bitmap?
 }
@@ -68,65 +67,64 @@ class ImageCacheRepositoryImpl @Inject constructor(private val applicationContex
     override suspend fun decodeSampledBitmapFromUri(
         uri: Uri,
     ): Bitmap? {
-        val orientation = rotateImageAndReturnUri(uri)
+
+        val rotatedUri = rotateImageAndReturnUri(uri) ?: return null
 
         val options = BitmapFactory.Options().apply {
             inJustDecodeBounds = true
         }
 
+        applicationContext.contentResolver.openInputStream(rotatedUri)?.use { inputStream ->
+            BitmapFactory.decodeStream(inputStream, null, options)
+        }
         options.inSampleSize = calculateInSampleSize(options)
 
         options.inJustDecodeBounds = false
 
-        return orientation?.let {
-            applicationContext.contentResolver.openInputStream(uri)?.use { inputStream ->
-                BitmapFactory.decodeStream(inputStream, null, options)?.let { bitmap ->
-                    rotateBitmap(
-                        orientation = orientation,
-                        source = bitmap
-                    )
-                }
+        return applicationContext.contentResolver.openInputStream(rotatedUri)?.use { inputStream ->
+            BitmapFactory.decodeStream(inputStream, null, options)
+        }
+    }
+
+    private fun rotateImageAndReturnUri(uri: Uri): Uri? {
+        var exif: ExifInterface? = null
+        var outputUri: Uri? = null
+        var rotatedBitmap: Bitmap? = null
+
+        val inputStream = applicationContext.contentResolver.openInputStream(uri)
+
+        inputStream?.use { stream ->
+            try {
+                exif = ExifInterface(stream)
+            } catch (e: IOException) {
+                Log.e("회전 에러", e.message.toString())
             }
         }
-    }
 
-    private fun rotateImageAndReturnUri(uri: Uri): Int? {
-        var exif: ExifInterface? = null
-
-        try {
-            exif = applicationContext.contentResolver.openInputStream(uri)
-                ?.use { inputStream -> ExifInterface(inputStream) }
-        } catch (e: IOException) {
-            Log.e("회전 에러", e.message.toString())
-        }
-
-        if (exif != null) {
-            val orientation = exif.getAttributeInt(
+        applicationContext.contentResolver.openInputStream(uri)?.use { stream ->
+            val originalBitmap = BitmapFactory.decodeStream(stream)
+            val orientation = exif?.getAttributeInt(
                 ExifInterface.TAG_ORIENTATION,
                 ExifInterface.ORIENTATION_NORMAL
-            )
-            Log.e("회전", orientation.toString())
+            ) ?: ExifInterface.ORIENTATION_NORMAL
 
-            return orientation
+            rotatedBitmap = rotateBitmap(orientation, originalBitmap)
         }
-        return null
+
+        rotatedBitmap?.let {
+            val file =
+                File(applicationContext.cacheDir, "rotated_photo_${System.currentTimeMillis()}.jpg")
+            FileOutputStream(file).use { out ->
+                it.compress(Bitmap.CompressFormat.JPEG, 100, out)
+            }
+
+            outputUri = Uri.fromFile(file)
+        }
+
+        return outputUri
     }
 
-//            val file = File(applicationContext.cacheDir, "rotated_photo_${System.currentTimeMillis()}.jpg")
-//
-//            FileOutputStream(file).use { out ->
-//                rotatedBitmap?.compress(Bitmap.CompressFormat.JPEG, 100, out)
-//            }
-//
-//            // 파일의 URI 반환
-//            outputUri = Uri.fromFile(file)
-//        }
-//
-//        return outputUri
-
-
     private fun rotateBitmap(orientation: Int, source: Bitmap): Bitmap {
-
         val angle = when (orientation) {
             ExifInterface.ORIENTATION_ROTATE_90 -> 90f
             ExifInterface.ORIENTATION_ROTATE_180 -> 180f
@@ -137,7 +135,6 @@ class ImageCacheRepositoryImpl @Inject constructor(private val applicationContex
         val matrix = Matrix().apply {
             postRotate(angle)
         }
-
         return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
     }
 
@@ -146,10 +143,8 @@ class ImageCacheRepositoryImpl @Inject constructor(private val applicationContex
     ): Int {
         val (height: Int, width: Int) = options.run { outHeight to outWidth }
         var inSampleSize = 1
-        // todo 상수 변환 필요(900, 720)
 
         if (height > 900 || width > 720) {
-
             val halfHeight: Int = height / 2
             val halfWidth: Int = width / 2
 
