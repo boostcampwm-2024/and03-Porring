@@ -13,8 +13,9 @@ import javax.inject.Inject
 
 interface FollowDataSource {
     suspend fun getIsFollower(userId: String, followerId: String): Result<Boolean>
-    suspend fun uploadFollow(userId: String, followerId: String, followerName: String)
+    suspend fun uploadFollow(userId: String, followerId: String, followerName: String): Flow<Boolean>
     suspend fun removeFollow(userId: String, followerId: String): Flow<Boolean>
+    suspend fun getFollowerName(userId: String, followerId: String): Flow<String>
 }
 
 class FollowDataSourceImpl @Inject constructor(
@@ -30,11 +31,32 @@ class FollowDataSourceImpl @Inject constructor(
 
             result.isEmpty.not()
         }.onFailure {
-            Log.e("FollowTest", "getIsFollower: $it")
+            Log.e("GetFollower", "getIsFollower: $it")
         }
     }
 
-    override suspend fun uploadFollow(userId: String, followerId: String, followerName: String) {
+    override suspend fun getFollowerName(userId: String, followerId: String): Flow<String> = flow {
+
+        val prevFollow = followCollection.contains(userId, followerId).getOrElse {
+            throw IOException("팔로우 확인 에러")
+        }
+
+        if (prevFollow.isEmpty) {
+            throw IOException("팔로우 관계가 없습니다.")
+        }
+
+        val name = prevFollow.first().data["followerName"].toString()
+
+        emit(name)
+    }.catch { e ->
+        Log.e("GetFollowerName", "datasource: $e")
+    }
+
+    override suspend fun uploadFollow(
+        userId: String,
+        followerId: String,
+        followerName: String
+    ): Flow<Boolean> = flow {
         val uploadData = mapOf(
             "userId" to userId,
             "followerId" to followerId,
@@ -46,6 +68,12 @@ class FollowDataSourceImpl @Inject constructor(
             .await()
             .let {
                 it.update("followId", "follow-${it.id}")
+            }
+            .runCatching {
+                emit(true)
+            }.onFailure { e ->
+                Log.e("FollowUpload", "datasource: $e")
+                emit(false)
             }
     }
 
@@ -78,7 +106,7 @@ class FollowDataSourceImpl @Inject constructor(
                 .get()
                 .await()
         }.onFailure {
-            Log.e("FollowTest", "contains: $it")
+            Log.e("FollowContains", "contains: $it")
         }
     }
 }
