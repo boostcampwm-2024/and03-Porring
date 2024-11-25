@@ -88,7 +88,7 @@ class PostRepositoryImpl @Inject constructor(
         val posts = postDataSource.getRandomPost(currentUserId, count).getOrElse {
             throw IOException("게시물 불러오기 실패")
         }
-        val (tags, reactions) = coroutineScope {
+        val (tags, reactions, isFollowers) = coroutineScope {
             val tagsDeferred = async {
                 posts.map {
                     async {
@@ -107,8 +107,20 @@ class PostRepositoryImpl @Inject constructor(
                     }
                 }.awaitAll()
             }
+            val followDeferred = async {
+                posts.map {
+                    async {
+                        followDataSource.getIsFollower(
+                            userId = currentUserId,
+                            followerId = it.authorId
+                        ).getOrElse {
+                            throw IOException("팔로우 확인 실패")
+                        }
+                    }
+                }.awaitAll()
+            }
 
-            tagsDeferred.await() to reactionsDeferred.await()
+            Triple(tagsDeferred.await(), reactionsDeferred.await(), followDeferred.await())
         }
 
         val postContentModels = posts.mapIndexed { index, postModel ->
@@ -119,7 +131,7 @@ class PostRepositoryImpl @Inject constructor(
                 registerAt = postModel.registerAt,
                 description = postModel.description,
                 tags = tags[index].map { it.tagName },
-                isFollower = false,
+                isFollower = isFollowers[index],
                 reactions = reactions[index].mapNotNull { it.reaction },
                 myReaction = reactions[index].find { it.userId == currentUserId }?.reaction
             )

@@ -12,6 +12,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 interface FollowDataSource {
+    suspend fun getIsFollower(userId: String, followerId: String): Result<Boolean>
     suspend fun uploadFollow(userId: String, followerId: String, followerName: String)
     suspend fun removeFollow(userId: String, followerId: String): Flow<Boolean>
 }
@@ -20,6 +21,18 @@ class FollowDataSourceImpl @Inject constructor(
     firestore: FirebaseFirestore
 ) : FollowDataSource {
     private val followCollection = firestore.collection("follow")
+
+    override suspend fun getIsFollower(userId: String, followerId: String): Result<Boolean> {
+        return runCatching {
+            val result = followCollection.contains(userId, followerId).getOrElse {
+                throw IOException("팔로우 확인 에러")
+            }
+
+            result.isEmpty.not()
+        }.onFailure {
+            Log.e("FollowTest", "getIsFollower: $it")
+        }
+    }
 
     override suspend fun uploadFollow(userId: String, followerId: String, followerName: String) {
         val uploadData = mapOf(
