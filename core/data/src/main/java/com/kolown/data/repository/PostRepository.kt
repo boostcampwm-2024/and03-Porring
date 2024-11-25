@@ -7,6 +7,8 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.kolown.data.datasource.AuthDataSource
 import com.kolown.data.datasource.paging.RandomPagingDataSource
+import com.kolown.data.datasource.paging.UserPagingDataSource
+import com.kolown.data.datasource.paging.UserPagingKey
 import com.kolown.data.datasource.remote.ImageDataSource
 import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.data.datasource.remote.ReactionDataSource
@@ -33,6 +35,7 @@ interface PostRepository {
     suspend fun getRandomDetailPostList(): Flow<PagingData<PostContentModel>>
     suspend fun reactPost(postId: String, reaction: Reactions): Result<Unit>
     suspend fun removePostReaction(postId: String): Result<Unit>
+    fun getUserPosts(userId: String): Flow<PagingData<PostContentModel>>
 }
 
 class PostRepositoryImpl @Inject constructor(
@@ -42,8 +45,20 @@ class PostRepositoryImpl @Inject constructor(
     private val reactionDataSource: ReactionDataSource,
     private val randomPagingDataSource: RandomPagingDataSource,
     @Named("google") private val googleAuthDataSource: AuthDataSource,
-    private val followDataSource: FollowDataSource
+    private val followDataSource: FollowDataSource,
+    private val userPagingDataSource: UserPagingDataSource,
 ) : PostRepository {
+
+    override fun getUserPosts(userId: String): Flow<PagingData<PostContentModel>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 20,
+                enablePlaceholders = false
+            ),
+            initialKey = UserPagingKey(1, userId),
+            pagingSourceFactory = { userPagingDataSource }
+        ).flow
+    }
 
     override suspend fun uploadPost(
         fileUri: Uri,

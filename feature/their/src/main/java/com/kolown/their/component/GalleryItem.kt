@@ -13,10 +13,11 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.kolown.data.mock.MockDataProvider
 import com.kolown.model.GalleryThumbnail
+import com.kolown.model.PostContentModel
 import kotlin.random.Random
 
 @Composable
-internal fun GalleryItem(galleryThumbnail: GalleryThumbnail, width: Dp) {
+internal fun GalleryItem(galleryThumbnail: PostContentModel, width: Dp) {
     //비율은 그냥 테스트
     val height = if (Random.nextBoolean()) (width.value * 1.4).dp else width + 20.dp
 
@@ -32,8 +33,8 @@ internal fun GalleryItem(galleryThumbnail: GalleryThumbnail, width: Dp) {
 
 }
 
-@Preview
-@Composable
-private fun GalleryItemPreview() {
-    GalleryItem(MockDataProvider.getRandomGalleryThumbnail(), 200.dp)
-}
+//@Preview
+//@Composable
+//private fun GalleryItemPreview() {
+//    GalleryItem(MockDataProvider.getRandomGalleryThumbnail(), 200.dp)
+//}
