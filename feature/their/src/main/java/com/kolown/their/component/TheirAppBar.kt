@@ -2,13 +2,8 @@ package com.kolown.their.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,7 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun MyAppBar() {
+internal fun TheirAppBar(
+    followerName: String = ""
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -28,7 +25,7 @@ fun MyAppBar() {
             .background(Color.White)
     ) {
         Text(
-            "My Gallery",
+            "${followerName}'s Gallery",
             modifier = Modifier.align(Alignment.Center),
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold
@@ -38,6 +35,6 @@ fun MyAppBar() {
 
 @Composable
 @Preview
-fun MyAppBarPreview() {
-    MyAppBar()
+fun TheirAppBarPreview() {
+    TheirAppBar()
 }
