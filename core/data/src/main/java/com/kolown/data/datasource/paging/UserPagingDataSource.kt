@@ -2,12 +2,15 @@ package com.kolown.data.datasource.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.kolown.data.datasource.remote.FollowDataSource
 import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.TagDataSource
 import com.kolown.model.PostContentModel
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import java.io.IOException
 import javax.inject.Inject
 
 data class UserPagingKey(
@@ -18,7 +21,7 @@ data class UserPagingKey(
 class UserPagingDataSource @Inject constructor(
     private val postDataSource: PostDataSource,
     private val tagDataSource: TagDataSource,
-    private val reactionDataSource: ReactionDataSource,
+    private val reactionDataSource: ReactionDataSource
 ) : PagingSource<UserPagingKey, PostContentModel>() {
     override fun getRefreshKey(state: PagingState<UserPagingKey, PostContentModel>): UserPagingKey {
         return UserPagingKey(state.anchorPosition ?: 0, "")
@@ -30,11 +33,20 @@ class UserPagingDataSource @Inject constructor(
         val posts = postDataSource.getUserPost(userId, params.loadSize.toLong()).getOrThrow()
         val (tags, reactions) = coroutineScope {
             val tagsDeferred =
-                async { posts.map { tagDataSource.getPostTag(it.postId).getOrThrow() } }
+                async {
+                    posts.map {
+                        async{
+                            tagDataSource.getPostTag(it.postId).getOrThrow()
+
+                        }
+                    }.awaitAll()
+                }
             val reactionsDeferred = async {
                 posts.map {
-                    reactionDataSource.getReactionByPostId(it.postId).getOrThrow()
-                }
+                    async {
+                        reactionDataSource.getReactionByPostId(it.postId).getOrThrow()
+                    }
+                }.awaitAll()
             }
 
             tagsDeferred.await() to reactionsDeferred.await()
@@ -49,8 +61,8 @@ class UserPagingDataSource @Inject constructor(
                     registerAt = postModel.registerAt,
                     description = postModel.description,
                     tags = tags[index].map { it.tagName },
-                    isFollower = false,
-                    reactions = reactions[index].mapNotNull { it.reaction }
+                    isFollower = true,
+                    reactions = reactions[index].mapNotNull { it.reaction },
                 )
             },
             prevKey = if (page == 1) null else UserPagingKey(page - 1, userId),
