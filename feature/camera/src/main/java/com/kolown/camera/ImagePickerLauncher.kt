@@ -9,19 +9,28 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 
 
 @Composable
 fun getImagePickerLauncher(): ImagePickerLauncher {
 
-    val launcher = ImagePickerLauncher()
-    launcher.ProvideLauncher({
+    val launcher =  ImagePickerLauncher()
+    launcher.ProvideLauncher(
+        imagePickerProvider = { onSucceed ->
         rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetContent(), it
+            contract = ActivityResultContracts.GetContent(),
+            onResult = {
+                onSucceed(it)
+            }
         )
-    }, {
+    }, photoPickerProvider = {  onSucceed ->
         rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.PickVisualMedia(), it
+            contract = ActivityResultContracts.PickVisualMedia(),
+            onResult = {
+                Log.d("이미지:result",it.toString())
+                onSucceed(it)
+            }
         )
     }
     )
@@ -41,17 +50,18 @@ class ImagePickerLauncher {
         imagePickerProvider: @Composable ((Uri?) -> Unit) -> ManagedActivityResultLauncher<String, Uri?>,
         photoPickerProvider: @Composable ((Uri?) -> Unit) -> ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>
     ) {
-        Log.d("이미지:provide", "Selected image URI: $")
-        imagePickerLauncher = imagePickerProvider(onSucceed)
-        photoPickerLauncher = photoPickerProvider(onSucceed)
-
+        imagePickerLauncher = imagePickerProvider { uri ->
+            onSucceed(uri)
+        }
+        photoPickerLauncher = photoPickerProvider { uri ->
+            onSucceed(uri)
+        }
+        //imagePickerLauncher = imagePickerProvider(onSucceed)
     }
 
 
     fun launch(onFinished: (Uri?) -> Unit) {
         onSucceed = { uri ->
-            // URI를 로그로 출력
-            Log.d("이미지:launch", "Selected image URI: $uri")
             onFinished(uri)
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
