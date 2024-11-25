@@ -64,7 +64,7 @@ internal fun RandomImageList(
         ImageCard(
             imageItems[page],
             isReactionDialogVisible,
-            onFollowClick,
+            { onFollowClick("test") },
             { reaction -> onSelectReaction(imageItems[page].postId, reaction) },
             onChangeReactionDialogVisibility,
             onClickImage
@@ -76,13 +76,14 @@ internal fun RandomImageList(
 private fun ImageCard(
     imageItem: PostContentModel,
     isReactionDialogVisible: Boolean,
-    onFollowClick: (String) -> Unit,
+    onFollowClick: () -> Unit,
     onSelectReaction: (Reactions) -> Unit,
     onChangeReactionDialogVisibility: () -> Unit,
     onClickImage: (PostContentModel) -> Unit
 ) {
     val likedImageVector =
         if (imageItem.myReaction == null) Icons.Outlined.FavoriteBorder else Icons.Outlined.Favorite
+    val isFollowDialogVisible = remember { mutableStateOf(false) }
 
     Column {
         Box(
@@ -105,7 +106,12 @@ private fun ImageCard(
                     .align(Alignment.BottomEnd)
                     .padding(16.dp),
                 imageItem,
-                onFollowClick
+                {
+                    isFollowDialogVisible.value = !isFollowDialogVisible.value
+                    if(isFollowDialogVisible.value) {
+                        // todo follow 취소하는 함수 추가
+                    }
+                }
             )
             if (isReactionDialogVisible) {
                 ReactionDialog(
@@ -132,6 +138,11 @@ private fun ImageCard(
                 tint = MaterialTheme.colorScheme.primary
             )
         }
+        if(isFollowDialogVisible.value) {
+            FollowDialog(
+                onClickCancel = { isFollowDialogVisible.value = false }
+            )
+        }
     }
 }
 
@@ -139,7 +150,7 @@ private fun ImageCard(
 private fun IconButtonGroup(
     modifier: Modifier,
     imageItem: PostContentModel,
-    onFollowClick: (String) -> Unit
+    onFollowClick: () -> Unit
 ) {
     val whiteModifier = Modifier
         .clip(CircleShape)
@@ -154,7 +165,7 @@ private fun IconButtonGroup(
             IconFollow,
             imageItem.isFollower
         ) {
-//            onFollowClick(imageItem.authorId)
+            onFollowClick()
         }
         CustomIconButton(
             whiteModifier,
