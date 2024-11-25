@@ -70,7 +70,7 @@ internal fun HomeRoute(
                 padding = padding,
                 mainFeedImages = images,
 //                onFollowClick = viewModel::followUser,
-//                onSelectReaction = viewModel::selectReaction,
+                onSelectReaction = viewModel::selectReaction,
                 onClickImage = onClickImage
             )
         }

@@ -65,7 +65,7 @@ internal fun RandomImageList(
             imageItems[page],
             isReactionDialogVisible,
             onFollowClick,
-            { reaction -> onSelectReaction(imageItems[page].authorId, reaction) },
+            { reaction -> onSelectReaction(imageItems[page].postId, reaction) },
             onChangeReactionDialogVisibility,
             onClickImage
         )
@@ -98,7 +98,7 @@ private fun ImageCard(
             )
             ReactionGroup(
                 modifier = Modifier.align(Alignment.TopEnd),
-                reactions = imageItem.reactions.mapNotNull { it.reaction }
+                reactions = imageItem.reactions
             )
             IconButtonGroup(
                 modifier = Modifier
@@ -112,7 +112,7 @@ private fun ImageCard(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(16.dp),
-                    selectedReaction = Reactions.LOVE,
+                    selectedReaction = imageItem.myReaction,
                     onClick = onSelectReaction,
                     onDismiss = onChangeReactionDialogVisibility
                 )
