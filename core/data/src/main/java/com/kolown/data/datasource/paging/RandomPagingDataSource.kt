@@ -2,20 +2,24 @@ package com.kolown.data.datasource.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.kolown.data.datasource.AuthDataSource
 import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.TagDataSource
 import com.kolown.model.PostContentModel
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import java.io.IOException
 import javax.inject.Inject
+import javax.inject.Named
 
 class RandomPagingDataSource @Inject constructor(
     private val postDataSource: PostDataSource,
     private val tagDataSource: TagDataSource,
     private val reactionDataSource: ReactionDataSource,
-) : PagingSource<Long,PostContentModel>() {
+    @Named("google") private val googleAuthDataSource: AuthDataSource,
+) : PagingSource<Long, PostContentModel>() {
     private val randomSeed = (0..Long.MAX_VALUE).random()
 
     override fun getRefreshKey(state: PagingState<Long, PostContentModel>): Long? {
@@ -23,24 +27,30 @@ class RandomPagingDataSource @Inject constructor(
     }
 
     override suspend fun load(params: LoadParams<Long>): LoadResult<Long, PostContentModel> {
+        val authorId = googleAuthDataSource.getUserId()
         val page = params.key ?: randomSeed
-        val posts = postDataSource.getRandomPost("u",page,params.loadSize.toLong()).getOrElse {
-            throw IOException("랜덤 게시글 불러오기 실패")
-        }
+        val posts =
+            postDataSource.getRandomPost(authorId, page, params.loadSize.toLong()).getOrElse {
+                throw IOException("랜덤 게시글 불러오기 실패")
+            }
         val (tags, reactions) = coroutineScope {
             val tagsDeferred = async {
                 posts.map {
-                    tagDataSource.getPostTag(it.postId).getOrElse {
-                        throw IOException("태그 불러오기 실패")
+                    async {
+                        tagDataSource.getPostTag(it.postId).getOrElse {
+                            throw IOException("태그 불러오기 실패")
+                        }
                     }
-                }
+                }.awaitAll()
             }
             val reactionsDeferred = async {
                 posts.map {
-                    reactionDataSource.getReactionByPostId(it.postId).getOrElse {
-                        throw IOException("리액션 불러오기 실패")
+                    async {
+                        reactionDataSource.getReactionByPostId(it.postId).getOrElse {
+                            throw IOException("리액션 불러오기 실패")
+                        }
                     }
-                }
+                }.awaitAll()
             }
 
             tagsDeferred.await() to reactionsDeferred.await()
@@ -58,8 +68,8 @@ class RandomPagingDataSource @Inject constructor(
                     reactions = reactions[index]
                 )
             },
-            prevKey = if(page== randomSeed) null else posts.lastOrNull()?.random,
-            nextKey = if(posts.isEmpty()) null else posts.last().random + 1
+            prevKey = if (page == randomSeed) null else posts.lastOrNull()?.random,
+            nextKey = if (posts.isEmpty()) null else posts.last().random + 1
         )
     }
 }

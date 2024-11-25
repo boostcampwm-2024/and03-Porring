@@ -24,16 +24,13 @@ class DetailViewModel @Inject constructor(
     private val postRepository: PostRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-
     private val typeMap = mapOf(
         typeOf<PostContentModel>() to PostType,
     )
 
-
     private val _uiState =
         MutableStateFlow<UiState<Flow<PagingData<PostContentModel>>>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
-
 
     private val post: PostContentModel =
         savedStateHandle.toRoute<AppRoute.Detail>(typeMap).postContentModel

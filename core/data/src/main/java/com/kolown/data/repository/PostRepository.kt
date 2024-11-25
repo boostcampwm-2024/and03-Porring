@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.kolown.data.datasource.AuthDataSource
 import com.kolown.data.datasource.paging.RandomPagingDataSource
 import com.kolown.data.datasource.remote.ImageDataSource
 import com.kolown.data.datasource.remote.PostDataSource
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
+import javax.inject.Named
 
 interface PostRepository {
     suspend fun uploadPost(fileUri: Uri, description: String, tags: List<String>): Result<Unit>
@@ -32,8 +34,8 @@ class PostRepositoryImpl @Inject constructor(
     private val tagDataSource: TagDataSource,
     private val reactionDataSource: ReactionDataSource,
     private val randomPagingDataSource: RandomPagingDataSource,
+    @Named("google") private val googleAuthDataSource: AuthDataSource,
 ) : PostRepository {
-    private val authorId = "user-1feIeEN3rMh4ZY7YpQKxDfnKGvi2"
 
     override suspend fun uploadPost(
         fileUri: Uri,
@@ -42,6 +44,8 @@ class PostRepositoryImpl @Inject constructor(
     ): Result<Unit> {
         return runCatching {
             CoroutineScope(Dispatchers.IO).launch {
+                val authorId = googleAuthDataSource.getUserId()
+
                 // post Upload to Firestore & get postId
                 val postIdDeferred = async {
                     postDataSource.uploadPost(authorId, description).getOrElse {
@@ -71,9 +75,9 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun getRandomPostList(count: Int): Result<List<PostContentModel>> {
 
         return runCatching {
-            val mockAuthorId = "mock"
+            val authorId = googleAuthDataSource.getUserId()
 
-            val posts = postDataSource.getRandomPost(mockAuthorId, count).getOrElse {
+            val posts = postDataSource.getRandomPost(authorId, count).getOrElse {
                 throw IOException("게시물 불러오기 실패")
             }
             val (tags, reactions) = coroutineScope {
@@ -121,6 +125,8 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     private suspend fun updateImageUrl(postId: String, fileUri: Uri) {
+        val authorId = googleAuthDataSource.getUserId()
+
         val documentId = postId.substringAfter("-")
         val imageUrl = imageDataSource.getImageUrl(authorId, fileUri).getOrElse {
             throw IOException("이미지 업로드 실패")
@@ -129,7 +135,6 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     companion object {
-        const val DETAIL_PER_PAGE = 1
+        const val DETAIL_PER_PAGE = 2
     }
-
 }
