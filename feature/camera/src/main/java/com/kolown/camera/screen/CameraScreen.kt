@@ -16,7 +16,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.kolown.camera.camera.permissions
 import android.provider.Settings
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,12 +33,17 @@ internal fun CameraRoute(
     navigateToUpload: (String) -> Unit = {},
     padding: PaddingValues = PaddingValues(),
 ) {
-    CameraScreen(navigateToUpload = navigateToUpload)
+    CameraScreen(
+        padding = padding,
+        navigateToUpload = navigateToUpload
+    )
 }
+
 @Composable
 fun CameraScreen(
+    padding: PaddingValues,
     navigateToUpload: (String) -> Unit = {},
-    viewModel:CameraScreenViewModel = hiltViewModel()
+    viewModel: CameraScreenViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val activity = LocalView.current.context as android.app.Activity
@@ -45,16 +55,15 @@ fun CameraScreen(
         )
     }
 
-
     val launcherMultiplePermissions = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissionsMap ->
+        ActivityResultContracts.RequestPermission()
+    ) { areGranted ->
+        Log.e("카메라", areGranted.toString())
 
-        val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
         if (areGranted) {
             cameraPermission = true
         } else {
-            if(!shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)){
+            if (!shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)) {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                     data = Uri.fromParts("package", context.packageName, null)
                 }
@@ -62,21 +71,28 @@ fun CameraScreen(
             }
         }
     }
-    SideEffect {
-        launcherMultiplePermissions.launch(permissions)
+
+    LaunchedEffect(cameraPermission) {
+        launcherMultiplePermissions.launch(Manifest.permission.CAMERA)
     }
 
-    if (cameraPermission) {
-        CameraXCompose(viewModel, navigateToUpload)
-    } else {
-        CameraPermissionDeniedScreen()
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)
+    ) {
+        if (cameraPermission) {
+            CameraXCompose(viewModel, navigateToUpload)
+        } else {
+            CameraPermissionDeniedScreen()
+        }
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun CameraScreenPreview() {
-    CameraScreen()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun CameraScreenPreview() {
+//    CameraScreen()
+//}
 
 
