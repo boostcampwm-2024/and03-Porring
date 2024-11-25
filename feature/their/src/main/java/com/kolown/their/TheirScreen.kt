@@ -19,8 +19,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.kolown.my.component.PageItemFooter
 import com.kolown.their.component.GalleryItem
+import com.kolown.their.component.PageItemFooter
 import com.kolown.their.component.RestrictedLoginContent
 import com.kolown.their.component.TheirAppBar
 

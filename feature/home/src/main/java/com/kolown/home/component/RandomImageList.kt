@@ -50,24 +50,26 @@ internal fun RandomImageList(
     pagerState: PagerState = rememberPagerState(pageCount = { 10 }),
     imageItems: List<PostContentModel> = emptyList(),
     isReactionDialogVisible: Boolean = false,
-    onFollowClick: (String, String) -> Unit = { id, name -> },
+    onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
     onSelectReaction: (String, Reactions) -> Unit = { _, _ -> },
     onChangeReactionDialogVisibility: () -> Unit = {},
-    onClickImage: (PostContentModel) -> Unit = {}
+    onClickImage: (PostContentModel) -> Unit = {},
+    navigateToTheir: (String) -> Unit = {}
 ) {
     HorizontalPager(
         modifier = Modifier.padding(top = 32.dp),
         state = pagerState
     ) { page ->
         ImageCard(
-            imageItems[page],
-            isReactionDialogVisible,
-            onFollowClick,
-            onUnfollowClick,
-            { reaction -> onSelectReaction(imageItems[page].postId, reaction) },
-            onChangeReactionDialogVisibility,
-            onClickImage
+            imageItem = imageItems[page],
+            isReactionDialogVisible = isReactionDialogVisible,
+            onFollowClick = onFollowClick,
+            onUnfollowClick = onUnfollowClick,
+            onSelectReaction = { reaction -> onSelectReaction(imageItems[page].postId, reaction) },
+            onChangeReactionDialogVisibility = onChangeReactionDialogVisibility,
+            onClickImage = onClickImage,
+            navigateToTheir = navigateToTheir
         )
     }
 }
@@ -80,7 +82,8 @@ private fun ImageCard(
     onUnfollowClick: (String) -> Unit,
     onSelectReaction: (Reactions) -> Unit,
     onChangeReactionDialogVisibility: () -> Unit,
-    onClickImage: (PostContentModel) -> Unit
+    onClickImage: (PostContentModel) -> Unit,
+    navigateToTheir: (String) -> Unit
 ) {
     val likedImageVector =
         if (imageItem.myReaction == null) Icons.Outlined.FavoriteBorder else Icons.Outlined.Favorite
@@ -106,14 +109,16 @@ private fun ImageCard(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(16.dp),
-                imageItem,
-            ) {
-                if (imageItem.isFollower) {
-                    onUnfollowClick(imageItem.authorId)
-                } else {
-                    isFollowDialogVisible.value = true
+                imageItem = imageItem,
+                navigateToTheir = { navigateToTheir(imageItem.authorId) },
+                onFollowClick = {
+                    if (imageItem.isFollower) {
+                        onUnfollowClick(imageItem.authorId)
+                    } else {
+                        isFollowDialogVisible.value = true
+                    }
                 }
-            }
+            )
             if (isReactionDialogVisible) {
                 ReactionDialog(
                     modifier = Modifier
@@ -154,7 +159,8 @@ private fun ImageCard(
 private fun IconButtonGroup(
     modifier: Modifier,
     imageItem: PostContentModel,
-    onFollowClick: () -> Unit
+    onFollowClick: () -> Unit,
+    navigateToTheir: () -> Unit
 ) {
     val whiteModifier = Modifier
         .clip(CircleShape)
@@ -165,18 +171,18 @@ private fun IconButtonGroup(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         CustomIconButton(
-            whiteModifier,
-            IconFollow,
-            imageItem.isFollower
+            modifier = whiteModifier,
+            imageVector = IconFollow,
+            isSelected = imageItem.isFollower
         ) {
             onFollowClick()
         }
         CustomIconButton(
-            whiteModifier,
-            IconGallery
-        ) {
-
-        }
+            modifier = whiteModifier,
+            imageVector = IconGallery,
+            isSelected = false,
+            onClick = navigateToTheir
+        )
     }
 }
 

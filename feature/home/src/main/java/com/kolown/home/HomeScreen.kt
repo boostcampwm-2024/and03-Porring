@@ -42,7 +42,8 @@ import com.kolown.model.UiState
 internal fun HomeRoute(
     padding: PaddingValues = PaddingValues(),
     viewModel: HomeViewModel = hiltViewModel(),
-    onClickImage: (PostContentModel) -> Unit = {}
+    onClickImage: (PostContentModel) -> Unit = {},
+    navigateToTheir: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -72,7 +73,8 @@ internal fun HomeRoute(
                 onFollowClick = viewModel::followUser,
                 onUnfollowClick = viewModel::unFollowUser,
                 onSelectReaction = viewModel::selectReaction,
-                onClickImage = onClickImage
+                onClickImage = onClickImage,
+                navigateToTheir = navigateToTheir
             )
         }
     }
@@ -87,7 +89,8 @@ private fun HomeScreen(
     onFollowClick: (String, String) -> Unit = {_, _ ->},
     onUnfollowClick: (String) -> Unit = {},
     onSelectReaction: (String, Reactions) -> Unit = { _, _ -> },
-    onClickImage: (PostContentModel) -> Unit = {}
+    onClickImage: (PostContentModel) -> Unit = {},
+    navigateToTheir: (String) -> Unit = {}
 ) {
     val pagerState = rememberPagerState(pageCount = { mainFeedImages.size })
     var isReactionDialogVisible by remember { mutableStateOf(false) }
@@ -114,7 +117,8 @@ private fun HomeScreen(
             onChangeReactionDialogVisibility = {
                 isReactionDialogVisible = !isReactionDialogVisible
             },
-            onClickImage = onClickImage
+            onClickImage = onClickImage,
+            navigateToTheir = navigateToTheir
         )
         Spacer(
             modifier = Modifier
