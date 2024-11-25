@@ -2,4 +2,5 @@
 <resources>
     <string name="string_use_after_login">로그인 후 서비스 이용이 가능합니다</string>
     <string name="string_move_to_login">로그인 화면으로 이동</string>
+    <string name="string_back_button">뒤로 가기 버튼</string>
 </resources>

@@ -92,6 +92,7 @@ internal fun MainNavHost(
             theirNavGraph(
                 isLoggedIn = isLoggedIn,
                 navigateToLogin = navigator::navigateToLogin,
+                popBackStack = navigator::popBackStack,
                 padding = padding
             )
         }
