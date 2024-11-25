@@ -1,24 +1,45 @@
 package com.kolown.data.repository
 
+import android.R.attr.path
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.exifinterface.media.ExifInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.nio.file.Path
 import javax.inject.Inject
 
+
 interface ImageCacheRepository {
-    suspend fun saveBitmapToCache(bitmap: Bitmap, format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG, quality: Int = 100): Uri?
+    suspend fun saveBitmapToCache(
+        bitmap: Bitmap,
+        format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
+        quality: Int = 100
+    ): Uri?
+
     suspend fun clearCacheFiles()
     suspend fun decodeSampledBitmapFromUri(uri: Uri): Bitmap?
 }
 
 class ImageCacheRepositoryImpl @Inject constructor(private val applicationContext: Context) :
     ImageCacheRepository {
-    override suspend fun saveBitmapToCache(bitmap: Bitmap, format: Bitmap.CompressFormat, quality: Int): Uri? {
+    @RequiresApi(Build.VERSION_CODES.Q)
+    override suspend fun saveBitmapToCache(
+        bitmap: Bitmap,
+        format: Bitmap.CompressFormat,
+        quality: Int
+    ): Uri? {
         return try {
             val file = File(applicationContext.cacheDir, "photo_${System.currentTimeMillis()}.jpg")
 
@@ -47,19 +68,77 @@ class ImageCacheRepositoryImpl @Inject constructor(private val applicationContex
     override suspend fun decodeSampledBitmapFromUri(
         uri: Uri,
     ): Bitmap? {
+        val orientation = rotateImageAndReturnUri(uri)
+
         val options = BitmapFactory.Options().apply {
             inJustDecodeBounds = true
-        }
-        applicationContext.contentResolver.openInputStream(uri)?.use { inputStream ->
-            BitmapFactory.decodeStream(inputStream, null, options)
         }
 
         options.inSampleSize = calculateInSampleSize(options)
 
         options.inJustDecodeBounds = false
-        return applicationContext.contentResolver.openInputStream(uri)?.use { inputStream ->
-            BitmapFactory.decodeStream(inputStream, null, options)
+
+        return orientation?.let {
+            applicationContext.contentResolver.openInputStream(uri)?.use { inputStream ->
+                BitmapFactory.decodeStream(inputStream, null, options)?.let { bitmap ->
+                    rotateBitmap(
+                        orientation = orientation,
+                        source = bitmap
+                    )
+                }
+            }
         }
+    }
+
+    private fun rotateImageAndReturnUri(uri: Uri): Int? {
+        var exif: ExifInterface? = null
+
+        try {
+            exif = applicationContext.contentResolver.openInputStream(uri)
+                ?.use { inputStream -> ExifInterface(inputStream) }
+        } catch (e: IOException) {
+            Log.e("회전 에러", e.message.toString())
+        }
+
+        if (exif != null) {
+            val orientation = exif.getAttributeInt(
+                ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_NORMAL
+            )
+            Log.e("회전", orientation.toString())
+
+            return orientation
+        }
+        return null
+    }
+
+//            val file = File(applicationContext.cacheDir, "rotated_photo_${System.currentTimeMillis()}.jpg")
+//
+//            FileOutputStream(file).use { out ->
+//                rotatedBitmap?.compress(Bitmap.CompressFormat.JPEG, 100, out)
+//            }
+//
+//            // 파일의 URI 반환
+//            outputUri = Uri.fromFile(file)
+//        }
+//
+//        return outputUri
+
+
+    private fun rotateBitmap(orientation: Int, source: Bitmap): Bitmap {
+
+        val angle = when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> 90f
+            ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+            ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+            ExifInterface.ORIENTATION_NORMAL -> 0f
+            else -> 0f
+        }
+        val matrix = Matrix().apply {
+            postRotate(angle)
+        }
+
+        return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
     }
 
     private fun calculateInSampleSize(
