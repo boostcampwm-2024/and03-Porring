@@ -46,8 +46,6 @@ dependencies {
 
     implementation(libs.bundles.android.compose)
 
-    implementation(projects.core.navigation)
-
     //paging
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
@@ -64,6 +62,6 @@ dependencies {
     implementation(libs.androidx.foundation)
 
     implementation(projects.core.data)
-
+    implementation(projects.core.navigation)
     implementation(projects.core.designsystem)
 }

@@ -1,11 +1,9 @@
 package com.kolown.data.datasource.remote
 
-import android.app.DownloadManager
-import android.util.Log
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.kolown.data.remote.PostDto
 import com.kolown.data.remote.toPostModel
-import com.kolown.data.service.FirebaseService
 import com.kolown.model.PostModel
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
@@ -19,9 +17,9 @@ interface PostDataSource {
 }
 
 class PostDataSourceImpl @Inject constructor(
-    firebaseService: FirebaseService
+    firestore: FirebaseFirestore
 ) : PostDataSource {
-    private val postCollection = firebaseService.getCollection("post")
+    private val postCollection = firestore.collection("post")
     private val randomType = listOf("A", "B", "C", "D", "E").random()
 
     override suspend fun uploadPost(
@@ -67,7 +65,11 @@ class PostDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getRandomPost(uid: String, page: Long, perPage: Long): Result<List<PostModel>> {
+    override suspend fun getRandomPost(
+        uid: String,
+        page: Long,
+        perPage: Long
+    ): Result<List<PostModel>> {
         return kotlin.runCatching {
             val fetchPosts: suspend (Long) -> List<PostModel> = { key ->
                 postCollection

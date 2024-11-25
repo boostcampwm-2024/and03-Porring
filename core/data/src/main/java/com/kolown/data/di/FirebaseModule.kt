@@ -1,8 +1,8 @@
 package com.kolown.data.di
 
-import com.google.firebase.ktx.Firebase
-import com.kolown.data.service.FirebaseService
-import com.kolown.data.service.FirebaseServiceImpl
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,7 +12,17 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 object FirebaseModule {
     @Provides
-    fun provideFirebaseService(): FirebaseService {
-        return FirebaseServiceImpl(Firebase)
+    fun provideFireStore(): FirebaseFirestore {
+        return FirebaseFirestore.getInstance()
+    }
+
+    @Provides
+    fun provideFireStorage(): FirebaseStorage {
+        return FirebaseStorage.getInstance()
+    }
+
+    @Provides
+    fun provideFireAuth(): FirebaseAuth {
+        return FirebaseAuth.getInstance()
     }
 }
