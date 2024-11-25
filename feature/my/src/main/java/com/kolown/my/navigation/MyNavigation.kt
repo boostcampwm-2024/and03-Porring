@@ -13,11 +13,15 @@ fun NavController.navigateMy(navOptions: NavOptions) {
 }
 
 fun NavGraphBuilder.myNavGraph(
+    isLoggedIn: Boolean,
+    navigateToLogin: () -> Unit,
     navigateToSetting: () -> Unit,
     padding: PaddingValues,
 ) {
     composable<MainMenuRoute.My> {
         MyRoute(
+            isLoggedIn = isLoggedIn,
+            navigateToLogin = navigateToLogin,
             navigateToSetting = navigateToSetting,
             padding = padding
         )
