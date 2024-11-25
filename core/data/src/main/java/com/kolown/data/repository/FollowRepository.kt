@@ -11,6 +11,8 @@ import javax.inject.Named
 
 interface FollowRepository {
     fun getFollowerName(followerId: String): Flow<String>
+    suspend fun unFollowUser(followerId: String): Flow<Boolean>
+    fun followUser(followerId: String, followerName: String): Flow<Boolean>
 }
 
 class FollowRepositoryImpl @Inject constructor(
@@ -27,6 +29,34 @@ class FollowRepositoryImpl @Inject constructor(
             }
     }.catch { e ->
         Log.e("GetFollowerName", "repository: $e")
+    }
+
+    override fun followUser(
+        followerId: String,
+        followerName: String
+    ): Flow<Boolean> = flow {
+        val currentUserId = googleAuthDataSource.getUserId()
+
+        followDataSource.uploadFollow(
+            userId = currentUserId,
+            followerId = followerId,
+            followerName = followerName
+        ).collect { success ->
+            emit(success)
+        }
+    }
+
+    override suspend fun unFollowUser(
+        followerId: String
+    ): Flow<Boolean> = flow {
+        val currentUserId = googleAuthDataSource.getUserId()
+
+        followDataSource.removeFollow(
+            userId = currentUserId,
+            followerId = followerId
+        ).collect { success ->
+            emit(success)
+        }
     }
 
 }
