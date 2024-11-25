@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -16,14 +17,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.kolown.detail.R
+import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 
 @Composable
 internal fun ReactionDialog(
     modifier: Modifier = Modifier,
-    selectedReaction: Reactions?,
-    onClick: (Reactions) -> Unit,
-    onDismiss: () -> Unit
+    imageItem: PostContentModel,
+    selectedReaction: (PostContentModel, Reactions) -> Unit,
+    onDismiss: () -> Unit,
 ) {
     Card(
         modifier = modifier
@@ -40,6 +42,7 @@ internal fun ReactionDialog(
         ) {
             Reactions.entries.forEach {
                 ReactionButton(
+                    didIReact = imageItem.myReaction == it,
                     reaction = it,
                     onClick = { reaction ->
                         onClick(reaction)
@@ -53,11 +56,16 @@ internal fun ReactionDialog(
 
 @Composable
 private fun ReactionButton(
+    didIReact: Boolean,
     reaction: Reactions,
-    onClick: (Reactions) -> Unit
+    onClick: (Reactions) -> Unit,
 ) {
     IconButton(
-        modifier = Modifier.size(30.dp),
+        modifier = Modifier
+            .size(30.dp)
+            .background(
+                color = if(didIReact) Color.Blue else Color.Transparent,
+                shape = CircleShape),
         onClick = { onClick(reaction) }
     ) {
         AsyncImage(
