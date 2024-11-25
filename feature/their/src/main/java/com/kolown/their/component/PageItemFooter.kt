@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 
 @Composable
-fun PageItemFooter(
+internal fun PageItemFooter(
     modifier: Modifier = Modifier,
     loadState: LoadState,
     onRetryClicked: () -> Unit,

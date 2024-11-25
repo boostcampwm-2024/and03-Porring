@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.kolown.their.R
 
 @Composable
-fun RestrictedLoginContent(
+internal fun RestrictedLoginContent(
     navigateToLogin: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {

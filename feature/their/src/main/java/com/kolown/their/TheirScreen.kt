@@ -16,23 +16,33 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.kolown.my.component.GalleryItem
-import com.kolown.my.component.MyAppBar
 import com.kolown.my.component.PageItemFooter
-import com.kolown.my.component.RestrictedLoginContent
+import com.kolown.their.component.GalleryItem
+import com.kolown.their.component.RestrictedLoginContent
+import com.kolown.their.component.TheirAppBar
 
 @Composable
 internal fun TheirRoute(
     isLoggedIn: Boolean,
     navigateToLogin: () -> Unit,
     padding: PaddingValues = PaddingValues(),
+    followerId: String,
+    viewModel: TheirViewModel = hiltViewModel(),
 ) {
+    val followerName = viewModel.followerName.collectAsStateWithLifecycle()
+
+    LaunchedEffect(followerName) {
+        viewModel.setFollowerName(followerId)
+    }
+
     TheirScreen(
         isLoggedIn = isLoggedIn,
         navigateToLogin = navigateToLogin,
-        padding = padding
+        padding = padding,
+        followerName
     )
 }
 
@@ -41,7 +51,8 @@ fun TheirScreen(
     isLoggedIn: Boolean = false,
     navigateToLogin: () -> Unit = {},
     padding: PaddingValues = PaddingValues(),
-    viewModel: TheirViewModel = hiltViewModel(),
+    followerName: String = "",
+    viewModel: TheirViewModel = hiltViewModel()
 ) {
 
     val width = LocalConfiguration.current.screenWidthDp.dp / 2
@@ -57,7 +68,8 @@ fun TheirScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            MyAppBar(
+            TheirAppBar(
+                followerName = followerName
             )
             LazyVerticalStaggeredGrid(
                 columns = StaggeredGridCells.Fixed(2),
