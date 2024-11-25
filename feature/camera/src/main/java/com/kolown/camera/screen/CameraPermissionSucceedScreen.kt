@@ -1,5 +1,11 @@
 package com.kolown.camera.screen
 
+import android.net.Uri
+import android.os.Build
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
@@ -48,6 +54,7 @@ fun CameraXCompose(
 
     val uri = viewModel.uri.collectAsStateWithLifecycle()
     LaunchedEffect(uri.value) {
+        Log.e("이미지 클릭3", uri.value.toString())
         uri.value?.let {
             navigateToUpload(it.toString())
         }
@@ -118,15 +125,17 @@ fun CameraXCompose(
                     .align(Alignment.CenterEnd),
 
                 onClick = {
+                    Log.d("이미지:onClick", "Selected image URI: $uri")
+
                     imagePickerLauncher.launch {
+                        Log.d("이미지:picker", "Selected image URI: $uri")
                         it?.let {
+                            Log.e("이미지 클릭2", it.toString())
                             viewModel.setUri(it)
                         } ?: run {
-                            //
+                            Log.e("이미지 클릭5", it.toString())
                         }
-
                     }
-
                 }) {
                 Icon(
                     modifier = Modifier.fillMaxSize(),
@@ -137,18 +146,18 @@ fun CameraXCompose(
         }
 
 
-        // API 21 이상 사용: 일반 이미지 선택기
+//        // API 21 이상 사용: 일반 이미지 선택기
 //        val imagePickerLauncher = rememberLauncherForActivityResult(
 //            contract = ActivityResultContracts.GetContent()
-//        ) { uri: Uri? ->
-//            uri?.let { imageUri = it }
+//        ) { imageUri: Uri? ->
+//            imageUri?.let { imageUri = it }
 //        }
 //
 //        // API 33 이상 사용: PhotoPicker
 //        val photoPickerLauncher = rememberLauncherForActivityResult(
 //            contract = ActivityResultContracts.PickVisualMedia()
-//        ) { uri: Uri? ->
-//            uri?.let { imageUri = it }
+//        ) { imageUri: Uri? ->
+//            imageUri?.let { imageUri = it }
 //        }
 //
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
