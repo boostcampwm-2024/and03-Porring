@@ -7,9 +7,8 @@ import com.kolown.data.di.Fake
 import com.kolown.model.FollowerThumbnail
 import javax.inject.Inject
 
-class FollowerGalleryThumbnailPagingDataSource @Inject constructor(
-    @Fake private val followerDataSource: FollowerDataSource,
-    //임시
+class FollowerGalleryThumbnailPagingDataSource(
+   private val followerDataSource: FollowerDataSource,
 ) : PagingSource<Int, FollowerThumbnail>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FollowerThumbnail> {
