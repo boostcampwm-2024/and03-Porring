@@ -1,5 +1,6 @@
 package com.kolown.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kolown.data.repository.PostRepository
@@ -34,16 +35,23 @@ class HomeViewModel @Inject constructor(
     fun followUser(id: String, name: String) {
         postRepository.followUser(id, name)
             .onEach {
-                currentItems = currentItems.map {
-                    if (it.authorId == id) {
-                        it.copy(isFollower = !it.isFollower)
-                    } else {
-                        it
-                    }
-                }
-                _uiState.update { UiState.Success(currentItems) }
+                updateFollow(id)
             }
             .launchIn(viewModelScope)
+    }
+
+    fun unFollowUser(id: String) {
+        viewModelScope.launch {
+            postRepository.unFollowUser(id)
+                .catch {
+                    Log.e("FollowTest", "unFollowUser: $it")
+                }
+                .collect { success ->
+                    if(success) {
+                        updateFollow(id)
+                    }
+                }
+        }
     }
 
 
@@ -85,5 +93,17 @@ class HomeViewModel @Inject constructor(
             .catch { e -> _uiState.update { UiState.Failure(e) } }
             .onEach { newState -> _uiState.update { newState } }
             .launchIn(viewModelScope)
+    }
+
+    private fun updateFollow(id: String) {
+        currentItems = currentItems.map {
+            if (it.authorId == id) {
+                it.copy(isFollower = !it.isFollower)
+            } else {
+                it
+            }
+        }
+
+        _uiState.update { UiState.Success(currentItems) }
     }
 }
