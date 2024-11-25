@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
 import com.kolown.data.repository.PostRepository
 import com.kolown.detail.navigation.PostType
 import com.kolown.model.PostContentModel
@@ -16,7 +17,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -38,7 +39,7 @@ class DetailViewModel @Inject constructor(
     private val post: PostContentModel =
         savedStateHandle.toRoute<AppRoute.Detail>(typeMap).postContentModel
 
-    private var currentItems: Flow<PagingData<PostContentModel>> = flow { }
+    private val reactionStateFlow = MutableStateFlow<Map<String, ReactionState>>(emptyMap())
 
     init {
         getItem()
@@ -48,8 +49,29 @@ class DetailViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             try {
-                currentItems = postRepository.getRandomDetailPostList().cachedIn(viewModelScope)
-                _uiState.update { UiState.Success(currentItems) }
+                val pagingFlow = postRepository.getRandomDetailPostList().cachedIn(viewModelScope)
+
+                val combineFlow = combine(
+                    pagingFlow, reactionStateFlow
+                ) { paging, reaction ->
+                    paging.map { item ->
+                        reaction[item.postId]?.let { reactionState ->
+                            val (myReaction, reactions) = if (reactionState.prev == null) {
+                                reactionState.current to item.reactions + reactionState.current
+                            } else {
+                                if (reactionState.prev == reactionState.current) {
+                                    null to item.reactions - reactionState.current
+                                } else {
+                                    reactionState.current to item.reactions + reactionState.current - reactionState.prev
+                                }
+                            }
+
+                            item.copy(reactions = reactions, myReaction = myReaction)
+                        } ?: item.copy()
+                    }
+                }
+
+                _uiState.value = UiState.Success(combineFlow)
             } catch (e: Exception) {
                 _uiState.value = UiState.Failure(e)
             }
@@ -61,16 +83,33 @@ class DetailViewModel @Inject constructor(
     fun selectReaction(imageItem: PostContentModel, reaction: Reactions) {
         val currentReaction = imageItem.myReaction
 
-        if (currentReaction == reaction) {
-            viewModelScope.launch { postRepository.removePostReaction(imageItem.postId) }
-        } else {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            if (currentReaction == reaction) {
+                postRepository.removePostReaction(imageItem.postId)
+            } else {
                 postRepository.reactPost(
                     postId = imageItem.postId, reaction = reaction
                 )
             }
         }
+        updateReactionState(imageItem.postId, currentReaction, reaction)
+    }
 
-        getItem()
+    private fun updateReactionState(
+        postId: String,
+        prevReaction: Reactions?,
+        currentReaction: Reactions,
+    ) {
+        reactionStateFlow.update { reactionState ->
+            val newState = reactionState.toMutableMap()
+
+            newState[postId] = ReactionState(prev = prevReaction, current = currentReaction)
+            newState
+        }
     }
 }
+
+data class ReactionState(
+    val prev: Reactions? = null,
+    val current: Reactions = Reactions.LOVE,
+)
