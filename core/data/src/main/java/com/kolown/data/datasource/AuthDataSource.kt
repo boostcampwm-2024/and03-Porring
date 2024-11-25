@@ -12,6 +12,7 @@ import javax.inject.Named
 
 interface AuthDataSource {
     suspend fun signInWithCredential(credential: CustomCredential): Result<Unit>
+    fun getUserId(): String
     fun getUserInfo(): UserDto
     fun checkUserLoggedIn(): Boolean
     fun logout(): Result<Unit>
@@ -29,6 +30,12 @@ class AuthDataSourceImpl @Inject constructor() : AuthDataSource {
                 auth.signInWithCredential(it).await()
             }
         }
+    }
+
+    override fun getUserId(): String {
+        val currentUser = auth.currentUser ?: throw Exception("로그인 안 됨")
+
+        return "user-${currentUser.uid}"
     }
 
     override fun getUserInfo(): UserDto {
