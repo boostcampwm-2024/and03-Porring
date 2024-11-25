@@ -1,5 +1,6 @@
 package com.kolown.data.datasource.remote
 
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.kolown.data.remote.PostDto
@@ -14,6 +15,7 @@ interface PostDataSource {
     suspend fun updateImageUrl(documentId: String, imageUrl: String)
     suspend fun getRandomPost(uid: String, count: Int): Result<List<PostModel>>
     suspend fun getRandomPost(uid: String, page: Long, perPage: Long): Result<List<PostModel>>
+    suspend fun getUserPost(uid: String, perPage: Long): Result<List<PostModel>>
 }
 
 class PostDataSourceImpl @Inject constructor(
@@ -21,6 +23,32 @@ class PostDataSourceImpl @Inject constructor(
 ) : PostDataSource {
     private val postCollection = firestore.collection("post")
     private val randomType = listOf("A", "B", "C", "D", "E").random()
+    private var lastVisible: DocumentSnapshot? = null
+
+    override suspend fun getUserPost(uid: String, perPage: Long): Result<List<PostModel>> {
+        return kotlin.runCatching {
+            if (lastVisible == null) {
+                postCollection
+                    .whereEqualTo("authorId", uid)
+                    .orderBy("registerAt", Query.Direction.DESCENDING)
+                    .limit(perPage)
+                    .get()
+                    .await()
+                    .also { lastVisible = it.documents.last() }
+                    .map { it.toObject(PostDto::class.java).toPostModel() }
+            } else {
+                postCollection
+                    .whereEqualTo("authorId", uid)
+                    .orderBy("registerAt", Query.Direction.DESCENDING)
+                    .startAfter(lastVisible!!)
+                    .limit(perPage)
+                    .get()
+                    .await()
+                    .also { lastVisible = it.documents.lastOrNull() }
+                    .map { it.toObject(PostDto::class.java).toPostModel() }
+            }
+        }
+    }
 
     override suspend fun uploadPost(
         authorId: String,
