@@ -1,10 +1,10 @@
 package com.kolown.data.datasource.remote
 
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.kolown.data.remote.ReactionDto
 import com.kolown.data.remote.toReactionModel
-import com.kolown.data.service.FirebaseService
 import com.kolown.model.ReactionModel
 import com.kolown.model.Reactions
 import kotlinx.coroutines.tasks.await
@@ -18,9 +18,9 @@ interface ReactionDataSource {
 }
 
 class ReactionDataSourceImpl @Inject constructor(
-    firebaseService: FirebaseService,
+    firestore: FirebaseFirestore,
 ) : ReactionDataSource {
-    private val reactionCollection = firebaseService.getCollection("reaction")
+    private val reactionCollection = firestore.collection("reaction")
 
     override suspend fun getReactionByPostId(postId: String): Result<List<ReactionModel>> {
         return kotlin.runCatching {

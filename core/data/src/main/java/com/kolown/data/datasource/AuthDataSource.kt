@@ -2,6 +2,7 @@ package com.kolown.data.datasource
 
 import androidx.credentials.CustomCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -19,9 +20,9 @@ interface AuthDataSource {
 }
 
 @Named("google")
-class AuthDataSourceImpl @Inject constructor() : AuthDataSource {
-    private val auth by lazy { Firebase.auth }
-
+class AuthDataSourceImpl @Inject constructor(
+    private val auth: FirebaseAuth
+) : AuthDataSource {
     override suspend fun signInWithCredential(credential: CustomCredential): Result<Unit> {
         return kotlin.runCatching {
             val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)

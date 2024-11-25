@@ -1,9 +1,7 @@
 package com.kolown.data.datasource.remote
 
 import android.net.Uri
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
-import com.kolown.data.service.FirebaseService
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 import java.security.MessageDigest
 import java.time.LocalDateTime
@@ -15,10 +13,8 @@ interface ImageDataSource {
 }
 
 class ImageDataSourceImpl @Inject constructor(
-    firebaseService: FirebaseService
+    private val storage: FirebaseStorage
 ) : ImageDataSource {
-    private val storage by lazy { firebaseService.getStorage() }
-
     override suspend fun getImageUrl(authorId: String, fileUri: Uri): Result<String> {
         return uploadImage(authorId.toRefName(), fileUri)
     }
