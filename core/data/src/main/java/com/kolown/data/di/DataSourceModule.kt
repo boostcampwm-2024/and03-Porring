@@ -16,6 +16,8 @@ import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.ReactionDataSourceImpl
 import com.kolown.data.datasource.remote.TagDataSource
 import com.kolown.data.datasource.remote.TagDataSourceImpl
+import com.kolown.data.datasource.remote.FollowDataSource
+import com.kolown.data.datasource.remote.FollowDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -63,6 +65,11 @@ abstract class DataSourceModule {
     abstract fun provideUserDataSource(
         userDataSource: UserDataSourceImpl,
     ): UserDataSource
+
+    @Binds
+    abstract fun provideUploadDataSource(
+        followDataSource: FollowDataSourceImpl,
+    ): FollowDataSource
 
     @Binds
     abstract fun provideFollowerDataSource(
