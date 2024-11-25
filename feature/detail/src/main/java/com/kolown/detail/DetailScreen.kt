@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,11 +35,9 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -175,10 +172,8 @@ fun DetailContent(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun DetailItem(
-    refreshPage: () -> Unit = {},
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
     onDoubleTab: (Boolean) -> Unit,
@@ -190,7 +185,6 @@ fun DetailItem(
 
     if (!isConcentrateMode.value) {
         ReelsContent(
-            refreshPage = refreshPage,
             onSelectReaction = onSelectReaction,
             imageItem = imageItem,
             onDoubleTab = {
@@ -217,7 +211,6 @@ fun DetailItem(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ReelsContent(
-    refreshPage: () -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
     onDoubleTab: () -> Unit,
@@ -274,7 +267,7 @@ fun ReelsContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        imageVector = if(imageItem.myReaction == null )Icons.Outlined.FavoriteBorder else Icons.Default.Favorite,
+                        imageVector = if (imageItem.myReaction == null) Icons.Outlined.FavoriteBorder else Icons.Default.Favorite,
                         tint = Color(0xFF00BBFF),
                         contentDescription = "",
                         modifier = Modifier.clickable {
@@ -295,7 +288,6 @@ fun ReelsContent(
             }
             if (isReactionVisible.value) {
                 ReactionDialog(
-                    refreshPage = refreshPage,
                     imageItem = imageItem,
                     modifier = Modifier
                         .align(Alignment.TopCenter)

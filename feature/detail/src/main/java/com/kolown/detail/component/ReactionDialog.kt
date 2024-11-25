@@ -22,7 +22,6 @@ import com.kolown.model.Reactions
 
 @Composable
 internal fun ReactionDialog(
-    refreshPage: () -> Unit,
     modifier: Modifier = Modifier,
     imageItem: PostContentModel,
     selectedReaction: (PostContentModel, Reactions) -> Unit,
@@ -48,7 +47,6 @@ internal fun ReactionDialog(
                     onClick = { reaction ->
                         selectedReaction(imageItem, reaction)
                         onDismiss()
-                        refreshPage()
                     }
                 )
             }
@@ -66,8 +64,9 @@ private fun ReactionButton(
         modifier = Modifier
             .size(30.dp)
             .background(
-                color = if(didIReact) Color.Blue else Color.Transparent,
-                shape = CircleShape),
+                color = if (didIReact) Color.Blue else Color.Transparent,
+                shape = CircleShape
+            ),
         onClick = { onClick(reaction) }
     ) {
         AsyncImage(
