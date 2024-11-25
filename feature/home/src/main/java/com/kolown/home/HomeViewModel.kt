@@ -3,6 +3,7 @@ package com.kolown.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kolown.data.repository.PostRepository
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
@@ -35,12 +36,16 @@ class HomeViewModel @Inject constructor(
     fun followUser(id: String, name: String) {
         updateFollow(id)
         postRepository.followUser(id, name)
+            .catch { Log.e("FollowUpload", "viewModel: $it") }
+            .launchIn(viewModelScope)
     }
 
     fun unFollowUser(id: String) {
         viewModelScope.launch {
             updateFollow(id)
             postRepository.unFollowUser(id)
+                .catch { Log.e("UnFollowUpload", "viewModel: $it") }
+                .launchIn(viewModelScope)
         }
     }
 

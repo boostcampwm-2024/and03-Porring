@@ -33,7 +33,7 @@ interface PostRepository {
     suspend fun getRandomDetailPostList(): Flow<PagingData<PostContentModel>>
     suspend fun reactPost(postId: String, reaction: Reactions): Result<Unit>
     suspend fun removePostReaction(postId: String): Result<Unit>
-    fun followUser(followerId: String, followerName: String): Flow<Unit>
+    fun followUser(followerId: String, followerName: String): Flow<Boolean>
     suspend fun unFollowUser(followerId: String): Flow<Boolean>
 }
 
@@ -184,18 +184,16 @@ class PostRepositoryImpl @Inject constructor(
     override fun followUser(
         followerId: String,
         followerName: String
-    ): Flow<Unit> = flow {
+    ): Flow<Boolean> = flow {
         val currentUserId = googleAuthDataSource.getUserId()
 
         followDataSource.uploadFollow(
             userId = currentUserId,
             followerId = followerId,
             followerName = followerName
-        )
-
-        emit(Unit)
-    }.catch { e ->
-        throw e
+        ).collect { success ->
+            emit(success)
+        }
     }
 
     companion object {
