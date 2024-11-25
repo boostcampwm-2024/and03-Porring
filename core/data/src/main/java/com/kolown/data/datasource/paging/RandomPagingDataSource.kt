@@ -27,10 +27,10 @@ class RandomPagingDataSource @Inject constructor(
     }
 
     override suspend fun load(params: LoadParams<Long>): LoadResult<Long, PostContentModel> {
-        val authorId = googleAuthDataSource.getUserId()
+        val currentUserId = googleAuthDataSource.getUserId()
         val page = params.key ?: randomSeed
         val posts =
-            postDataSource.getRandomPost(authorId, page, params.loadSize.toLong()).getOrElse {
+            postDataSource.getRandomPost(currentUserId, page, params.loadSize.toLong()).getOrElse {
                 throw IOException("랜덤 게시글 불러오기 실패")
             }
         val (tags, reactions) = coroutineScope {
@@ -66,7 +66,8 @@ class RandomPagingDataSource @Inject constructor(
                     description = postModel.description,
                     tags = tags[index].map { it.tagName },
                     isFollower = false,
-                    reactions = reactions[index].mapNotNull { it.reaction }
+                    reactions = reactions[index].mapNotNull { it.reaction },
+                    myReaction = reactions[index].find { it.userId == currentUserId }?.reaction
                 )
             },
             prevKey = if (page == randomSeed) null else posts.lastOrNull()?.random,

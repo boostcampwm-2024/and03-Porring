@@ -155,10 +155,12 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getRandomDetailPostList(): Flow<PagingData<PostContentModel>> {
+        Log.w("porring_test_tag", "이거 타냐?")
         return Pager(
             config = PagingConfig(pageSize = DETAIL_PER_PAGE, enablePlaceholders = false),
             pagingSourceFactory = { randomPagingDataSource }
         ).flow
+
     }
 
     private suspend fun updateImageUrl(postId: String, fileUri: Uri) {
