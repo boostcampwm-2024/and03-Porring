@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.kolown.porring.navigation.MainNavigator
+import com.kolown.porring.navigation.rememberMainNavigator
 import com.kolown.porring.ui.theme.PorringTheme
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -16,8 +16,8 @@ import com.kolown.follower.navigation.followerNavGraph
 import com.kolown.home.navigation.homeNavGraph
 import com.kolown.login.navigation.loginNavGraph
 import com.kolown.my.navigation.myNavGraph
-import com.kolown.porring.MainMenu
-import com.kolown.porring.MainNavigator
+import com.kolown.porring.navigation.MainMenu
+import com.kolown.porring.navigation.MainNavigator
 import com.kolown.search.navigation.searchNavGraph
 import com.kolown.setting.navigation.settingNavGraph
 import com.kolown.their.navigation.theirNavGraph

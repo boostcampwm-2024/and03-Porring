@@ -1,4 +1,4 @@
-package com.kolown.porring
+package com.kolown.porring.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.kolown.data.repository.AuthRepository
