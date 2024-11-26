@@ -52,10 +52,11 @@ internal fun RandomImageList(
     isReactionDialogVisible: Boolean = false,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-    onSelectReaction: (String, Reactions) -> Unit = { _, _ -> },
     onChangeReactionDialogVisibility: () -> Unit = {},
-    onClickImage: (PostContentModel) -> Unit = {},
-    navigateToTheir: (String) -> Unit = {}
+    navigateToTheir: (String) -> Unit = {},
+    onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
+    fetchDetailFirst: (PostContentModel) -> Unit = {},
+    navigateToDetail: () -> Unit = {},
 ) {
     HorizontalPager(
         modifier = Modifier.padding(top = 32.dp),
@@ -66,10 +67,11 @@ internal fun RandomImageList(
             isReactionDialogVisible = isReactionDialogVisible,
             onFollowClick = onFollowClick,
             onUnfollowClick = onUnfollowClick,
-            onSelectReaction = { reaction -> onSelectReaction(imageItems[page].postId, reaction) },
             onChangeReactionDialogVisibility = onChangeReactionDialogVisibility,
-            onClickImage = onClickImage,
-            navigateToTheir = navigateToTheir
+            navigateToTheir = navigateToTheir,
+            onSelectReaction = { reaction -> onSelectReaction(imageItems[page], reaction) },
+            fetchDetailFirst = fetchDetailFirst,
+            navigateToDetail = navigateToDetail
         )
     }
 }
@@ -82,8 +84,9 @@ private fun ImageCard(
     onUnfollowClick: (String) -> Unit,
     onSelectReaction: (Reactions) -> Unit,
     onChangeReactionDialogVisibility: () -> Unit,
-    onClickImage: (PostContentModel) -> Unit,
-    navigateToTheir: (String) -> Unit
+    navigateToTheir: (String) -> Unit,
+    fetchDetailFirst: (PostContentModel) -> Unit,
+    navigateToDetail: () -> Unit,
 ) {
     val likedImageVector =
         if (imageItem.myReaction == null) Icons.Outlined.FavoriteBorder else Icons.Outlined.Favorite
@@ -99,7 +102,10 @@ private fun ImageCard(
         ) {
             RandomImage(
                 imageItem.imageUrl,
-                onClickImage = { onClickImage(imageItem) }
+                onClickImage = {
+                    fetchDetailFirst(imageItem)
+                    navigateToDetail()
+                }
             )
             ReactionGroup(
                 modifier = Modifier.align(Alignment.TopEnd),
@@ -160,7 +166,7 @@ private fun IconButtonGroup(
     modifier: Modifier,
     imageItem: PostContentModel,
     onFollowClick: () -> Unit,
-    navigateToTheir: () -> Unit
+    navigateToTheir: () -> Unit,
 ) {
     val whiteModifier = Modifier
         .clip(CircleShape)
@@ -189,7 +195,7 @@ private fun IconButtonGroup(
 @Composable
 private fun RandomImage(
     imageUrl: String = "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png",
-    onClickImage: () -> Unit
+    onClickImage: () -> Unit,
 ) {
     var isLoading by remember { mutableStateOf(true) }
     var isError by remember { mutableStateOf(false) }

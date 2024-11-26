@@ -3,16 +3,13 @@ package com.kolown.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.kolown.data.repository.PostRepository
-import com.kolown.detail.navigation.PostType
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.model.UiState
-import com.kolown.navigation.AppRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,24 +18,15 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.reflect.typeOf
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     private val postRepository: PostRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val typeMap = mapOf(
-        typeOf<PostContentModel>() to PostType,
-    )
-
     private val _uiState =
         MutableStateFlow<UiState<Flow<PagingData<PostContentModel>>>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
-
-    private var _firstPost =
-        MutableStateFlow(savedStateHandle.toRoute<AppRoute.Detail>(typeMap).postContentModel)
-    val firstPost = _firstPost.asStateFlow()
 
     private val reactionStateFlow = MutableStateFlow<Map<String, ReactionState>>(emptyMap())
 
@@ -81,29 +69,6 @@ class DetailViewModel @Inject constructor(
 
     fun selectReaction(imageItem: PostContentModel, reaction: Reactions) {
         val currentReaction = imageItem.myReaction
-
-        if (imageItem.postId == firstPost.value.postId) {
-            _firstPost.update { item ->
-                if (item.myReaction == null) {
-                    item.copy(
-                        reactions = item.reactions + reaction,
-                        myReaction = reaction
-                    )
-                } else {
-                    if (item.myReaction == reaction) {
-                        item.copy(
-                            reactions = item.reactions - reaction,
-                            myReaction = null
-                        )
-                    } else {
-                        item.copy(
-                            reactions = item.reactions - item.myReaction!! + reaction,
-                            myReaction = reaction
-                        )
-                    }
-                }
-            }
-        }
 
         viewModelScope.launch {
             if (currentReaction == reaction) {

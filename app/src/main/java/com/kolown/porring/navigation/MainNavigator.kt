@@ -14,7 +14,6 @@ import com.kolown.detail.navigation.navigateToDetail
 import com.kolown.follower.navigation.navigateFollower
 import com.kolown.home.navigation.navigateHome
 import com.kolown.login.navigation.navigateLogin
-import com.kolown.model.PostContentModel
 import com.kolown.my.navigation.navigateMy
 import com.kolown.search.navigation.navigateSearch
 import com.kolown.setting.navigation.navigateSetting
@@ -60,8 +59,7 @@ internal class MainNavigator(
 
     fun navigateToUpload(imgUri: String) = navController.navigateUpload(imgUri)
 
-    fun navigateToDetail(postContentModel: PostContentModel) =
-        navController.navigateToDetail(postContentModel)
+    fun navigateToDetail() = navController.navigateToDetail()
 
     fun navigateToLogin() = navController.navigateLogin()
 

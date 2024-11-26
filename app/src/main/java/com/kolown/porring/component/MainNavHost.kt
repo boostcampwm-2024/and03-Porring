@@ -15,6 +15,8 @@ import com.kolown.detail.navigation.detailNavGraph
 import com.kolown.follower.navigation.followerNavGraph
 import com.kolown.home.navigation.homeNavGraph
 import com.kolown.login.navigation.loginNavGraph
+import com.kolown.model.PostContentModel
+import com.kolown.model.Reactions
 import com.kolown.my.navigation.myNavGraph
 import com.kolown.porring.navigation.MainMenu
 import com.kolown.porring.navigation.MainNavigator
@@ -26,6 +28,10 @@ import com.kolown.upload.navigation.uploadNavGraph
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 internal fun MainNavHost(
+    mainItems: Result<List<PostContentModel>>,
+    onSelectReaction: (PostContentModel, Reactions) -> Unit,
+    detailFirstItem: PostContentModel,
+    fetchDetailFirst: (PostContentModel) -> Unit,
     isLoggedIn: Boolean,
     updateLoginState: () -> Unit,
     modifier: Modifier = Modifier,
@@ -40,11 +46,18 @@ internal fun MainNavHost(
             startDestination = navigator.startDestination,
         ) {
             homeNavGraph(
+                mainItems = mainItems,
+                onSelectReaction = onSelectReaction,
+                fetchDetailFirst = fetchDetailFirst,
                 padding = padding,
+<<<<<<< HEAD
                 onClickImage = { postContentModel ->
                     navigator.navigateToDetail(postContentModel)
                 },
                 navigateToTheir = navigator::navigateToTheir
+=======
+                navigateToDetail = navigator::navigateToDetail
+>>>>>>> 399f857 (Refactor: reaction refactoring)
             )
 
             searchNavGraph(
@@ -70,6 +83,8 @@ internal fun MainNavHost(
             )
 
             detailNavGraph(
+                detailFirstItem = detailFirstItem,
+                updateMainPostReaction = onSelectReaction,
                 popBackStack = navigator::popBackStack,
                 padding = padding
             )

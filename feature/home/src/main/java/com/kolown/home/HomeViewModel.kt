@@ -3,7 +3,6 @@ package com.kolown.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kolown.data.repository.FollowRepository
 import com.kolown.data.repository.PostRepository
 import com.kolown.model.PostContentModel
@@ -14,9 +13,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,16 +20,12 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val postRepository: PostRepository,
-    private val followRepository: FollowRepository
+    private val followRepository: FollowRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<List<PostContentModel>>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
     private var currentItems = listOf<PostContentModel>()
-
-    init {
-        loadImageItem()
-    }
 
     fun followUser(id: String, name: String) {
         updateFollow(id)
@@ -51,45 +43,16 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-
-    fun selectReaction(postId: String, reaction: Reactions) {
-        val currentReaction = currentItems.find { it.postId == postId }?.myReaction
-
-        if (currentReaction == reaction) {
-            currentItems = currentItems.map { item ->
-                item.takeIf { it.postId == postId }?.copy(
-                    reactions = item.reactions - reaction,
-                    myReaction = null
-                ) ?: item
-            }
-            viewModelScope.launch { postRepository.removePostReaction(postId) }
+    fun selectReaction(item: PostContentModel, reaction: Reactions) {
+        if (item.myReaction == reaction) {
+            viewModelScope.launch { postRepository.removePostReaction(item.postId) }
         } else {
-            currentItems = currentItems.map { item ->
-                item.takeIf { it.postId == postId }?.copy(
-                    reactions = if (item.myReaction != null) item.reactions - item.myReaction!! + reaction else item.reactions + reaction,
-                    myReaction = reaction
-                ) ?: item
-            }
             viewModelScope.launch {
                 postRepository.reactPost(
-                    postId = postId, reaction = reaction
+                    postId = item.postId, reaction = reaction
                 )
             }
         }
-
-        _uiState.update { UiState.Success(currentItems) }
-    }
-
-    private fun loadImageItem() {
-        postRepository.getRandomPostList(10)
-            .onStart { _uiState.update { UiState.Loading } }
-            .map { items ->
-                currentItems = items
-                UiState.Success(items)
-            }
-            .catch { e -> _uiState.update { UiState.Failure(e) } }
-            .onEach { newState -> _uiState.update { newState } }
-            .launchIn(viewModelScope)
     }
 
     private fun updateFollow(id: String) {
@@ -99,6 +62,16 @@ class HomeViewModel @Inject constructor(
             } else {
                 it
             }
+        }
+
+        _uiState.update { UiState.Success(currentItems) }
+    }
+
+    fun updateItems(result: Result<List<PostContentModel>>) {
+        result.onSuccess { items ->
+            _uiState.update { UiState.Success(items) }
+        }.onFailure { e ->
+            _uiState.update { UiState.Failure(e) }
         }
 
         _uiState.update { UiState.Success(currentItems) }
