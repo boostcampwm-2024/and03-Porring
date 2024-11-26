@@ -61,15 +61,18 @@ internal fun TheirRoute(
             val pagingItems = state.data.collectAsLazyPagingItems()
             val pagerState = rememberLazyStaggeredGridState()
 
-            TheirScreen(
-                isLoggedIn = isLoggedIn,
-                navigateToLogin = navigateToLogin,
-                popBackStack = popBackStack,
-                padding = padding,
-                followerName = followerName.value,
-                pagingItems = pagingItems,
-                pagerState = pagerState
-            )
+            if(isLoggedIn) {
+                TheirScreen(
+                    popBackStack = popBackStack,
+                    padding = padding,
+                    followerName = followerName.value,
+                    pagingItems = pagingItems,
+                    pagerState = pagerState
+                )
+            } else {
+                RestrictedLoginContent(navigateToLogin)
+            }
+
         }
 
         is UiState.Failure -> {
@@ -80,8 +83,6 @@ internal fun TheirRoute(
 
 @Composable
 fun TheirScreen(
-    isLoggedIn: Boolean = false,
-    navigateToLogin: () -> Unit = {},
     popBackStack: () -> Unit = {},
     padding: PaddingValues = PaddingValues(),
     followerName: String = "",
@@ -90,46 +91,42 @@ fun TheirScreen(
 ) {
     val width = LocalConfiguration.current.screenWidthDp.dp / 2
 
-    if (isLoggedIn) {
-        LaunchedEffect(pagingItems) {
-            pagerState.scrollToItem(0)
-        }
-        Column(
+    LaunchedEffect(pagingItems) {
+        pagerState.scrollToItem(0)
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)
+    ) {
+        TheirAppBar(
+            popBackStack = popBackStack,
+            followerName = followerName
+        )
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Fixed(2),
             modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            TheirAppBar(
-                popBackStack = popBackStack,
-                followerName = followerName
-            )
-            LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Fixed(2),
-                modifier = Modifier
-                    .fillMaxSize(),
-                state = pagerState,
-                contentPadding = PaddingValues(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalItemSpacing = 8.dp,
-                content = {
-                    items(pagingItems.itemCount) { index ->
-                        pagingItems[index]?.let {
-                            GalleryItem(it, width)
-                        }
+                .fillMaxSize(),
+            state = pagerState,
+            contentPadding = PaddingValues(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalItemSpacing = 8.dp,
+            content = {
+                items(pagingItems.itemCount) { index ->
+                    pagingItems[index]?.let {
+                        GalleryItem(it, width)
                     }
+                }
 
-                    if (pagingItems.loadState.append !is LoadState.NotLoading) {
-                        item(key = "", span = StaggeredGridItemSpan.FullLine) {
-                            PageItemFooter(loadState = pagingItems.loadState.append) {
-                                pagingItems.retry()
-                            }
+                if (pagingItems.loadState.append !is LoadState.NotLoading) {
+                    item(key = "", span = StaggeredGridItemSpan.FullLine) {
+                        PageItemFooter(loadState = pagingItems.loadState.append) {
+                            pagingItems.retry()
                         }
                     }
                 }
-            )
-        }
-    } else {
-        RestrictedLoginContent(navigateToLogin)
+            }
+        )
     }
 
 }
