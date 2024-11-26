@@ -5,6 +5,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.kolown.data.datasource.paging.RandomPagingDataSource
+import com.kolown.data.datasource.paging.SearchPagingSource
 import com.kolown.data.datasource.paging.UserPagingDataSource
 import com.kolown.data.datasource.paging.UserPagingKey
 import com.kolown.data.datasource.remote.AuthDataSource
@@ -35,6 +36,7 @@ interface PostRepository {
     suspend fun reactPost(postId: String, reaction: Reactions): Result<Unit>
     suspend fun removePostReaction(postId: String): Result<Unit>
     fun getUserPosts(userId: String): Flow<PagingData<PostContentModel>>
+    suspend fun getPostBySearch(tagId: String): Flow<PagingData<PostContentModel>>
 }
 
 class PostRepositoryImpl @Inject constructor(
