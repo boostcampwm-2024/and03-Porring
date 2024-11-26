@@ -10,7 +10,10 @@ import com.kolown.data.repository.PostRepository
 import com.kolown.model.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,6 +32,16 @@ class UploadViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     private val webPUri = MutableStateFlow<Uri?>(null)
+
+    val uploadEnable = combine(
+        _description, _categoryItems, webPUri
+    ) { description, categoryItems, webPUri ->
+        description.isNotEmpty() && categoryItems.none { it.isBlank() } && webPUri != null
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = false
+    )
 
     fun changeDescription(description: String) {
         _description.value = description
