@@ -37,22 +37,24 @@ import com.kolown.home.component.RandomImageList
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.model.UiState
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 internal fun HomeRoute(
-    mainItems: Result<List<PostContentModel>>,
+    mainItems: Flow<List<PostContentModel>>,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
     fetchDetailFirst: (PostContentModel) -> Unit,
+    updateFollow: (String) -> Unit,
     padding: PaddingValues = PaddingValues(),
     viewModel: HomeViewModel = hiltViewModel(),
     navigateToTheir: (String) -> Unit = {},
     navigateToDetail: () -> Unit = {},
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     SideEffect {
         viewModel.updateItems(mainItems)
     }
-
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (uiState) {
         is UiState.Failure -> {
@@ -75,8 +77,14 @@ internal fun HomeRoute(
             HomeScreen(
                 padding = padding,
                 mainFeedImages = images,
-                onFollowClick = viewModel::followUser,
-                onUnfollowClick = viewModel::unFollowUser,
+                onFollowClick = { id, name ->
+                    viewModel.followUser(id, name)
+                    updateFollow(id)
+                },
+                onUnfollowClick = {
+                    updateFollow(it)
+                    viewModel.unFollowUser(it)
+                },
                 navigateToTheir = navigateToTheir,
                 onSelectReaction = { post, reaction ->
                     viewModel.selectReaction(post, reaction)

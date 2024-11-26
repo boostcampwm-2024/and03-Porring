@@ -9,35 +9,30 @@ import com.kolown.home.HomeRoute
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.navigation.MainMenuRoute
+import kotlinx.coroutines.flow.Flow
 
 fun NavController.navigateHome(navOptions: NavOptions) {
     navigate(MainMenuRoute.Home, navOptions)
 }
 
 fun NavGraphBuilder.homeNavGraph(
-    mainItems: Result<List<PostContentModel>>,
+    mainItems: Flow<List<PostContentModel>>,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
     fetchDetailFirst: (PostContentModel) -> Unit,
+    updateFollow: (String) -> Unit,
     padding: PaddingValues,
-<<<<<<< HEAD
-    onClickImage: (PostContentModel) -> Unit,
-    navigateToTheir: (String) -> Unit
-=======
+    navigateToTheir: (String) -> Unit,
     navigateToDetail: () -> Unit,
->>>>>>> 399f857 (Refactor: reaction refactoring)
 ) {
     composable<MainMenuRoute.Home> {
         HomeRoute(
             mainItems = mainItems,
             onSelectReaction = onSelectReaction,
             fetchDetailFirst = fetchDetailFirst,
+            updateFollow = updateFollow,
             padding = padding,
-<<<<<<< HEAD
-            onClickImage = onClickImage,
-            navigateToTheir = navigateToTheir
-=======
+            navigateToTheir = navigateToTheir,
             navigateToDetail = navigateToDetail
->>>>>>> 399f857 (Refactor: reaction refactoring)
         )
     }
 }

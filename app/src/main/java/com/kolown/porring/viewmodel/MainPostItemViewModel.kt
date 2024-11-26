@@ -1,24 +1,25 @@
 package com.kolown.porring.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kolown.data.repository.PostRepository
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainPostItemViewModel @Inject constructor(
     private val postRepository: PostRepository,
 ) : ViewModel() {
-    private val _mainItems =
-        MutableStateFlow<Result<List<PostContentModel>>>(Result.success(emptyList()))
+    private val _mainItems = MutableStateFlow<Flow<List<PostContentModel>>>(flow { })
     val mainItems = _mainItems.asStateFlow()
 
     private val _detailFirstItem =
@@ -32,14 +33,9 @@ class MainPostItemViewModel @Inject constructor(
     }
 
     private fun loadImageItem() {
-        viewModelScope.launch {
-            try {
-                currentItems = postRepository.getRandomPostList(10).getOrThrow()
-                _mainItems.update { Result.success(currentItems.toList()) }
-            } catch (e: Exception) {
-                Log.e(MainPostItemViewModel::class.simpleName, e.message.orEmpty())
-                _mainItems.update { Result.failure(e) }
-            }
+        postRepository.getRandomPostList(10).let { flow ->
+            _mainItems.update { flow }
+            flow.onEach { currentItems = it }.launchIn(viewModelScope)
         }
     }
 
@@ -65,10 +61,22 @@ class MainPostItemViewModel @Inject constructor(
             } ?: prev
         }
 
-        _mainItems.update { Result.success(currentItems.toList()) }
+        _mainItems.update { flow { emit(currentItems) } }
         currentItems.find { new.postId == it.postId }?.let { new ->
             _detailFirstItem.update { new }
         }
+    }
+
+    fun updateFollow(id: String) {
+        currentItems = currentItems.map {
+            if (it.authorId == id) {
+                it.copy(isFollower = !it.isFollower)
+            } else {
+                it
+            }
+        }
+
+        _mainItems.update { flow { emit(currentItems) } }
     }
 
     fun fetchDetailFirst(item: PostContentModel) {
