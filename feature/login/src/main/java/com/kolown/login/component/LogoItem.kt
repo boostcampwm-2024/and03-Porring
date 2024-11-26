@@ -28,7 +28,7 @@ fun LogoItem() {
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Icon(
-            modifier = Modifier.fillMaxWidth(0.7f),
+            modifier = Modifier.fillMaxWidth(0.6f),
             painter = painterResource(R.drawable.logo_porring),
             contentDescription = null,
             tint = Color.Unspecified

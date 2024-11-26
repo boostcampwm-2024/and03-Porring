@@ -11,20 +11,34 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import com.kolown.designsystem.R.drawable
 import com.kolown.login.R
 
 @Composable
 fun LoginTopAppBar(
+    isEmailLogin: Boolean = false,
+    cancelEmailLogin: () -> Unit = {},
     popBackStack: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier.fillMaxWidth().height(52.dp),
-        horizontalArrangement = Arrangement.End,
+        horizontalArrangement = if (isEmailLogin) Arrangement.SpaceBetween else Arrangement.End,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        if (isEmailLogin) {
+            IconButton(onClick = { cancelEmailLogin() }) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(drawable.ic_arrow_back),
+                    contentDescription = stringResource(R.string.string_close_button)
+                )
+            }
+        }
+
         IconButton(onClick = { popBackStack() }) {
             Icon(
                 imageVector = Icons.Default.Close,

@@ -1,5 +1,10 @@
 package com.kolown.login.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,31 +18,38 @@ import com.kolown.login.util.LoginButton
 @Composable
 fun LoginButtonGroup(
     vararg buttons: LoginButton,
+    visible: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+    AnimatedVisibility(
+        visible = visible,
+        enter = slideInHorizontally() + fadeIn(),
+        exit = slideOutHorizontally() + fadeOut()
     ) {
-        buttons.forEach { button ->
-            when (button) {
-                is LoginButton.PainterIconButton -> {
-                    ButtonWithIcon(
-                        icon = button.icon,
-                        text = button.text,
-                        onClick = button.onClick
-                    )
-                }
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            buttons.forEach { button ->
+                when (button) {
+                    is LoginButton.PainterIconButton -> {
+                        ButtonWithIcon(
+                            icon = button.icon,
+                            text = button.text,
+                            onClick = button.onClick
+                        )
+                    }
 
-                is LoginButton.VectorIconButton -> {
-                    ButtonWithIcon(
-                        icon = button.icon,
-                        text = button.text,
-                        onClick = button.onClick
-                    )
+                    is LoginButton.VectorIconButton -> {
+                        ButtonWithIcon(
+                            icon = button.icon,
+                            text = button.text,
+                            onClick = button.onClick
+                        )
+                    }
                 }
             }
         }
