@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -70,27 +71,37 @@ class PostRepositoryImpl @Inject constructor(
             coroutineScope {
                 val authorId = googleAuthDataSource.getUserId()
 
-                // post Upload to Firestore & get postId
                 val postIdDeferred = async {
-                    postDataSource.uploadPost(authorId, description).getOrElse {
-                        throw IOException("게시물 업로드 실패")
-                    }
+                    retryWithLimit {
+                        postDataSource.uploadPost(authorId, description).getOrElse {
+                            throw IOException("게시물 업로드 실패")
+                        }
+                    }.getOrThrow()
                 }
                 val tagIdsDeferred = async {
-                    tagDataSource.uploadTags(tags).getOrElse {
-                        throw IOException("태그 업로드 실패")
-                    }
+                    retryWithLimit {
+                        tagDataSource.uploadTags(tags).getOrElse {
+                            throw IOException("태그 업로드 실패")
+                        }
+                    }.getOrThrow()
                 }
 
                 val (postId, tagIds) = postIdDeferred.await() to tagIdsDeferred.await()
 
-                // todo 실패했을때 처리 필요
                 launch {
-                    tagDataSource.uploadPostTags(tagIds, postId)
+                    retryWithLimit {
+                        tagDataSource.uploadPostTags(tagIds, postId).getOrElse {
+                            throw IOException("포스트 태그 업로드 실패")
+                        }
+                    }.getOrThrow()
                 }
 
                 launch {
-                    updateImageUrl(postId, fileUri)
+                    retryWithLimit {
+                        updateImageUrl(postId, fileUri).getOrElse {
+                            throw IOException("이미지 uri 업로드 실패")
+                        }
+                    }.getOrThrow()
                 }
             }
         }
@@ -162,16 +173,6 @@ class PostRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    private suspend fun updateImageUrl(postId: String, fileUri: Uri) {
-        val authorId = googleAuthDataSource.getUserId()
-
-        val documentId = postId.substringAfter("-")
-        val imageUrl = imageDataSource.getImageUrl(authorId, fileUri).getOrElse {
-            throw IOException("이미지 업로드 실패")
-        }
-        postDataSource.updateImageUrl(documentId, imageUrl)
-    }
-
     override suspend fun reactPost(postId: String, reaction: Reactions): Result<Unit> {
         return kotlin.runCatching {
             val currentUserId = googleAuthDataSource.getUserId()
@@ -205,6 +206,36 @@ class PostRepositoryImpl @Inject constructor(
                 )
             }
         ).flow
+    }
+
+    private suspend fun updateImageUrl(postId: String, fileUri: Uri): Result<Unit> {
+        return runCatching {
+            val authorId = googleAuthDataSource.getUserId()
+
+            val documentId = postId.substringAfter("-")
+            val imageUrl = imageDataSource.getImageUrl(authorId, fileUri).getOrElse {
+                throw IOException("이미지 업로드 실패")
+            }
+            postDataSource.updateImageUrl(documentId, imageUrl)
+        }
+    }
+
+    private suspend fun <T> retryWithLimit(
+        maxAttempts: Int = 3,
+        delayMillis: Long = 1000,
+        block: suspend () -> T
+    ): Result<T> {
+        repeat(maxAttempts - 1) { attempt ->
+            try {
+                return Result.success(block())
+            } catch (e: Exception) {
+                if(attempt < maxAttempts - 1) {
+                    delay(delayMillis)
+                    Log.e("retryWithLimit", "retryWithLimit: attempt $e")
+                }
+            }
+        }
+        return runCatching { block() }
     }
 
     companion object {
