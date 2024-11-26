@@ -36,8 +36,9 @@ class DetailViewModel @Inject constructor(
         MutableStateFlow<UiState<Flow<PagingData<PostContentModel>>>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
-    private val post: PostContentModel =
-        savedStateHandle.toRoute<AppRoute.Detail>(typeMap).postContentModel
+    private var _firstPost =
+        MutableStateFlow(savedStateHandle.toRoute<AppRoute.Detail>(typeMap).postContentModel)
+    val firstPost = _firstPost.asStateFlow()
 
     private val reactionStateFlow = MutableStateFlow<Map<String, ReactionState>>(emptyMap())
 
@@ -78,10 +79,31 @@ class DetailViewModel @Inject constructor(
         }
     }
 
-    fun getPagingItem(): PostContentModel = post
-
     fun selectReaction(imageItem: PostContentModel, reaction: Reactions) {
         val currentReaction = imageItem.myReaction
+
+        if (imageItem.postId == firstPost.value.postId) {
+            _firstPost.update { item ->
+                if (item.myReaction == null) {
+                    item.copy(
+                        reactions = item.reactions + reaction,
+                        myReaction = reaction
+                    )
+                } else {
+                    if (item.myReaction == reaction) {
+                        item.copy(
+                            reactions = item.reactions - reaction,
+                            myReaction = null
+                        )
+                    } else {
+                        item.copy(
+                            reactions = item.reactions - item.myReaction!! + reaction,
+                            myReaction = reaction
+                        )
+                    }
+                }
+            }
+        }
 
         viewModelScope.launch {
             if (currentReaction == reaction) {

@@ -23,8 +23,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
@@ -90,6 +92,7 @@ internal fun DetailRoute(
     when (state) {
         is UiState.Loading -> LoadingDetailScreen()
         is UiState.Success -> {
+            val firstItem by detailViewModel.firstPost.collectAsStateWithLifecycle()
             val pagingItems = state.data.collectAsLazyPagingItems()
             val pagerState =
                 rememberPagerState(initialPage = 0) { pagingItems.itemCount + 1 }
@@ -99,7 +102,7 @@ internal fun DetailRoute(
                 onSelectReaction = detailViewModel::selectReaction,
                 viewModeChange = { isReelsMode = it },
                 isReelsMode = isReelsMode,
-                firstItem = detailViewModel.getPagingItem(),
+                firstItem = firstItem,
                 pagingItems = pagingItems,
                 pagerState = pagerState,
                 padding = padding
@@ -220,7 +223,8 @@ fun ReelsContent(
     val isFollowDialogVisible = remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current).data(imageItem.imageUrl)
@@ -238,19 +242,20 @@ fun ReelsContent(
             Column {
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                        .fillMaxWidth()
+                        .height(36.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = imageItem.description,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(vertical = 8.dp, horizontal = 10.dp),
+                            .padding(horizontal = 10.dp),
                         color = Color.White,
                         fontSize = 16.sp
                     )
                     ReactionGroup(
-                        modifier = Modifier.wrapContentWidth(),
+                        modifier = Modifier.wrapContentWidth().fillMaxHeight(),
                         reactions = imageItem.reactions
                     )
                 }
@@ -290,10 +295,10 @@ fun ReelsContent(
                 ReactionDialog(
                     imageItem = imageItem,
                     modifier = Modifier
-                        .align(Alignment.TopCenter)
                         .padding(16.dp),
                     selectedReaction = onSelectReaction,
-                    onDismiss = { isReactionVisible.value = false })
+                    onDismiss = { isReactionVisible.value = false }
+                )
             }
         }
     }

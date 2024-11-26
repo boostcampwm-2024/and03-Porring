@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -19,13 +20,14 @@ import com.kolown.model.Reactions
 @Composable
 internal fun ReactionGroup(
     modifier: Modifier,
-    reactions: List<Reactions>
+    reactions: List<Reactions>,
 ) {
     val reactionList = reactions.distinct().sortedBy { it.ordinal }
 
     if (reactionList.isNotEmpty()) {
         Row(
-            modifier = modifier.padding(16.dp)
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             reactionList.forEachIndexed { index, reaction ->
                 ReactionIcons(index, reaction, reactionList.size)
@@ -38,7 +40,7 @@ internal fun ReactionGroup(
 private fun ReactionIcons(
     index: Int,
     reaction: Reactions,
-    size: Int
+    size: Int,
 ) {
     val offset = (-12 * index + (size - 1) * 12).dp
 
