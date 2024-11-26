@@ -81,6 +81,8 @@ import com.kolown.model.UiState
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 internal fun DetailRoute(
+    detailFirstItem: PostContentModel,
+    updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     popBackStack: () -> Unit,
     padding: PaddingValues = PaddingValues(),
     detailViewModel: DetailViewModel = hiltViewModel(),
@@ -92,17 +94,17 @@ internal fun DetailRoute(
     when (state) {
         is UiState.Loading -> LoadingDetailScreen()
         is UiState.Success -> {
-            val firstItem by detailViewModel.firstPost.collectAsStateWithLifecycle()
             val pagingItems = state.data.collectAsLazyPagingItems()
             val pagerState =
                 rememberPagerState(initialPage = 0) { pagingItems.itemCount + 1 }
 
             DetailScreen(
                 popBackStack = popBackStack,
+                updateMainPostReaction = updateMainPostReaction,
                 onSelectReaction = detailViewModel::selectReaction,
                 viewModeChange = { isReelsMode = it },
                 isReelsMode = isReelsMode,
-                firstItem = firstItem,
+                firstItem = detailFirstItem,
                 pagingItems = pagingItems,
                 pagerState = pagerState,
                 padding = padding
@@ -116,6 +118,7 @@ internal fun DetailRoute(
 @Composable
 fun DetailScreen(
     popBackStack: () -> Unit = {},
+    updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     viewModeChange: (Boolean) -> Unit = {},
     isReelsMode: Boolean = true,
@@ -131,6 +134,7 @@ fun DetailScreen(
             .padding(padding)
     ) {
         DetailContent(
+            updateMainPostReaction = updateMainPostReaction,
             onSelectReaction = onSelectReaction,
             viewModeChange = viewModeChange,
             isReelsMode = isReelsMode,
@@ -148,6 +152,7 @@ fun DetailScreen(
 
 @Composable
 fun DetailContent(
+    updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
     viewModeChange: (Boolean) -> Unit,
     isReelsMode: Boolean,
@@ -165,6 +170,7 @@ fun DetailContent(
         val imageItem = if (page == 0) firstItem else pagingItems[page - 1] ?: return@VerticalPager
 
         DetailItem(
+            updateMainPostReaction = updateMainPostReaction,
             onSelectReaction = onSelectReaction,
             imageItem = imageItem,
             onDoubleTab = viewModeChange
@@ -177,6 +183,7 @@ fun DetailContent(
 
 @Composable
 fun DetailItem(
+    updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
     onDoubleTab: (Boolean) -> Unit,
@@ -188,6 +195,7 @@ fun DetailItem(
 
     if (!isConcentrateMode.value) {
         ReelsContent(
+            updateMainPostReaction = updateMainPostReaction,
             onSelectReaction = onSelectReaction,
             imageItem = imageItem,
             onDoubleTab = {
@@ -214,6 +222,7 @@ fun DetailItem(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ReelsContent(
+    updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
     onDoubleTab: () -> Unit,
@@ -296,6 +305,7 @@ fun ReelsContent(
                     imageItem = imageItem,
                     modifier = Modifier
                         .padding(16.dp),
+                    updateMainPostReaction = updateMainPostReaction,
                     selectedReaction = onSelectReaction,
                     onDismiss = { isReactionVisible.value = false }
                 )

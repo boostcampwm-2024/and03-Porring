@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,18 +34,24 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kolown.home.component.RandomImageList
-import com.kolown.model.ImageItem
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.model.UiState
 
 @Composable
 internal fun HomeRoute(
+    mainItems: Result<List<PostContentModel>>,
+    onSelectReaction: (PostContentModel, Reactions) -> Unit,
+    fetchDetailFirst: (PostContentModel) -> Unit,
     padding: PaddingValues = PaddingValues(),
     viewModel: HomeViewModel = hiltViewModel(),
-    onClickImage: (PostContentModel) -> Unit = {},
-    navigateToTheir: (String) -> Unit = {}
+    navigateToTheir: (String) -> Unit = {},
+    navigateToDetail: () -> Unit = {},
 ) {
+    SideEffect {
+        viewModel.updateItems(mainItems)
+    }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (uiState) {
@@ -56,9 +63,7 @@ internal fun HomeRoute(
 
         UiState.Loading -> {
             Box(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize(),
+                modifier = Modifier.padding(padding).fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(modifier = Modifier.size(64.dp))
@@ -72,9 +77,13 @@ internal fun HomeRoute(
                 mainFeedImages = images,
                 onFollowClick = viewModel::followUser,
                 onUnfollowClick = viewModel::unFollowUser,
-                onSelectReaction = viewModel::selectReaction,
-                onClickImage = onClickImage,
-                navigateToTheir = navigateToTheir
+                navigateToTheir = navigateToTheir,
+                onSelectReaction = { post, reaction ->
+                    viewModel.selectReaction(post, reaction)
+                    onSelectReaction(post, reaction)
+                },
+                fetchDetailFirst = fetchDetailFirst,
+                navigateToDetail = navigateToDetail
             )
         }
     }
@@ -86,26 +95,23 @@ internal fun HomeRoute(
 private fun HomeScreen(
     padding: PaddingValues = PaddingValues(),
     mainFeedImages: List<PostContentModel> = emptyList(),
-    onFollowClick: (String, String) -> Unit = {_, _ ->},
+    onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-    onSelectReaction: (String, Reactions) -> Unit = { _, _ -> },
-    onClickImage: (PostContentModel) -> Unit = {},
-    navigateToTheir: (String) -> Unit = {}
+    navigateToTheir: (String) -> Unit = {},
+    onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
+    fetchDetailFirst: (PostContentModel) -> Unit = {},
+    navigateToDetail: () -> Unit = {},
 ) {
     val pagerState = rememberPagerState(pageCount = { mainFeedImages.size })
     var isReactionDialogVisible by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)
-            .padding(top = 64.dp)
+        modifier = Modifier.fillMaxSize().padding(padding).padding(top = 64.dp)
             .pointerInput(isReactionDialogVisible) {
                 if (isReactionDialogVisible) {
                     detectTapGestures { isReactionDialogVisible = false }
                 }
-            },
-        horizontalAlignment = Alignment.CenterHorizontally
+            }, horizontalAlignment = Alignment.CenterHorizontally
     ) {
         RandomImageList(
             pagerState = pagerState,
@@ -117,22 +123,18 @@ private fun HomeScreen(
             onChangeReactionDialogVisibility = {
                 isReactionDialogVisible = !isReactionDialogVisible
             },
-            onClickImage = onClickImage,
-            navigateToTheir = navigateToTheir
+            navigateToTheir = navigateToTheir,
+            fetchDetailFirst = fetchDetailFirst,
+            navigateToDetail = navigateToDetail
         )
         Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Transparent,
-                            Color.Black
-                        )
-                    ),
-                    alpha = 0.05f
-                )
+            modifier = Modifier.fillMaxWidth().height(100.dp).background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color.Transparent, Color.Black
+                    )
+                ), alpha = 0.05f
+            )
         )
     }
 }
@@ -140,40 +142,29 @@ private fun HomeScreen(
 @Composable
 private fun ErrorScreen(padding: PaddingValues = PaddingValues()) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)
-            .padding(top = 64.dp)
+        modifier = Modifier.fillMaxSize().padding(padding).padding(top = 64.dp)
     ) {
         Column(
-            modifier = Modifier
-                .align(Alignment.Center),
+            modifier = Modifier.align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                imageVector = Icons.Default.Warning,
-                contentDescription = null
+                imageVector = Icons.Default.Warning, contentDescription = null
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "오류가 발생하였습니다!",
-                color = Color.Red
+                text = "오류가 발생하였습니다!", color = Color.Red
             )
         }
 
         Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .align(Alignment.BottomCenter)
+            modifier = Modifier.fillMaxWidth().height(100.dp).align(Alignment.BottomCenter)
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            Color.Transparent,
-                            Color.Black
+                            Color.Transparent, Color.Black
                         )
-                    ),
-                    alpha = 0.05f
+                    ), alpha = 0.05f
                 )
         )
     }

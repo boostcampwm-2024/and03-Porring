@@ -24,6 +24,7 @@ import com.kolown.model.Reactions
 internal fun ReactionDialog(
     modifier: Modifier = Modifier,
     imageItem: PostContentModel,
+    updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     selectedReaction: (PostContentModel, Reactions) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -45,6 +46,7 @@ internal fun ReactionDialog(
                     didIReact = imageItem.myReaction == it,
                     reaction = it,
                     onClick = { reaction ->
+                        updateMainPostReaction(imageItem, reaction)
                         selectedReaction(imageItem, reaction)
                         onDismiss()
                     }

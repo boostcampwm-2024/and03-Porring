@@ -1,0 +1,7 @@
+R_DEF: Internal format may change without notice
+local
+drawable ic_arrow_back
+drawable ic_porring_symbol
+string string_back_button
+string string_move_to_login
+string string_use_after_login

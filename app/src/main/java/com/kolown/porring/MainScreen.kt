@@ -1,5 +1,7 @@
 package com.kolown.porring
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -11,11 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kolown.model.PostContentModel
+import com.kolown.model.Reactions
 import com.kolown.porring.component.MainBottomBar
 import com.kolown.porring.component.MainNavHost
 import com.kolown.porring.navigation.MainMenu
 import com.kolown.porring.navigation.MainNavigator
 import com.kolown.porring.navigation.rememberMainNavigator
+import com.kolown.porring.viewmodel.MainPostItemViewModel
 import com.kolown.porring.viewmodel.UserStateViewModel
 import kotlinx.collections.immutable.toPersistentList
 
@@ -23,11 +28,18 @@ import kotlinx.collections.immutable.toPersistentList
 internal fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator(),
     userStateViewModel: UserStateViewModel = hiltViewModel(),
+    mainPostItemViewModel: MainPostItemViewModel = hiltViewModel(),
 ) {
+    val mainItems by mainPostItemViewModel.mainItems.collectAsStateWithLifecycle()
+    val detailFirstItem by mainPostItemViewModel.detailFirstItem.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
     val isLoggedIn by userStateViewModel.loginState.collectAsStateWithLifecycle()
 
     MainScreenContent(
+        mainItems = mainItems,
+        onSelectReaction = mainPostItemViewModel::selectReaction,
+        detailFirstItem = detailFirstItem,
+        fetchDetailFirst = mainPostItemViewModel::fetchDetailFirst,
         isLoggedIn = isLoggedIn,
         updateLoginState = userStateViewModel::updateLoginState,
         navigator = navigator,
@@ -35,8 +47,13 @@ internal fun MainScreen(
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun MainScreenContent(
+    mainItems: Result<List<PostContentModel>>,
+    onSelectReaction: (PostContentModel, Reactions) -> Unit,
+    detailFirstItem: PostContentModel,
+    fetchDetailFirst: (PostContentModel) -> Unit,
     isLoggedIn: Boolean,
     updateLoginState: () -> Unit,
     modifier: Modifier = Modifier,
@@ -47,6 +64,10 @@ private fun MainScreenContent(
         modifier = modifier,
         content = { padding ->
             MainNavHost(
+                mainItems = mainItems,
+                onSelectReaction = onSelectReaction,
+                detailFirstItem = detailFirstItem,
+                fetchDetailFirst = fetchDetailFirst,
                 isLoggedIn = isLoggedIn,
                 updateLoginState = updateLoginState,
                 navigator = navigator,

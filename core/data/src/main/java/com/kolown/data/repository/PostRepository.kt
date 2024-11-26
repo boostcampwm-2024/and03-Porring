@@ -158,7 +158,6 @@ class PostRepositoryImpl @Inject constructor(
             config = PagingConfig(pageSize = DETAIL_PER_PAGE, enablePlaceholders = false),
             pagingSourceFactory = { randomPagingDataSource }
         ).flow
-
     }
 
     private suspend fun updateImageUrl(postId: String, fileUri: Uri) {
