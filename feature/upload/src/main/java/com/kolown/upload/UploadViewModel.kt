@@ -2,21 +2,31 @@ package com.kolown.upload
 
 import android.graphics.Bitmap
 import android.net.Uri
+import androidx.core.net.toUri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.kolown.data.repository.ImageCacheRepository
+import com.kolown.model.UploadModel
+import com.kolown.navigation.MainMenuRoute
+import com.kolown.navigation.Route
+import com.kolown.upload.navigation.UploadType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.reflect.typeOf
 
 @HiltViewModel
 class UploadViewModel @Inject constructor(
-    private val repository: ImageCacheRepository
+    private val repository: ImageCacheRepository,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _description = MutableStateFlow("")
     val description = _description.asStateFlow()
@@ -26,6 +36,14 @@ class UploadViewModel @Inject constructor(
 
     private val _webPUri = MutableStateFlow<Uri?>(null)
     val webPUri = _webPUri.asStateFlow()
+
+    private val typeMap = mapOf(
+        typeOf<UploadModel>() to UploadType,
+    )
+
+    init {
+        setUploadData()
+    }
 
     val uploadEnable = combine(
         _description, _categoryItems, _webPUri
@@ -72,5 +90,12 @@ class UploadViewModel @Inject constructor(
                 _webPUri.value = repository.saveBitmapToCache(it, Bitmap.CompressFormat.WEBP, 80)
             }
         }
+    }
+
+    private fun setUploadData() {
+        val uploadModel = savedStateHandle.toRoute<Route.Upload>(typeMap).uploadModel
+        _description.value = uploadModel.description
+        _categoryItems.value = uploadModel.categoryItems
+        _webPUri.value = uploadModel.imgUri.toUri()
     }
 }

@@ -43,15 +43,18 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    //coil
+    // coil
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
     implementation(libs.bundles.android.compose)
 
-    //hilt
+    // hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.android.compiler)
+
+    // serialization
+    implementation(libs.kotlinx.serialization.json)
 
     implementation(projects.core.navigation)
     implementation(projects.core.model)

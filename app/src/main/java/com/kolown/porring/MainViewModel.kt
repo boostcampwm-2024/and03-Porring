@@ -1,13 +1,12 @@
 package com.kolown.porring
 
-import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kolown.data.repository.AuthRepository
 import com.kolown.data.repository.PostRepository
 import com.kolown.model.InitUiState
-import com.kolown.model.UiState
+import com.kolown.model.UploadModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,6 +25,9 @@ class MainViewModel @Inject constructor(
     private val _uploadUiState = MutableStateFlow<InitUiState<Boolean>>(InitUiState.Init)
     val upLoadUiState = _uploadUiState.asStateFlow()
 
+    private var _uploadModel = MutableStateFlow(UploadModel("", "", emptyList()))
+    val uploadModel = _uploadModel.asStateFlow()
+
     init {
         updateLoginState()
     }
@@ -36,6 +38,14 @@ class MainViewModel @Inject constructor(
 
     fun uploadPost(webPUri: String, description: String, categoryItems: List<String>) {
         viewModelScope.launch {
+            _uploadModel.update {
+                UploadModel(
+                    imgUri = webPUri,
+                    description = description,
+                    categoryItems = categoryItems
+                )
+            }
+
             _uploadUiState.value = InitUiState.Loading
             postRepository.uploadPost(
                 fileUri = webPUri.toUri(),
@@ -43,6 +53,7 @@ class MainViewModel @Inject constructor(
                 tags = categoryItems
             ).onSuccess {
                 _uploadUiState.update { InitUiState.Success(true) }
+                _uploadModel.update { UploadModel("", "", emptyList()) }
             }.onFailure { error ->
                 _uploadUiState.update { InitUiState.Failure(error) }
             }

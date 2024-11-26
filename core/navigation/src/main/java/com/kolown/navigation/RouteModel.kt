@@ -1,10 +1,12 @@
 package com.kolown.navigation
 
+import com.kolown.model.PostContentModel
+import com.kolown.model.UploadModel
 import kotlinx.serialization.Serializable
 
 sealed interface Route {
     @Serializable
-    data class Upload(val imgUri: String) : Route
+    data class Upload(val imgUri: String, val uploadModel: UploadModel) : Route
 
     @Serializable
     data object Login : Route
