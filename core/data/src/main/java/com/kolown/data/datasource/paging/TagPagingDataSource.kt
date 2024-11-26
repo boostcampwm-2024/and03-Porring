@@ -1,19 +1,36 @@
 package com.kolown.data.datasource.paging
 
-import com.kolown.data.datasource.fake.TagDataSource
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
+import com.kolown.data.datasource.remote.TagDataSource
 import com.kolown.model.Tag
 
-class TagPagingDataSource(
-    private val tagDataSource: TagDataSource,
-    private val name: String,
-) : CommonPagingDataSource<Tag>() {
+class TagPagingSource(
+    private val searchText: String,
+    private val tagDataSource: TagDataSource
+) : PagingSource<String, Tag>() {
 
-    //fake
-    override fun providesNextKeyCondition(page: Int, body: List<Tag>): Boolean {
-        return true
+    override suspend fun load(params: LoadParams<String>): LoadResult<String, Tag> {
+        return try {
+            val page = params.key
+            val tags = tagDataSource.getTagBySearch(searchText = searchText,key = params.key, perPage = params.loadSize.toLong()).getOrElse {
+                throw Exception("태그 불러오기 실패")
+            }
+            val nextKey = if (tags.isEmpty()) null else tags.last().name
+
+            LoadResult.Page(
+                data = tags,
+                prevKey = if (page == null) null else tags.firstOrNull()?.name,
+                nextKey = nextKey
+            )
+        } catch (e: Exception) {
+            LoadResult.Error(e)
+        }
     }
 
-    override suspend fun providePage(page: Int): Result<List<Tag>> {
-        return tagDataSource.getTagListByName(name)
+    override fun getRefreshKey(state: PagingState<String, Tag>): String? {
+        return null
     }
+
+
 }

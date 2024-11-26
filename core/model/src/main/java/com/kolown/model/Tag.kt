@@ -1,6 +1,6 @@
 package com.kolown.model
 
 data class Tag(
-    val id:Long,
+    val id:String,
     val name:String
 )
