@@ -2,12 +2,9 @@ package com.kolown.upload
 
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kolown.data.repository.ImageCacheRepository
-import com.kolown.data.repository.PostRepository
-import com.kolown.model.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,8 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UploadViewModel @Inject constructor(
-    private val repository: ImageCacheRepository,
-    private val postRepository: PostRepository
+    private val repository: ImageCacheRepository
 ) : ViewModel() {
     private val _description = MutableStateFlow("")
     val description = _description.asStateFlow()
@@ -28,13 +24,11 @@ class UploadViewModel @Inject constructor(
     private val _categoryItems = MutableStateFlow<List<String>>(emptyList())
     val categoryItems = _categoryItems.asStateFlow()
 
-    private val _uiState = MutableStateFlow<UiState<Boolean>>(UiState.Loading)
-    val uiState = _uiState.asStateFlow()
-
-    private val webPUri = MutableStateFlow<Uri?>(null)
+    private val _webPUri = MutableStateFlow<Uri?>(null)
+    val webPUri = _webPUri.asStateFlow()
 
     val uploadEnable = combine(
-        _description, _categoryItems, webPUri
+        _description, _categoryItems, _webPUri
     ) { description, categoryItems, webPUri ->
         description.isNotEmpty() && categoryItems.none { it.isBlank() } && webPUri != null
     }.stateIn(
@@ -75,26 +69,7 @@ class UploadViewModel @Inject constructor(
             }
 
             bitmap?.let {
-                webPUri.value = repository.saveBitmapToCache(it, Bitmap.CompressFormat.WEBP, 80)
-            }
-        }
-    }
-
-    fun uploadPost() {
-        viewModelScope.launch {
-            _uiState.value = UiState.Loading
-            webPUri.value?.let {
-                postRepository.uploadPost(
-                    fileUri = it,
-                    description = description.value,
-                    tags = categoryItems.value
-                ).onSuccess {
-                    _uiState.value = UiState.Success(true)
-                    Log.w("UploadTime", "uploadPost success")
-                }.onFailure { error ->
-                    _uiState.value = UiState.Failure(error)
-                    Log.w("UploadTime", "uploadPost failure : $error")
-                }
+                _webPUri.value = repository.saveBitmapToCache(it, Bitmap.CompressFormat.WEBP, 80)
             }
         }
     }

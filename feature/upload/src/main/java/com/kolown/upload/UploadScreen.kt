@@ -1,13 +1,11 @@
 package com.kolown.upload
 
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,7 +35,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,7 +43,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.kolown.designsystem.Primary
-import com.kolown.model.UiState
 import com.kolown.upload.component.CategoryGroup
 import kotlinx.coroutines.launch
 
@@ -55,24 +51,16 @@ internal fun UploadRoute(
     viewModel: UploadViewModel = hiltViewModel(),
     imgUri: String,
     padding: PaddingValues,
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
+    uploadPost: (String, String, List<String>) -> Unit
 ) {
     val description by viewModel.description.collectAsStateWithLifecycle()
     val categoryItems by viewModel.categoryItems.collectAsStateWithLifecycle()
+    val webPUri by viewModel.webPUri.collectAsStateWithLifecycle()
     val uploadEnable by viewModel.uploadEnable.collectAsStateWithLifecycle()
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
     BackHandler {
         navigateToHome()
-    }
-
-    LaunchedEffect(uiState) {
-        when(uiState) {
-            is UiState.Failure -> Toast.makeText(context, "업로드 실패", Toast.LENGTH_SHORT).show()
-            UiState.Loading -> Toast.makeText(context, "업로드 중입니다.", Toast.LENGTH_SHORT).show()
-            is UiState.Success -> navigateToHome()
-        }
     }
 
     LaunchedEffect(Unit) {
@@ -89,7 +77,10 @@ internal fun UploadRoute(
         addCategory = viewModel::addCategory,
         removeCategory = viewModel::removeCategory,
         changeCategoryName = viewModel::changeCategoryName,
-        uploadPost = viewModel::uploadPost,
+        uploadPost = {
+            uploadPost(webPUri.toString(), description, categoryItems)
+            navigateToHome()
+        },
     )
 }
 
@@ -117,7 +108,7 @@ internal fun UploadScreen(
     }
 
     fun chooseColor(boolean: Boolean): Color {
-        return if(boolean) {
+        return if (boolean) {
             Primary
         } else {
             Color.White
@@ -189,7 +180,7 @@ private fun UploadContent(
         Spacer(modifier = Modifier.height(20.dp))
         DescriptionTextField(horizontalModifier, description, changeDescription)
         Spacer(modifier = Modifier.height(4.dp))
-        if(description.length >= 20) {
+        if (description.length >= 20) {
             Text(
                 modifier = Modifier.padding(horizontal = 56.dp),
                 text = "설명은 최대 20자까지만 입력이 가능합니다.",
