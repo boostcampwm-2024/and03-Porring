@@ -47,7 +47,7 @@ internal fun MainBottomBar(
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .height(80.dp),
+                .height(52.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             menus.forEach { menu ->
