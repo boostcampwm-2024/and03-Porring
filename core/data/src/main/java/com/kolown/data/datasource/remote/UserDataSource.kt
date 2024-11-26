@@ -1,4 +1,4 @@
-package com.kolown.data.datasource
+package com.kolown.data.datasource.remote
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kolown.data.remote.UserDto

@@ -1,13 +1,13 @@
 package com.kolown.data.di
 
-import com.kolown.data.datasource.AuthDataSource
-import com.kolown.data.datasource.AuthDataSourceImpl
-import com.kolown.data.datasource.FakeFollowerDataSource
-import com.kolown.data.datasource.FakeGalleryDataSource
-import com.kolown.data.datasource.FollowerDataSource
-import com.kolown.data.datasource.GalleryDataSource
-import com.kolown.data.datasource.UserDataSource
-import com.kolown.data.datasource.UserDataSourceImpl
+import com.kolown.data.datasource.fake.FakeFollowerDataSource
+import com.kolown.data.datasource.fake.FakeGalleryDataSource
+import com.kolown.data.datasource.fake.FollowerDataSource
+import com.kolown.data.datasource.fake.GalleryDataSource
+import com.kolown.data.datasource.remote.AuthDataSource
+import com.kolown.data.datasource.remote.AuthDataSourceImpl
+import com.kolown.data.datasource.remote.FollowDataSource
+import com.kolown.data.datasource.remote.FollowDataSourceImpl
 import com.kolown.data.datasource.remote.ImageDataSource
 import com.kolown.data.datasource.remote.ImageDataSourceImpl
 import com.kolown.data.datasource.remote.PostDataSource
@@ -16,8 +16,8 @@ import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.ReactionDataSourceImpl
 import com.kolown.data.datasource.remote.TagDataSource
 import com.kolown.data.datasource.remote.TagDataSourceImpl
-import com.kolown.data.datasource.remote.FollowDataSource
-import com.kolown.data.datasource.remote.FollowDataSourceImpl
+import com.kolown.data.datasource.remote.UserDataSource
+import com.kolown.data.datasource.remote.UserDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

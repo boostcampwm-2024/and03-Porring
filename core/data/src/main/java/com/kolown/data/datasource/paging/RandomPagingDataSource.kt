@@ -2,7 +2,7 @@ package com.kolown.data.datasource.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.kolown.data.datasource.AuthDataSource
+import com.kolown.data.datasource.remote.AuthDataSource
 import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.TagDataSource
