@@ -16,6 +16,11 @@ interface PostDataSource {
     suspend fun getRandomPost(uid: String, count: Int): Result<List<PostModel>>
     suspend fun getRandomPost(uid: String, page: Long, perPage: Long): Result<List<PostModel>>
     suspend fun getUserPost(uid: String, perPage: Long): Result<List<PostModel>>
+    suspend fun getPostBySearch(
+        postIds: List<String>,
+        lastRegisteredAt: String?,
+        perPage: Long
+    ): Result<List<PostModel>>
 }
 
 class PostDataSourceImpl @Inject constructor(
@@ -113,4 +118,26 @@ class PostDataSourceImpl @Inject constructor(
             fetchPosts(page).ifEmpty { fetchPosts(0) }
         }
     }
+
+    override suspend fun getPostBySearch(
+        postIds: List<String>,
+        key: String?,
+        perPage: Long
+    ): Result<List<PostModel>> {
+        return kotlin.runCatching {
+            // 쿼리 초기화
+            val query = postCollection
+                .whereIn("postId", postIds)
+                .orderBy("postId", Query.Direction.ASCENDING)
+                .let { if (key != null) it.startAfter(key) else it }
+                .limit(perPage)
+                .get()
+                .await()
+                .mapNotNull { it.toObject(PostDto::class.java).toPostModel(randomType) }
+
+            query
+        }
+    }
+
+
 }

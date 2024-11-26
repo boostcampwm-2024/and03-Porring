@@ -3,10 +3,11 @@ package com.kolown.search
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.kolown.data.di.Fake
 import com.kolown.data.repository.PostRepository
 import com.kolown.data.repository.TagRepository
+import com.kolown.model.PostContentModel
 import com.kolown.model.Tag
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,36 +19,35 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    @Fake
     private val tagRepository: TagRepository,
     private val postRepository: PostRepository
-
 ) : ViewModel() {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
+    private val _tag = MutableStateFlow<Tag?>(null)
+    val tag = _tag.asStateFlow()
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     val searchResult = _searchQuery.debounce(SEARCH_DEBOUNCE_TIME_MILLIS)
         .filter { it.isNotBlank() }
         .distinctUntilChanged() //같은거 반응 안함.(근데 stateflow라 어차피 반응 안할듯?)
         .flatMapLatest {
-            tagRepository.getTagePageFlow(it)
+            tagRepository.getTagBySearch(it)
         }.cachedIn(viewModelScope)
 
-    fun setSearchQuery(searchText: String) {
+     fun setSearchQuery(searchText: String) {
         _searchQuery.value = searchText
-
     }
 
-    private val _tag = MutableStateFlow<Tag?>(null)
-    val tag = _tag.asStateFlow()
+
 
     fun setTag(tag: Tag) {
-        Log.e("test", "set tag: $tag")
+        Log.e("test", "set tag: ${tag.name}")
         _tag.value = tag
     }
 
@@ -56,11 +56,9 @@ class SearchViewModel @Inject constructor(
         it != null
     }.flatMapLatest { tag ->
         tag?.let {
-            postRepository.getRandomDetailPostList()
-        } ?: run {
-            flow {}
-        }
-
+            postRepository.getPostBySearch(tag.id)
+                .onStart { emit(PagingData.empty()) }
+        } ?: flow { emit(PagingData.empty())}
     }
 
     companion object {

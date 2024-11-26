@@ -1,9 +1,11 @@
 package com.kolown.data.datasource.remote
 
+import androidx.paging.PagingSource.LoadResult
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kolown.data.remote.TagDto
 import com.kolown.data.remote.toTagModel
+import com.kolown.model.Tag
 import com.kolown.model.TagModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -15,6 +17,8 @@ interface TagDataSource {
     suspend fun uploadPostTags(tagIds: List<String>, postId: String)
     suspend fun uploadTags(tags: List<String>): Result<List<String>>
     suspend fun getPostTag(postId: String): Result<List<TagModel>>
+    suspend fun getPostTagByTagId(tagId: String): Result<List<String>>
+    suspend fun getTagBySearch(searchText: String,key:String?,perPage:Long) : Result<List<Tag>>
 }
 
 class TagDataSourceImpl @Inject constructor(
@@ -86,6 +90,45 @@ class TagDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun getPostTagByTagId(tagId: String): Result<List<String>> {
+        return runCatching {
+            val postIds = postTagCollection
+                .whereEqualTo("tagId", tagId)
+                .get()
+                .await()
+                .map { it.data["postId"].toString() }
+            postIds
+        }
+    }
+
+    override suspend fun getTagBySearch(searchText: String,key:String?,perPage:Long): Result<List<Tag>> {
+        return kotlin.runCatching {
+            val tags = mutableListOf<Tag>()
+            val documents = if (key == null) {
+                tagCollection.whereGreaterThanOrEqualTo("tagName", searchText)
+                    .whereLessThanOrEqualTo("tagName", searchText + "\uf8ff")
+                    .limit(SEARCH_TAG_PER_PAGE.toLong())
+                    .get()
+                    .await()
+            } else {
+                tagCollection.whereGreaterThan("tagName", key)
+                    .whereGreaterThanOrEqualTo("tagName", searchText)
+                    .whereLessThanOrEqualTo("tagName", searchText + "\uf8ff")
+                    .limit(SEARCH_TAG_PER_PAGE.toLong()).get().await()
+            }
+
+
+            for (document in documents) {
+                val tagName = document.getString("tagName")
+                val tagId = document.getString("tagId")
+                if (tagName != null && tagId != null ) {
+                    tags.add(Tag(tagId,tagName))
+                }
+            }
+            tags.toList()
+        }
+    }
+
     private suspend fun CollectionReference.contains(
         field: String,
         value: String,
@@ -98,5 +141,9 @@ class TagDataSourceImpl @Inject constructor(
                 .isEmpty
                 .not()
         }
+    }
+
+    companion object {
+        const val SEARCH_TAG_PER_PAGE = 5
     }
 }

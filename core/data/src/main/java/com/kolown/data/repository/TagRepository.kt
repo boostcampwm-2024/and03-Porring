@@ -4,8 +4,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.kolown.data.datasource.fake.FakeTagDataSource
-import com.kolown.data.datasource.fake.TagDataSource
-import com.kolown.data.datasource.paging.TagPagingDataSource
+import com.kolown.data.datasource.paging.TagPagingSource
+import com.kolown.data.datasource.remote.TagDataSource
 import com.kolown.data.mock.MockDataProvider
 import com.kolown.model.Tag
 import kotlinx.coroutines.delay
@@ -13,38 +13,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 interface TagRepository {
-    suspend fun getTagListByName(name: String): Result<List<Tag>>
-    suspend fun getTagePageFlow(name: String): Flow<PagingData<Tag>>
+    suspend fun getTagBySearch(search: String): Flow<PagingData<Tag>>
 }
 
 class TagRepositoryImpl(private val tagDataSource: TagDataSource) : TagRepository {
-    override suspend fun getTagListByName(name: String): Result<List<Tag>> {
-        return tagDataSource.getTagListByName(name)
-    }
 
-    override suspend fun getTagePageFlow(name: String): Flow<PagingData<Tag>> = flow {
-        while (true) {
-            val result = getTagListByName(name)
-            if (result.isSuccess) {
-                emit(PagingData.from(result.getOrThrow()))
-            }
-        }
-    }
-}
-
-class FakeTagRepository() : TagRepository {
-    private val tagDataSource = FakeTagDataSource()
-    override suspend fun getTagListByName(name: String): Result<List<Tag>> {
-        delay(500L)
-        return Result.success(MockDataProvider.getTagByName(name))
-    }
-
-    override suspend fun getTagePageFlow(name: String): Flow<PagingData<Tag>> =
-        Pager(
-            config = PagingConfig(
-                pageSize = 20,
-                enablePlaceholders = false,
-            ),
-            pagingSourceFactory = { TagPagingDataSource(tagDataSource, name) }
+    override suspend fun getTagBySearch(search: String): Flow<PagingData<Tag>> {
+        return Pager(
+            config = PagingConfig(pageSize = 1),
+            pagingSourceFactory = { TagPagingSource(searchText = search, tagDataSource = tagDataSource) } // PagingSource 제공
         ).flow
+    }
 }

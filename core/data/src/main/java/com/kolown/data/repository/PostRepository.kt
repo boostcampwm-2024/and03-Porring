@@ -193,7 +193,20 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getPostBySearch(tagId: String): Flow<PagingData<PostContentModel>> {
+        return Pager(
+            config = PagingConfig(pageSize = SEARCH_PER_PAGE, enablePlaceholders = false),
+            pagingSourceFactory = {
+                SearchPagingSource(
+                    postDataSource = postDataSource, reactionDataSource = reactionDataSource,
+                    tagId = tagId, tagDataSource = tagDataSource
+                )
+            }
+        ).flow
+    }
+
     companion object {
         const val DETAIL_PER_PAGE = 2
+        const val SEARCH_PER_PAGE = 5
     }
 }
