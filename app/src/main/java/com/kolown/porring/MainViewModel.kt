@@ -11,6 +11,7 @@ import com.kolown.model.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,12 +42,14 @@ class MainViewModel @Inject constructor(
                 description = description,
                 tags = categoryItems
             ).onSuccess {
-                _uploadUiState.value = InitUiState.Success(true)
-                Log.w("UploadTime", "uploadPost success")
+                _uploadUiState.update { InitUiState.Success(true) }
             }.onFailure { error ->
-                _uploadUiState.value = InitUiState.Failure(error)
-                Log.w("UploadTime", "uploadPost failure : $error")
+                _uploadUiState.update { InitUiState.Failure(error) }
             }
         }
+    }
+
+    fun resetUploadState() {
+        _uploadUiState.update { InitUiState.Init }
     }
 }

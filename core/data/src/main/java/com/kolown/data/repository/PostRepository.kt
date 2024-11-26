@@ -67,7 +67,7 @@ class PostRepositoryImpl @Inject constructor(
         tags: List<String>,
     ): Result<Unit> {
         return runCatching {
-            CoroutineScope(Dispatchers.IO).launch {
+            coroutineScope {
                 val authorId = googleAuthDataSource.getUserId()
 
                 // post Upload to Firestore & get postId
