@@ -39,6 +39,7 @@ internal fun MainNavHost(
     modifier: Modifier = Modifier,
     navigator: MainNavigator,
     padding: PaddingValues,
+    uploadPost: (String, String, List<String>) -> Unit
 ) {
     Box(
         modifier = modifier.fillMaxSize().background(Color.White)
@@ -88,6 +89,7 @@ internal fun MainNavHost(
 
             uploadNavGraph(
                 navigateToHome = { navigator.navigate(MainMenu.HOME) },
+                uploadPost = uploadPost,
                 padding = padding
             )
 

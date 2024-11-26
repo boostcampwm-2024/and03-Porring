@@ -1,5 +1,6 @@
 package com.kolown.porring
 
+import android.widget.Toast
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -7,12 +8,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kolown.model.InitUiState
+import com.kolown.model.UiState
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.porring.component.MainBottomBar
@@ -28,13 +33,25 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 internal fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator(),
-    userStateViewModel: UserStateViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel = hiltViewModel(),
     mainPostItemViewModel: MainPostItemViewModel = hiltViewModel(),
 ) {
     val mainItems by mainPostItemViewModel.mainItems.collectAsStateWithLifecycle()
     val detailFirstItem by mainPostItemViewModel.detailFirstItem.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
-    val isLoggedIn by userStateViewModel.loginState.collectAsStateWithLifecycle()
+    val isLoggedIn by mainViewModel.loginState.collectAsStateWithLifecycle()
+
+    val uploadState by mainViewModel.upLoadUiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(uploadState) {
+        when(uploadState) {
+            InitUiState.Init -> { }
+            is InitUiState.Failure -> Toast.makeText(context, "업로드 실패", Toast.LENGTH_SHORT).show()
+            InitUiState.Loading -> Toast.makeText(context, "업로드 중입니다.", Toast.LENGTH_SHORT).show()
+            is InitUiState.Success -> Toast.makeText(context, "업로드 성공", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     MainScreenContent(
         mainItems = mainItems,
@@ -43,9 +60,10 @@ internal fun MainScreen(
         fetchDetailFirst = mainPostItemViewModel::fetchDetailFirst,
         updateFollow = mainPostItemViewModel::updateFollow,
         isLoggedIn = isLoggedIn,
-        updateLoginState = userStateViewModel::updateLoginState,
+        updateLoginState = mainViewModel::updateLoginState,
         navigator = navigator,
         snackBarHostState = snackBarHostState,
+        uploadPost = mainViewModel::uploadPost
     )
 }
 
@@ -62,6 +80,7 @@ private fun MainScreenContent(
     modifier: Modifier = Modifier,
     navigator: MainNavigator,
     snackBarHostState: SnackbarHostState,
+    uploadPost: (String, String, List<String>) -> Unit
 ) {
     Scaffold(
         modifier = modifier,
@@ -75,7 +94,8 @@ private fun MainScreenContent(
                 isLoggedIn = isLoggedIn,
                 updateLoginState = updateLoginState,
                 navigator = navigator,
-                padding = padding
+                padding = padding,
+                uploadPost = uploadPost
             )
         },
         bottomBar = {

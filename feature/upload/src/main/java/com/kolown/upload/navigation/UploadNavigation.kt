@@ -16,6 +16,7 @@ fun NavController.navigateUpload(imgUri: String, navOptions: NavOptions? = null)
 
 fun NavGraphBuilder.uploadNavGraph(
     navigateToHome: () -> Unit,
+    uploadPost: (String, String, List<String>) -> Unit,
     padding: PaddingValues
 ) {
     composable<Route.Upload> { navBackStackEntry ->
@@ -24,7 +25,8 @@ fun NavGraphBuilder.uploadNavGraph(
         UploadRoute(
             imgUri = imgUri,
             padding = padding,
-            navigateToHome = navigateToHome
+            navigateToHome = navigateToHome,
+            uploadPost = uploadPost
         )
     }
 }
