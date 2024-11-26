@@ -40,22 +40,22 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(project(":core:data"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.bundles.android.compose)
-
-    implementation(projects.core.navigation)
-
     implementation(libs.coil.compose)
 
     //paging
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
+
     //hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.android.compiler)
+
+    implementation(projects.core.navigation)
+    implementation(projects.core.data)
 }
