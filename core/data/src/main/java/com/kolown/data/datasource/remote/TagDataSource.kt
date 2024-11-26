@@ -14,7 +14,7 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 interface TagDataSource {
-    suspend fun uploadPostTags(tagIds: List<String>, postId: String)
+    suspend fun uploadPostTags(tagIds: List<String>, postId: String): Result<Unit>
     suspend fun uploadTags(tags: List<String>): Result<List<String>>
     suspend fun getPostTag(postId: String): Result<List<TagModel>>
     suspend fun getPostTagByTagId(tagId: String): Result<List<String>>
@@ -27,19 +27,21 @@ class TagDataSourceImpl @Inject constructor(
     private val postTagCollection = firestore.collection("postTag")
     private val tagCollection = firestore.collection("tag")
 
-    override suspend fun uploadPostTags(tagIds: List<String>, postId: String) {
-        tagIds.forEach { tagId ->
-            val uploadData = mapOf(
-                "postId" to postId,
-                "tagId" to tagId
-            )
+    override suspend fun uploadPostTags(tagIds: List<String>, postId: String): Result<Unit> {
+        return runCatching {
+            tagIds.forEach { tagId ->
+                val uploadData = mapOf(
+                    "postId" to postId,
+                    "tagId" to tagId
+                )
 
-            postTagCollection
-                .add(uploadData)
-                .await()
-                .let {
-                    it.update("postTagId", "postTag-${it.id}")
-                }
+                postTagCollection
+                    .add(uploadData)
+                    .await()
+                    .let {
+                        it.update("postTagId", "postTag-${it.id}")
+                    }
+            }
         }
     }
 
