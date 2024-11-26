@@ -1,9 +1,10 @@
-package com.kolown.porring
+package com.kolown.porring.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import com.kolown.navigation.MainMenuRoute
 import com.kolown.navigation.Route
+import com.kolown.porring.R
 
 internal enum class MainMenu(
     @DrawableRes

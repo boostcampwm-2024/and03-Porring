@@ -13,6 +13,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kolown.porring.component.MainBottomBar
 import com.kolown.porring.component.MainNavHost
+import com.kolown.porring.navigation.MainMenu
+import com.kolown.porring.navigation.MainNavigator
+import com.kolown.porring.navigation.rememberMainNavigator
+import com.kolown.porring.viewmodel.UserStateViewModel
 import kotlinx.collections.immutable.toPersistentList
 
 @Composable
