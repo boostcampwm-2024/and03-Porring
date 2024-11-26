@@ -1,8 +1,13 @@
 package com.kolown.data.repository
 
 import android.util.Log
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.kolown.data.datasource.paging.FollowerGalleryThumbnailPagingDataSource
 import com.kolown.data.datasource.remote.AuthDataSource
 import com.kolown.data.datasource.remote.FollowDataSource
+import com.kolown.model.FollowerThumbnail
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -13,11 +18,13 @@ interface FollowRepository {
     fun getFollowerName(followerId: String): Flow<String>
     suspend fun unFollowUser(followerId: String): Flow<Boolean>
     fun followUser(followerId: String, followerName: String): Flow<Boolean>
+    suspend fun getFollowerDataSourcePagingFlow(): Flow<PagingData<FollowerThumbnail>>
 }
 
 class FollowRepositoryImpl @Inject constructor(
     private val followDataSource: FollowDataSource,
     @Named("google") private val googleAuthDataSource: AuthDataSource,
+    private val followerGalleryThumbnailPagingDataSource: FollowerGalleryThumbnailPagingDataSource,
 ) : FollowRepository {
 
     override fun getFollowerName(followerId: String): Flow<String> = flow {
@@ -57,6 +64,19 @@ class FollowRepositoryImpl @Inject constructor(
         ).collect { success ->
             emit(success)
         }
+    }
+
+    override suspend fun getFollowerDataSourcePagingFlow(): Flow<PagingData<FollowerThumbnail>> {
+        Log.e("팔로워","?")
+
+        return Pager(
+            config = PagingConfig(
+                pageSize = 1,
+                enablePlaceholders = false,
+            ), pagingSourceFactory = {
+                followerGalleryThumbnailPagingDataSource
+            }
+        ).flow
     }
 
 }

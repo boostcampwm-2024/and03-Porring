@@ -3,7 +3,12 @@ package com.kolown.data.datasource.remote
 import android.util.Log
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.toObject
+import com.kolown.data.remote.FollowerDto
+import com.kolown.data.remote.toFollowerModel
+import com.kolown.model.FollowerModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -13,9 +18,19 @@ import javax.inject.Inject
 
 interface FollowDataSource {
     suspend fun getIsFollower(userId: String, followerId: String): Result<Boolean>
-    suspend fun uploadFollow(userId: String, followerId: String, followerName: String): Flow<Boolean>
+    suspend fun uploadFollow(
+        userId: String,
+        followerId: String,
+        followerName: String
+    ): Flow<Boolean>
+
     suspend fun removeFollow(userId: String, followerId: String): Flow<Boolean>
     suspend fun getFollowerName(userId: String, followerId: String): Flow<String>
+    suspend fun getFollowerList(
+        userId: String,
+        key: String?,
+        perPage: Long
+    ): Result<List<FollowerModel>>
 }
 
 class FollowDataSourceImpl @Inject constructor(
@@ -50,6 +65,25 @@ class FollowDataSourceImpl @Inject constructor(
         emit(name)
     }.catch { e ->
         Log.e("GetFollowerName", "datasource: $e")
+    }
+
+    override suspend fun getFollowerList(
+        userId: String,
+        key: String?,
+        perPage: Long
+    ): Result<List<FollowerModel>> {
+        return kotlin.runCatching {
+            val followerIds = followCollection
+                .whereEqualTo("userId", userId)
+                .orderBy("userId", Query.Direction.ASCENDING)
+                .let { if (key != null) it.startAfter(key) else it }
+                .limit(perPage)
+                .get()
+                .await()
+                .map { it.toObject(FollowerDto::class.java).toFollowerModel() }
+
+            followerIds
+        }
     }
 
     override suspend fun uploadFollow(

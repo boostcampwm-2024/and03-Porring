@@ -30,7 +30,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
@@ -40,6 +42,8 @@ import com.kolown.follower.component.FollowContent
 import com.kolown.follower.component.PageItemFooter
 import com.kolown.follower.component.RestrictedLoginContent
 import com.kolown.model.FollowerThumbnail
+import com.kolown.model.UiState
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 internal fun FollowerRoute(
@@ -49,13 +53,21 @@ internal fun FollowerRoute(
     viewModel: FollowerViewModel = hiltViewModel()
 ) {
     if (isLoggedIn) {
-        val pagingItems = viewModel.galleryFlow.collectAsLazyPagingItems()
+        val uiState = viewModel.uiState.collectAsStateWithLifecycle()
         val pagerState = rememberLazyListState()
-        FollowerScreen(
-            items = pagingItems,
-            pagerState = pagerState,
-            padding = padding
-        )
+        when(uiState.value) {
+            is UiState.Loading ->{}
+            is UiState.Success -> {
+                val items = (uiState.value as UiState.Success<Flow<PagingData<FollowerThumbnail>>>).data.collectAsLazyPagingItems()
+                FollowerScreen(
+                    items = items,
+                    pagerState = pagerState,
+                    padding = padding
+                )
+            }
+            is UiState.Failure -> {}
+        }
+
     } else {
         RestrictedLoginContent(
             navigateToLogin = navigateToLogin,
@@ -82,7 +94,8 @@ private fun FollowerScreen(
             items[index]?.let {
                 FollowContent(
                     followerName = it.followerName,
-                    followAlbums = it.images
+                    followAlbums = it.posts.take(3)
+                        .map{ post -> post.imageUrl}
                 )
             }
         }
