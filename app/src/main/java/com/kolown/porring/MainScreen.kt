@@ -23,6 +23,7 @@ import com.kolown.porring.navigation.rememberMainNavigator
 import com.kolown.porring.viewmodel.MainPostItemViewModel
 import com.kolown.porring.viewmodel.UserStateViewModel
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 internal fun MainScreen(
@@ -40,6 +41,7 @@ internal fun MainScreen(
         onSelectReaction = mainPostItemViewModel::selectReaction,
         detailFirstItem = detailFirstItem,
         fetchDetailFirst = mainPostItemViewModel::fetchDetailFirst,
+        updateFollow = mainPostItemViewModel::updateFollow,
         isLoggedIn = isLoggedIn,
         updateLoginState = userStateViewModel::updateLoginState,
         navigator = navigator,
@@ -50,10 +52,11 @@ internal fun MainScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun MainScreenContent(
-    mainItems: Result<List<PostContentModel>>,
+    mainItems: Flow<List<PostContentModel>>,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
     detailFirstItem: PostContentModel,
     fetchDetailFirst: (PostContentModel) -> Unit,
+    updateFollow: (String) -> Unit,
     isLoggedIn: Boolean,
     updateLoginState: () -> Unit,
     modifier: Modifier = Modifier,
@@ -68,6 +71,7 @@ private fun MainScreenContent(
                 onSelectReaction = onSelectReaction,
                 detailFirstItem = detailFirstItem,
                 fetchDetailFirst = fetchDetailFirst,
+                updateFollow = updateFollow,
                 isLoggedIn = isLoggedIn,
                 updateLoginState = updateLoginState,
                 navigator = navigator,

@@ -24,14 +24,16 @@ import com.kolown.search.navigation.searchNavGraph
 import com.kolown.setting.navigation.settingNavGraph
 import com.kolown.their.navigation.theirNavGraph
 import com.kolown.upload.navigation.uploadNavGraph
+import kotlinx.coroutines.flow.Flow
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 internal fun MainNavHost(
-    mainItems: Result<List<PostContentModel>>,
+    mainItems: Flow<List<PostContentModel>>,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
     detailFirstItem: PostContentModel,
     fetchDetailFirst: (PostContentModel) -> Unit,
+    updateFollow: (String) -> Unit,
     isLoggedIn: Boolean,
     updateLoginState: () -> Unit,
     modifier: Modifier = Modifier,
@@ -49,15 +51,10 @@ internal fun MainNavHost(
                 mainItems = mainItems,
                 onSelectReaction = onSelectReaction,
                 fetchDetailFirst = fetchDetailFirst,
+                updateFollow = updateFollow,
                 padding = padding,
-<<<<<<< HEAD
-                onClickImage = { postContentModel ->
-                    navigator.navigateToDetail(postContentModel)
-                },
-                navigateToTheir = navigator::navigateToTheir
-=======
+                navigateToTheir = navigator::navigateToTheir,
                 navigateToDetail = navigator::navigateToDetail
->>>>>>> 399f857 (Refactor: reaction refactoring)
             )
 
             searchNavGraph(

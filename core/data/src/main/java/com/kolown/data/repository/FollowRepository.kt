@@ -1,7 +1,7 @@
 package com.kolown.data.repository
 
 import android.util.Log
-import com.kolown.data.datasource.AuthDataSource
+import com.kolown.data.datasource.remote.AuthDataSource
 import com.kolown.data.datasource.remote.FollowDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -33,7 +33,7 @@ class FollowRepositoryImpl @Inject constructor(
 
     override fun followUser(
         followerId: String,
-        followerName: String
+        followerName: String,
     ): Flow<Boolean> = flow {
         val currentUserId = googleAuthDataSource.getUserId()
 
@@ -47,7 +47,7 @@ class FollowRepositoryImpl @Inject constructor(
     }
 
     override suspend fun unFollowUser(
-        followerId: String
+        followerId: String,
     ): Flow<Boolean> = flow {
         val currentUserId = googleAuthDataSource.getUserId()
 
