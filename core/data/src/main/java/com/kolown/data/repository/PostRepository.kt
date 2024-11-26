@@ -1,19 +1,18 @@
 package com.kolown.data.repository
 
 import android.net.Uri
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.kolown.data.datasource.AuthDataSource
 import com.kolown.data.datasource.paging.RandomPagingDataSource
 import com.kolown.data.datasource.paging.UserPagingDataSource
 import com.kolown.data.datasource.paging.UserPagingKey
+import com.kolown.data.datasource.remote.AuthDataSource
+import com.kolown.data.datasource.remote.FollowDataSource
 import com.kolown.data.datasource.remote.ImageDataSource
 import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.TagDataSource
-import com.kolown.data.datasource.remote.FollowDataSource
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import kotlinx.coroutines.CoroutineScope
@@ -155,7 +154,6 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getRandomDetailPostList(): Flow<PagingData<PostContentModel>> {
-        Log.w("porring_test_tag", "이거 타냐?")
         return Pager(
             config = PagingConfig(pageSize = DETAIL_PER_PAGE, enablePlaceholders = false),
             pagingSourceFactory = { randomPagingDataSource }

@@ -1,7 +1,7 @@
 package com.kolown.data.repository
 
-import com.kolown.data.datasource.AuthDataSource
-import com.kolown.data.datasource.UserDataSource
+import com.kolown.data.datasource.remote.AuthDataSource
+import com.kolown.data.datasource.remote.UserDataSource
 import javax.inject.Inject
 import javax.inject.Named
 

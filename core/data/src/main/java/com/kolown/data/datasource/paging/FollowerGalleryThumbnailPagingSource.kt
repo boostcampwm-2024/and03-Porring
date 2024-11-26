@@ -2,13 +2,11 @@ package com.kolown.data.datasource.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.kolown.data.datasource.FollowerDataSource
-import com.kolown.data.di.Fake
+import com.kolown.data.datasource.fake.FollowerDataSource
 import com.kolown.model.FollowerThumbnail
-import javax.inject.Inject
 
 class FollowerGalleryThumbnailPagingDataSource(
-   private val followerDataSource: FollowerDataSource,
+    private val followerDataSource: FollowerDataSource,
 ) : PagingSource<Int, FollowerThumbnail>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FollowerThumbnail> {

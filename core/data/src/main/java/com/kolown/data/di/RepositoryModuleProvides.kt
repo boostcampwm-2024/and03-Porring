@@ -1,7 +1,6 @@
 package com.kolown.data.di
 
-import com.kolown.data.datasource.FakeGalleryDataSource
-import com.kolown.data.datasource.GalleryDataSource
+import com.kolown.data.datasource.fake.FakeGalleryDataSource
 import com.kolown.data.repository.FakeTagRepository
 import com.kolown.data.repository.GalleryRepository
 import com.kolown.data.repository.GalleryRepositoryImpl

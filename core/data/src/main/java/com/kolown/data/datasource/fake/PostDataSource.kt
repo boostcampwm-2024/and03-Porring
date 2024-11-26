@@ -1,4 +1,4 @@
-package com.kolown.data.datasource
+package com.kolown.data.datasource.fake
 
 import com.kolown.data.mock.MockDataProvider
 import com.kolown.model.Post
@@ -8,7 +8,7 @@ interface PostDataSource {
     suspend fun getPostListByTag(tag: Tag): Result<List<Post>>
 }
 
-class FakePostDataSource():PostDataSource{
+class FakePostDataSource() : PostDataSource {
     override suspend fun getPostListByTag(tag: Tag): Result<List<Post>> {
         return Result.success(MockDataProvider.getRandomPostList())
     }

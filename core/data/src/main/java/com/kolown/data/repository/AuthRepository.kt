@@ -3,7 +3,7 @@ package com.kolown.data.repository
 import androidx.credentials.Credential
 import androidx.credentials.CustomCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.kolown.data.datasource.AuthDataSource
+import com.kolown.data.datasource.remote.AuthDataSource
 import javax.inject.Inject
 import javax.inject.Named
 

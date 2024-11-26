@@ -3,9 +3,9 @@ package com.kolown.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.kolown.data.datasource.FakeTagDataSource
-import com.kolown.data.datasource.TagDataSource
-import com.kolown.data.datasource.TagPagingDataSource
+import com.kolown.data.datasource.fake.FakeTagDataSource
+import com.kolown.data.datasource.fake.TagDataSource
+import com.kolown.data.datasource.paging.TagPagingDataSource
 import com.kolown.data.mock.MockDataProvider
 import com.kolown.model.Tag
 import kotlinx.coroutines.delay

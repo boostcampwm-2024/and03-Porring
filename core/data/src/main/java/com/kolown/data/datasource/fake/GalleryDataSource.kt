@@ -1,4 +1,4 @@
-package com.kolown.data.datasource
+package com.kolown.data.datasource.fake
 
 import com.kolown.data.mock.MockDataProvider
 import com.kolown.model.Gallery
@@ -24,7 +24,7 @@ class FakeGalleryDataSource @Inject constructor() : GalleryDataSource {
         page: Int,
     ): Result<List<GalleryThumbnail>> {
         delay(if (test == 0) 500 else 5000)
-        if (Random.nextInt(4) == 3 && test!=0) {
+        if (Random.nextInt(4) == 3 && test != 0) {
             return Result.failure(Exception())
         }
         test++

@@ -1,4 +1,4 @@
-package com.kolown.data.datasource
+package com.kolown.data.datasource.fake
 
 import com.kolown.data.mock.MockDataProvider
 import com.kolown.model.Tag
