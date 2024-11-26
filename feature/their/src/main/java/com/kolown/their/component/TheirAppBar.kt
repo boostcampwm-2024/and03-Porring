@@ -33,12 +33,12 @@ internal fun TheirAppBar(
             .background(Color.White)
     ) {
         IconButton(
-            onClick = { popBackStack() }, modifier = Modifier.size(48.dp)
+            onClick = { popBackStack() }, modifier = Modifier.size(48.dp).align(Alignment.CenterStart)
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_back),
                 contentDescription = stringResource(R.string.string_back_button),
-                modifier = Modifier.size(24.dp).align(Alignment.CenterStart)
+                modifier = Modifier.size(24.dp)
             )
         }
 
