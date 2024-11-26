@@ -8,6 +8,8 @@ import com.kolown.data.repository.FollowerRepository
 import com.kolown.data.repository.FollowerRepositoryImpl
 import com.kolown.data.repository.PostRepository
 import com.kolown.data.repository.PostRepositoryImpl
+import com.kolown.data.repository.TagRepository
+import com.kolown.data.repository.TagRepositoryImpl
 import com.kolown.data.repository.UserRepository
 import com.kolown.data.repository.UserRepositoryImpl
 import dagger.Binds
@@ -43,4 +45,9 @@ abstract class RepositoryModule {
     abstract fun provideFollowerRepository(
         followerRepository: FollowerRepositoryImpl,
     ): FollowerRepository
+
+    @Binds
+    abstract fun provideTagRepository(
+        tagRepository: TagRepositoryImpl,
+    ): TagRepository
 }

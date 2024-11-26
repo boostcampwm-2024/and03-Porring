@@ -130,7 +130,7 @@ object MockDataProvider {
 
     fun getRandomTag(): Tag {
         return Tag(
-            id = getRandomId(),
+            id = getRandomId().toString(),
             name = getRandomTagName()
         )
     }
@@ -171,7 +171,7 @@ object MockDataProvider {
     fun getTagByName(name: String): List<Tag> {
         val a = tagNameList.filter { name in it }.map {
             Tag(
-                id = getRandomId(),
+                id = getRandomId().toString(),
                 name = it
             )
         }
