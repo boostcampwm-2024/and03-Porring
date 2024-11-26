@@ -52,7 +52,7 @@ class PostRepositoryImpl @Inject constructor(
     override fun getUserPosts(userId: String): Flow<PagingData<PostContentModel>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 20,
+                pageSize = 10,
                 enablePlaceholders = false
             ),
             initialKey = UserPagingKey(1, userId),

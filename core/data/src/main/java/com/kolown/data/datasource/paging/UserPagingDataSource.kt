@@ -2,7 +2,6 @@ package com.kolown.data.datasource.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.kolown.data.datasource.remote.FollowDataSource
 import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.TagDataSource
@@ -10,7 +9,6 @@ import com.kolown.model.PostContentModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import java.io.IOException
 import javax.inject.Inject
 
 data class UserPagingKey(
@@ -35,9 +33,8 @@ class UserPagingDataSource @Inject constructor(
             val tagsDeferred =
                 async {
                     posts.map {
-                        async{
+                        async {
                             tagDataSource.getPostTag(it.postId).getOrThrow()
-
                         }
                     }.awaitAll()
                 }
@@ -48,7 +45,6 @@ class UserPagingDataSource @Inject constructor(
                     }
                 }.awaitAll()
             }
-
             tagsDeferred.await() to reactionsDeferred.await()
         }
 
