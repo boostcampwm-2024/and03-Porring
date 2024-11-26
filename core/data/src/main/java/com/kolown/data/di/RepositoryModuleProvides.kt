@@ -1,7 +1,6 @@
 package com.kolown.data.di
 
 import com.kolown.data.datasource.fake.FakeGalleryDataSource
-import com.kolown.data.repository.FakeTagRepository
 import com.kolown.data.repository.GalleryRepository
 import com.kolown.data.repository.GalleryRepositoryImpl
 import com.kolown.data.repository.TagRepository
@@ -23,10 +22,4 @@ class RepositoryModuleProvides {
         return GalleryRepositoryImpl(FakeGalleryDataSource())
     }
 
-    @Fake
-    @Provides
-    @Singleton
-    fun provideTagRepositoryFake(): TagRepository {
-        return FakeTagRepository()
-    }
 }
