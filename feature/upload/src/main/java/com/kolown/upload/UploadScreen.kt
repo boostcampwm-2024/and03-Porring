@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.kolown.designsystem.Primary
 import com.kolown.model.UiState
 import com.kolown.upload.component.CategoryGroup
 
@@ -51,6 +52,7 @@ internal fun UploadRoute(
 ) {
     val description by viewModel.description.collectAsStateWithLifecycle()
     val categoryItems by viewModel.categoryItems.collectAsStateWithLifecycle()
+    val uploadEnable by viewModel.uploadEnable.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
@@ -74,6 +76,7 @@ internal fun UploadRoute(
         imgUri = imgUri,
         padding = padding,
         description = description,
+        uploadEnable = uploadEnable,
         changeDescription = viewModel::changeDescription,
         categoryItems = categoryItems,
         addCategory = viewModel::addCategory,
@@ -88,6 +91,7 @@ internal fun UploadScreen(
     imgUri: String = "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png",
     padding: PaddingValues = PaddingValues(),
     description: String = "",
+    uploadEnable: Boolean = false,
     changeDescription: (String) -> Unit = {},
     categoryItems: List<String> = emptyList(),
     addCategory: () -> Unit = {},
@@ -95,6 +99,14 @@ internal fun UploadScreen(
     changeCategoryName: (Int, String) -> Unit = { _, _ -> },
     uploadPost: () -> Unit = {},
 ) {
+    fun chooseColor(boolean: Boolean): Color {
+        return if(boolean) {
+            Primary
+        } else {
+            Color.White
+        }
+    }
+
     Column(
         modifier = Modifier
             .padding(padding)
@@ -119,12 +131,13 @@ internal fun UploadScreen(
                 .fillMaxWidth()
                 .height(40.dp),
             onClick = uploadPost,
+            enabled = uploadEnable,
             shape = RoundedCornerShape(10.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            colors = ButtonDefaults.buttonColors(containerColor = chooseColor(uploadEnable))
         ) {
             Text(
                 text = "올리기",
-                color = Color.White,
+                color = chooseColor(!uploadEnable),
                 style = MaterialTheme.typography.bodyMedium
             )
         }
