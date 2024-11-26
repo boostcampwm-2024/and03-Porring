@@ -6,10 +6,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -29,10 +33,12 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,6 +48,7 @@ import coil3.compose.AsyncImage
 import com.kolown.designsystem.Primary
 import com.kolown.model.UiState
 import com.kolown.upload.component.CategoryGroup
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun UploadRoute(
@@ -99,6 +106,16 @@ internal fun UploadScreen(
     changeCategoryName: (Int, String) -> Unit = { _, _ -> },
     uploadPost: () -> Unit = {},
 ) {
+    val scrollState = rememberScrollState()
+    val imeHeight = WindowInsets.ime.getBottom(LocalDensity.current)
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(imeHeight) {
+        coroutineScope.launch {
+            scrollState.scrollTo(scrollState.maxValue)
+        }
+    }
+
     fun chooseColor(boolean: Boolean): Color {
         return if(boolean) {
             Primary
@@ -117,7 +134,9 @@ internal fun UploadScreen(
             imgUri = imgUri,
             modifier = Modifier
                 .weight(1f)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .imePadding(),
             description = description,
             changeDescription = changeDescription,
             categoryItems = categoryItems,
@@ -155,9 +174,7 @@ private fun UploadContent(
     removeCategory: (String) -> Unit,
     changeCategoryName: (Int, String) -> Unit
 ) {
-    Column(
-        modifier = modifier.verticalScroll(rememberScrollState())
-    ) {
+    Column(modifier = modifier) {
         val ratio = 4f / 5f // todo 이후에 가로 이미지를 지원할 때는 분기처리 필요
         val horizontalModifier = Modifier
             .padding(horizontal = 40.dp)
@@ -172,12 +189,14 @@ private fun UploadContent(
         Spacer(modifier = Modifier.height(20.dp))
         DescriptionTextField(horizontalModifier, description, changeDescription)
         Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            modifier = Modifier.padding(horizontal = 56.dp),
-            text = "설명은 최대 20자까지만 입력이 가능합니다.",
-            style = MaterialTheme.typography.bodySmall,
-            color = Color.Red
-        )
+        if(description.length >= 20) {
+            Text(
+                modifier = Modifier.padding(horizontal = 56.dp),
+                text = "설명은 최대 20자까지만 입력이 가능합니다.",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Red
+            )
+        }
         Spacer(modifier = Modifier.height(50.dp))
         CategoryGroup(
             modifier = horizontalModifier,
