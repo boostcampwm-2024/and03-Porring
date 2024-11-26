@@ -43,6 +43,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.kolown.designsystem.Primary
+import com.kolown.model.UploadModel
 import com.kolown.upload.component.CategoryGroup
 import kotlinx.coroutines.launch
 
@@ -64,11 +65,17 @@ internal fun UploadRoute(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.getUriWebP(imgUri)
+        if(imgUri.isNotBlank()) {
+            viewModel.getUriWebP(imgUri)
+        }
     }
 
     UploadScreen(
-        imgUri = imgUri,
+        imgUri = if(imgUri == "") {
+            webPUri.toString()
+        } else {
+            imgUri
+        },
         padding = padding,
         description = description,
         uploadEnable = uploadEnable,

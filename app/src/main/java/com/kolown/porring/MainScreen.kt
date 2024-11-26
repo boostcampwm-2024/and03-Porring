@@ -51,6 +51,7 @@ internal fun MainScreen(
     val isLoggedIn by mainViewModel.loginState.collectAsStateWithLifecycle()
 
     val uploadState by mainViewModel.upLoadUiState.collectAsStateWithLifecycle()
+    val uploadModel by mainViewModel.uploadModel.collectAsStateWithLifecycle()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -64,10 +65,14 @@ internal fun MainScreen(
 
             is InitUiState.Failure -> {
                 coroutineScope.launch {
-                    snackBarHostState.showSnackbar(
-                        message = "업로드에 실패하였습니다. 다시 시도해주세요.",
+                    val result = snackBarHostState.showSnackbar(
+                        message = "업로드에 실패하였습니다. 다시 시도하시려면 업로드 화면으로 이동하세요!.",
+                        actionLabel = "이동",
                         duration = SnackbarDuration.Short
                     )
+                    if(result == SnackbarResult.ActionPerformed) {
+                        navigator.navigateToUpload("", uploadModel)
+                    }
                 }
             }
 

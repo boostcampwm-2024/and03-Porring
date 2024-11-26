@@ -15,6 +15,7 @@ import com.kolown.detail.navigation.detailNavGraph
 import com.kolown.follower.navigation.followerNavGraph
 import com.kolown.home.navigation.homeNavGraph
 import com.kolown.login.navigation.loginNavGraph
+import com.kolown.model.UploadModel
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.my.navigation.myNavGraph
@@ -63,7 +64,7 @@ internal fun MainNavHost(
             )
 
             cameraNavGraph(
-                navigateToUpload = { imgUri -> navigator.navigateToUpload(imgUri) },
+                navigateToUpload = { imgUri -> navigator.navigateToUpload(imgUri, UploadModel("", "", emptyList())) },
                 padding = padding
             )
 
