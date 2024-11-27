@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.kolown.data.repository.ImageCacheRepository
 import com.kolown.model.UploadModel
-import com.kolown.navigation.MainMenuRoute
 import com.kolown.navigation.Route
 import com.kolown.upload.navigation.UploadType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.reflect.typeOf

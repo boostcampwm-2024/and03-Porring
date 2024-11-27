@@ -9,9 +9,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.kolown.model.PostContentModel
 import com.kolown.model.UploadModel
-import com.kolown.navigation.MainMenuRoute
 import com.kolown.navigation.Route
 import com.kolown.upload.UploadRoute
 import kotlinx.serialization.encodeToString
@@ -31,10 +29,15 @@ val UploadType = object : NavType<UploadModel>(isNullableAllowed = false) {
         bundle.putString(key, Json.encodeToString(UploadModel.serializer(), value))
     }
 
-    override fun serializeAsValue(value: UploadModel): String  = Uri.encode(Json.encodeToString<UploadModel>(value))
+    override fun serializeAsValue(value: UploadModel): String =
+        Uri.encode(Json.encodeToString<UploadModel>(value))
 }
 
-fun NavController.navigateUpload(imgUri: String, uploadModel: UploadModel, navOptions: NavOptions? = null) {
+fun NavController.navigateUpload(
+    imgUri: String,
+    uploadModel: UploadModel,
+    navOptions: NavOptions? = null
+) {
     navigate(Route.Upload(imgUri, uploadModel), navOptions)
 }
 
