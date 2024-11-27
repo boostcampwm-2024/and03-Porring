@@ -3,6 +3,7 @@ package com.kolown.follower
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,9 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,16 +59,28 @@ internal fun FollowerRoute(
     if (isLoggedIn) {
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
         val pagerState = rememberLazyListState()
-        when(uiState.value) {
-            is UiState.Loading ->{}
+        when (uiState.value) {
+            is UiState.Loading -> {
+                Box(
+                    modifier = Modifier
+                        .padding(padding)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.size(64.dp))
+                }
+            }
+
             is UiState.Success -> {
-                val items = (uiState.value as UiState.Success<Flow<PagingData<FollowerThumbnail>>>).data.collectAsLazyPagingItems()
+                val items =
+                    (uiState.value as UiState.Success<Flow<PagingData<FollowerThumbnail>>>).data.collectAsLazyPagingItems()
                 FollowerScreen(
                     items = items,
                     pagerState = pagerState,
                     padding = padding
                 )
             }
+
             is UiState.Failure -> {}
         }
 
@@ -95,7 +111,7 @@ private fun FollowerScreen(
                 FollowContent(
                     followerName = it.followerName,
                     followAlbums = it.posts.take(3)
-                        .map{ post -> post.imageUrl}
+                        .map { post -> post.imageUrl }
                 )
             }
         }
@@ -127,7 +143,7 @@ internal fun FollowContent(
             Text(
                 text = followerName,
                 color = Color(0xFF598AFF),
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.titleLarge
             )
             Spacer(modifier = Modifier.width(10.dp))
             Text(text = "Edit", color = Color.Black, style = MaterialTheme.typography.labelMedium)
@@ -139,17 +155,22 @@ internal fun FollowContent(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             followAlbums.forEach { imageUrl ->
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(imageUrl)
-                        .crossfade(true)
-                        .build(),
+                Card(
                     modifier = Modifier
                         .size(100.dp)
                         .clip(RoundedCornerShape(10.dp)),
-                    contentDescription = "follower's image",
-                    contentScale = ContentScale.Crop,
-                )
+                    colors = CardDefaults.cardColors(containerColor = Color.LightGray)
+                ) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(imageUrl)
+                            .crossfade(true)
+                            .build(),
+                        modifier = Modifier.fillMaxSize(),
+                        contentDescription = "follower's image",
+                        contentScale = ContentScale.Crop,
+                    )
+                }
             }
         }
     }
