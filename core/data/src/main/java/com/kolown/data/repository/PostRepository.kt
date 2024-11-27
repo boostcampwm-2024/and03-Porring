@@ -1,6 +1,7 @@
 package com.kolown.data.repository
 
 import android.net.Uri
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -38,6 +39,7 @@ interface PostRepository {
     suspend fun removePostReaction(postId: String): Result<Unit>
     fun getUserPosts(userId: String? = null): Flow<PagingData<PostContentModel>>
     suspend fun getPostBySearch(tagId: String): Flow<PagingData<PostContentModel>>
+    suspend fun deletePost(postId: String): Flow<Boolean>
 }
 
 class PostRepositoryImpl @Inject constructor(
@@ -213,6 +215,46 @@ class PostRepositoryImpl @Inject constructor(
                 )
             }
         ).flow
+    }
+
+    override suspend fun deletePost(postId: String): Flow<Boolean> = flow {
+        coroutineScope {
+            val deletePostTagDeferred = async {
+                retryWithLimit {
+                    tagDataSource.deletePostTag(postId).getOrElse {
+                        throw IOException("포스트 태그 삭제 실패")
+                    }
+                }
+            }
+            val deleteReactionDeferred = async {
+                retryWithLimit {
+                    reactionDataSource.deletePostReaction(postId).getOrElse {
+                        throw IOException("리액션 삭제 실패")
+                    }
+                }
+            }
+            val deletePostDeferred = async {
+                retryWithLimit {
+                    postDataSource.deletePost(postId).getOrElse {
+                        throw IOException("게시물 삭제 실패")
+                    }
+                }
+            }
+
+            val results = awaitAll(
+                deletePostTagDeferred,
+                deleteReactionDeferred,
+                deletePostDeferred
+            )
+
+            val allSuccess = results.all { it.isSuccess }
+
+            if(allSuccess) {
+                emit(true)
+            } else {
+                throw IOException("하나 이상의 작업이 실패하였습니다.")
+            }
+        }
     }
 
     private suspend fun updateImageUrl(postId: String, fileUri: Uri): Result<Unit> {

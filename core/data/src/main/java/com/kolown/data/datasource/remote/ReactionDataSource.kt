@@ -7,6 +7,9 @@ import com.kolown.data.remote.ReactionDto
 import com.kolown.data.remote.toReactionModel
 import com.kolown.model.ReactionModel
 import com.kolown.model.Reactions
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
 import java.io.IOException
 import javax.inject.Inject
@@ -15,6 +18,7 @@ interface ReactionDataSource {
     suspend fun getReactionByPostId(postId: String): Result<List<ReactionModel>>
     suspend fun updatePostReaction(userId: String, postId: String, reaction: Reactions)
     suspend fun removePostReaction(userId: String, postId: String): Result<Unit>
+    suspend fun deletePostReaction(postId: String): Result<Unit>
 }
 
 class ReactionDataSourceImpl @Inject constructor(
@@ -70,6 +74,20 @@ class ReactionDataSourceImpl @Inject constructor(
             if (prevReaction.isEmpty) return Result.failure(IOException("리액션 없음"))
 
             prevReaction.forEach { it.reference.delete().await() }
+        }
+    }
+
+    override suspend fun deletePostReaction(postId: String): Result<Unit> {
+        return runCatching {
+            val reactions = reactionCollection.whereEqualTo("postId", postId).get().await()
+
+            coroutineScope {
+                reactions.documents.map {
+                    async {
+                        reactionCollection.document(it.id).delete().await()
+                    }
+                }.awaitAll()
+            }
         }
     }
 
