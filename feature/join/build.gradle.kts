@@ -53,4 +53,6 @@ dependencies {
     ksp(libs.hilt.android.compiler)
 
     implementation(libs.bundles.android.compose)
+
+    implementation(libs.google.firebase.auth)
 }

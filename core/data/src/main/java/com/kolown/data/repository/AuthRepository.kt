@@ -11,6 +11,7 @@ interface AuthRepository {
     suspend fun signInWithCredential(credential: Credential): Result<Unit>
     fun checkUserLoggedIn(): Boolean
     fun logout(): Result<Unit>
+    suspend fun joinWithEmailAndPassword(email: String, password: String): Result<Unit>
 }
 
 class AuthRepositoryImpl @Inject constructor(
@@ -36,6 +37,10 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun logout(): Result<Unit> {
         return googleAuthDataSource.logout()
+    }
+
+    override suspend fun joinWithEmailAndPassword(email: String, password: String): Result<Unit> {
+        return googleAuthDataSource.joinWithEmailAndPassword(email, password)
     }
 }
 

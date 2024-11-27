@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.Flow
 internal fun MainNavHost(
     mainItems: Flow<List<PostContentModel>>,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
+    onShowSnackBar: (String) -> Unit,
     detailFirstItem: PostContentModel,
     fetchDetailFirst: (PostContentModel) -> Unit,
     updateFollow: (String) -> Unit,
@@ -41,7 +42,7 @@ internal fun MainNavHost(
     modifier: Modifier = Modifier,
     navigator: MainNavigator,
     padding: PaddingValues,
-    uploadPost: (String, String, List<String>) -> Unit
+    uploadPost: (String, String, List<String>) -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -122,6 +123,7 @@ internal fun MainNavHost(
             )
 
             joinNavGraph(
+                onShowSnackBar = onShowSnackBar,
                 popBackStack = navigator::popBackStack,
                 padding = padding
             )

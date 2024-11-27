@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator(),
-    mainViewModel: MainViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel(),
 ) {
     val mainItems by mainViewModel.mainItems.collectAsStateWithLifecycle()
     val detailFirstItem by mainViewModel.detailFirstItem.collectAsStateWithLifecycle()
@@ -49,6 +49,10 @@ internal fun MainScreen(
     val uploadModel by mainViewModel.uploadModel.collectAsStateWithLifecycle()
 
     val coroutineScope = rememberCoroutineScope()
+
+    val onShowSnackBar: (String) -> Unit = { msg ->
+        coroutineScope.launch { snackBarHostState.showSnackbar(msg) }
+    }
 
     LaunchedEffect(uploadState) {
         if (uploadState != InitUiState.Init) {
@@ -81,15 +85,17 @@ internal fun MainScreen(
             }
 
             is InitUiState.Success -> {
-                val result = snackBarHostState.showSnackbar(
-                    message = "업로드 성공! MyGallery로 이동하시려면 이동을 눌러주세요!",
-                    actionLabel = "이동",
-                    duration = SnackbarDuration.Short
-                )
-                if (result == SnackbarResult.ActionPerformed) {
-                    navigator.navigate(MainMenu.MY)
+                coroutineScope.launch {
+                    val result = snackBarHostState.showSnackbar(
+                        message = "업로드 성공! MyGallery로 이동하시려면 이동을 눌러주세요!",
+                        actionLabel = "이동",
+                        duration = SnackbarDuration.Short
+                    )
+                    if (result == SnackbarResult.ActionPerformed) {
+                        navigator.navigate(MainMenu.MY)
+                    }
+                    mainViewModel.resetUploadState()
                 }
-                mainViewModel.resetUploadState()
             }
         }
     }
@@ -97,6 +103,7 @@ internal fun MainScreen(
     MainScreenContent(
         mainItems = mainItems,
         onSelectReaction = mainViewModel::selectReaction,
+        onShowSnackBar = onShowSnackBar,
         detailFirstItem = detailFirstItem,
         fetchDetailFirst = mainViewModel::fetchDetailFirst,
         updateFollow = mainViewModel::updateFollow,
@@ -112,6 +119,7 @@ internal fun MainScreen(
 @Composable
 private fun MainScreenContent(
     mainItems: Flow<List<PostContentModel>>,
+    onShowSnackBar: (String) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
     detailFirstItem: PostContentModel,
     fetchDetailFirst: (PostContentModel) -> Unit,
@@ -121,7 +129,7 @@ private fun MainScreenContent(
     modifier: Modifier = Modifier,
     navigator: MainNavigator,
     snackBarHostState: SnackbarHostState,
-    uploadPost: (String, String, List<String>) -> Unit
+    uploadPost: (String, String, List<String>) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -130,6 +138,7 @@ private fun MainScreenContent(
             MainNavHost(
                 mainItems = mainItems,
                 onSelectReaction = onSelectReaction,
+                onShowSnackBar = onShowSnackBar,
                 detailFirstItem = detailFirstItem,
                 fetchDetailFirst = fetchDetailFirst,
                 updateFollow = updateFollow,
@@ -156,7 +165,7 @@ private fun MainScreenContent(
 
 @Composable
 private fun CustomSnackBar(
-    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     SnackbarHost(hostState = snackBarHostState) { snackBarData ->
         Snackbar(
