@@ -24,16 +24,26 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.kolown.designsystem.Error
 import com.kolown.designsystem.Primary
 import com.kolown.designsystem.PrimaryDark
 import com.kolown.designsystem.PrimaryUnActive
 import com.kolown.designsystem.PrimaryUnActiveDark
 import com.kolown.designsystem.Surface
+import com.kolown.designsystem.SurfaceError
 
 @Composable
 fun PorringTextField(
@@ -41,31 +51,53 @@ fun PorringTextField(
     onValueChange: (String) -> Unit,
     hint: String? = null,
     label: String? = null,
+    validator: ((String) -> Boolean)? = null,
     leadingIcon: ImageVector? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     modifier: Modifier = Modifier,
 ) {
+    var isError by remember { mutableStateOf(false) }
+    var isInitial by remember { mutableStateOf(false) }
+
     BasicTextField(
         modifier = modifier
-            .height(56.dp),
+            .height(56.dp)
+            .onFocusChanged {
+                if (isInitial) {
+                    validator?.let { validate ->
+                        if (it.hasFocus.not()) {
+                            isError = validate(value)
+                        }
+                    }
+                } else {
+                    isInitial = true
+                }
+            },
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = {
+            onValueChange(it)
+            isError = false
+        },
         maxLines = 1,
         cursorBrush = SolidColor(Primary),
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
+        visualTransformation = if (keyboardOptions.keyboardType == KeyboardType.Password) PasswordVisualTransformation() else VisualTransformation.None,
         textStyle = MaterialTheme.typography.bodyLarge,
-        decorationBox = { innerText ->
+        decorationBox = { innerTextField ->
             Row(
                 modifier = Modifier
                     .fillMaxSize()
                     .border(
-                        width = 1.dp,
-                        shape = RoundedCornerShape(5.dp),
-                        color = PrimaryDark
+                        width = if (isError) 2.dp else 1.dp,
+                        shape = RoundedCornerShape(10.dp),
+                        color = if (isError) Error else PrimaryDark
                     )
-                    .background(Surface, RoundedCornerShape(10.dp))
+                    .background(
+                        color = if (isError) SurfaceError else Surface,
+                        shape = RoundedCornerShape(10.dp)
+                    )
                     .padding(vertical = 8.dp, horizontal = 16.dp),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
@@ -75,7 +107,7 @@ fun PorringTextField(
                         modifier = Modifier.size(24.dp),
                         imageVector = leadingIcon,
                         contentDescription = null,
-                        tint = PrimaryDark
+                        tint = if (isError) Error else PrimaryDark
                     )
                     Spacer(modifier = Modifier.size(16.dp))
                 }
@@ -89,7 +121,7 @@ fun PorringTextField(
                         hint?.let { h ->
                             Text(
                                 text = h,
-                                color = PrimaryUnActive,
+                                color = if (isError) Error else PrimaryUnActive,
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }
@@ -109,11 +141,11 @@ fun PorringTextField(
                                 Text(
                                     text = l,
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = PrimaryUnActiveDark
+                                    color = if (isError) Error else PrimaryUnActiveDark
                                 )
                             }
                         }
-                        innerText()
+                        innerTextField()
                     }
                 }
             }
