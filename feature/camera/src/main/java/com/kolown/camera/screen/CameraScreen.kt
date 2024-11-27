@@ -32,10 +32,12 @@ import com.kolown.camera.PermissionChecker
 internal fun CameraRoute(
     navigateToUpload: (String) -> Unit = {},
     padding: PaddingValues = PaddingValues(),
+    popBackStack: () -> Unit = {}
 ) {
     CameraScreen(
         padding = padding,
-        navigateToUpload = navigateToUpload
+        navigateToUpload = navigateToUpload,
+        popBackStack = popBackStack
     )
 }
 
@@ -43,7 +45,8 @@ internal fun CameraRoute(
 fun CameraScreen(
     padding: PaddingValues,
     navigateToUpload: (String) -> Unit = {},
-    viewModel: CameraScreenViewModel = hiltViewModel()
+    viewModel: CameraScreenViewModel = hiltViewModel(),
+    popBackStack: () -> Unit
 ) {
     val context = LocalContext.current
     val activity = LocalView.current.context as android.app.Activity
@@ -82,9 +85,11 @@ fun CameraScreen(
             .padding(padding)
     ) {
         if (cameraPermission) {
-            CameraXCompose(viewModel, navigateToUpload)
+            CameraXCompose(viewModel, navigateToUpload, popBackStack)
         } else {
-            CameraPermissionDeniedScreen()
+            CameraPermissionDeniedScreen(
+                popBackStack
+            )
         }
     }
 }

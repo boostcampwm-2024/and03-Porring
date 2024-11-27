@@ -55,7 +55,7 @@ dependencies {
     implementation(libs.androidx.camera.video)
     implementation(libs.androidx.camera.view)
     implementation(libs.androidx.camera.extension)
-
+    implementation(libs.kotlinx.coroutines.guava)
     //compose
 //    implementation(platform(libs.androidx.compose.bom))
 //    implementation(libs.androidx.compose.ui)
