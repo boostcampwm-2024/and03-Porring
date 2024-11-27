@@ -18,9 +18,11 @@ interface PostDataSource {
     suspend fun getUserPost(uid: String, perPage: Long): Result<List<PostModel>>
     suspend fun getPostBySearch(
         postIds: List<String>,
-        lastRegisteredAt: String?,
+        key: String?,
         perPage: Long
     ): Result<List<PostModel>>
+
+    suspend fun getUserFollowerPost(uid: String, perPage: Long): Result<List<PostModel>>
 }
 
 class PostDataSourceImpl @Inject constructor(
@@ -52,6 +54,19 @@ class PostDataSourceImpl @Inject constructor(
                     .also { lastVisible = it.documents.lastOrNull() }
                     .map { it.toObject(PostDto::class.java).toPostModel() }
             }
+        }
+    }
+
+    override suspend fun getUserFollowerPost(uid: String, perPage: Long): Result<List<PostModel>> {
+        return kotlin.runCatching {
+            postCollection
+                .whereEqualTo("authorId", uid)
+                .limit(perPage)
+                .orderBy("registerAt", Query.Direction.DESCENDING)
+                .get()
+                .await()
+                .map { it.toObject(PostDto::class.java).toPostModel() }
+
         }
     }
 
@@ -138,6 +153,5 @@ class PostDataSourceImpl @Inject constructor(
             query
         }
     }
-
 
 }
