@@ -89,6 +89,7 @@ internal fun DetailRoute(
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     popBackStack: () -> Unit,
     padding: PaddingValues = PaddingValues(),
+    navigateToTheir : (String) -> Unit,
     detailViewModel: DetailViewModel = hiltViewModel(),
 ) {
     var isReelsMode by remember { mutableStateOf(true) }
@@ -114,7 +115,8 @@ internal fun DetailRoute(
                 firstItem = detailFirstItem,
                 pagingItems = pagingItems,
                 pagerState = pagerState,
-                padding = padding
+                padding = padding,
+                navigateToTheir = navigateToTheir
             )
         }
 
@@ -136,7 +138,8 @@ private fun DetailScreen(
     pagingItems: LazyPagingItems<PostContentModel>,
     pagerState: PagerState,
     padding: PaddingValues = PaddingValues(),
-) {
+    navigateToTheir : (String) -> Unit,
+    ) {
     Box(
         modifier = Modifier.fillMaxSize().background(Color(0xff151D37)).padding(padding)
     ) {
@@ -150,7 +153,8 @@ private fun DetailScreen(
             viewModeChange = viewModeChange,
             pagingItems = pagingItems,
             pagerState = pagerState,
-            firstItem = firstItem
+            firstItem = firstItem,
+            navigateToTheir = navigateToTheir
         )
 
         DetailTopAppBar(
@@ -174,7 +178,8 @@ private fun DetailContent(
     pagingItems: LazyPagingItems<PostContentModel>,
     pagerState: PagerState,
     firstItem: PostContentModel,
-) {
+    navigateToTheir : (String) -> Unit,
+    ) {
     VerticalPager(
         modifier = Modifier.fillMaxSize(),
         state = pagerState,
@@ -192,7 +197,8 @@ private fun DetailContent(
             updateMainPostReaction = updateMainPostReaction,
             onSelectReaction = onSelectReaction,
             imageItem = imageItem,
-            onDoubleTab = viewModeChange
+            onDoubleTab = viewModeChange,
+            navigateToTheir = navigateToTheir
         )
     }
 
@@ -210,7 +216,8 @@ private fun DetailItem(
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
     onDoubleTab: (Boolean) -> Unit,
-) {
+    navigateToTheir : (String) -> Unit,
+    ) {
     val view = LocalView.current
 
     if (isReelsMode) {
@@ -230,6 +237,7 @@ private fun DetailItem(
                 requestFullScreen(view)
                 onDoubleTab(false)
             },
+            navigateToTheir =  navigateToTheir
         )
     } else {
         ConcentrateContent(
@@ -250,6 +258,7 @@ private fun ReelsContent(
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
+    navigateToTheir : (String) -> Unit,
     onDoubleTab: () -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -323,7 +332,9 @@ private fun ReelsContent(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         DetailButton(
-                            onClick = {}, id = R.drawable.ic_detail_gallary, buttonText = "갤러리"
+                            onClick = {
+                                navigateToTheir(imageItem.authorId)
+                            }, id = R.drawable.ic_detail_gallary, buttonText = "갤러리"
                         )
 
                         DetailButton(
