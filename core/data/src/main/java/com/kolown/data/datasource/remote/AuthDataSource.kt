@@ -4,8 +4,6 @@ import androidx.credentials.CustomCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.kolown.data.remote.UserDto
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -17,11 +15,12 @@ interface AuthDataSource {
     fun getUserInfo(): UserDto
     fun checkUserLoggedIn(): Boolean
     fun logout(): Result<Unit>
+    suspend fun joinWithEmailAndPassword(email: String, password: String): Result<Unit>
 }
 
 @Named("google")
 class AuthDataSourceImpl @Inject constructor(
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
 ) : AuthDataSource {
     override suspend fun signInWithCredential(credential: CustomCredential): Result<Unit> {
         return kotlin.runCatching {
@@ -51,6 +50,13 @@ class AuthDataSourceImpl @Inject constructor(
 
     override fun logout(): Result<Unit> {
         return kotlin.runCatching {
+            auth.signOut()
+        }
+    }
+
+    override suspend fun joinWithEmailAndPassword(email: String, password: String): Result<Unit> {
+        return kotlin.runCatching {
+            auth.createUserWithEmailAndPassword(email, password).await()
             auth.signOut()
         }
     }
