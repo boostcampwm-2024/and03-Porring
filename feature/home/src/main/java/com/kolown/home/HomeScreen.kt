@@ -81,7 +81,6 @@ internal fun HomeRoute(
         }
 
         uiState is UiState.Loading -> {
-            showErrorScreen = false
             Box(
                 modifier = Modifier
                     .padding(padding)

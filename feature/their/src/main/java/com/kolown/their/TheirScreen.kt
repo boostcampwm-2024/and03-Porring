@@ -40,7 +40,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.kolown.model.PostContentModel
 import com.kolown.their.component.GalleryItem
 import com.kolown.their.component.PageItemFooter
-import com.kolown.their.component.RestrictedLoginContent
 import com.kolown.their.component.TheirAppBar
 import kotlinx.coroutines.delay
 
