@@ -7,7 +7,10 @@ import com.kolown.data.repository.AuthRepository
 import com.kolown.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,6 +21,9 @@ class LoginViewModel @Inject constructor(
 ) : ViewModel() {
     private var _loginEnd = MutableSharedFlow<Boolean>()
     val loginEnd = _loginEnd.asSharedFlow()
+
+    private var _isEmailLogin = MutableStateFlow(false)
+    val isEmailLogin = _isEmailLogin.asStateFlow()
 
     fun handleSignIn(credential: Credential) {
         viewModelScope.launch {
@@ -34,5 +40,9 @@ class LoginViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun changeEmailLogin(isEmail: Boolean) {
+        _isEmailLogin.update { isEmail }
     }
 }
