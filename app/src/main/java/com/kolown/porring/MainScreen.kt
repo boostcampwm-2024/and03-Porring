@@ -31,7 +31,6 @@ import com.kolown.porring.component.MainNavHost
 import com.kolown.porring.navigation.MainMenu
 import com.kolown.porring.navigation.MainNavigator
 import com.kolown.porring.navigation.rememberMainNavigator
-import com.kolown.porring.viewmodel.MainPostItemViewModel
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -39,11 +38,10 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator(),
-    mainViewModel: MainViewModel = hiltViewModel(),
-    mainPostItemViewModel: MainPostItemViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
-    val mainItems by mainPostItemViewModel.mainItems.collectAsStateWithLifecycle()
-    val detailFirstItem by mainPostItemViewModel.detailFirstItem.collectAsStateWithLifecycle()
+    val mainItems by mainViewModel.mainItems.collectAsStateWithLifecycle()
+    val detailFirstItem by mainViewModel.detailFirstItem.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
     val isLoggedIn by mainViewModel.loginState.collectAsStateWithLifecycle()
 
@@ -98,10 +96,10 @@ internal fun MainScreen(
 
     MainScreenContent(
         mainItems = mainItems,
-        onSelectReaction = mainPostItemViewModel::selectReaction,
+        onSelectReaction = mainViewModel::selectReaction,
         detailFirstItem = detailFirstItem,
-        fetchDetailFirst = mainPostItemViewModel::fetchDetailFirst,
-        updateFollow = mainPostItemViewModel::updateFollow,
+        fetchDetailFirst = mainViewModel::fetchDetailFirst,
+        updateFollow = mainViewModel::updateFollow,
         isLoggedIn = isLoggedIn,
         updateLoginState = mainViewModel::updateLoginState,
         navigator = navigator,
