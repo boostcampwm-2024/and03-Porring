@@ -74,7 +74,9 @@ fun MyScreen(
                 content = {
                     items(pagingItems.itemCount) { index ->
                         pagingItems[index]?.let {
-                            GalleryItem(it, width)
+                            GalleryItem(it, width) {
+                                viewModel.deletePost(it.postId)
+                            }
                         }
                     }
 

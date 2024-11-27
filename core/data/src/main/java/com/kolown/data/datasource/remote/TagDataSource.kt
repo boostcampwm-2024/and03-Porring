@@ -19,6 +19,7 @@ interface TagDataSource {
     suspend fun getPostTag(postId: String): Result<List<TagModel>>
     suspend fun getPostTagByTagId(tagId: String): Result<List<String>>
     suspend fun getTagBySearch(searchText: String,key:String?,perPage:Long) : Result<List<Tag>>
+    suspend fun deletePostTag(postId: String): Result<Unit>
 }
 
 class TagDataSourceImpl @Inject constructor(
@@ -128,6 +129,20 @@ class TagDataSourceImpl @Inject constructor(
                 }
             }
             tags.toList()
+        }
+    }
+
+    override suspend fun deletePostTag(postId: String): Result<Unit> {
+        return runCatching {
+            val postTags = postTagCollection.whereEqualTo("postId", postId).get().await()
+
+            coroutineScope {
+                postTags.documents.map {
+                    async {
+                        postTagCollection.document(it.id).delete().await()
+                    }
+                }.awaitAll()
+            }
         }
     }
 

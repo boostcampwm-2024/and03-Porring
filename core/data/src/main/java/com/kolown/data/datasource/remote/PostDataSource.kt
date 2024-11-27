@@ -21,7 +21,7 @@ interface PostDataSource {
         key: String?,
         perPage: Long
     ): Result<List<PostModel>>
-
+    suspend fun deletePost(postId: String): Result<Unit>
     suspend fun getUserFollowerPost(uid: String, perPage: Long): Result<List<PostModel>>
 }
 
@@ -154,4 +154,11 @@ class PostDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun deletePost(postId: String): Result<Unit> {
+        return runCatching {
+            throw Exception("Test")
+            val documentId = postId.substringAfter("-")
+            postCollection.document(documentId).delete().await()
+        }
+    }
 }
