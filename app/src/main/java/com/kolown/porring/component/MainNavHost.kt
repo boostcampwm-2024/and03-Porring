@@ -15,9 +15,9 @@ import com.kolown.detail.navigation.detailNavGraph
 import com.kolown.follower.navigation.followerNavGraph
 import com.kolown.home.navigation.homeNavGraph
 import com.kolown.login.navigation.loginNavGraph
-import com.kolown.model.UploadModel
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
+import com.kolown.model.UploadModel
 import com.kolown.my.navigation.myNavGraph
 import com.kolown.porring.navigation.MainMenu
 import com.kolown.porring.navigation.MainNavigator
@@ -43,7 +43,9 @@ internal fun MainNavHost(
     uploadPost: (String, String, List<String>) -> Unit
 ) {
     Box(
-        modifier = modifier.fillMaxSize().background(Color.White)
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White)
     ) {
         NavHost(
             navController = navigator.navController,
@@ -64,7 +66,12 @@ internal fun MainNavHost(
             )
 
             cameraNavGraph(
-                navigateToUpload = { imgUri -> navigator.navigateToUpload(imgUri, UploadModel("", "", emptyList())) },
+                navigateToUpload = { imgUri ->
+                    navigator.navigateToUpload(
+                        imgUri,
+                        UploadModel("", "", emptyList())
+                    )
+                },
                 padding = padding
             )
 

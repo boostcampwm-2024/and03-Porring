@@ -1,6 +1,5 @@
 package com.kolown.porring
 
-import android.widget.Toast
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -25,7 +24,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kolown.designsystem.PrimaryDark
 import com.kolown.designsystem.SnackBarContainer
 import com.kolown.model.InitUiState
-import com.kolown.model.UiState
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.porring.component.MainBottomBar
@@ -34,10 +32,9 @@ import com.kolown.porring.navigation.MainMenu
 import com.kolown.porring.navigation.MainNavigator
 import com.kolown.porring.navigation.rememberMainNavigator
 import com.kolown.porring.viewmodel.MainPostItemViewModel
-import com.kolown.porring.viewmodel.UserStateViewModel
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun MainScreen(
@@ -70,7 +67,7 @@ internal fun MainScreen(
                         actionLabel = "이동",
                         duration = SnackbarDuration.Short
                     )
-                    if(result == SnackbarResult.ActionPerformed) {
+                    if (result == SnackbarResult.ActionPerformed) {
                         navigator.navigateToUpload("", uploadModel)
                     }
                 }
