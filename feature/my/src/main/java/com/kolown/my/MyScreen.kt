@@ -33,18 +33,19 @@ internal fun MyRoute(
     navigateToSetting: () -> Unit,
     padding: PaddingValues = PaddingValues(),
 ) {
-    MyScreen(
-        isLoggedIn = isLoggedIn,
-        navigateToLogin = navigateToLogin,
-        navigateToSetting = navigateToSetting,
-        padding = padding
-    )
+    if(isLoggedIn) {
+        MyScreen(
+            navigateToSetting = navigateToSetting,
+            padding = padding
+        )
+    } else {
+        RestrictedLoginContent(navigateToLogin)
+    }
+
 }
 
 @Composable
 fun MyScreen(
-    isLoggedIn: Boolean = false,
-    navigateToLogin: () -> Unit = {},
     navigateToSetting: () -> Unit = {},
     padding: PaddingValues = PaddingValues(),
     viewModel: MyViewModel = hiltViewModel(),
@@ -53,49 +54,44 @@ fun MyScreen(
     val pagingItems = viewModel.galleryFlow.collectAsLazyPagingItems()
     val listState = rememberLazyStaggeredGridState()
 
-    if (isLoggedIn) {
-        LaunchedEffect(pagingItems) {
-            listState.scrollToItem(0)
-        }
-        Column(
+    LaunchedEffect(pagingItems) {
+        listState.scrollToItem(0)
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)
+    ) {
+        MyAppBar(
+            onSettingClicked = navigateToSetting
+        )
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Fixed(2),
             modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            MyAppBar(
-                onSettingClicked = navigateToSetting
-            )
-            LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Fixed(2),
-                modifier = Modifier
-                    .fillMaxSize(),
-                state = listState,
-                contentPadding = PaddingValues(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalItemSpacing = 8.dp,
-                content = {
-                    items(pagingItems.itemCount) { index ->
-                        pagingItems[index]?.let {
-                            GalleryItem(it, width) {
-                                viewModel.deletePost(it.postId)
-                            }
-                        }
-                    }
-
-                    if (pagingItems.loadState.append !is LoadState.NotLoading) {
-                        item(key = "", span = StaggeredGridItemSpan.FullLine) {
-                            PageItemFooter(loadState = pagingItems.loadState.append) {
-                                pagingItems.retry()
-                            }
+                .fillMaxSize(),
+            state = listState,
+            contentPadding = PaddingValues(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalItemSpacing = 8.dp,
+            content = {
+                items(pagingItems.itemCount) { index ->
+                    pagingItems[index]?.let {
+                        GalleryItem(it, width) {
+                            viewModel.deletePost(it.postId)
                         }
                     }
                 }
-            )
-        }
-    } else {
-        RestrictedLoginContent(navigateToLogin)
-    }
 
+                if (pagingItems.loadState.append !is LoadState.NotLoading) {
+                    item(key = "", span = StaggeredGridItemSpan.FullLine) {
+                        PageItemFooter(loadState = pagingItems.loadState.append) {
+                            pagingItems.retry()
+                        }
+                    }
+                }
+            }
+        )
+    }
 }
 
 @Preview(showBackground = true)
