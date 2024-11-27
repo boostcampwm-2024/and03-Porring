@@ -6,15 +6,15 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.kolown.data.di.Fake
 import com.kolown.data.repository.GalleryRepository
+import com.kolown.data.repository.PostRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
 class MyViewModel @Inject constructor(
-    @Fake
-    private val galleryRepository: GalleryRepository
+    private val postRepository: PostRepository,
 ) : ViewModel() {
-    val galleryFlow = galleryRepository.getGalleryThumbnailPagingFlow(1).cachedIn(viewModelScope)
+    val galleryFlow = postRepository.getUserPosts().cachedIn(viewModelScope)
 
 }
