@@ -25,7 +25,7 @@ class SearchPagingSource(
             val page = params.key
             val posts = postDataSource.getPostBySearch(
                 postIds = postIds,
-                lastRegisteredAt = page,
+                key = page,
                 perPage = params.loadSize.toLong()
             ).getOrElse { throw Exception("포스트 불러오기 실패")  }
 

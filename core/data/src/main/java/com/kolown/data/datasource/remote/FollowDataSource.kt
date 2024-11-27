@@ -75,7 +75,7 @@ class FollowDataSourceImpl @Inject constructor(
         return kotlin.runCatching {
             val followerIds = followCollection
                 .whereEqualTo("userId", userId)
-                .orderBy("userId", Query.Direction.ASCENDING)
+                .orderBy("followerId", Query.Direction.DESCENDING)
                 .let { if (key != null) it.startAfter(key) else it }
                 .limit(perPage)
                 .get()
