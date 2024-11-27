@@ -13,6 +13,9 @@ sealed interface Route {
 
     @Serializable
     data object Setting : Route
+
+    @Serializable
+    data object Join : Route
 }
 
 sealed interface MainMenuRoute : Route {

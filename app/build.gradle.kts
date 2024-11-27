@@ -123,7 +123,7 @@ dependencies {
     implementation(projects.feature.upload)
     implementation(projects.feature.setting)
     implementation(projects.feature.their)
-
+    implementation(projects.feature.join)
 
     implementation(projects.core.navigation)
     implementation(projects.feature.login)

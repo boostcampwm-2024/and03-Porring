@@ -1,13 +1,11 @@
 package com.kolown.login
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -73,6 +71,7 @@ import kotlinx.coroutines.launch
 fun LoginRoute(
     updateLoginState: () -> Unit,
     popBackStack: () -> Unit,
+    navigateToJoin: () -> Unit,
     loginViewModel: LoginViewModel = hiltViewModel(),
     padding: PaddingValues = PaddingValues(),
 ) {
@@ -91,8 +90,8 @@ fun LoginRoute(
         }
     }
 
-    LoginScreen(
-        isEmailLogin = isEmailLogin,
+    LoginScreen(isEmailLogin = isEmailLogin,
+        navigateToJoin = navigateToJoin,
         onClickGoogleLogin = {
             CoroutineScope(Dispatchers.Main).launch {
                 getCredential(LoginPlatform.Google, context).getOrNull()?.let {
@@ -110,6 +109,7 @@ fun LoginRoute(
 @Composable
 fun LoginScreen(
     isEmailLogin: Boolean = false,
+    navigateToJoin: () -> Unit = {},
     onClickGoogleLogin: () -> Unit = {},
     onClickEmailLogin: () -> Unit = {},
     cancelEmailLogin: () -> Unit = {},
@@ -127,6 +127,7 @@ fun LoginScreen(
 
         LoginContent(
             isEmailLogin = isEmailLogin,
+            navigateToJoin = navigateToJoin,
             onClickGoogleLogin = onClickGoogleLogin,
             onClickEmailLogin = onClickEmailLogin
         )
@@ -142,6 +143,7 @@ fun LoginScreen(
 @Composable
 fun LoginContent(
     isEmailLogin: Boolean = false,
+    navigateToJoin: () -> Unit = {},
     onClickGoogleLogin: () -> Unit = {},
     onClickEmailLogin: () -> Unit = {},
     modifier: Modifier = Modifier,
@@ -166,7 +168,8 @@ fun LoginContent(
             )
 
             EmailLoginContent(
-                isEmailLogin = isEmailLogin
+                navigateToJoin = navigateToJoin,
+                isEmailLogin = isEmailLogin,
             )
         }
 
@@ -176,10 +179,10 @@ fun LoginContent(
 @Composable
 fun EmailLoginContent(
     isEmailLogin: Boolean = true,
+    navigateToJoin: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    AnimatedVisibility(
-        visible = isEmailLogin,
+    AnimatedVisibility(visible = isEmailLogin,
         enter = slideInHorizontally(initialOffsetX = { it }) + fadeIn(),
         exit = slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
     ) {
@@ -256,17 +259,11 @@ fun EmailLoginContent(
                 Text(text = "로그인")
             }
 
-            val interactionSource = remember { MutableInteractionSource() }
-
             TextButton(
-                onClick = {
-                    Log.e("porring_test_tag", "회원가입 클릭됨")
-                },
+                onClick = { navigateToJoin() },
             ) {
                 Text(
-                    text = "회원가입",
-                    color = Primary,
-                    style = MaterialTheme.typography.labelLarge
+                    text = "회원가입", color = Primary, style = MaterialTheme.typography.labelLarge
                 )
             }
         }

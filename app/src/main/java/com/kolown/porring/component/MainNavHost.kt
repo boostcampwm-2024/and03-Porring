@@ -14,6 +14,7 @@ import com.kolown.camera.navigation.cameraNavGraph
 import com.kolown.detail.navigation.detailNavGraph
 import com.kolown.follower.navigation.followerNavGraph
 import com.kolown.home.navigation.homeNavGraph
+import com.kolown.join.navigation.joinNavGraph
 import com.kolown.login.navigation.loginNavGraph
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
@@ -105,6 +106,7 @@ internal fun MainNavHost(
             loginNavGraph(
                 updateLoginState = updateLoginState,
                 popBackStack = navigator::popBackStack,
+                navigateToJoin = navigator::navigateToJoin,
                 padding = padding
             )
 
@@ -115,6 +117,11 @@ internal fun MainNavHost(
             )
 
             theirNavGraph(
+                popBackStack = navigator::popBackStack,
+                padding = padding
+            )
+
+            joinNavGraph(
                 popBackStack = navigator::popBackStack,
                 padding = padding
             )

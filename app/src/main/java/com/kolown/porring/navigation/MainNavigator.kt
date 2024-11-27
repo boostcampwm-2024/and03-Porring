@@ -13,6 +13,7 @@ import com.kolown.camera.navigation.navigateCamera
 import com.kolown.detail.navigation.navigateToDetail
 import com.kolown.follower.navigation.navigateFollower
 import com.kolown.home.navigation.navigateHome
+import com.kolown.join.navigation.navigateToJoin
 import com.kolown.login.navigation.navigateLogin
 import com.kolown.model.UploadModel
 import com.kolown.my.navigation.navigateMy
@@ -66,6 +67,8 @@ internal class MainNavigator(
     fun navigateToLogin() = navController.navigateLogin()
 
     fun navigateToSetting() = navController.navigateSetting()
+
+    fun navigateToJoin() = navController.navigateToJoin()
 
     fun popBackStack() {
         navController.popBackStack()
