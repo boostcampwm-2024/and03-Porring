@@ -39,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kolown.camera.R
 import com.kolown.camera.getImagePickerLauncher
 import com.kolown.camera.screen.component.CaptureButton
+import com.kolown.camera.screen.component.GridLineCompose
 import com.kolown.camera.screen.component.PreviewViewCompose
 import com.kolown.camera.takePhoto
 import java.io.IOException
@@ -106,8 +107,7 @@ fun CameraXCompose(
 
                 IconButton(onClick = {
                     cameraFlashState = !cameraFlashState
-                    Log.e("test","flash state: $cameraFlashState")
-                        cameraController.enableTorch(cameraFlashState)
+                    cameraController.enableTorch(cameraFlashState)
                 }, modifier = Modifier.size(48.dp)) {
                     Icon(tint = Color.White,
                         modifier = Modifier.fillMaxSize(),
@@ -115,6 +115,12 @@ fun CameraXCompose(
                         imageVector = ImageVector.vectorResource(R.drawable.icon_flash)
                     )
                 }
+
+
+
+
+
+
 //                IconButton(onClick = {
 //                    val nowSelector = cameraController.cameraSelector
 //                    if (nowSelector == CameraSelector.DEFAULT_BACK_CAMERA)
@@ -131,43 +137,48 @@ fun CameraXCompose(
 //                }
             }
 
-        }
+            GridLineCompose(modifier = Modifier.fillMaxWidth().weight(1f))
 
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(104.dp) // 높이 지정
+                    .background(Color.Black.copy(alpha = 0.6f)) // 반투명한 색상
+                    .padding(20.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CaptureButton {
+                    cameraController.takePhoto(context) {
+                        viewModel.saveBitmapToCache(it)
+                    }
+                }
+                IconButton(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .align(Alignment.CenterEnd),
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp) // 높이 지정
-                .background(Color.Black.copy(alpha = 0.6f)) // 반투명한 색상
-                .align(Alignment.BottomCenter)
-                .padding(20.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            CaptureButton {
-                cameraController.takePhoto(context) {
-                    viewModel.saveBitmapToCache(it)
+                    onClick = {
+                        imagePickerLauncher.launch { it ->
+                            it?.let {
+                                viewModel.setUri(it)
+                            } ?: run {
+                            }
+                        }
+                    }) {
+                    Icon(
+                        modifier = Modifier.fillMaxSize(),
+                        contentDescription = "",
+                        imageVector = ImageVector.vectorResource(R.drawable.icon_album)
+                    )
                 }
             }
-            IconButton(
-                modifier = Modifier
-                    .size(32.dp)
-                    .align(Alignment.CenterEnd),
 
-                onClick = {
-                    imagePickerLauncher.launch { it ->
-                        it?.let {
-                            viewModel.setUri(it)
-                        } ?: run {
-                        }
-                    }
-                }) {
-                Icon(
-                    modifier = Modifier.fillMaxSize(),
-                    contentDescription = "",
-                    imageVector = ImageVector.vectorResource(R.drawable.icon_album)
-                )
-            }
+
+
         }
+
+
+
 
     }
 
