@@ -72,7 +72,7 @@ internal fun MainNavHost(
                         UploadModel("", "", emptyList())
                     )
                 },
-                padding = padding
+                padding = padding,
                 popBackStack = navigator::popBackStack
             )
 
