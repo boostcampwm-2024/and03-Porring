@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.kolown.designsystem.Primary
 import com.kolown.designsystem.PrimaryUnActive
@@ -77,7 +78,7 @@ fun LoginRoute(
 ) {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current
-    var isEmailLogin by remember { mutableStateOf(false) }
+    val isEmailLogin by loginViewModel.isEmailLogin.collectAsStateWithLifecycle()
 
     LaunchedEffect(true) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -90,7 +91,8 @@ fun LoginRoute(
         }
     }
 
-    LoginScreen(isEmailLogin = isEmailLogin,
+    LoginScreen(
+        isEmailLogin = isEmailLogin,
         navigateToJoin = navigateToJoin,
         onClickGoogleLogin = {
             CoroutineScope(Dispatchers.Main).launch {
@@ -99,8 +101,8 @@ fun LoginRoute(
                 }
             }
         },
-        onClickEmailLogin = { isEmailLogin = true },
-        cancelEmailLogin = { isEmailLogin = false },
+        onClickEmailLogin = { loginViewModel.changeEmailLogin(true) },
+        cancelEmailLogin = { loginViewModel.changeEmailLogin(false) },
         popBackStack = popBackStack,
         padding = padding
     )
@@ -182,7 +184,8 @@ fun EmailLoginContent(
     navigateToJoin: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    AnimatedVisibility(visible = isEmailLogin,
+    AnimatedVisibility(
+        visible = isEmailLogin,
         enter = slideInHorizontally(initialOffsetX = { it }) + fadeIn(),
         exit = slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
     ) {
