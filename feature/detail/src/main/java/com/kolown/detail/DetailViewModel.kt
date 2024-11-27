@@ -1,5 +1,6 @@
 package com.kolown.detail
 
+import androidx.compose.foundation.pager.PagerState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,11 +25,11 @@ class DetailViewModel @Inject constructor(
     private val postRepository: PostRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val _uiState =
-        MutableStateFlow<UiState<Flow<PagingData<PostContentModel>>>>(UiState.Loading)
+    private val _uiState = MutableStateFlow<UiState<Flow<PagingData<PostContentModel>>>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
     private val reactionStateFlow = MutableStateFlow<Map<String, ReactionState>>(emptyMap())
+
 
     init {
         getItem()
