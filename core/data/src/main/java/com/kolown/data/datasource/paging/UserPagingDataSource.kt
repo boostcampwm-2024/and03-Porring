@@ -6,6 +6,7 @@ import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.TagDataSource
 import com.kolown.model.PostContentModel
+import com.kolown.model.PostModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -21,14 +22,37 @@ class UserPagingDataSource @Inject constructor(
     private val tagDataSource: TagDataSource,
     private val reactionDataSource: ReactionDataSource
 ) : PagingSource<UserPagingKey, PostContentModel>() {
-    override fun getRefreshKey(state: PagingState<UserPagingKey, PostContentModel>): UserPagingKey {
-        return UserPagingKey(state.anchorPosition ?: 0, "")
+    override fun getRefreshKey(state: PagingState<UserPagingKey, PostContentModel>): UserPagingKey? {
+        return state.anchorPosition?.let { position ->
+            val closestPage = state.closestPageToPosition(position)
+            val page = closestPage?.prevKey?.page?.plus(1)
+                ?: closestPage?.nextKey?.page?.minus(1)
+            UserPagingKey(page ?: 0, "")
+        }
+
+//        return UserPagingKey(state.anchorPosition ?: 0, "")
     }
 
     override suspend fun load(params: LoadParams<UserPagingKey>): LoadResult<UserPagingKey, PostContentModel> {
-        val page = params.key?.page ?: 1
+        val page = params.key?.page ?: 0
         val userId = params.key?.userId ?: ""
-        val posts = postDataSource.getUserPost(userId, params.loadSize.toLong()).getOrThrow()
+        val posts = getPosts(userId, params)
+
+        return LoadResult.Page(
+            data = getData(posts),
+            prevKey = if (page == 0) null else UserPagingKey(page - 1, userId),
+            nextKey = if (posts.isEmpty()) null else UserPagingKey(page + 1, userId)
+        )
+    }
+
+    private suspend fun getPosts(
+        userId: String,
+        params: LoadParams<UserPagingKey>
+    ): List<PostModel> {
+        return postDataSource.getUserPost(userId, params.loadSize.toLong()).getOrThrow()
+    }
+
+    private suspend fun getData(posts: List<PostModel>): List<PostContentModel> {
         val (tags, reactions) = coroutineScope {
             val tagsDeferred =
                 async {
@@ -48,21 +72,17 @@ class UserPagingDataSource @Inject constructor(
             tagsDeferred.await() to reactionsDeferred.await()
         }
 
-        return LoadResult.Page(
-            data = posts.mapIndexed { index, postModel ->
-                PostContentModel(
-                    postId = postModel.postId,
-                    authorId = postModel.authorId,
-                    imageUrl = postModel.imageUrl,
-                    registerAt = postModel.registerAt,
-                    description = postModel.description,
-                    tags = tags[index].map { it.tagName },
-                    isFollower = true,
-                    reactions = reactions[index].mapNotNull { it.reaction },
-                )
-            },
-            prevKey = if (page == 1) null else UserPagingKey(page - 1, userId),
-            nextKey = if (posts.isEmpty()) null else UserPagingKey(page + 1, userId)
-        )
+        return posts.mapIndexed { index, postModel ->
+            PostContentModel(
+                postId = postModel.postId,
+                authorId = postModel.authorId,
+                imageUrl = postModel.imageUrl,
+                registerAt = postModel.registerAt,
+                description = postModel.description,
+                tags = tags[index].map { it.tagName },
+                isFollower = true,
+                reactions = reactions[index].mapNotNull { it.reaction },
+            )
+        }
     }
 }
