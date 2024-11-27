@@ -41,43 +41,24 @@ internal fun TheirRoute(
     followerId: String,
     viewModel: TheirViewModel = hiltViewModel(),
 ) {
-    val followerName = viewModel.followerName.collectAsStateWithLifecycle()
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-    val state = uiState.value
-
-    LaunchedEffect(followerName) {
+    LaunchedEffect(followerId) {
         viewModel.setFollowerName(followerId)
     }
-    LaunchedEffect(followerId) {
-        viewModel.getFollowerGallery(followerId)
-    }
 
-    when (state) {
-        is UiState.Loading -> {
-            Log.e("TheirRoute", "Loading: ${state}")
-        }
-        is UiState.Success -> {
-            Log.e("TheirRoute", "Success: ${state.data}")
-            val pagingItems = state.data.collectAsLazyPagingItems()
-            val pagerState = rememberLazyStaggeredGridState()
+    val followerName = viewModel.followerName.collectAsStateWithLifecycle()
+    val pagingItems = viewModel.galleryFlow.collectAsLazyPagingItems()
+    val pagerState = rememberLazyStaggeredGridState()
 
-            if(isLoggedIn) {
-                TheirScreen(
-                    popBackStack = popBackStack,
-                    padding = padding,
-                    followerName = followerName.value,
-                    pagingItems = pagingItems,
-                    pagerState = pagerState
-                )
-            } else {
-                RestrictedLoginContent(navigateToLogin)
-            }
-
-        }
-
-        is UiState.Failure -> {
-            Log.e("TheirRoute", "Error: ${state.error}")
-        }
+    if(isLoggedIn) {
+        TheirScreen(
+            popBackStack = popBackStack,
+            padding = padding,
+            followerName = followerName.value,
+            pagingItems = pagingItems,
+            pagerState = pagerState
+        )
+    } else {
+        RestrictedLoginContent(navigateToLogin)
     }
 }
 
