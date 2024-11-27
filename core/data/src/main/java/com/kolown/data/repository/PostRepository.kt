@@ -231,7 +231,6 @@ class PostRepositoryImpl @Inject constructor(
             } catch (e: Exception) {
                 if(attempt < maxAttempts - 1) {
                     delay(delayMillis)
-                    Log.e("retryWithLimit", "retryWithLimit: attempt $e")
                 }
             }
         }
