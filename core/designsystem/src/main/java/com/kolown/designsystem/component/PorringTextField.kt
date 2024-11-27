@@ -1,4 +1,4 @@
-package com.kolown.login.component
+package com.kolown.designsystem.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
@@ -55,6 +55,7 @@ fun PorringTextField(
         cursorBrush = SolidColor(Primary),
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
+        textStyle = MaterialTheme.typography.bodyLarge,
         decorationBox = { innerText ->
             Row(
                 modifier = Modifier
@@ -117,6 +118,5 @@ fun PorringTextField(
                 }
             }
         },
-        textStyle = MaterialTheme.typography.bodyLarge
     )
 }
