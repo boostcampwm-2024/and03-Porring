@@ -40,15 +40,14 @@ class SearchViewModel @Inject constructor(
             tagRepository.getTagBySearch(it)
         }.cachedIn(viewModelScope)
 
-     fun setSearchQuery(searchText: String) {
+    fun setSearchQuery(searchText: String) {
         _searchQuery.value = searchText
     }
 
 
-
     fun setTag(tag: Tag) {
-        Log.e("test", "set tag: ${tag.name}")
         _tag.value = tag
+        _searchQuery.value = "# ${tag.name}"
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -58,7 +57,7 @@ class SearchViewModel @Inject constructor(
         tag?.let {
             postRepository.getPostBySearch(tag.id)
                 .onStart { emit(PagingData.empty()) }
-        } ?: flow { emit(PagingData.empty())}
+        } ?: flow { emit(PagingData.empty()) }
     }
 
     companion object {
