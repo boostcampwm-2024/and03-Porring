@@ -156,7 +156,6 @@ class PostDataSourceImpl @Inject constructor(
 
     override suspend fun deletePost(postId: String): Result<Unit> {
         return runCatching {
-            throw Exception("Test")
             val documentId = postId.substringAfter("-")
             postCollection.document(documentId).delete().await()
         }
