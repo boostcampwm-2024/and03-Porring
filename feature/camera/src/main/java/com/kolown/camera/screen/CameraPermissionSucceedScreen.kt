@@ -109,16 +109,13 @@ fun CameraXCompose(
                     cameraFlashState = !cameraFlashState
                     cameraController.enableTorch(cameraFlashState)
                 }, modifier = Modifier.size(48.dp)) {
-                    Icon(tint = Color.White,
+                    Icon(
+                        tint = Color.White,
                         modifier = Modifier.fillMaxSize(),
                         contentDescription = "icon_flash",
                         imageVector = ImageVector.vectorResource(R.drawable.icon_flash)
                     )
                 }
-
-
-
-
 
 
 //                IconButton(onClick = {
@@ -137,7 +134,11 @@ fun CameraXCompose(
 //                }
             }
 
-            GridLineCompose(modifier = Modifier.fillMaxWidth().weight(1f))
+            GridLineCompose(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
 
             Box(
                 modifier = Modifier
@@ -152,10 +153,20 @@ fun CameraXCompose(
                         viewModel.saveBitmapToCache(it)
                     }
                 }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .background(Color.Black),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
                 IconButton(
                     modifier = Modifier
-                        .size(32.dp)
-                        .align(Alignment.CenterEnd),
+                        .size(48.dp),
 
                     onClick = {
                         imagePickerLauncher.launch { it ->
@@ -167,17 +178,34 @@ fun CameraXCompose(
                     }) {
                     Icon(
                         modifier = Modifier.fillMaxSize(),
-                        contentDescription = "",
-                        imageVector = ImageVector.vectorResource(R.drawable.icon_album)
+                        contentDescription = "icon_album",
+                        imageVector = ImageVector.vectorResource(R.drawable.icon_album_white),
+                        tint = Color.White
                     )
                 }
+                IconButton(
+                    modifier = Modifier
+                        .size(48.dp),
+                    onClick = {
+                        val nowSelector = cameraController.cameraSelector
+                        if (nowSelector == CameraSelector.DEFAULT_BACK_CAMERA)
+                            cameraController.cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+                        else
+                            cameraController.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                    }) {
+                    Icon(
+                        modifier = Modifier.fillMaxSize(),
+                        contentDescription = "icon_switch_camera",
+                        imageVector = ImageVector.vectorResource(R.drawable.icon_switch_camera_white),
+                        tint = Color.White
+                    )
+                }
+
+
             }
 
 
-
         }
-
-
 
 
     }
