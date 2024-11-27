@@ -83,10 +83,8 @@ internal fun UploadRoute(
         addCategory = viewModel::addCategory,
         removeCategory = viewModel::removeCategory,
         changeCategoryName = viewModel::changeCategoryName,
-        uploadPost = {
-            uploadPost(webPUri.toString(), description, categoryItems)
-            navigateToHome()
-        },
+        uploadPost = { uploadPost(webPUri.toString(), description, categoryItems) },
+        navigateToHome = navigateToHome
     )
 }
 
@@ -102,6 +100,7 @@ internal fun UploadScreen(
     removeCategory: (String) -> Unit = {},
     changeCategoryName: (Int, String) -> Unit = { _, _ -> },
     uploadPost: () -> Unit = {},
+    navigateToHome: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
     val imeHeight = WindowInsets.ime.getBottom(LocalDensity.current)
@@ -126,7 +125,7 @@ internal fun UploadScreen(
             .padding(padding)
             .fillMaxSize()
     ) {
-        UploadTopAppBar()
+        UploadTopAppBar(navigateToHome = navigateToHome)
         UploadContent(
             imgUri = imgUri,
             modifier = Modifier
@@ -146,7 +145,10 @@ internal fun UploadScreen(
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .fillMaxWidth()
                 .height(40.dp),
-            onClick = uploadPost,
+            onClick = {
+                uploadPost()
+                navigateToHome()
+            },
             enabled = uploadEnable,
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(containerColor = chooseColor(uploadEnable))
@@ -207,7 +209,9 @@ private fun UploadContent(
 }
 
 @Composable
-private fun UploadTopAppBar() {
+private fun UploadTopAppBar(
+    navigateToHome: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -216,7 +220,7 @@ private fun UploadTopAppBar() {
     ) {
         IconButton(
             modifier = Modifier.size(48.dp),
-            onClick = {}
+            onClick = { navigateToHome() }
         ) {
             Icon(
                 modifier = Modifier.size(36.dp),
