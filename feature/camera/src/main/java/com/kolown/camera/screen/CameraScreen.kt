@@ -63,16 +63,7 @@ fun CameraScreen(
     ) { areGranted ->
         Log.e("카메라", areGranted.toString())
 
-        if (areGranted) {
-            cameraPermission = true
-        } else {
-            if (!shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)) {
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = Uri.fromParts("package", context.packageName, null)
-                }
-                context.startActivity(intent)
-            }
-        }
+        cameraPermission = areGranted
     }
 
     LaunchedEffect(cameraPermission) {
