@@ -54,7 +54,8 @@ fun GalleryItem(
     onLongClickImage: () -> Unit = {}
 ) {
     //비율은 그냥 테스트
-    val height = if (Random.nextBoolean()) (width.value * 1.4).dp else width + 20.dp
+    val heightNum = postContentModel.postId.filter { it.isDigit() }.toInt()
+    val height = if (heightNum % 2 == 0) (width.value * 1.4).dp else width + 20.dp
     val isDialogVisible = remember { mutableStateOf(false) }
 
     AsyncImage(
