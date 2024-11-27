@@ -33,7 +33,7 @@ class CameraActivity : ComponentActivity() {
             viewModel.cameraPermissionDinedStateFlow.collectAsStateWithLifecycle(false, this)
             PorringTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
-                    SearchScreen(paddingValues)
+                    CameraScreen(paddingValues)
 
                 }
             }
