@@ -5,6 +5,8 @@ import com.kolown.model.FollowerThumbnail
 import com.kolown.model.Gallery
 import com.kolown.model.GalleryThumbnail
 import com.kolown.model.Post
+import com.kolown.model.PostContentModel
+import com.kolown.model.Reactions
 import com.kolown.model.Tag
 
 object MockDataProvider {
@@ -152,6 +154,18 @@ object MockDataProvider {
         galleryId = getRandomId(),
         imageUrl = getRandomImageUrl(),
         description = getRandomDescription()
+    )
+
+    fun getRandomGalleryPostContentModel() = PostContentModel(
+        postId = getRandomName(),
+        authorId = getRandomName(),
+        imageUrl = getRandomImageUrl(),
+        description = getRandomDescription(),
+        registerAt = "2023-01-01",
+        tags = listOf(getRandomTagName()),
+        isFollower = true,
+        reactions = listOf(Reactions.STAR),
+        myReaction = Reactions.STAR
     )
 
     fun getRandomPostList() = getRandomList {
