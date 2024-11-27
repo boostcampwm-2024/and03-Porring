@@ -100,7 +100,8 @@ internal fun MainNavHost(
                 detailFirstItem = detailFirstItem,
                 updateMainPostReaction = onSelectReaction,
                 popBackStack = navigator::popBackStack,
-                padding = padding
+                padding = padding,
+                navigateToTheir = navigator::navigateToTheir
             )
 
             uploadNavGraph(
