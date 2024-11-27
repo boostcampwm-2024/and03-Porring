@@ -1,6 +1,5 @@
 package com.kolown.data.repository
 
-import android.R.attr.path
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -13,13 +12,9 @@ import androidx.exifinterface.media.ExifInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
-import java.nio.file.Path
 import javax.inject.Inject
-
 
 interface ImageCacheRepository {
     suspend fun saveBitmapToCache(
@@ -27,13 +22,14 @@ interface ImageCacheRepository {
         format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
         quality: Int = 100
     ): Uri?
+
     suspend fun clearCacheFiles()
     suspend fun decodeSampledBitmapFromUri(uri: Uri): Bitmap?
 }
 
-class ImageCacheRepositoryImpl @Inject constructor(private val applicationContext: Context) :
-    ImageCacheRepository {
-    @RequiresApi(Build.VERSION_CODES.Q)
+class ImageCacheRepositoryImpl (
+    private val applicationContext: Context
+) : ImageCacheRepository {
     override suspend fun saveBitmapToCache(
         bitmap: Bitmap,
         format: Bitmap.CompressFormat,
