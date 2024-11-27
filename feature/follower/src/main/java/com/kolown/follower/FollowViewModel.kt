@@ -1,5 +1,6 @@
 package com.kolown.follower
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -22,22 +23,17 @@ class FollowerViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState<Flow<PagingData<FollowerThumbnail>>>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
-    init {
-        getItem()
-    }
 
-    private fun getItem() {
+    fun getItem() {
         viewModelScope.launch {
-            _uiState.value = UiState.Loading
             try {
-                val follows =
-                    followerRepository.getFollowerDataSourcePagingFlow().cachedIn(viewModelScope)
+                _uiState.value = UiState.Loading
+                val follows = followerRepository.getFollowerDataSourcePagingFlow().cachedIn(viewModelScope)
                 _uiState.value = UiState.Success(follows)
             } catch (e:Exception) {
                 _uiState.value = UiState.Failure(e)
             }
         }
     }
-
 
 }
