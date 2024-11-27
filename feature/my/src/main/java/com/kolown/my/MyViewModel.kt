@@ -23,11 +23,10 @@ class MyViewModel @Inject constructor(
     val galleryFlow = postRepository.getUserPosts().cachedIn(viewModelScope)
 
     fun deletePost(postId: String) {
-        Log.e("GalleryItem", "postId: $postId")
         viewModelScope.launch {
             postRepository.deletePost(postId)
                 .onEach {
-                    Log.e("GalleryItem", "deletePost: $it")
+
                 }
                 .catch {
                     Log.e("GalleryItem", "deletePost error: $it")

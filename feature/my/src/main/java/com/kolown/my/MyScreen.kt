@@ -11,6 +11,8 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.kolown.my.component.DeleteDialog
 import com.kolown.my.component.GalleryItem
 import com.kolown.my.component.MyAppBar
 import com.kolown.my.component.PageItemFooter
@@ -46,7 +49,6 @@ fun MyScreen(
     padding: PaddingValues = PaddingValues(),
     viewModel: MyViewModel = hiltViewModel(),
 ) {
-
     val width = LocalConfiguration.current.screenWidthDp.dp / 2
     val pagingItems = viewModel.galleryFlow.collectAsLazyPagingItems()
     val listState = rememberLazyStaggeredGridState()

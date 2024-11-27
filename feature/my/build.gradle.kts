@@ -66,4 +66,5 @@ dependencies {
     implementation(libs.androidx.foundation)
 
     implementation(projects.core.data)
+    implementation(projects.core.designsystem)
 }
