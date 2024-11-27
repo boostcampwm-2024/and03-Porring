@@ -1,5 +1,6 @@
 package com.kolown.follower
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,24 +59,27 @@ internal fun FollowerRoute(
     padding: PaddingValues = PaddingValues(),
     viewModel: FollowerViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val pagerState = rememberLazyListState()
+
+    LaunchedEffect(true) {
+        viewModel.getItem()
+    }
+
     if (isLoggedIn) {
-        val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-        val pagerState = rememberLazyListState()
-        when (uiState.value) {
-            is UiState.Loading -> {
+        when (uiState) {
+            is UiState.Loading ->
                 Box(
-                    modifier = Modifier
-                        .padding(padding)
-                        .fillMaxSize(),
+                    modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(modifier = Modifier.size(64.dp))
+                    CircularProgressIndicator()
                 }
-            }
+
 
             is UiState.Success -> {
                 val items =
-                    (uiState.value as UiState.Success<Flow<PagingData<FollowerThumbnail>>>).data.collectAsLazyPagingItems()
+                    (uiState as UiState.Success<Flow<PagingData<FollowerThumbnail>>>).data.collectAsLazyPagingItems()
                 FollowerScreen(
                     items = items,
                     pagerState = pagerState,
@@ -130,7 +136,6 @@ internal fun FollowContent(
     followerName: String,
     followAlbums: List<String>
 ) {
-    val scrollableState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -150,9 +155,11 @@ internal fun FollowContent(
         }
         Spacer(modifier = Modifier.height(10.dp))
         Row(
-            modifier = Modifier.horizontalScroll(state = scrollableState),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(
+                space = 8.dp,
+                alignment = Alignment.CenterHorizontally
+            )
         ) {
             followAlbums.forEach { imageUrl ->
                 Card(
