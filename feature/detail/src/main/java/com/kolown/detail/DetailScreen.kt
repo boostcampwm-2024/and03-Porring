@@ -92,6 +92,7 @@ internal fun DetailRoute(
     val state = uiState.value
 
     when (state) {
+        is UiState.Idle -> {}
         is UiState.Loading -> LoadingDetailScreen()
         is UiState.Success -> {
             val pagingItems = state.data.collectAsLazyPagingItems()
