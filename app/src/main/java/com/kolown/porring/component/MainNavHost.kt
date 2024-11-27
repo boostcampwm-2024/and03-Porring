@@ -73,6 +73,7 @@ internal fun MainNavHost(
                     )
                 },
                 padding = padding
+                popBackStack = navigator::popBackStack
             )
 
             followerNavGraph(

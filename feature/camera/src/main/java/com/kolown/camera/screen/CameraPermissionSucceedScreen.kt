@@ -2,6 +2,7 @@ package com.kolown.camera.screen
 
 import android.net.Uri
 import android.os.Build
+import android.provider.CalendarContract.Colors
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -12,6 +13,7 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,12 +47,12 @@ import java.util.concurrent.Executors
 @Composable
 fun CameraXCompose(
     viewModel: CameraScreenViewModel,
-    navigateToUpload: (String) -> Unit = {}
+    navigateToUpload: (String) -> Unit = {},
+    popBackStack: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current
     val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
-
     val imagePickerLauncher = getImagePickerLauncher()
 
     val uri = viewModel.uri.collectAsStateWithLifecycle()
@@ -80,33 +82,57 @@ fun CameraXCompose(
     }
 
     val cameraFlashExist = remember { cameraController.cameraInfo?.hasFlashUnit() == true }
+    var cameraFlashState = remember { false }
 
     Box(modifier = Modifier.fillMaxSize()) {
         PreviewViewCompose(cameraController)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp) // 높이 지정
-                .background(Color.Black.copy(alpha = 0.6f)) // 반투명한 색상
-                .align(Alignment.TopCenter),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            IconButton(onClick = {
-                val nowSelector = cameraController.cameraSelector
-                if (nowSelector == CameraSelector.DEFAULT_BACK_CAMERA)
-                    cameraController.cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
-                else
-                    cameraController.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-            }, modifier = Modifier.size(50.dp)) {
-                Icon(
-                    modifier = Modifier.fillMaxSize(),
-                    contentDescription = "",
-                    imageVector = Icons.Default.Face
-                )
+        Column(modifier = Modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(148.dp)
+                    .background(Color.Black.copy(alpha = 0.6f)),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(onClick = popBackStack, modifier = Modifier.size(48.dp)) {
+                    Icon(
+                        tint = Color.White,
+                        modifier = Modifier.fillMaxSize(),
+                        contentDescription = "icon_back",
+                        imageVector = ImageVector.vectorResource(R.drawable.icon_back_button_white)
+                    )
+                }
 
+                IconButton(onClick = {
+                    cameraFlashState = !cameraFlashState
+                    Log.e("test","flash state: $cameraFlashState")
+                        cameraController.enableTorch(cameraFlashState)
+                }, modifier = Modifier.size(48.dp)) {
+                    Icon(tint = Color.White,
+                        modifier = Modifier.fillMaxSize(),
+                        contentDescription = "icon_flash",
+                        imageVector = ImageVector.vectorResource(R.drawable.icon_flash)
+                    )
+                }
+//                IconButton(onClick = {
+//                    val nowSelector = cameraController.cameraSelector
+//                    if (nowSelector == CameraSelector.DEFAULT_BACK_CAMERA)
+//                        cameraController.cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+//                    else
+//                        cameraController.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+//                }, modifier = Modifier.size(50.dp)) {
+//                    Icon(
+//                        modifier = Modifier.fillMaxSize(),
+//                        contentDescription = "",
+//                        imageVector = Icons.Default.Face
+//                    )
+//
+//                }
             }
+
         }
+
 
         Box(
             modifier = Modifier
@@ -143,26 +169,6 @@ fun CameraXCompose(
             }
         }
 
-
-//        // API 21 이상 사용: 일반 이미지 선택기
-//        val imagePickerLauncher = rememberLauncherForActivityResult(
-//            contract = ActivityResultContracts.GetContent()
-//        ) { imageUri: Uri? ->
-//            imageUri?.let { imageUri = it }
-//        }
-//
-//        // API 33 이상 사용: PhotoPicker
-//        val photoPickerLauncher = rememberLauncherForActivityResult(
-//            contract = ActivityResultContracts.PickVisualMedia()
-//        ) { imageUri: Uri? ->
-//            imageUri?.let { imageUri = it }
-//        }
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-//            photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-//        } else {
-//            imagePickerLauncher.launch("image/*")
-//        }
     }
 
 

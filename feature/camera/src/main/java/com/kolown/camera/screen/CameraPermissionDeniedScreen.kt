@@ -10,7 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun CameraPermissionDeniedScreen() {
+fun CameraPermissionDeniedScreen(
+    popBackstack: () -> Unit = {}
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
