@@ -79,6 +79,8 @@ fun CameraXCompose(
         }
     }
 
+    val cameraFlashExist = remember { cameraController.cameraInfo?.hasFlashUnit() == true }
+
     Box(modifier = Modifier.fillMaxSize()) {
         PreviewViewCompose(cameraController)
         Row(
