@@ -1,5 +1,0 @@
-int drawable ic_arrow_back 0x0
-int drawable ic_porring_symbol 0x0
-int string string_back_button 0x0
-int string string_move_to_login 0x0
-int string string_use_after_login 0x0
