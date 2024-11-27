@@ -16,9 +16,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,23 +28,16 @@ class TheirViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val followRepository: FollowRepository
 ) : ViewModel() {
-    private val _uiState =
-        MutableStateFlow<UiState<Flow<PagingData<PostContentModel>>>>(UiState.Loading)
-    val uiState = _uiState.asStateFlow()
-
     private val _followerName = MutableStateFlow("Anonymous")
     val followerName = _followerName.asStateFlow()
 
-    fun getFollowerGallery(followerId: String) {
-        try {
-            _uiState.value =
-                UiState.Success(postRepository.getUserPosts(followerId).cachedIn(viewModelScope))
-        } catch (e: Exception) {
-            _uiState.value = UiState.Failure(e)
-        }
-    }
+    private val _userId = MutableStateFlow("")
+    val galleryFlow = _userId.flatMapLatest { userId ->
+        postRepository.getUserPosts(userId)
+    }.cachedIn(viewModelScope)
 
     fun setFollowerName(followerId: String) {
+        _userId.update { followerId }
         followRepository.getFollowerName(followerId)
             .onEach { _followerName.value = it }
             .catch {
