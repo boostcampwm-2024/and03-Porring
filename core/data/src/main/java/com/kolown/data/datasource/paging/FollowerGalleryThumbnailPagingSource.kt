@@ -30,61 +30,63 @@ class FollowerGalleryThumbnailPagingDataSource @Inject constructor(
         return try {
             val currentUserId = googleAuthDataSource.getUserId()
             val key = params.key
-            Log.e("팔로워-current",currentUserId)
 
             val followers = followerDataSource.getFollowerList(
                 userId = currentUserId,
                 key = key,
-                perPage = 1
+                perPage = params.loadSize.toLong()
             ).getOrElse { throw Exception("팔로워 불러오기 실패") }
 
-            followers.forEach {
-                Log.e("팔로워",it.followerName)
-            }
-
-            val thumbnails = followers.map {
-                val posts = postDataSource.getUserPost(uid= it.followerId, perPage = params.loadSize.toLong()).getOrElse { throw Exception("게시물 불러오기 실패") }
-                val (tags, reactions) = coroutineScope {
-                    val tagsDeferred = async {
-                        posts.map {
-                            async {
-                                tagDataSource.getPostTag(it.postId).getOrElse {
-                                    throw IOException("태그 불러오기 실패")
-                                }
+            val thumbnails = coroutineScope {
+                followers.map { follower ->
+                    async {
+                        val posts =
+                            postDataSource.getUserFollowerPost(uid = follower.followerId, perPage = 3)
+                                .getOrElse { throw Exception("게시물 불러오기 실패") }
+                        val (tags, reactions) = coroutineScope {
+                            val tagsDeferred = async {
+                                posts.map {
+                                    async {
+                                        tagDataSource.getPostTag(it.postId).getOrElse {
+                                            throw IOException("태그 불러오기 실패")
+                                        }
+                                    }
+                                }.awaitAll()
                             }
-                        }.awaitAll()
-                    }
-                    val reactionsDeferred = async {
-                        posts.map {
-                            async {
-                                reactionDataSource.getReactionByPostId(it.postId).getOrElse {
-                                    throw IOException("리액션 불러오기 실패")
-                                }
+                            val reactionsDeferred = async {
+                                posts.map {
+                                    async {
+                                        reactionDataSource.getReactionByPostId(it.postId)
+                                            .getOrElse {
+                                                throw IOException("리액션 불러오기 실패")
+                                            }
+                                    }
+                                }.awaitAll()
                             }
-                        }.awaitAll()
+
+                            tagsDeferred.await() to reactionsDeferred.await()
+                        }
+                        val data = posts.mapIndexed { index, postModel ->
+                            PostContentModel(
+                                postId = postModel.postId,
+                                authorId = postModel.authorId,
+                                imageUrl = postModel.imageUrl,
+                                registerAt = postModel.registerAt,
+                                description = postModel.description,
+                                tags = tags[index].map { it.tagName },
+                                isFollower = false,
+                                reactions = reactions[index].mapNotNull { it.reaction },
+                                myReaction = reactions[index].find { it.userId == currentUserId }?.reaction
+                            )
+                        }
+
+                        FollowerThumbnail(
+                            id = follower.followerId,
+                            followerName = follower.followerName,
+                            posts = data
+                        )
                     }
-
-                    tagsDeferred.await() to reactionsDeferred.await()
-                }
-                val data = posts.mapIndexed { index, postModel ->
-                    PostContentModel(
-                        postId = postModel.postId,
-                        authorId = postModel.authorId,
-                        imageUrl = postModel.imageUrl,
-                        registerAt = postModel.registerAt,
-                        description = postModel.description,
-                        tags = tags[index].map { it.tagName },
-                        isFollower = false,
-                        reactions = reactions[index].mapNotNull { it.reaction },
-                        myReaction = reactions[index].find { it.userId == currentUserId }?.reaction
-                    )
-                }
-
-                FollowerThumbnail(
-                    id = it.followerId,
-                    followerName = it.followerName,
-                    posts = data
-                )
+                }.awaitAll()
             }
 
             LoadResult.Page(

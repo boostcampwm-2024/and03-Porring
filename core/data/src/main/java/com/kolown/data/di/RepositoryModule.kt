@@ -40,11 +40,6 @@ abstract class RepositoryModule {
     ): FollowRepository
 
     @Binds
-    abstract fun provideFollowerRepository(
-        followerRepository: FollowRepository,
-    ): FollowRepository
-
-    @Binds
     abstract fun provideTagRepository(
         tagRepository: TagRepositoryImpl,
     ): TagRepository

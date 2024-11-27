@@ -67,16 +67,18 @@ class FollowRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getFollowerDataSourcePagingFlow(): Flow<PagingData<FollowerThumbnail>> {
-        Log.e("팔로워","?")
-
         return Pager(
             config = PagingConfig(
-                pageSize = 1,
+                pageSize = FOLLOWER_PER_PAGE,
                 enablePlaceholders = false,
             ), pagingSourceFactory = {
                 followerGalleryThumbnailPagingDataSource
             }
         ).flow
+    }
+
+    companion object {
+        const val FOLLOWER_PER_PAGE = 5
     }
 
 }
