@@ -4,15 +4,15 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import androidx.paging.map
-import com.kolown.data.di.Fake
-import com.kolown.data.repository.GalleryRepository
+import androidx.paging.filter
 import com.kolown.data.repository.PostRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,13 +20,18 @@ import javax.inject.Inject
 class MyViewModel @Inject constructor(
     private val postRepository: PostRepository,
 ) : ViewModel() {
-    val galleryFlow = postRepository.getUserPosts().cachedIn(viewModelScope)
+    private val deletedPostIds = MutableStateFlow<Set<String>>(emptySet())
+    private val originalGalleryFlow = postRepository.getUserPosts().cachedIn(viewModelScope)
+
+    val galleryFlow = combine(originalGalleryFlow, deletedPostIds) { pagingData, deletedIds ->
+        pagingData.filter { post -> post.postId !in deletedIds }
+    }
 
     fun deletePost(postId: String) {
         viewModelScope.launch {
             postRepository.deletePost(postId)
                 .onEach {
-
+                    deletedPostIds.update { deletedPostIds.value + postId }
                 }
                 .catch {
                     Log.e("GalleryItem", "deletePost error: $it")

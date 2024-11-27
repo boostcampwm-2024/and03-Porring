@@ -29,8 +29,6 @@ class UserPagingDataSource @Inject constructor(
                 ?: closestPage?.nextKey?.page?.minus(1)
             UserPagingKey(page ?: 0, "")
         }
-
-//        return UserPagingKey(state.anchorPosition ?: 0, "")
     }
 
     override suspend fun load(params: LoadParams<UserPagingKey>): LoadResult<UserPagingKey, PostContentModel> {
