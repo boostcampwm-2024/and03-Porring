@@ -78,8 +78,6 @@ internal class MainNavigator(
         navController.popBackStack()
     }
 
-    fun getBackStackEntry() : NavBackStackEntry = navController.getBackStackEntry(MainMenu.HOME.route)
-
     @Composable
     fun isShowBottomBar() = MainMenu.contains {
         currentDestination?.hasRoute(it::class) == true

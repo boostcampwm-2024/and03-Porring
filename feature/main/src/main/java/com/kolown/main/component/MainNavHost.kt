@@ -73,7 +73,7 @@ internal fun MainNavHost(
                 },
                 navigateToSearchDetail = navigator::navigateToDetailSearch,
                 popBackStack = navigator::popBackStack,
-                getBackStackEntry = { navigator.navController.getBackStackEntry(MainMenu.HOME.route) }
+                getBackStackEntry = { navigator.navController.getBackStackEntry(MainMenu.SEARCH.route) }
             )
 
             cameraNavGraph(
