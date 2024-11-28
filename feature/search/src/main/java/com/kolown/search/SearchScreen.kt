@@ -86,7 +86,6 @@ private fun SearchScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-
         TagSearchBar(
             modifier = Modifier
                 .fillMaxWidth()
@@ -100,6 +99,9 @@ private fun SearchScreen(
             focusState = focusState,
             onBackButtonClicked = {
                 focusState = false
+            },
+            onClearClick = {
+                viewModel.setSearchQuery("")
             }
         )
 
