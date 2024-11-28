@@ -42,7 +42,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.kolown.designsystem.component.RestrictedLoginContent
+import com.kolown.common.component.RestrictedLoginContent
 import com.kolown.follower.component.PageItemFooter
 import com.kolown.model.FollowerThumbnail
 import com.kolown.model.UiState
