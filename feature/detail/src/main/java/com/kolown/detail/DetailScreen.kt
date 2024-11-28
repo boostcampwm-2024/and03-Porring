@@ -214,6 +214,11 @@ private fun DetailItem(
     val view = LocalView.current
 
     if (isReelsMode) {
+        onDoubleTab(true)
+        showSystembar(view = view)
+    }
+
+    if (isReelsMode) {
         ReelsContent(
             isLoggedIn = isLoggedIn,
             onShowLoginSnackBar = onShowLoginSnackBar,
@@ -221,7 +226,7 @@ private fun DetailItem(
             onSelectReaction = onSelectReaction,
             imageItem = imageItem,
             onDoubleTab = {
-                onChangeReelsMode(true)
+                onChangeReelsMode(false)
                 requestFullScreen(view)
                 onDoubleTab(false)
             },
@@ -231,11 +236,7 @@ private fun DetailItem(
             imageUrl = imageItem.imageUrl
         )
         BackHandler(enabled = true) {
-            if (isReelsMode) {
-                onChangeReelsMode(false)
-                onDoubleTab(true)
-                showSystembar(view = view)
-            }
+            onChangeReelsMode(true)
         }
     }
 }
