@@ -44,7 +44,7 @@ import com.kolown.designsystem.Surface2
 import com.kolown.search.R
 
 @Composable
-internal fun TagSearchBar(
+fun TagSearchBar(
     text: String,
     modifier: Modifier = Modifier.zIndex(1f),
     onValueChange: (String) -> Unit,
@@ -54,7 +54,6 @@ internal fun TagSearchBar(
     onBackButtonClicked: () -> Unit = {}
 ) {
 
-    val focusManager = LocalFocusManager.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -106,12 +105,5 @@ internal fun TagSearchBar(
             }
         )
     }
-}
 
-@Composable
-@Preview
-private fun PreviewSearchBar() {
-//    TagSearchBar("무니") {
-//
-//    }
 }

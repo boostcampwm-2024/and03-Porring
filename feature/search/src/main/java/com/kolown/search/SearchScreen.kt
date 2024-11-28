@@ -67,7 +67,9 @@ private fun SearchScreen(
 
     val focusManager = LocalFocusManager.current
     LaunchedEffect(focusState) {
-        if (!focusState) focusManager.clearFocus()
+        if (!focusState) {
+            focusManager.clearFocus()
+        }
     }
     Column(
         modifier = Modifier
@@ -82,7 +84,7 @@ private fun SearchScreen(
                 .fillMaxWidth()
                 .padding(16.dp)
                 .height(54.dp),
-            text = searchText,
+            text = if(focusState) searchText else tag?.name ?: "",
             onValueChange = viewModel::setSearchQuery,
             onFocusChange = {
                 focusState = it
@@ -97,11 +99,11 @@ private fun SearchScreen(
                 modifier = Modifier
                     .fillMaxSize(),
                 columns = GridCells.Fixed(3),
-                contentPadding = PaddingValues(8.dp),
+                contentPadding = PaddingValues(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                item (span = {GridItemSpan(3)}){
+                item(span = { GridItemSpan(3) }) {
                     tag?.let {
                         PostHeader(it)
                     } ?: run {
@@ -125,8 +127,6 @@ private fun SearchScreen(
                     .fillMaxWidth()
 
             ) {
-
-
                 items(searchResultTag.itemCount) { index ->
                     searchResultTag[index]?.let { tag ->
                         TagItem(tag) {
