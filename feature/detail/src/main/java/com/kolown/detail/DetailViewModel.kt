@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
+import com.kolown.data.repository.FollowRepository
 import com.kolown.data.repository.PostRepository
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
@@ -21,7 +22,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,20 +32,22 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     private val postRepository: PostRepository,
-    private val savedStateHandle: SavedStateHandle,
+    private val followRepository: FollowRepository,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<Flow<PagingData<PostContentModel>>>>(UiState.Loading)
+    private val _uiState =
+        MutableStateFlow<UiState<Flow<PagingData<PostContentModel>>>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
     private val reactionStateFlow = MutableStateFlow<Map<String, ReactionState>>(emptyMap())
 
+    private val _followSharedFlow = MutableSharedFlow<Boolean>()
+    val followState = _followSharedFlow.asSharedFlow()
+
     private var _currentPage = 0
-    val currentPage get() =  _currentPage
+    val currentPage get() = _currentPage
 
 
     init {
-        Log.e("??init","")
-
         getItem()
     }
 
@@ -105,6 +110,25 @@ class DetailViewModel @Inject constructor(
             newState
         }
     }
+
+    fun followUser(id: String, name: String) {
+        viewModelScope.launch {
+            followRepository.followUser(id, name)
+                .catch { Log.e("FollowUpload", "viewModel: $it") }
+                .launchIn(viewModelScope)
+            _followSharedFlow.emit(true)
+        }
+    }
+
+    fun unFollowUser(id: String) {
+        viewModelScope.launch {
+            followRepository.unFollowUser(id)
+                .catch { Log.e("UnFollowUpload", "viewModel: $it") }
+                .launchIn(viewModelScope)
+            _followSharedFlow.emit(false)
+        }
+    }
+
 
     fun updatePage(page: Int) {
         _currentPage = page

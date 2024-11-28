@@ -3,6 +3,7 @@ package com.kolown.data.datasource.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.kolown.data.datasource.remote.AuthDataSource
+import com.kolown.data.datasource.remote.FollowDataSource
 import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.TagDataSource
@@ -18,6 +19,7 @@ class RandomPagingDataSource @Inject constructor(
     private val postDataSource: PostDataSource,
     private val tagDataSource: TagDataSource,
     private val reactionDataSource: ReactionDataSource,
+    private val followDataSource: FollowDataSource,
     @Named("google") private val googleAuthDataSource: AuthDataSource,
 ) : PagingSource<Long, PostContentModel>() {
     private val randomSeed = (0..Long.MAX_VALUE).random()
@@ -33,7 +35,7 @@ class RandomPagingDataSource @Inject constructor(
             postDataSource.getRandomPost(currentUserId, page, params.loadSize.toLong()).getOrElse {
                 throw IOException("랜덤 게시글 불러오기 실패")
             }
-        val (tags, reactions) = coroutineScope {
+        val (tags, reactions, isFollowers) = coroutineScope {
             val tagsDeferred = async {
                 posts.map {
                     async {
@@ -52,8 +54,20 @@ class RandomPagingDataSource @Inject constructor(
                     }
                 }.awaitAll()
             }
+            val followDeferred = async {
+                posts.map {
+                    async {
+                        followDataSource.getIsFollower(
+                            userId = currentUserId,
+                            followerId = it.authorId
+                        ).getOrElse {
+                            throw IOException("팔로우 확인 실패")
+                        }
+                    }
+                }.awaitAll()
+            }
 
-            tagsDeferred.await() to reactionsDeferred.await()
+            Triple(tagsDeferred.await(), reactionsDeferred.await(), followDeferred.await())
         }
 
         return LoadResult.Page(
@@ -65,7 +79,7 @@ class RandomPagingDataSource @Inject constructor(
                     registerAt = postModel.registerAt,
                     description = postModel.description,
                     tags = tags[index].map { it.tagName },
-                    isFollower = false,
+                    isFollower = isFollowers[index],
                     reactions = reactions[index].mapNotNull { it.reaction },
                     myReaction = reactions[index].find { it.userId == currentUserId }?.reaction
                 )
