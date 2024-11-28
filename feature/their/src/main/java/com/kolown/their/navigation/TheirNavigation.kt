@@ -14,16 +14,12 @@ fun NavController.navigateTheir(authorId: String, navOptions: NavOptions? = null
 }
 
 fun NavGraphBuilder.theirNavGraph(
-    isLoggedIn: Boolean,
-    navigateToLogin: () -> Unit,
     popBackStack: () -> Unit,
     padding: PaddingValues,
 ) {
     composable<MainMenuRoute.Their> { navBackStackEntry ->
         val followerId = navBackStackEntry.toRoute<MainMenuRoute.Their>().authorId
         TheirRoute(
-            isLoggedIn = isLoggedIn,
-            navigateToLogin = navigateToLogin,
             popBackStack = popBackStack,
             padding = padding,
             followerId = followerId

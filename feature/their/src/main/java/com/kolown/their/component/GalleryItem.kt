@@ -1,40 +1,93 @@
 package com.kolown.their.component
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.kolown.data.mock.MockDataProvider
-import com.kolown.model.GalleryThumbnail
+import com.kolown.designsystem.Surface2
 import com.kolown.model.PostContentModel
-import kotlin.random.Random
 
 @Composable
-internal fun GalleryItem(galleryThumbnail: PostContentModel, width: Dp) {
-    //비율은 그냥 테스트
-    val height = if (Random.nextBoolean()) (width.value * 1.4).dp else width + 20.dp
+internal fun GalleryItem(
+    postContentModel: PostContentModel,
+    width: Dp
+) {
+    var isLoading by remember { mutableStateOf(true) }
+    var isError by remember { mutableStateOf(false) }
 
-    AsyncImage(
+    //비율은 그냥 테스트
+    val heightNum = postContentModel.postId.filter { it.isDigit() }
+        .takeIf { it.isNotEmpty() }?.toIntOrNull() ?: 0
+    val height = if (heightNum % 2 == 0) (width.value * 1.4).dp else width + 20.dp
+
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(height)
-            .clip(RoundedCornerShape(10.dp)),
-        model = galleryThumbnail.imageUrl,
-        contentDescription = null,
-        contentScale = ContentScale.Crop
-    )
+            .clip(RoundedCornerShape(10.dp))
+            .background(Surface2)
+    ) {
+        AsyncImage(
+            modifier = Modifier.fillMaxSize(),
+            model = postContentModel.imageUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            onLoading = {
+                isLoading = true
+                isError = false
+            },
+            onSuccess = {
+                isLoading = false
+                isError = false
+            },
+            onError = {
+                isLoading = false
+                isError = true
+            }
+        )
 
+        if (isLoading) {
+            CircularProgressIndicator(
+                color = Color.Gray,
+                modifier = Modifier
+                    .size(48.dp)
+                    .align(Alignment.Center)
+            )
+        }
+
+        if (isError) {
+            Text(
+                modifier = Modifier.align(Alignment.Center),
+                text = "이미지를 로드할 수 없음.\n 다시 시도해주세요.",
+                style = MaterialTheme.typography.labelMedium,
+            )
+        }
+    }
 }
 
-//@Preview
-//@Composable
-//private fun GalleryItemPreview() {
-//    GalleryItem(MockDataProvider.getRandomGalleryThumbnail(), 200.dp)
-//}
+@Preview
+@Composable
+private fun GalleryItemPreview() {
+    GalleryItem(MockDataProvider.getRandomGalleryPostContentModel(), 200.dp)
+}
