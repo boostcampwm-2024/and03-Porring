@@ -53,7 +53,8 @@ class SearchViewModel @Inject constructor(
     val currentPage get() = _currentPage
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-    val searchResult = _searchQuery.debounce(SEARCH_DEBOUNCE_TIME_MILLIS)
+    val searchResult = _searchQuery
+        .debounce(SEARCH_DEBOUNCE_TIME_MILLIS)
         .distinctUntilChanged()
         .flatMapLatest { query ->
             if (query.isBlank()) {
