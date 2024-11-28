@@ -35,10 +35,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.data)
-    implementation(projects.core.navigation)
-    implementation(projects.core.designsystem)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -46,10 +42,15 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation(libs.bundles.android.compose)
-
     //hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.android.compiler)
+
+    implementation(libs.bundles.android.compose)
+
+    implementation(projects.core.data)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.navigation)
 }
+

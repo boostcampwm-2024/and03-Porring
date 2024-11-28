@@ -37,7 +37,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -45,8 +44,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-    implementation(libs.bundles.android.compose)
 
     //camera(with optional)
     implementation(libs.androidx.camera.core)
@@ -65,14 +62,15 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-
     //hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.android.compiler)
 
-    implementation(projects.core.navigation)
-    implementation(projects.core.data)
+    implementation(libs.bundles.android.compose)
+
     implementation(projects.core.common)
+    implementation(projects.core.data)
     implementation(projects.core.designsystem)
+    implementation(projects.core.navigation)
 }

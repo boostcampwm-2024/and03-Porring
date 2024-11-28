@@ -7,10 +7,10 @@ plugins {
 
 android {
     namespace = "com.kolown.data"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 24
+        minSdk = libs.versions.minSdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -37,9 +37,6 @@ android {
 }
 
 dependencies {
-
-    api(projects.core.model)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -66,9 +63,12 @@ dependencies {
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
+    // credential, auth
     implementation(libs.androidx.credentials)
     implementation(libs.google.play.services.auth)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.google.android.googleid)
+
+    api(projects.core.model)
 }
 

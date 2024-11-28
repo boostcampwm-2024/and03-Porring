@@ -43,7 +43,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation(libs.bundles.android.compose)
 
     //paging
     implementation(libs.androidx.paging.runtime)
@@ -60,9 +59,11 @@ dependencies {
 
     implementation(libs.androidx.foundation)
 
-    implementation(projects.core.data)
-    implementation(projects.core.navigation)
-    implementation(projects.core.domain)
-    implementation(projects.core.designsystem)
+    implementation(libs.bundles.android.compose)
+
     implementation(projects.core.common)
+    implementation(projects.core.data)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.domain)
+    implementation(projects.core.navigation)
 }

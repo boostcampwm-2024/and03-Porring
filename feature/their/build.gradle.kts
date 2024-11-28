@@ -36,7 +36,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -56,12 +55,13 @@ dependencies {
     //coil
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
-    implementation(libs.bundles.android.compose)
 
     implementation(libs.androidx.foundation)
 
+    implementation(libs.bundles.android.compose)
+
     implementation(projects.core.data)
+    implementation(projects.core.designsystem)
     implementation(projects.core.domain)
     implementation(projects.core.navigation)
-    implementation(projects.core.designsystem)
 }
