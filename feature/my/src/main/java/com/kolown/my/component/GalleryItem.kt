@@ -3,32 +3,16 @@ package com.kolown.my.component
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,22 +22,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImage
 import com.kolown.data.mock.MockDataProvider
-import com.kolown.designsystem.Error
-import com.kolown.designsystem.Gray
-import com.kolown.designsystem.Primary
 import com.kolown.designsystem.Surface2
 import com.kolown.model.PostContentModel
-import kotlin.random.Random
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -66,12 +42,14 @@ fun GalleryItem(
     var isError by remember { mutableStateOf(false) }
 
     //비율은 그냥 테스트
-    val heightNum = postContentModel.postId.filter { it.isDigit() }.toInt()
+    val heightNum = postContentModel.postId.filter { it.isDigit() }
+        .takeIf { it.isNotEmpty() }?.toIntOrNull() ?: 0
     val height = if (heightNum % 2 == 0) (width.value * 1.4).dp else width + 20.dp
     val isDialogVisible = remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .height(height)
             .clip(RoundedCornerShape(10.dp))
             .background(Surface2)
@@ -79,7 +57,7 @@ fun GalleryItem(
         AsyncImage(
             modifier = Modifier
                 .fillMaxSize()
-                .combinedClickable (
+                .combinedClickable(
                     onClick = {
                         // todo navigateToDetail
                     },
@@ -108,7 +86,9 @@ fun GalleryItem(
         if (isLoading) {
             CircularProgressIndicator(
                 color = Color.Gray,
-                modifier = Modifier.size(48.dp).align(Alignment.Center)
+                modifier = Modifier
+                    .size(48.dp)
+                    .align(Alignment.Center)
             )
         }
 
@@ -120,7 +100,7 @@ fun GalleryItem(
             )
         }
 
-        if(isDialogVisible.value) {
+        if (isDialogVisible.value) {
             DeleteDialog(
                 onClickCancel = { isDialogVisible.value = false },
                 onClickConfirm = {
