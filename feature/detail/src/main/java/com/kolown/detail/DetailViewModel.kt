@@ -1,6 +1,10 @@
 package com.kolown.detail
 
+import android.util.Log
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,7 +17,9 @@ import com.kolown.model.Reactions
 import com.kolown.model.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
@@ -23,15 +29,20 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     private val postRepository: PostRepository,
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<Flow<PagingData<PostContentModel>>>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
     private val reactionStateFlow = MutableStateFlow<Map<String, ReactionState>>(emptyMap())
 
+    private var _currentPage = 0
+    val currentPage get() =  _currentPage
+
 
     init {
+        Log.e("??init","")
+
         getItem()
     }
 
@@ -90,11 +101,16 @@ class DetailViewModel @Inject constructor(
     ) {
         reactionStateFlow.update { reactionState ->
             val newState = reactionState.toMutableMap()
-
             newState[postId] = ReactionState(prev = prevReaction, current = currentReaction)
             newState
         }
     }
+
+    fun updatePage(page: Int) {
+        _currentPage = page
+    }
+
+
 }
 
 data class ReactionState(

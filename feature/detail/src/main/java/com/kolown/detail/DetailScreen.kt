@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.os.Build
+import android.util.Log
 import android.view.View
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
@@ -44,6 +45,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +54,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -70,8 +73,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.kolown.designsystem.Gray
-import com.kolown.designsystem.PrimaryDark
 import com.kolown.detail.component.DetailTopAppBar
 import com.kolown.detail.component.FollowDialog
 import com.kolown.detail.component.ReactionDialog
@@ -79,6 +80,7 @@ import com.kolown.detail.component.ReactionGroup
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.model.UiState
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -89,11 +91,13 @@ internal fun DetailRoute(
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     popBackStack: () -> Unit,
     padding: PaddingValues = PaddingValues(),
-    navigateToTheir : (String) -> Unit,
+    navigateToTheir: (String) -> Unit,
     detailViewModel: DetailViewModel = hiltViewModel(),
 ) {
     var isReelsMode by remember { mutableStateOf(true) }
     val uiState = detailViewModel.uiState.collectAsStateWithLifecycle()
+    val currentPage = detailViewModel.currentPage
+
     val state = uiState.value
 
     when (state) {
@@ -101,7 +105,11 @@ internal fun DetailRoute(
         is UiState.Loading -> LoadingDetailScreen()
         is UiState.Success -> {
             val pagingItems = state.data.collectAsLazyPagingItems()
-            val pagerState = rememberPagerState(initialPage = 0) { pagingItems.itemCount + 1 }
+            val pagerState = rememberPagerState(initialPage = currentPage) { pagingItems.itemCount + 1 }
+
+            LaunchedEffect(pagingItems.itemCount) {
+                if (pagerState.currentPage == 0) pagerState.scrollToPage(currentPage)
+            }
 
             DetailScreen(
                 isLoggedIn = isLoggedIn,
@@ -116,30 +124,34 @@ internal fun DetailRoute(
                 pagingItems = pagingItems,
                 pagerState = pagerState,
                 padding = padding,
-                navigateToTheir = navigateToTheir
+                navigateToTheir = navigateToTheir,
+                updatePage = { page ->
+                    detailViewModel.updatePage(page)
+                }
             )
         }
 
-        is UiState.Failure -> {}
-    }
+    is UiState.Failure -> {}
+}
 }
 
 @Composable
 private fun DetailScreen(
     isLoggedIn: Boolean = false,
-    isReelsMode: Boolean = true,
     onShowLoginSnackBar: () -> Unit = {},
     onChangeReelsMode: (Boolean) -> Unit = {},
     popBackStack: () -> Unit = {},
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     viewModeChange: (Boolean) -> Unit = {},
+    isReelsMode: Boolean = true,
     firstItem: PostContentModel,
     pagingItems: LazyPagingItems<PostContentModel>,
     pagerState: PagerState,
     padding: PaddingValues = PaddingValues(),
-    navigateToTheir : (String) -> Unit,
-    ) {
+    navigateToTheir: (String) -> Unit,
+    updatePage: (Int) -> Unit
+) {
     Box(
         modifier = Modifier.fillMaxSize().background(Color(0xff151D37)).padding(padding)
     ) {
@@ -154,7 +166,8 @@ private fun DetailScreen(
             pagingItems = pagingItems,
             pagerState = pagerState,
             firstItem = firstItem,
-            navigateToTheir = navigateToTheir
+            navigateToTheir = navigateToTheir,
+            updatePage = updatePage
         )
 
         DetailTopAppBar(
@@ -169,17 +182,18 @@ private fun DetailScreen(
 @Composable
 private fun DetailContent(
     isLoggedIn: Boolean,
-    isReelsMode: Boolean,
     onShowLoginSnackBar: () -> Unit,
     onChangeReelsMode: (Boolean) -> Unit,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
     viewModeChange: (Boolean) -> Unit,
+    isReelsMode: Boolean,
     pagingItems: LazyPagingItems<PostContentModel>,
     pagerState: PagerState,
     firstItem: PostContentModel,
     navigateToTheir : (String) -> Unit,
-    ) {
+    updatePage: (Int) -> Unit
+) {
     VerticalPager(
         modifier = Modifier.fillMaxSize(),
         state = pagerState,
@@ -198,7 +212,10 @@ private fun DetailContent(
             onSelectReaction = onSelectReaction,
             imageItem = imageItem,
             onDoubleTab = viewModeChange,
-            navigateToTheir = navigateToTheir
+            navigateToTheir = navigateToTheir,
+            updatePage = {
+                updatePage(pagerState.currentPage)
+            }
         )
     }
 
@@ -216,9 +233,11 @@ private fun DetailItem(
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
     onDoubleTab: (Boolean) -> Unit,
-    navigateToTheir : (String) -> Unit,
-    ) {
+    navigateToTheir: (String) -> Unit,
+    updatePage: () -> Unit
+) {
     val view = LocalView.current
+
 
     if (isReelsMode) {
         onDoubleTab(true)
@@ -237,7 +256,8 @@ private fun DetailItem(
                 requestFullScreen(view)
                 onDoubleTab(false)
             },
-            navigateToTheir =  navigateToTheir
+            navigateToTheir = navigateToTheir,
+            updatePage = updatePage
         )
     } else {
         ConcentrateContent(
@@ -258,7 +278,8 @@ private fun ReelsContent(
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
-    navigateToTheir : (String) -> Unit,
+    navigateToTheir: (String) -> Unit,
+    updatePage: () -> Unit,
     onDoubleTab: () -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -273,8 +294,11 @@ private fun ReelsContent(
 
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current).data(imageItem.imageUrl)
-                .crossfade(true).build(),
-            modifier = Modifier.fillMaxWidth().aspectRatio(4f / 5f)
+                .crossfade(true)
+                .build(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(4f / 5f)
                 .combinedClickable(indication = null,
                     interactionSource = interactionSource,
                     onClick = {},
@@ -313,7 +337,7 @@ private fun ReelsContent(
                 }
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -334,6 +358,7 @@ private fun ReelsContent(
                         DetailButton(
                             onClick = {
                                 navigateToTheir(imageItem.authorId)
+                                updatePage()
                             }, id = R.drawable.ic_detail_gallary, buttonText = "갤러리"
                         )
 
@@ -396,13 +421,17 @@ private fun ConcentrateContent(
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current).data(imageUrl).crossfade(true)
                 .build(),
-            modifier = Modifier.fillMaxWidth().aspectRatio(4f / 5f).align(Alignment.Center)
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(4f / 5f)
+                .align(Alignment.Center)
                 .graphicsLayer {
                     scaleX = scale
                     scaleY = scale
                     translationX = offset.x
                     translationY = offset.y
-                }.transformable(state),
+                }
+                .transformable(state),
             contentDescription = "",
             contentScale = ContentScale.Crop,
         )
