@@ -65,7 +65,9 @@ internal fun HomeRoute(
 
         UiState.Loading -> {
             Box(
-                modifier = Modifier.padding(padding).fillMaxSize(),
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(modifier = Modifier.size(64.dp))
@@ -114,7 +116,10 @@ private fun HomeScreen(
     var isReactionDialogVisible by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(padding).padding(top = 64.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)
+            .padding(top = 64.dp)
             .pointerInput(isReactionDialogVisible) {
                 if (isReactionDialogVisible) {
                     detectTapGestures { isReactionDialogVisible = false }
@@ -136,13 +141,16 @@ private fun HomeScreen(
             navigateToDetail = navigateToDetail
         )
         Spacer(
-            modifier = Modifier.fillMaxWidth().height(100.dp).background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.Transparent, Color.Black
-                    )
-                ), alpha = 0.05f
-            )
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Transparent, Color.Black
+                        )
+                    ), alpha = 0.05f
+                )
         )
     }
 }
@@ -150,7 +158,10 @@ private fun HomeScreen(
 @Composable
 private fun ErrorScreen(padding: PaddingValues = PaddingValues()) {
     Box(
-        modifier = Modifier.fillMaxSize().padding(padding).padding(top = 64.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)
+            .padding(top = 64.dp)
     ) {
         Column(
             modifier = Modifier.align(Alignment.Center),
@@ -166,7 +177,10 @@ private fun ErrorScreen(padding: PaddingValues = PaddingValues()) {
         }
 
         Spacer(
-            modifier = Modifier.fillMaxWidth().height(100.dp).align(Alignment.BottomCenter)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .align(Alignment.BottomCenter)
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(
