@@ -62,8 +62,7 @@ internal class MainNavigator(
 
     fun navigateToTheir(authorId: String) = navController.navigateTheir(authorId)
 
-    fun navigateToUpload(imgUri: String, uploadModel: UploadModel) =
-        navController.navigateUpload(imgUri, uploadModel)
+    fun navigateToUpload(imgUri: String, uploadModel: UploadModel) = navController.navigateUpload(imgUri, uploadModel)
 
     fun navigateToDetail() = navController.navigateToDetail()
 
@@ -80,7 +79,6 @@ internal class MainNavigator(
     }
 
     fun getBackStackEntry() : NavBackStackEntry = navController.getBackStackEntry(MainMenu.HOME.route)
-
 
     @Composable
     fun isShowBottomBar() = MainMenu.contains {
