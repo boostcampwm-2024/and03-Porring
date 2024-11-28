@@ -1,5 +1,6 @@
 package com.kolown.data.datasource.remote
 
+import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -21,6 +22,7 @@ interface PostDataSource {
         key: String?,
         perPage: Long
     ): Result<List<PostModel>>
+
     suspend fun deletePost(postId: String): Result<Unit>
     suspend fun getUserFollowerPost(uid: String, perPage: Long): Result<List<PostModel>>
 }
@@ -33,7 +35,7 @@ class PostDataSourceImpl @Inject constructor(
     private var lastVisible: DocumentSnapshot? = null
 
     override suspend fun getUserPost(uid: String, perPage: Long): Result<List<PostModel>> {
-        return kotlin.runCatching {
+        return runCatching {
             if (lastVisible == null) {
                 postCollection
                     .whereEqualTo("authorId", uid)
@@ -41,8 +43,8 @@ class PostDataSourceImpl @Inject constructor(
                     .limit(perPage)
                     .get()
                     .await()
-                    .also { lastVisible = it.documents.last() }
-                    .map { it.toObject(PostDto::class.java).toPostModel() }
+                    .also { querySnapshot -> lastVisible = querySnapshot.documents.lastOrNull() }
+                    .mapNotNull { it.toObject(PostDto::class.java).toPostModel() }
             } else {
                 postCollection
                     .whereEqualTo("authorId", uid)
@@ -51,14 +53,14 @@ class PostDataSourceImpl @Inject constructor(
                     .limit(perPage)
                     .get()
                     .await()
-                    .also { lastVisible = it.documents.lastOrNull() }
-                    .map { it.toObject(PostDto::class.java).toPostModel() }
+                    .also { querySnapshot -> lastVisible = querySnapshot.documents.lastOrNull() }
+                    .mapNotNull { it.toObject(PostDto::class.java).toPostModel() }
             }
         }
     }
 
     override suspend fun getUserFollowerPost(uid: String, perPage: Long): Result<List<PostModel>> {
-        return kotlin.runCatching {
+        return runCatching {
             postCollection
                 .whereEqualTo("authorId", uid)
                 .limit(perPage)
@@ -118,7 +120,7 @@ class PostDataSourceImpl @Inject constructor(
         page: Long,
         perPage: Long
     ): Result<List<PostModel>> {
-        return kotlin.runCatching {
+        return runCatching {
             val fetchPosts: suspend (Long) -> List<PostModel> = { key ->
                 postCollection
                     .whereNotEqualTo("authorId", uid)
@@ -139,7 +141,7 @@ class PostDataSourceImpl @Inject constructor(
         key: String?,
         perPage: Long
     ): Result<List<PostModel>> {
-        return kotlin.runCatching {
+        return runCatching {
             // 쿼리 초기화
             val query = postCollection
                 .whereIn("postId", postIds)
