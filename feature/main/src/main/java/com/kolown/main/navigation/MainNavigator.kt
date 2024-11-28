@@ -1,7 +1,9 @@
 package com.kolown.main.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -18,6 +20,7 @@ import com.kolown.login.navigation.navigateLogin
 import com.kolown.model.UploadModel
 import com.kolown.my.navigation.navigateMy
 import com.kolown.search.navigation.navigateSearch
+import com.kolown.search.navigation.navigateSearchDetail
 import com.kolown.setting.navigation.navigateSetting
 import com.kolown.their.navigation.navigateTheir
 import com.kolown.upload.navigation.navigateUpload
@@ -26,7 +29,7 @@ internal class MainNavigator(
     val navController: NavHostController,
 ) {
     val startDestination = MainMenu.HOME.route
-    val currentDestination: NavDestination?
+    private val currentDestination: NavDestination?
         @Composable get() = navController.currentBackStackEntryAsState().value?.destination
     val currentMenu: MainMenu?
         @Composable get() = MainMenu.find { m ->
@@ -70,9 +73,14 @@ internal class MainNavigator(
 
     fun navigateToJoin() = navController.navigateToJoin()
 
+    fun navigateToDetailSearch() = navController.navigateSearchDetail()
+
     fun popBackStack() {
         navController.popBackStack()
     }
+
+    val backStackEntry get() = navController.getBackStackEntry(MainMenu.HOME.route)
+
 
     @Composable
     fun isShowBottomBar() = MainMenu.contains {

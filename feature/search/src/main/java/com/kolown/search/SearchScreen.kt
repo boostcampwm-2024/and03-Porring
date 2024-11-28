@@ -47,16 +47,21 @@ import com.kolown.search.component.TagSearchBar
 @Composable
 internal fun SearchRoute(
     padding: PaddingValues = PaddingValues(),
+    navigateToSearchDetail : () -> Unit,
+    viewModel: SearchViewModel
 ) {
     SearchScreen(
-        padding = padding
+        padding = padding,
+        viewModel = viewModel,
+        navigateToSearchDetail = navigateToSearchDetail
     )
 }
 
 @Composable
 private fun SearchScreen(
     padding: PaddingValues = PaddingValues(),
-    viewModel: SearchViewModel = hiltViewModel(),
+    navigateToSearchDetail : () -> Unit,
+    viewModel: SearchViewModel,
 ) {
 
     val searchResultTag = viewModel.searchResult.collectAsLazyPagingItems()
@@ -84,7 +89,7 @@ private fun SearchScreen(
                 .fillMaxWidth()
                 .padding(16.dp)
                 .height(54.dp),
-            text = if(focusState) searchText else tag?.name ?: "",
+            text = if (focusState) searchText else tag?.name ?: "",
             onValueChange = viewModel::setSearchQuery,
             onFocusChange = {
                 focusState = it
@@ -114,7 +119,13 @@ private fun SearchScreen(
 
                 items(searchResultPost.itemCount) { index ->
                     searchResultPost[index]?.let { post ->
-                        PostItem(post)
+                        PostItem(
+                            post,
+                            onClick = {
+                                viewModel.setPage(index)
+                                navigateToSearchDetail()
+                            }
+                        )
                     }
                 }
             }
@@ -140,11 +151,6 @@ private fun SearchScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun PreviewSearchScreen() {
-    SearchScreen()
-}
 
 @Composable
 private fun ExpandableColumnExample() {
