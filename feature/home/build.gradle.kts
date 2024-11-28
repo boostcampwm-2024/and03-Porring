@@ -53,6 +53,9 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.android.compiler)
 
+    //lottie
+    implementation(libs.lottie.compose)
+
     implementation(projects.core.navigation)
     implementation(projects.core.model)
     implementation(projects.core.data)
