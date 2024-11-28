@@ -60,7 +60,7 @@ internal fun HomeRoute(
     }
 
     LaunchedEffect(uiState) {
-        if(uiState is UiState.Loading) {
+        if (uiState is UiState.Loading) {
             delay(5000)
             showErrorScreen = true
         } else {
