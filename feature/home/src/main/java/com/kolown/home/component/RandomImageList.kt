@@ -44,7 +44,12 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.kolown.designsystem.Primary
+import com.kolown.home.R
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 
@@ -62,20 +67,28 @@ internal fun RandomImageList(
     navigateToDetail: () -> Unit = {},
 ) {
     HorizontalPager(
-        modifier = Modifier.padding(top = 32.dp),
         state = pagerState
     ) { page ->
-        ImageCard(
-            imageItem = imageItems[page],
-            isReactionDialogVisible = isReactionDialogVisible,
-            onFollowClick = onFollowClick,
-            onUnfollowClick = onUnfollowClick,
-            onChangeReactionDialogVisibility = onChangeReactionDialogVisibility,
-            navigateToTheir = navigateToTheir,
-            onSelectReaction = { reaction -> onSelectReaction(imageItems[page], reaction) },
-            fetchDetailFirst = fetchDetailFirst,
-            navigateToDetail = navigateToDetail
-        )
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            ImageCard(
+                imageItem = imageItems[page],
+                isReactionDialogVisible = isReactionDialogVisible,
+                onFollowClick = onFollowClick,
+                onUnfollowClick = onUnfollowClick,
+                onChangeReactionDialogVisibility = onChangeReactionDialogVisibility,
+                navigateToTheir = navigateToTheir,
+                onSelectReaction = { reaction -> onSelectReaction(imageItems[page], reaction) },
+                fetchDetailFirst = fetchDetailFirst,
+                navigateToDetail = navigateToDetail
+            )
+            LottieFireWorkAnimation(
+                modifier = Modifier.align(Alignment.TopEnd),
+                reactions = imageItems[page].reactions,
+                myReaction = imageItems[page].myReaction
+            )
+        }
     }
 }
 
@@ -93,12 +106,12 @@ private fun ImageCard(
 ) {
     val likedImageVector =
         if (imageItem.myReaction == null) Icons.Outlined.FavoriteBorder else Icons.Outlined.Favorite
-    val isFollowDialogVisible = remember { mutableStateOf(false) }
-    val isFirstRenderer = remember { mutableStateOf(true) }
+    var isFollowDialogVisible by remember { mutableStateOf(false) }
+    var isFirstRenderer by remember { mutableStateOf(true) }
     val sizeAnimation = remember { Animatable(1f) }
 
     LaunchedEffect(imageItem.myReaction) {
-        if (!isFirstRenderer.value) {
+        if (!isFirstRenderer) {
             sizeAnimation.animateTo(
                 targetValue = 1.4f,
                 animationSpec = tween(durationMillis = 100)
@@ -116,7 +129,7 @@ private fun ImageCard(
                 animationSpec = tween(durationMillis = 100)
             )
         } else {
-            isFirstRenderer.value = false
+            isFirstRenderer = false
         }
     }
 
@@ -124,6 +137,7 @@ private fun ImageCard(
         Box(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
+                .padding(top = 40.dp)
                 .fillMaxWidth()
                 .aspectRatio(4f / 5f),
             contentAlignment = Alignment.Center
@@ -149,7 +163,7 @@ private fun ImageCard(
                     if (imageItem.isFollower) {
                         onUnfollowClick(imageItem.authorId)
                     } else {
-                        isFollowDialogVisible.value = true
+                        isFollowDialogVisible = true
                     }
                 }
             )
@@ -178,9 +192,9 @@ private fun ImageCard(
                 tint = Primary
             )
         }
-        if (isFollowDialogVisible.value) {
+        if (isFollowDialogVisible) {
             FollowDialog(
-                onClickCancel = { isFollowDialogVisible.value = false },
+                onClickCancel = { isFollowDialogVisible = false },
                 onClickConfirm = { name ->
                     onFollowClick(imageItem.authorId, name)
                 }
@@ -299,6 +313,44 @@ private fun CustomIconButton(
             imageVector = imageVector,
             contentDescription = null,
             tint = if (isSelected) Color.White else Primary
+        )
+    }
+}
+
+@Composable
+fun LottieFireWorkAnimation(
+    modifier: Modifier,
+    reactions: List<Reactions>,
+    myReaction: Reactions?
+) {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.fireworks))
+    var isAnimationPlaying by remember { mutableStateOf(false) }
+    var isFirstShow by remember { mutableStateOf(true) }
+
+    LaunchedEffect(reactions) {
+        if (reactions.isNotEmpty() && myReaction != null && !isFirstShow) {
+            isAnimationPlaying = true
+        }
+        isFirstShow = false
+    }
+
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        isPlaying = isAnimationPlaying,
+        iterations = 1,
+    )
+
+    LaunchedEffect(progress) {
+        if (progress == 1f) {
+            isAnimationPlaying = false
+        }
+    }
+
+    if(isAnimationPlaying) {
+        LottieAnimation(
+            modifier = modifier.size(140.dp),
+            composition = composition,
+            progress = { progress }
         )
     }
 }
