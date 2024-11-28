@@ -76,6 +76,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.kolown.designsystem.Gray
 import com.kolown.designsystem.PrimaryDark
 import com.kolown.detail.component.DetailTopAppBar
 import com.kolown.detail.component.FollowDialog
