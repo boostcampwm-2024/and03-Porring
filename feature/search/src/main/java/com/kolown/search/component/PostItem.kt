@@ -1,5 +1,6 @@
 package com.kolown.search.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,12 +15,18 @@ import com.kolown.model.Post
 import com.kolown.model.PostContentModel
 
 @Composable
-internal fun PostItem(post: PostContentModel) {
+fun PostItem(
+    post: PostContentModel,
+    onClick : () -> Unit
+) {
     AsyncImage(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f)
-            .clip(RoundedCornerShape(10.dp)),
+            .clip(RoundedCornerShape(10.dp))
+            .clickable {
+                onClick()
+            },
         model = post.imageUrl,
         contentDescription = null,
         contentScale = ContentScale.Crop

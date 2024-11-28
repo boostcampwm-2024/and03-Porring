@@ -42,4 +42,7 @@ sealed interface MainMenuRoute : Route {
 sealed interface AppRoute : Route {
     @Serializable
     data object Detail : AppRoute
+
+    @Serializable
+    data object DetailSearch : AppRoute
 }

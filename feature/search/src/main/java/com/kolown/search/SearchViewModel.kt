@@ -32,6 +32,9 @@ class SearchViewModel @Inject constructor(
     private val _tag = MutableStateFlow<Tag?>(null)
     val tag = _tag.asStateFlow()
 
+    private var _firstPage = 0
+    val firstPage get() = _firstPage
+
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     val searchResult = _searchQuery.debounce(SEARCH_DEBOUNCE_TIME_MILLIS)
         .filter { it.isNotBlank() }
@@ -59,6 +62,11 @@ class SearchViewModel @Inject constructor(
                 .onStart { emit(PagingData.empty()) }
         } ?: flow { emit(PagingData.empty()) }
     }
+
+    fun setPage(page : Int) {
+        _firstPage = page
+    }
+
 
     companion object {
         const val SEARCH_DEBOUNCE_TIME_MILLIS = 300L
