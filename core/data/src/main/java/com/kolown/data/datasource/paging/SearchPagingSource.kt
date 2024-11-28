@@ -2,6 +2,8 @@ package com.kolown.data.datasource.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.kolown.data.datasource.remote.AuthDataSource
+import com.kolown.data.datasource.remote.FollowDataSource
 import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.TagDataSource
@@ -10,27 +12,34 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Named
 
 
 class SearchPagingSource(
     private val postDataSource: PostDataSource,
     private val tagDataSource: TagDataSource,
     private val reactionDataSource: ReactionDataSource,
-    val tagId : String
+    private val followerDataSource: FollowDataSource,
+    @Named("google") private val googleAuthDataSource: AuthDataSource,
+    val tagId: String
 ) : PagingSource<String, PostContentModel>() {
 
     override suspend fun load(params: LoadParams<String>): LoadResult<String, PostContentModel> {
         return try {
-            val postIds = tagDataSource.getPostTagByTagId(tagId).getOrElse { throw Exception("포스트 불러오기 실패") }
+            val currentUserId = googleAuthDataSource.getUserId()
+            val postIds =
+                tagDataSource.getPostTagByTagId(tagId).getOrElse { throw Exception("포스트 불러오기 실패") }
             val page = params.key
             val posts = postDataSource.getPostBySearch(
+                currentUserId = currentUserId,
                 postIds = postIds,
                 key = page,
                 perPage = params.loadSize.toLong()
-            ).getOrElse { throw Exception("포스트 불러오기 실패")  }
+            ).getOrElse { throw Exception("포스트 불러오기 실패") }
 
 
-            val (tags, reactions) = coroutineScope {
+            val (tags, reactions, isFollowers) = coroutineScope {
                 val tagsDeferred = async {
                     posts.map {
                         async {
@@ -49,8 +58,20 @@ class SearchPagingSource(
                         }
                     }.awaitAll()
                 }
+                val followDeferred = async {
+                    posts.map {
+                        async {
+                            followerDataSource.getIsFollower(
+                                userId = currentUserId,
+                                followerId = it.authorId
+                            ).getOrElse {
+                                throw IOException("팔로우 확인 실패")
+                            }
+                        }
+                    }.awaitAll()
+                }
 
-                tagsDeferred.await() to reactionsDeferred.await()
+                Triple(tagsDeferred.await(), reactionsDeferred.await(), followDeferred.await())
             }
             val lastPostRegisteredAt = posts.lastOrNull()?.postId
 
@@ -63,7 +84,7 @@ class SearchPagingSource(
                         registerAt = postModel.registerAt,
                         description = postModel.description,
                         tags = tags[index].map { it.tagName },
-                        isFollower = false,
+                        isFollower = isFollowers[index],
                         reactions = reactions[index].mapNotNull { it.reaction }
                     )
                 },
@@ -71,7 +92,7 @@ class SearchPagingSource(
                 nextKey = lastPostRegisteredAt
             )
 
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             return LoadResult.Error(e)
         }
     }

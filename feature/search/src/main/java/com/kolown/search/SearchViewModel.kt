@@ -8,6 +8,7 @@ import androidx.paging.cachedIn
 import com.kolown.data.repository.FollowRepository
 import com.kolown.data.repository.PostRepository
 import com.kolown.data.repository.TagRepository
+import com.kolown.data.repository.UserRepository
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.model.Tag
@@ -34,7 +35,8 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val tagRepository: TagRepository,
     private val postRepository: PostRepository,
-    private val followRepository: FollowRepository
+    private val followRepository: FollowRepository,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
@@ -132,6 +134,8 @@ class SearchViewModel @Inject constructor(
     fun updatePage(page: Int) {
         _currentPage = page
     }
+
+    fun checkPostIsMine(authorId : String)  = userRepository.checkUserId(authorId)
 
 
     companion object {

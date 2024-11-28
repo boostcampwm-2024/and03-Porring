@@ -89,7 +89,8 @@ internal fun DetailSearchRoute(
 
     val searchResultPost = viewModel.resultPostList.collectAsLazyPagingItems()
 
-    val pagerState = rememberPagerState(initialPage = viewModel.firstPage) { searchResultPost.itemCount }
+    val pagerState =
+        rememberPagerState(initialPage = viewModel.firstPage) { searchResultPost.itemCount }
     val followState = viewModel.followState.collectAsStateWithLifecycle(null)
 
     DetailSearchScreen(
@@ -104,6 +105,7 @@ internal fun DetailSearchRoute(
         updatePage = { page ->
             viewModel.updatePage(page)
         },
+        checkPostIsMine = viewModel::checkPostIsMine
     )
 }
 
@@ -120,7 +122,8 @@ fun DetailSearchScreen(
     updatePage: (Int) -> Unit = {},
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-    followerState: State<Pair<String, Boolean>?>
+    followerState: State<Pair<String, Boolean>?>,
+    checkPostIsMine: (String) -> Boolean
 ) {
     Box(
         modifier = Modifier
@@ -139,8 +142,8 @@ fun DetailSearchScreen(
             updatePage = updatePage,
             onFollowClick = onFollowClick,
             onUnfollowClick = onUnfollowClick,
-            followerState = followerState
-
+            followerState = followerState,
+            checkPostIsMine = checkPostIsMine
         )
 
 
@@ -163,6 +166,7 @@ fun DetailContent(
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
     followerState: State<Pair<String, Boolean>?>,
+    checkPostIsMine: (String) -> Boolean
 ) {
 
     VerticalPager(
@@ -183,7 +187,8 @@ fun DetailContent(
             },
             onFollowClick = onFollowClick,
             onUnfollowClick = onUnfollowClick,
-            followerState = followerState
+            followerState = followerState,
+            checkPostIsMine = checkPostIsMine
         )
 
     }
@@ -203,6 +208,7 @@ fun DetailItem(
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
     followerState: State<Pair<String, Boolean>?>,
+    checkPostIsMine: (String) -> Boolean
 ) {
     val view = LocalView.current
     val isConcentrateMode = remember {
@@ -224,6 +230,7 @@ fun DetailItem(
             onFollowClick = onFollowClick,
             onUnfollowClick = onUnfollowClick,
             followerState = followerState,
+            checkPostIsMine = checkPostIsMine
         )
     } else {
         ConcentrateContent(
@@ -252,6 +259,7 @@ fun ReelsContent(
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
     followerState: State<Pair<String, Boolean>?>,
+    checkPostIsMine: (String) -> Boolean
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isReactionVisible = remember { mutableStateOf(false) }
@@ -327,32 +335,35 @@ fun ReelsContent(
                             isReactionVisible.value = true
                         })
                     Row {
+                        if (checkPostIsMine(imageItem.authorId)) {
+                            DetailButton(
+                                onClick = {
+                                    if (isFollowed.value) {
+                                        onUnfollowClick(imageItem.authorId)
+                                    } else {
+                                        isFollowDialogVisible.value = true
+                                    }
+                                },
+                                id = R.drawable.ic_detail_follow,
+                                buttonText = "팔로우",
+                                contentColor = if (isFollowed.value) Color(0xFF151D37) else Color(
+                                    0xFF00BBFF
+                                ),
+                                backgroundColor = if (isFollowed.value) Color(0xFF00BBFF) else Color(
+                                    0xFF151D37
+                                )
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                        }
                         DetailButton(
                             onClick = {
                                 navigateToTheir(imageItem.authorId)
                                 updatePage()
                             },
-                            id = R.drawable.icon_arrow_back,
+                            id = R.drawable.ic_detail_gallary,
                             buttonText = "갤러리"
                         )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        DetailButton(
-                            onClick = {
-                                if (isFollowed.value) {
-                                    onUnfollowClick(imageItem.authorId)
-                                } else {
-                                    isFollowDialogVisible.value = true
-                                }
-                            },
-                            id = R.drawable.icon_arrow_back,
-                            buttonText = "팔로우",
-                            contentColor = if (isFollowed.value) Color(0xFF151D37) else Color(
-                                0xFF00BBFF
-                            ),
-                            backgroundColor = if (isFollowed.value) Color(0xFF00BBFF) else Color(
-                                0xFF151D37
-                            )
-                        )
+
                     }
                 }
             }

@@ -70,10 +70,12 @@ private fun SearchScreen(
     val searchText by viewModel.searchQuery.collectAsStateWithLifecycle()
     var focusState by remember { mutableStateOf(false) }
 
+
     val focusManager = LocalFocusManager.current
     LaunchedEffect(focusState) {
         if (!focusState) {
             focusManager.clearFocus()
+            viewModel.setSearchQuery(tag?.name ?: "")
         }
     }
     Column(

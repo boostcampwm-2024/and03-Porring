@@ -7,6 +7,7 @@ import javax.inject.Named
 
 interface UserRepository {
     suspend fun createUserData(): Result<Unit>
+    fun checkUserId(authorId : String) : Boolean
 }
 
 class UserRepositoryImpl @Inject constructor(
@@ -19,5 +20,9 @@ class UserRepositoryImpl @Inject constructor(
                 userDataSource.createUserData(it)
             }
         }
+    }
+
+    override fun checkUserId(authorId: String): Boolean {
+        return authDataSource.getUserId() == authorId
     }
 }

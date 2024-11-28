@@ -77,7 +77,7 @@ fun FollowDialog(
                     ),
                     trailingIcon = {
                         Icon(
-                            painter = painterResource(R.drawable.icon_arrow_back),
+                            painter = painterResource(R.drawable.icon_delete),
                             contentDescription = null,
                             modifier = Modifier.clickable {
                                 textValue.value = ""

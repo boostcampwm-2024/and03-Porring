@@ -110,7 +110,8 @@ internal fun DetailRoute(
         is UiState.Loading -> LoadingDetailScreen()
         is UiState.Success -> {
             val pagingItems = state.data.collectAsLazyPagingItems()
-            val pagerState = rememberPagerState(initialPage = currentPage) { pagingItems.itemCount + 1 }
+            val pagerState =
+                rememberPagerState(initialPage = currentPage) { pagingItems.itemCount + 1 }
 
             LaunchedEffect(pagingItems.itemCount) {
                 if (pagerState.currentPage == 0) pagerState.scrollToPage(currentPage)
@@ -161,7 +162,7 @@ private fun DetailScreen(
     updatePage: (Int) -> Unit,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-    followerState : State<Pair<String,Boolean>?>
+    followerState: State<Pair<String, Boolean>?>
 ) {
     Box(
         modifier = Modifier.fillMaxSize().background(Color(0xff151D37)).padding(padding)
@@ -209,7 +210,7 @@ private fun DetailContent(
     updatePage: (Int) -> Unit,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-    followerState : State<Pair<String,Boolean>?>,
+    followerState: State<Pair<String, Boolean>?>,
 ) {
 
     VerticalPager(
@@ -258,8 +259,8 @@ private fun DetailItem(
     updatePage: () -> Unit,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-    followerState : State<Pair<String,Boolean>?>,
-    ) {
+    followerState: State<Pair<String, Boolean>?>,
+) {
     val view = LocalView.current
     val isConcentrateMode = remember {
         mutableStateOf(false)
@@ -313,12 +314,13 @@ private fun ReelsContent(
     onDoubleTab: () -> Unit,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-    followerState : State<Pair<String,Boolean>?>,
-    ) {
+    followerState: State<Pair<String, Boolean>?>,
+) {
     val interactionSource = remember { MutableInteractionSource() }
     val isReactionVisible = remember { mutableStateOf(false) }
     val isFollowDialogVisible = remember { mutableStateOf(false) }
-    val isFollowed = rememberSaveable  { mutableStateOf(imageItem.isFollower) }
+    val isFollowed = rememberSaveable { mutableStateOf(imageItem.isFollower) }
+
 
     LaunchedEffect(followerState.value) {
         followerState.value?.let { pair ->
@@ -385,11 +387,7 @@ private fun ReelsContent(
                         tint = PrimaryDark,
                         contentDescription = "",
                         modifier = Modifier.clickable {
-                            if (isLoggedIn) {
-                                isReactionVisible.value = true
-                            } else {
-                                onShowLoginSnackBar()
-                            }
+                            isReactionVisible.value = true
                         })
 
                     Row(
@@ -418,8 +416,21 @@ private fun ReelsContent(
                             },
                             id = R.drawable.ic_detail_follow,
                             buttonText = "팔로우",
-                            contentColor = if(isFollowed.value) Color(0xFF151D37) else Color(0xFF00BBFF),
-                            backgroundColor = if(isFollowed.value) Color(0xFF00BBFF) else Color(0xFF151D37)
+                            contentColor = if (isFollowed.value) Color(0xFF151D37) else Color(
+                                0xFF00BBFF
+                            ),
+                            backgroundColor = if (isFollowed.value) Color(0xFF00BBFF) else Color(
+                                0xFF151D37
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        DetailButton(
+                            onClick = {
+                                navigateToTheir(imageItem.authorId)
+                                updatePage()
+                            },
+                            id = R.drawable.ic_detail_gallary,
+                            buttonText = "갤러리"
                         )
                     }
                 }
@@ -497,8 +508,8 @@ private fun DetailButton(
     onClick: () -> Unit,
     @DrawableRes id: Int,
     buttonText: String,
-    contentColor : Color = Color(0xFF00BBFF),
-    backgroundColor : Color = Color(0xFF151D37)
+    contentColor: Color = Color(0xFF00BBFF),
+    backgroundColor: Color = Color(0xFF151D37)
 ) {
     Button(
         onClick = onClick,

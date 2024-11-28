@@ -3,6 +3,7 @@ package com.kolown.data.datasource.remote
 import androidx.paging.PagingSource.LoadResult
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestoreSettings
 import com.kolown.data.remote.TagDto
 import com.kolown.data.remote.toTagModel
 import com.kolown.model.Tag
@@ -25,6 +26,7 @@ interface TagDataSource {
 class TagDataSourceImpl @Inject constructor(
     firestore: FirebaseFirestore,
 ) : TagDataSource {
+
     private val postTagCollection = firestore.collection("postTag")
     private val tagCollection = firestore.collection("tag")
 

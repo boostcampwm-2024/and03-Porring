@@ -211,7 +211,8 @@ class PostRepositoryImpl @Inject constructor(
             pagingSourceFactory = {
                 SearchPagingSource(
                     postDataSource = postDataSource, reactionDataSource = reactionDataSource,
-                    tagId = tagId, tagDataSource = tagDataSource
+                    tagId = tagId, tagDataSource = tagDataSource, followerDataSource = followDataSource,
+                    googleAuthDataSource = googleAuthDataSource
                 )
             }
         ).flow

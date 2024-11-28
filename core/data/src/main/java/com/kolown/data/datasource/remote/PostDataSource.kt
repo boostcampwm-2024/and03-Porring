@@ -18,6 +18,7 @@ interface PostDataSource {
     suspend fun getRandomPost(uid: String, page: Long, perPage: Long): Result<List<PostModel>>
     suspend fun getUserPost(uid: String, perPage: Long): Result<List<PostModel>>
     suspend fun getPostBySearch(
+        currentUserId : String,
         postIds: List<String>,
         key: String?,
         perPage: Long
@@ -137,6 +138,7 @@ class PostDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getPostBySearch(
+        currentUserId : String,
         postIds: List<String>,
         key: String?,
         perPage: Long
