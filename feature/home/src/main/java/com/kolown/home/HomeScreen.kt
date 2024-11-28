@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +38,7 @@ import com.kolown.home.component.RandomImageList
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.model.UiState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -51,19 +53,35 @@ internal fun HomeRoute(
     navigateToDetail: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showErrorScreen by remember { mutableStateOf(false) }
 
     SideEffect {
         viewModel.updateItems(mainItems)
     }
 
-    when (uiState) {
-        is UiState.Failure -> {
+    LaunchedEffect(uiState) {
+        if(uiState is UiState.Loading) {
+            delay(5000)
+            showErrorScreen = true
+        } else {
+            showErrorScreen = false
+        }
+    }
+
+    when {
+        showErrorScreen -> {
+            ErrorScreen(padding)
+        }
+
+        uiState is UiState.Failure -> {
+            showErrorScreen = false
             val error = (uiState as UiState.Failure).error
             Log.e("HomeRoute", "HomeRoute: $error")
             ErrorScreen(padding)
         }
 
-        UiState.Loading -> {
+        uiState is UiState.Loading -> {
+            showErrorScreen = false
             Box(
                 modifier = Modifier
                     .padding(padding)
@@ -74,27 +92,32 @@ internal fun HomeRoute(
             }
         }
 
-        is UiState.Success -> {
+        uiState is UiState.Success -> {
+            showErrorScreen = false
             val images = (uiState as UiState.Success<List<PostContentModel>>).data
-            HomeScreen(
-                padding = padding,
-                mainFeedImages = images,
-                onFollowClick = { id, name ->
-                    viewModel.followUser(id, name)
-                    updateFollow(id)
-                },
-                onUnfollowClick = {
-                    updateFollow(it)
-                    viewModel.unFollowUser(it)
-                },
-                navigateToTheir = navigateToTheir,
-                onSelectReaction = { post, reaction ->
-                    viewModel.selectReaction(post, reaction)
-                    onSelectReaction(post, reaction)
-                },
-                fetchDetailFirst = fetchDetailFirst,
-                navigateToDetail = navigateToDetail
-            )
+            if (images.isEmpty()) {
+                ErrorScreen(padding)
+            } else {
+                HomeScreen(
+                    padding = padding,
+                    mainFeedImages = images,
+                    onFollowClick = { id, name ->
+                        viewModel.followUser(id, name)
+                        updateFollow(id)
+                    },
+                    onUnfollowClick = {
+                        updateFollow(it)
+                        viewModel.unFollowUser(it)
+                    },
+                    navigateToTheir = navigateToTheir,
+                    onSelectReaction = { post, reaction ->
+                        viewModel.selectReaction(post, reaction)
+                        onSelectReaction(post, reaction)
+                    },
+                    fetchDetailFirst = fetchDetailFirst,
+                    navigateToDetail = navigateToDetail
+                )
+            }
         }
     }
 
