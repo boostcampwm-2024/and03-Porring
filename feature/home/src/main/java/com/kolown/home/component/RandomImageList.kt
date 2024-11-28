@@ -24,6 +24,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -242,15 +243,14 @@ private fun RandomImage(
         }
 
         if (isError) {
-            Column {
-                Icon(
-                    imageVector = Icons.Default.Warning,
-                    contentDescription = null,
-                    tint = Color.Gray,
-                    modifier = Modifier.size(60.dp)
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = "이미지를 로드할 수 없음. 다시 시도해주세요."
                 )
             }
-
         }
     }
 
