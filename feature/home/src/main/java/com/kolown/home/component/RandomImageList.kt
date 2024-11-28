@@ -2,6 +2,8 @@ package com.kolown.home.component
 
 import IconFollow
 import IconGallery
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -91,6 +94,31 @@ private fun ImageCard(
     val likedImageVector =
         if (imageItem.myReaction == null) Icons.Outlined.FavoriteBorder else Icons.Outlined.Favorite
     val isFollowDialogVisible = remember { mutableStateOf(false) }
+    val isFirstRenderer = remember { mutableStateOf(true) }
+    val sizeAnimation = remember { Animatable(1f) }
+
+    LaunchedEffect(imageItem.myReaction) {
+        if (!isFirstRenderer.value) {
+            sizeAnimation.animateTo(
+                targetValue = 1.4f,
+                animationSpec = tween(durationMillis = 100)
+            )
+            sizeAnimation.animateTo(
+                targetValue = 1.1f,
+                animationSpec = tween(durationMillis = 100)
+            )
+            sizeAnimation.animateTo(
+                targetValue = 1.2f,
+                animationSpec = tween(durationMillis = 100)
+            )
+            sizeAnimation.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(durationMillis = 100)
+            )
+        } else {
+            isFirstRenderer.value = false
+        }
+    }
 
     Column {
         Box(
@@ -144,7 +172,7 @@ private fun ImageCard(
             onClick = onChangeReactionDialogVisibility,
         ) {
             Icon(
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(30.dp * sizeAnimation.value),
                 imageVector = likedImageVector,
                 contentDescription = null,
                 tint = Primary
