@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun JoinTopAppBar(
+internal fun JoinTopAppBar(
     popBackStack: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {

@@ -56,12 +56,6 @@ dependencies {
     implementation(libs.androidx.camera.view)
     implementation(libs.androidx.camera.extension)
     implementation(libs.kotlinx.coroutines.guava)
-    //compose
-//    implementation(platform(libs.androidx.compose.bom))
-//    implementation(libs.androidx.compose.ui)
-//    implementation(libs.androidx.compose.ui.graphics)
-//    implementation(libs.androidx.compose.ui.tooling.preview)
-//    implementation(libs.androidx.compose.material3)
 
     // Jetpack Compose nav
     implementation(libs.androidx.navigation.compose)
@@ -80,4 +74,5 @@ dependencies {
     implementation(projects.core.navigation)
     implementation(projects.core.data)
     implementation(projects.core.common)
+    implementation(projects.core.designsystem)
 }

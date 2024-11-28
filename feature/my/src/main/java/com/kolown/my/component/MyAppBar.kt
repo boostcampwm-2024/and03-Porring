@@ -20,11 +20,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun MyAppBar(onSettingClicked: () -> Unit = {}) {
+internal fun MyAppBar(onSettingClicked: () -> Unit = {}) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(56.dp)
             .background(Color.White)
     ) {
         Text(
@@ -43,6 +43,6 @@ fun MyAppBar(onSettingClicked: () -> Unit = {}) {
 
 @Composable
 @Preview
-fun MyAppBarPreview() {
+private fun MyAppBarPreview() {
     MyAppBar()
 }

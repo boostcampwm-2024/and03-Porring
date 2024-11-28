@@ -44,7 +44,7 @@ internal fun CategoryGroup(
     categoryItems: List<String> = emptyList(),
     addCategory: () -> Unit,
     removeCategory: (String) -> Unit,
-    changeCategoryName: (Int, String) -> Unit
+    changeCategoryName: (Int, String) -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
     val previousSize = remember { mutableIntStateOf(categoryItems.size) }
@@ -82,7 +82,7 @@ private fun CategoryChip(
     item: String,
     onRemove: (String) -> Unit,
     onEdit: (String) -> Unit,
-    focusRequester: FocusRequester? = null
+    focusRequester: FocusRequester? = null,
 ) {
     Box(
         modifier = Modifier
@@ -128,7 +128,7 @@ private fun CategoryChip(
 
 @Composable
 private fun AddChipButton(
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Box(
         modifier = Modifier.height(32.dp),
@@ -154,7 +154,6 @@ private fun AddChipButton(
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
-
         }
     }
 }

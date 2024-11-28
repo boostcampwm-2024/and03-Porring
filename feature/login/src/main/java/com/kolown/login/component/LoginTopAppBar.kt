@@ -19,7 +19,7 @@ import com.kolown.designsystem.R.drawable
 import com.kolown.login.R
 
 @Composable
-fun LoginTopAppBar(
+internal fun LoginTopAppBar(
     isEmailLogin: Boolean = false,
     cancelEmailLogin: () -> Unit = {},
     popBackStack: () -> Unit = {},

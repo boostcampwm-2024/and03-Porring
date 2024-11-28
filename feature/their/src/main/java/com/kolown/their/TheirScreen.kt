@@ -68,7 +68,7 @@ internal fun TheirRoute(
 }
 
 @Composable
-fun TheirScreen(
+private fun TheirScreen(
     popBackStack: () -> Unit = {},
     padding: PaddingValues = PaddingValues(),
     followerName: String = "",
@@ -98,7 +98,7 @@ fun TheirScreen(
 }
 
 @Composable
-fun StateLazyGrid(
+private fun StateLazyGrid(
     listState: LazyStaggeredGridState,
     pagingItems: LazyPagingItems<PostContentModel>,
     width: Dp,

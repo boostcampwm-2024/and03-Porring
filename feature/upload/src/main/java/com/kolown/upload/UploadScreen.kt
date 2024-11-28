@@ -89,7 +89,7 @@ internal fun UploadRoute(
 }
 
 @Composable
-internal fun UploadScreen(
+private fun UploadScreen(
     imgUri: String = "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png",
     padding: PaddingValues = PaddingValues(),
     description: String = "",

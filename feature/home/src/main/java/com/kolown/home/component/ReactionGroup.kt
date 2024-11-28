@@ -21,7 +21,7 @@ import com.kolown.model.Reactions
 @Composable
 internal fun ReactionGroup(
     modifier: Modifier,
-    reactions: List<Reactions>
+    reactions: List<Reactions>,
 ) {
     val reactionList = reactions.distinct().sortedBy { it.ordinal }
 
@@ -40,7 +40,7 @@ internal fun ReactionGroup(
 private fun ReactionIcons(
     index: Int,
     reaction: Reactions,
-    size: Int
+    size: Int,
 ) {
     val offset = (-15 * index + (size - 1) * 15).dp
 

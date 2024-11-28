@@ -18,7 +18,7 @@ import com.kolown.designsystem.Primary
 import com.kolown.designsystem.Surface
 
 @Composable
-fun ButtonWithIcon(
+internal fun ButtonWithIcon(
     icon: Int,
     text: String,
     onClick: () -> Unit = {},
@@ -39,7 +39,7 @@ fun ButtonWithIcon(
 }
 
 @Composable
-fun ButtonWithIcon(
+internal fun ButtonWithIcon(
     icon: ImageVector,
     text: String,
     onClick: () -> Unit = {},

@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 
 @Composable
-fun PageItemFooter(
+internal fun PageItemFooter(
     modifier: Modifier = Modifier,
     loadState: LoadState,
     onRetryClicked: () -> Unit,
@@ -38,7 +38,7 @@ fun PageItemFooter(
 }
 
 @Composable
-fun LoadingPageItem(modifier: Modifier = Modifier) {
+private fun LoadingPageItem(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -49,7 +49,7 @@ fun LoadingPageItem(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun RetryPageItem(modifier: Modifier = Modifier, onRetryClicked: () -> Unit) {
+private fun RetryPageItem(modifier: Modifier = Modifier, onRetryClicked: () -> Unit) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -70,6 +70,6 @@ fun RetryPageItem(modifier: Modifier = Modifier, onRetryClicked: () -> Unit) {
 
 @Composable
 @Preview
-fun LoadingPreview() {
+private fun LoadingPreview() {
     LoadingPageItem()
 }

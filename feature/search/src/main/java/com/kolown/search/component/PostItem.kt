@@ -14,7 +14,7 @@ import com.kolown.model.Post
 import com.kolown.model.PostContentModel
 
 @Composable
-fun PostItem(post: PostContentModel) {
+internal fun PostItem(post: PostContentModel) {
     AsyncImage(
         modifier = Modifier
             .fillMaxWidth()

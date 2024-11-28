@@ -72,7 +72,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginRoute(
+internal fun LoginRoute(
     updateLoginState: () -> Unit,
     popBackStack: () -> Unit,
     onShowSnackBar: (String) -> Unit,
@@ -146,7 +146,7 @@ fun LoginRoute(
 }
 
 @Composable
-fun LoginScreen(
+private fun LoginScreen(
     isEmailLogin: Boolean = false,
     isLoginProgress: Boolean = false,
     navigateToJoin: () -> Unit = {},
