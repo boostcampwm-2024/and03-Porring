@@ -30,6 +30,8 @@ import coil3.compose.AsyncImage
 import com.kolown.data.mock.MockDataProvider
 import com.kolown.designsystem.Surface2
 import com.kolown.model.PostContentModel
+import kotlin.math.absoluteValue
+import kotlin.random.Random
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
