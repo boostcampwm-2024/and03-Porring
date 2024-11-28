@@ -44,6 +44,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.kolown.common.component.RestrictedLoginContent
+import com.kolown.follower.component.FollowerAppBar
 import com.kolown.follower.component.PageItemFooter
 import com.kolown.model.FollowerThumbnail
 import com.kolown.model.UiState
@@ -78,14 +79,20 @@ internal fun FollowerRoute(
             }
 
             is LoadState.NotLoading -> {
-                if(pagingItems.itemCount!=0) {
-                    FollowerScreen(
-                        items = pagingItems,
-                        pagerState = pagerState,
-                        padding = padding,
-                        navigateToTheir = navigateToTheir
-                    )
-                } else NoFollowerScreen()
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                ) {
+                    FollowerAppBar()
+                    if (pagingItems.itemCount != 0) {
+                        FollowerScreen(
+                            items = pagingItems,
+                            pagerState = pagerState,
+                            navigateToTheir = navigateToTheir
+                        )
+                    } else NoFollowerScreen()
+                }
             }
 
             is LoadState.Error -> {}
@@ -103,14 +110,12 @@ private fun FollowerScreen(
     items: LazyPagingItems<FollowerThumbnail>,
     pagerState: LazyListState,
     navigateToTheir: (String) -> Unit,
-    padding: PaddingValues = PaddingValues(),
 ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(padding)
             .background(Color.White),
-        contentPadding = PaddingValues(16.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp),
         state = pagerState,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -143,7 +148,6 @@ internal fun FollowContent(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(5.dp)
             .clickable {
                 navigateToTheir()
             },
@@ -187,13 +191,14 @@ internal fun FollowContent(
 }
 
 @Composable
-fun NoFollowerScreen(){
+fun NoFollowerScreen() {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .padding(vertical = 100.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text( "팔로잉 하고 있는 사람이 없습니다.", color = Color.Gray)
+        Text("팔로잉 하고 있는 사람이 없습니다.", color = Color.Gray)
     }
 }
