@@ -47,7 +47,7 @@ import com.kolown.search.component.TagSearchBar
 @Composable
 internal fun SearchRoute(
     padding: PaddingValues = PaddingValues(),
-    navigateToSearchDetail : () -> Unit,
+    navigateToSearchDetail: () -> Unit,
     viewModel: SearchViewModel
 ) {
     SearchScreen(
@@ -60,7 +60,7 @@ internal fun SearchRoute(
 @Composable
 private fun SearchScreen(
     padding: PaddingValues = PaddingValues(),
-    navigateToSearchDetail : () -> Unit,
+    navigateToSearchDetail: () -> Unit,
     viewModel: SearchViewModel,
 ) {
 
@@ -86,6 +86,7 @@ private fun SearchScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+
         TagSearchBar(
             modifier = Modifier
                 .fillMaxWidth()
@@ -100,6 +101,12 @@ private fun SearchScreen(
             onBackButtonClicked = {
                 focusState = false
             }
+        )
+
+        if (searchText.isEmpty() && !focusState) Text(
+            text = "검색어를 입력하세요",
+            color = Color.DarkGray,
+            modifier = Modifier.padding(vertical = 16.dp)
         )
         Box(modifier = Modifier.fillMaxSize()) {
             LazyVerticalGrid(
@@ -118,7 +125,6 @@ private fun SearchScreen(
                     }
 
                 }
-
                 items(searchResultPost.itemCount) { index ->
                     searchResultPost[index]?.let { post ->
                         PostItem(

@@ -25,7 +25,9 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -52,11 +54,15 @@ class SearchViewModel @Inject constructor(
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     val searchResult = _searchQuery.debounce(SEARCH_DEBOUNCE_TIME_MILLIS)
-        .filter { it.isNotBlank() }
-        .distinctUntilChanged() //같은거 반응 안함.(근데 stateflow라 어차피 반응 안할듯?)
-        .flatMapLatest {
-            tagRepository.getTagBySearch(it)
-        }.cachedIn(viewModelScope)
+        .distinctUntilChanged()
+        .flatMapLatest { query ->
+            if (query.isBlank()) {
+                flowOf(PagingData.empty())
+            } else {
+                tagRepository.getTagBySearch(query)
+            }
+        }
+        .cachedIn(viewModelScope)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val resultPostList = _tag.filter {
@@ -70,11 +76,12 @@ class SearchViewModel @Inject constructor(
 
     private val reactionStateFlow = MutableStateFlow<Map<String, ReactionState>>(emptyMap())
 
-    private val _followSharedFlow = MutableSharedFlow<Pair<String,Boolean>>(0)
+    private val _followSharedFlow = MutableSharedFlow<Pair<String, Boolean>>(0)
     val followState = _followSharedFlow.asSharedFlow()
 
-     fun setSearchQuery(searchText: String) {
+    fun setSearchQuery(searchText: String) {
         _searchQuery.value = searchText
+        Log.e("test", "set query: $searchText")
     }
 
     fun setTag(tag: Tag) {
@@ -82,7 +89,7 @@ class SearchViewModel @Inject constructor(
         _tag.value = tag
     }
 
-    fun setPage(page : Int) {
+    fun setPage(page: Int) {
         _firstPage = page
     }
 
@@ -118,7 +125,7 @@ class SearchViewModel @Inject constructor(
             followRepository.followUser(id, name)
                 .catch { Log.e("FollowUpload", "viewModel: $it") }
                 .launchIn(viewModelScope)
-            _followSharedFlow.emit(Pair(id,true))
+            _followSharedFlow.emit(Pair(id, true))
         }
     }
 
@@ -127,7 +134,7 @@ class SearchViewModel @Inject constructor(
             followRepository.unFollowUser(id)
                 .catch { Log.e("UnFollowUpload", "viewModel: $it") }
                 .launchIn(viewModelScope)
-            _followSharedFlow.emit(Pair(id,false))
+            _followSharedFlow.emit(Pair(id, false))
         }
     }
 
@@ -135,7 +142,7 @@ class SearchViewModel @Inject constructor(
         _currentPage = page
     }
 
-    fun checkPostIsMine(authorId : String)  = userRepository.checkUserId(authorId)
+    fun checkPostIsMine(authorId: String) = userRepository.checkUserId(authorId)
 
 
     companion object {

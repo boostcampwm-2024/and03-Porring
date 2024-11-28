@@ -78,12 +78,14 @@ internal fun FollowerRoute(
             }
 
             is LoadState.NotLoading -> {
-                FollowerScreen(
-                    items = pagingItems,
-                    pagerState = pagerState,
-                    padding = padding,
-                    navigateToTheir = navigateToTheir
-                )
+                if(pagingItems.itemCount!=0) {
+                    FollowerScreen(
+                        items = pagingItems,
+                        pagerState = pagerState,
+                        padding = padding,
+                        navigateToTheir = navigateToTheir
+                    )
+                } else NoFollowerScreen()
             }
 
             is LoadState.Error -> {}
@@ -181,5 +183,17 @@ internal fun FollowContent(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun NoFollowerScreen(){
+    Column(
+        modifier = Modifier.fillMaxSize()
+            .padding(vertical = 100.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text( "팔로잉 하고 있는 사람이 없습니다.", color = Color.Gray)
     }
 }
