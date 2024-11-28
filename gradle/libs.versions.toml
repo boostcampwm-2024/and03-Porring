@@ -133,5 +133,7 @@ android-compose = [
     "androidx-compose-bom",
     "androidx-navigation-compose",
     "androidx-compose-material3",
-    "androidx-compose-ui-tooling"
+    "androidx-compose-ui-tooling",
+    "androidx-compose-ui",
+    "androidx-compose-ui-tooling-preview"
 ]

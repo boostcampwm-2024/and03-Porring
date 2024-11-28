@@ -37,12 +37,13 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 
     implementation(libs.bundles.android.compose)
-    debugImplementation(libs.androidx.compose.ui.tooling)
 
     implementation(projects.core.designsystem)
 }

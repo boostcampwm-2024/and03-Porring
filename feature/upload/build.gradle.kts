@@ -7,10 +7,10 @@ plugins {
 
 android {
     namespace = "com.kolown.upload"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 24
+        minSdk = libs.versions.minSdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -26,16 +26,15 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "1.8"
     }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -46,7 +45,6 @@ dependencies {
     // coil
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
-    implementation(libs.bundles.android.compose)
 
     // hilt
     implementation(libs.hilt.android)
@@ -56,8 +54,9 @@ dependencies {
     // serialization
     implementation(libs.kotlinx.serialization.json)
 
-    implementation(projects.core.navigation)
-    implementation(projects.core.model)
+    implementation(libs.bundles.android.compose)
+
     implementation(projects.core.data)
     implementation(projects.core.designsystem)
+    implementation(projects.core.navigation)
 }

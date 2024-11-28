@@ -39,19 +39,10 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.navigation)
-    implementation(projects.feature.home)
-
-    implementation(projects.core.designsystem)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.material3)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -60,9 +51,6 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-    // Jetpack Compose integration
-    implementation(libs.androidx.navigation.compose)
 
     //hilt
     implementation(libs.hilt.android)
@@ -92,21 +80,25 @@ dependencies {
 
     implementation(libs.kotlinx.immutable)
 
-    implementation(projects.feature.search)
+    implementation(libs.bundles.android.compose)
+
+    implementation(projects.core.common)
+    implementation(projects.core.data)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.domain)
+    implementation(projects.core.navigation)
+
     implementation(projects.feature.camera)
-    implementation(projects.feature.follower)
-    implementation(projects.feature.my)
     implementation(projects.feature.detail)
-    implementation(projects.feature.upload)
-    implementation(projects.feature.setting)
-    implementation(projects.feature.their)
+    implementation(projects.feature.home)
+    implementation(projects.feature.follower)
     implementation(projects.feature.join)
     implementation(projects.feature.login)
-
-    implementation(projects.core.data)
-    implementation(projects.core.domain)
-    implementation(projects.core.model)
-    implementation(projects.core.common)
+    implementation(projects.feature.my)
+    implementation(projects.feature.search)
+    implementation(projects.feature.setting)
+    implementation(projects.feature.their)
+    implementation(projects.feature.upload)
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 }

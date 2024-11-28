@@ -27,24 +27,21 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "1.8"
     }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-    implementation(libs.bundles.android.compose)
 
     //paging
     implementation(libs.androidx.paging.runtime)
@@ -61,7 +58,9 @@ dependencies {
 
     implementation(libs.androidx.foundation)
 
+    implementation(libs.bundles.android.compose)
+
     implementation(projects.core.data)
-    implementation(projects.core.navigation)
     implementation(projects.core.designsystem)
+    implementation(projects.core.navigation)
 }

@@ -36,10 +36,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.data)
-    implementation(projects.core.navigation)
-    implementation(projects.core.designsystem)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -52,7 +48,11 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.android.compiler)
 
+    implementation(libs.google.firebase.auth)
+
     implementation(libs.bundles.android.compose)
 
-    implementation(libs.google.firebase.auth)
+    implementation(projects.core.data)
+    implementation(projects.core.navigation)
+    implementation(projects.core.designsystem)
 }
