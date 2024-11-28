@@ -37,6 +37,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import coil3.compose.AsyncImage
+import com.kolown.designsystem.Primary
 import com.kolown.model.PostContentModel
 import com.kolown.my.component.GalleryItem
 import com.kolown.my.component.MyAppBar
@@ -103,7 +105,7 @@ fun StateLazyGrid(
 
     LaunchedEffect(pagingItems.loadState.refresh) {
         if (pagingItems.loadState.refresh == LoadState.Loading) {
-            delay(5000)
+            delay(7000)
             showErrorScreen = true
         } else {
             showErrorScreen = false
@@ -117,13 +119,11 @@ fun StateLazyGrid(
         }
 
         pagingItems.loadState.refresh is LoadState.Error -> {
-            Log.d("LazyVertical", "실패")
             showErrorScreen = false
             ErrorScreen()
         }
 
         pagingItems.loadState.refresh is LoadState.Loading -> {
-            Log.d("LazyVertical", "로딩")
             showErrorScreen = false
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -137,34 +137,56 @@ fun StateLazyGrid(
         }
 
         pagingItems.loadState.refresh is LoadState.NotLoading -> {
-            Log.d("LazyVertical", "성공 ${pagingItems.itemCount}")
             showErrorScreen = false
-            LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Fixed(2),
-                modifier = Modifier
-                    .fillMaxSize(),
-                state = listState,
-                contentPadding = PaddingValues(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalItemSpacing = 8.dp,
-                content = {
-                    items(pagingItems.itemCount) { index ->
-                        pagingItems[index]?.let {
-                            GalleryItem(it, width) {
-                                deletePost(it.postId)
-                            }
-                        }
-                    }
-
-                    if (pagingItems.loadState.append !is LoadState.NotLoading) {
-                        item(key = "", span = StaggeredGridItemSpan.FullLine) {
-                            PageItemFooter(loadState = pagingItems.loadState.append) {
-                                pagingItems.retry()
-                            }
-                        }
+            if(pagingItems.itemCount == 0){
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    Column(
+                        modifier = Modifier.align(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        AsyncImage(
+                            modifier = Modifier.size(100.dp),
+                            model = R.drawable.ic_question_mark,
+                            contentDescription = null
+                        )
+                        Spacer(modifier = Modifier.height(40.dp))
+                        Text(
+                            text = "게시물이 존재하지 않습니다!",
+                            color = Primary
+                        )
                     }
                 }
-            )
+            } else {
+                LazyVerticalStaggeredGrid(
+                    columns = StaggeredGridCells.Fixed(2),
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    state = listState,
+                    contentPadding = PaddingValues(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalItemSpacing = 8.dp,
+                    content = {
+                        items(pagingItems.itemCount) { index ->
+                            pagingItems[index]?.let {
+                                GalleryItem(it, width) {
+                                    deletePost(it.postId)
+                                }
+                            }
+                        }
+
+                        if (pagingItems.loadState.append !is LoadState.NotLoading) {
+                            item(key = "", span = StaggeredGridItemSpan.FullLine) {
+                                PageItemFooter(loadState = pagingItems.loadState.append) {
+                                    pagingItems.retry()
+                                }
+                            }
+                        }
+                    }
+                )
+            }
         }
     }
 }
