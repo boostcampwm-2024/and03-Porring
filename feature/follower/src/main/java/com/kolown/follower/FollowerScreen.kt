@@ -142,6 +142,7 @@ internal fun FollowContent(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
+            .padding(5.dp)
             .clickable {
                 navigateToTheir()
             },
@@ -160,6 +161,7 @@ internal fun FollowContent(
         }
         Spacer(modifier = Modifier.height(10.dp))
         Row(
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(
                 space = 8.dp, alignment = Alignment.CenterHorizontally

@@ -17,8 +17,7 @@ internal fun PostHeader(tag: Tag) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(48.dp)
-            .padding(horizontal = 16.dp),
+            .height(48.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(fontSize = 22.sp, text = "# ${tag.name}")
