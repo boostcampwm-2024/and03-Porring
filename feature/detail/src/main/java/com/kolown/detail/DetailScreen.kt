@@ -70,6 +70,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.kolown.designsystem.Gray
+import com.kolown.designsystem.PrimaryDark
 import com.kolown.detail.component.DetailTopAppBar
 import com.kolown.detail.component.FollowDialog
 import com.kolown.detail.component.ReactionDialog
@@ -81,6 +83,8 @@ import com.kolown.model.UiState
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 internal fun DetailRoute(
+    isLoggedIn: Boolean,
+    onShowLoginSnackBar: () -> Unit,
     detailFirstItem: PostContentModel,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     popBackStack: () -> Unit,
@@ -96,10 +100,12 @@ internal fun DetailRoute(
         is UiState.Loading -> LoadingDetailScreen()
         is UiState.Success -> {
             val pagingItems = state.data.collectAsLazyPagingItems()
-            val pagerState =
-                rememberPagerState(initialPage = 0) { pagingItems.itemCount + 1 }
+            val pagerState = rememberPagerState(initialPage = 0) { pagingItems.itemCount + 1 }
 
             DetailScreen(
+                isLoggedIn = isLoggedIn,
+                onShowLoginSnackBar = onShowLoginSnackBar,
+                onChangeReelsMode = { isReelsMode = it },
                 popBackStack = popBackStack,
                 updateMainPostReaction = updateMainPostReaction,
                 onSelectReaction = detailViewModel::selectReaction,
@@ -118,45 +124,53 @@ internal fun DetailRoute(
 
 @Composable
 private fun DetailScreen(
+    isLoggedIn: Boolean = false,
+    isReelsMode: Boolean = true,
+    onShowLoginSnackBar: () -> Unit = {},
+    onChangeReelsMode: (Boolean) -> Unit = {},
     popBackStack: () -> Unit = {},
-    updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
+    updateMainPostReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     viewModeChange: (Boolean) -> Unit = {},
-    isReelsMode: Boolean = true,
     firstItem: PostContentModel,
     pagingItems: LazyPagingItems<PostContentModel>,
     pagerState: PagerState,
     padding: PaddingValues = PaddingValues(),
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xff151D37))
-            .padding(padding)
+        modifier = Modifier.fillMaxSize().background(Color(0xff151D37)).padding(padding)
     ) {
         DetailContent(
+            isLoggedIn = isLoggedIn,
+            isReelsMode = isReelsMode,
+            onShowLoginSnackBar = onShowLoginSnackBar,
+            onChangeReelsMode = onChangeReelsMode,
             updateMainPostReaction = updateMainPostReaction,
             onSelectReaction = onSelectReaction,
             viewModeChange = viewModeChange,
-            isReelsMode = isReelsMode,
             pagingItems = pagingItems,
             pagerState = pagerState,
             firstItem = firstItem
         )
 
-        if (isReelsMode) {
-            DetailTopAppBar(popBackStack)
-        }
+        DetailTopAppBar(
+            isReelsMode = isReelsMode,
+            onChangeReelsMode = onChangeReelsMode,
+            popBackStack = popBackStack
+        )
     }
 }
 
 
 @Composable
 private fun DetailContent(
+    isLoggedIn: Boolean,
+    isReelsMode: Boolean,
+    onShowLoginSnackBar: () -> Unit,
+    onChangeReelsMode: (Boolean) -> Unit,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
     viewModeChange: (Boolean) -> Unit,
-    isReelsMode: Boolean,
     pagingItems: LazyPagingItems<PostContentModel>,
     pagerState: PagerState,
     firstItem: PostContentModel,
@@ -171,6 +185,10 @@ private fun DetailContent(
         val imageItem = if (page == 0) firstItem else pagingItems[page - 1] ?: return@VerticalPager
 
         DetailItem(
+            isLoggedIn = isLoggedIn,
+            isReelsMode = isReelsMode,
+            onShowLoginSnackBar = onShowLoginSnackBar,
+            onChangeReelsMode = onChangeReelsMode,
             updateMainPostReaction = updateMainPostReaction,
             onSelectReaction = onSelectReaction,
             imageItem = imageItem,
@@ -184,23 +202,26 @@ private fun DetailContent(
 
 @Composable
 private fun DetailItem(
+    isLoggedIn: Boolean,
+    isReelsMode: Boolean,
+    onShowLoginSnackBar: () -> Unit,
+    onChangeReelsMode: (Boolean) -> Unit,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
     onDoubleTab: (Boolean) -> Unit,
 ) {
     val view = LocalView.current
-    val isConcentrateMode = remember {
-        mutableStateOf(false)
-    }
 
-    if (!isConcentrateMode.value) {
+    if (isReelsMode) {
         ReelsContent(
+            isLoggedIn = isLoggedIn,
+            onShowLoginSnackBar = onShowLoginSnackBar,
             updateMainPostReaction = updateMainPostReaction,
             onSelectReaction = onSelectReaction,
             imageItem = imageItem,
             onDoubleTab = {
-                isConcentrateMode.value = true
+                onChangeReelsMode(true)
                 requestFullScreen(view)
                 onDoubleTab(false)
             },
@@ -210,8 +231,8 @@ private fun DetailItem(
             imageUrl = imageItem.imageUrl
         )
         BackHandler(enabled = true) {
-            if (isConcentrateMode.value) {
-                isConcentrateMode.value = false
+            if (isReelsMode) {
+                onChangeReelsMode(false)
                 onDoubleTab(true)
                 showSystembar(view = view)
             }
@@ -223,6 +244,8 @@ private fun DetailItem(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ReelsContent(
+    isLoggedIn: Boolean,
+    onShowLoginSnackBar: () -> Unit,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
@@ -233,13 +256,14 @@ private fun ReelsContent(
     val isFollowDialogVisible = remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().padding(top = 32.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
     ) {
+        val tags = imageItem.tags.joinToString(", ") { "#$it" }
+
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current).data(imageItem.imageUrl)
-                .crossfade(true)
-                .build(),
+                .crossfade(true).build(),
             modifier = Modifier.fillMaxWidth().aspectRatio(4f / 5f)
                 .combinedClickable(indication = null,
                     interactionSource = interactionSource,
@@ -248,68 +272,78 @@ private fun ReelsContent(
             contentDescription = "",
             contentScale = ContentScale.Crop,
         )
-        Box {
-            Column {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(36.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
+
+        Box(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().height(36.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = imageItem.description,
+                            modifier = Modifier.weight(1f),
+                            color = Color.White,
+                            fontSize = 16.sp
+                        )
+                        ReactionGroup(
+                            modifier = Modifier.wrapContentWidth().fillMaxHeight(),
+                            reactions = imageItem.reactions
+                        )
+                    }
+
                     Text(
-                        text = imageItem.description,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 10.dp),
-                        color = Color.White,
-                        fontSize = 16.sp
-                    )
-                    ReactionGroup(
-                        modifier = Modifier.wrapContentWidth().fillMaxHeight(),
-                        reactions = imageItem.reactions
+                        text = tags, style = MaterialTheme.typography.labelLarge, color = Gray
                     )
                 }
-                val tags = imageItem.tags.joinToString(", ") { "#$it" }
-                Text(
-                    text = tags,
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = Color(0xFF8D8D8D)
-                )
+
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = if (imageItem.myReaction == null) Icons.Outlined.FavoriteBorder else Icons.Default.Favorite,
-                        tint = Color(0xFF00BBFF),
+                    Icon(imageVector = if (imageItem.myReaction == null) Icons.Outlined.FavoriteBorder else Icons.Default.Favorite,
+                        tint = PrimaryDark,
                         contentDescription = "",
                         modifier = Modifier.clickable {
-                            isReactionVisible.value = true
+                            if (isLoggedIn) {
+                                isReactionVisible.value = true
+                            } else {
+                                onShowLoginSnackBar()
+                            }
                         })
-                    Row {
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
                         DetailButton(
                             onClick = {}, id = R.drawable.ic_detail_gallary, buttonText = "갤러리"
                         )
-                        Spacer(modifier = Modifier.width(10.dp))
+
                         DetailButton(
-                            onClick = { isFollowDialogVisible.value = true },
-                            id = R.drawable.ic_detail_follow,
-                            buttonText = "팔로우"
+                            onClick = {
+                                if (isLoggedIn) {
+                                    isFollowDialogVisible.value = true
+                                } else {
+                                    onShowLoginSnackBar()
+                                }
+                            }, id = R.drawable.ic_detail_follow, buttonText = "팔로우"
                         )
                     }
                 }
             }
+
             if (isReactionVisible.value) {
-                ReactionDialog(
-                    imageItem = imageItem,
-                    modifier = Modifier
-                        .padding(16.dp),
+                ReactionDialog(imageItem = imageItem,
+                    modifier = Modifier.padding(16.dp),
                     updateMainPostReaction = updateMainPostReaction,
                     selectedReaction = onSelectReaction,
-                    onDismiss = { isReactionVisible.value = false }
-                )
+                    onDismiss = { isReactionVisible.value = false })
             }
         }
     }
@@ -328,6 +362,7 @@ private fun ConcentrateContent(
     var offset by remember {
         mutableStateOf(Offset.Zero)
     }
+
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -414,9 +449,5 @@ private fun Context.getActivity(): Activity? = when (this) {
 @Preview(showBackground = true, backgroundColor = 0xFF000000)
 @Composable
 private fun DetailScreenPreview() {
-//    DetailContent(
-//        padding = PaddingValues(0.dp),
-//        imageItem = PostContentModel(""),
-//        onDoubleTab = {},
-//    )
+//    DetailScreen()
 }

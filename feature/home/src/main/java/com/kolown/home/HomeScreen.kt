@@ -43,6 +43,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Composable
 internal fun HomeRoute(
+    isLoggedIn: Boolean,
+    onShowLoginSnackBar: () -> Unit,
     mainItems: Flow<List<PostContentModel>>,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
     fetchDetailFirst: (PostContentModel) -> Unit,
@@ -98,6 +100,8 @@ internal fun HomeRoute(
                 ErrorScreen(padding)
             } else {
                 HomeScreen(
+                    isLoggedIn = isLoggedIn,
+                    onShowLoginSnackBar = onShowLoginSnackBar,
                     padding = padding,
                     mainFeedImages = images,
                     onFollowClick = { id, name ->
@@ -119,12 +123,12 @@ internal fun HomeRoute(
             }
         }
     }
-
-
 }
 
 @Composable
 private fun HomeScreen(
+    isLoggedIn: Boolean = false,
+    onShowLoginSnackBar: () -> Unit = {},
     padding: PaddingValues = PaddingValues(),
     mainFeedImages: List<PostContentModel> = emptyList(),
     onFollowClick: (String, String) -> Unit = { _, _ -> },
@@ -149,6 +153,8 @@ private fun HomeScreen(
             }, horizontalAlignment = Alignment.CenterHorizontally
     ) {
         RandomImageList(
+            isLoggedIn = isLoggedIn,
+            onShowLoginSnackBar = onShowLoginSnackBar,
             pagerState = pagerState,
             imageItems = mainFeedImages,
             isReactionDialogVisible = isReactionDialogVisible,

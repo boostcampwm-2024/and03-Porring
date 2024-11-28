@@ -16,6 +16,8 @@ fun NavController.navigateHome(navOptions: NavOptions) {
 }
 
 fun NavGraphBuilder.homeNavGraph(
+    isLoggedIn: Boolean,
+    onShowLoginSnackBar: () -> Unit,
     mainItems: Flow<List<PostContentModel>>,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
     fetchDetailFirst: (PostContentModel) -> Unit,
@@ -26,6 +28,8 @@ fun NavGraphBuilder.homeNavGraph(
 ) {
     composable<MainMenuRoute.Home> {
         HomeRoute(
+            isLoggedIn = isLoggedIn,
+            onShowLoginSnackBar = onShowLoginSnackBar,
             mainItems = mainItems,
             onSelectReaction = onSelectReaction,
             fetchDetailFirst = fetchDetailFirst,

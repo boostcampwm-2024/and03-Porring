@@ -17,6 +17,8 @@ fun NavController.navigateToDetail() {
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.detailNavGraph(
+    isLoggedIn: Boolean,
+    onShowLoginSnackBar: () -> Unit,
     detailFirstItem: PostContentModel,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     popBackStack: () -> Unit,
@@ -24,6 +26,8 @@ fun NavGraphBuilder.detailNavGraph(
 ) {
     composable<AppRoute.Detail> {
         DetailRoute(
+            isLoggedIn = isLoggedIn,
+            onShowLoginSnackBar = onShowLoginSnackBar,
             detailFirstItem = detailFirstItem,
             updateMainPostReaction = updateMainPostReaction,
             popBackStack = popBackStack,
