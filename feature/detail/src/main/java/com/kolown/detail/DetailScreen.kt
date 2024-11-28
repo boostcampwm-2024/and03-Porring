@@ -46,9 +46,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,6 +77,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.kolown.designsystem.PrimaryDark
 import com.kolown.detail.component.DetailTopAppBar
 import com.kolown.detail.component.FollowDialog
 import com.kolown.detail.component.ReactionDialog
@@ -97,7 +102,7 @@ internal fun DetailRoute(
     var isReelsMode by remember { mutableStateOf(true) }
     val uiState = detailViewModel.uiState.collectAsStateWithLifecycle()
     val currentPage = detailViewModel.currentPage
-
+    val followState = detailViewModel.followState.collectAsStateWithLifecycle(null)
     val state = uiState.value
 
     when (state) {
@@ -105,7 +110,8 @@ internal fun DetailRoute(
         is UiState.Loading -> LoadingDetailScreen()
         is UiState.Success -> {
             val pagingItems = state.data.collectAsLazyPagingItems()
-            val pagerState = rememberPagerState(initialPage = currentPage) { pagingItems.itemCount + 1 }
+            val pagerState =
+                rememberPagerState(initialPage = currentPage) { pagingItems.itemCount + 1 }
 
             LaunchedEffect(pagingItems.itemCount) {
                 if (pagerState.currentPage == 0) pagerState.scrollToPage(currentPage)
@@ -127,12 +133,15 @@ internal fun DetailRoute(
                 navigateToTheir = navigateToTheir,
                 updatePage = { page ->
                     detailViewModel.updatePage(page)
-                }
+                },
+                onFollowClick = detailViewModel::followUser,
+                onUnfollowClick = detailViewModel::unFollowUser,
+                followerState = followState
             )
         }
 
-    is UiState.Failure -> {}
-}
+        is UiState.Failure -> {}
+    }
 }
 
 @Composable
@@ -150,7 +159,10 @@ private fun DetailScreen(
     pagerState: PagerState,
     padding: PaddingValues = PaddingValues(),
     navigateToTheir: (String) -> Unit,
-    updatePage: (Int) -> Unit
+    updatePage: (Int) -> Unit,
+    onFollowClick: (String, String) -> Unit = { _, _ -> },
+    onUnfollowClick: (String) -> Unit = {},
+    followerState : State<Boolean?>
 ) {
     Box(
         modifier = Modifier.fillMaxSize().background(Color(0xff151D37)).padding(padding)
@@ -167,7 +179,11 @@ private fun DetailScreen(
             pagerState = pagerState,
             firstItem = firstItem,
             navigateToTheir = navigateToTheir,
-            updatePage = updatePage
+            updatePage = updatePage,
+            onFollowClick = onFollowClick,
+            onUnfollowClick = onUnfollowClick,
+            followerState = followerState
+
         )
 
         DetailTopAppBar(
@@ -191,9 +207,13 @@ private fun DetailContent(
     pagingItems: LazyPagingItems<PostContentModel>,
     pagerState: PagerState,
     firstItem: PostContentModel,
-    navigateToTheir : (String) -> Unit,
-    updatePage: (Int) -> Unit
+    navigateToTheir: (String) -> Unit,
+    updatePage: (Int) -> Unit,
+    onFollowClick: (String, String) -> Unit = { _, _ -> },
+    onUnfollowClick: (String) -> Unit = {},
+    followerState : State<Boolean?>,
 ) {
+
     VerticalPager(
         modifier = Modifier.fillMaxSize(),
         state = pagerState,
@@ -215,7 +235,10 @@ private fun DetailContent(
             navigateToTheir = navigateToTheir,
             updatePage = {
                 updatePage(pagerState.currentPage)
-            }
+            },
+            onFollowClick = onFollowClick,
+            onUnfollowClick = onUnfollowClick,
+            followerState = followerState
         )
     }
 
@@ -234,8 +257,11 @@ private fun DetailItem(
     imageItem: PostContentModel,
     onDoubleTab: (Boolean) -> Unit,
     navigateToTheir: (String) -> Unit,
-    updatePage: () -> Unit
-) {
+    updatePage: () -> Unit,
+    onFollowClick: (String, String) -> Unit = { _, _ -> },
+    onUnfollowClick: (String) -> Unit = {},
+    followerState : State<Boolean?>,
+    ) {
     val view = LocalView.current
 
 
@@ -257,7 +283,10 @@ private fun DetailItem(
                 onDoubleTab(false)
             },
             navigateToTheir = navigateToTheir,
-            updatePage = updatePage
+            updatePage = updatePage,
+            onFollowClick = onFollowClick,
+            onUnfollowClick = onUnfollowClick,
+            followerState = followerState,
         )
     } else {
         ConcentrateContent(
@@ -281,10 +310,20 @@ private fun ReelsContent(
     navigateToTheir: (String) -> Unit,
     updatePage: () -> Unit,
     onDoubleTab: () -> Unit,
-) {
+    onFollowClick: (String, String) -> Unit = { _, _ -> },
+    onUnfollowClick: (String) -> Unit = {},
+    followerState : State<Boolean?>,
+    ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isReactionVisible = remember { mutableStateOf(false) }
     val isFollowDialogVisible = remember { mutableStateOf(false) }
+    val isFollowed = rememberSaveable  { mutableStateOf(imageItem.isFollower) }
+
+    LaunchedEffect(followerState.value) {
+        followerState.value?.let {
+            isFollowed.value = it
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(top = 32.dp),
@@ -359,17 +398,27 @@ private fun ReelsContent(
                             onClick = {
                                 navigateToTheir(imageItem.authorId)
                                 updatePage()
-                            }, id = R.drawable.ic_detail_gallary, buttonText = "갤러리"
+                            },
+                            id = R.drawable.ic_detail_gallary,
+                            buttonText = "갤러리"
                         )
 
                         DetailButton(
                             onClick = {
                                 if (isLoggedIn) {
-                                    isFollowDialogVisible.value = true
+                                    if (isFollowed.value) {
+                                        onUnfollowClick(imageItem.authorId)
+                                    } else {
+                                        isFollowDialogVisible.value = true
+                                    }
                                 } else {
                                     onShowLoginSnackBar()
                                 }
-                            }, id = R.drawable.ic_detail_follow, buttonText = "팔로우"
+                            },
+                            id = R.drawable.ic_detail_follow,
+                            buttonText = "팔로우",
+                            contentColor = if(isFollowed.value) Color(0xFF151D37) else Color(0xFF00BBFF),
+                            backgroundColor = if(isFollowed.value) Color(0xFF00BBFF) else Color(0xFF151D37)
                         )
                     }
                 }
@@ -384,9 +433,12 @@ private fun ReelsContent(
             }
         }
     }
-    if (isFollowDialogVisible.value) FollowDialog(onClickCancel = {
-        isFollowDialogVisible.value = false
-    })
+    if (isFollowDialogVisible.value)
+        FollowDialog(onClickCancel = {
+            isFollowDialogVisible.value = false
+        }, onClickConfirm = { name ->
+            onFollowClick(imageItem.authorId, name)
+        })
 }
 
 @Composable
@@ -444,18 +496,20 @@ private fun DetailButton(
     onClick: () -> Unit,
     @DrawableRes id: Int,
     buttonText: String,
+    contentColor : Color = Color(0xFF00BBFF),
+    backgroundColor : Color = Color(0xFF151D37)
 ) {
     Button(
         onClick = onClick,
         modifier = Modifier.wrapContentSize(),
         shape = RoundedCornerShape(10.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF151D37))
+        colors = ButtonDefaults.buttonColors(containerColor = backgroundColor)
     ) {
         Icon(
-            painter = painterResource(id = id), contentDescription = null, tint = Color(0xFF00BBFF)
+            painter = painterResource(id = id), contentDescription = null, tint = contentColor
         )
         Spacer(modifier = Modifier.width(10.dp))
-        Text(text = buttonText, color = Color(0xFF00BBFF))
+        Text(text = buttonText, color = contentColor)
     }
 }
 
