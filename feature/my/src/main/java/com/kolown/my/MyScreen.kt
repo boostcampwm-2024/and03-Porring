@@ -1,6 +1,5 @@
 package com.kolown.my
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,11 +38,12 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import com.kolown.designsystem.Primary
+import com.kolown.designsystem.R
+import com.kolown.designsystem.component.RestrictedLoginContent
 import com.kolown.model.PostContentModel
 import com.kolown.my.component.GalleryItem
 import com.kolown.my.component.MyAppBar
 import com.kolown.my.component.PageItemFooter
-import com.kolown.my.component.RestrictedLoginContent
 import kotlinx.coroutines.delay
 
 @Composable
@@ -61,7 +61,6 @@ internal fun MyRoute(
     } else {
         RestrictedLoginContent(navigateToLogin)
     }
-
 }
 
 @Composable
@@ -138,7 +137,7 @@ fun StateLazyGrid(
 
         pagingItems.loadState.refresh is LoadState.NotLoading -> {
             showErrorScreen = false
-            if(pagingItems.itemCount == 0){
+            if (pagingItems.itemCount == 0) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()

@@ -1,4 +1,4 @@
-package com.kolown.follower.component
+package com.kolown.designsystem.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,7 +18,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kolown.follower.R
+import com.kolown.designsystem.Primary
+import com.kolown.designsystem.R
 
 @Composable
 fun RestrictedLoginContent(
@@ -35,10 +36,9 @@ fun RestrictedLoginContent(
             imageVector = ImageVector.vectorResource(R.drawable.ic_porring_symbol),
             modifier = Modifier.size(120.dp),
             contentDescription = null,
-            tint = Color(0XFF598aff)
+            tint = Primary
         )
 
-        Spacer(Modifier.size(24.dp))
         Text(
             text = stringResource(R.string.string_use_after_login),
             style = MaterialTheme.typography.labelLarge
@@ -46,7 +46,10 @@ fun RestrictedLoginContent(
         TextButton(
             onClick = { navigateToLogin() },
         ) {
-            Text(text = stringResource(R.string.string_move_to_login), color = Color.Blue)
+            Text(
+                text = stringResource(R.string.string_move_to_login),
+                color = Primary
+            )
         }
     }
 }

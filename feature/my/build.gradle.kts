@@ -38,16 +38,13 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation(projects.core.domain)
     implementation(libs.bundles.android.compose)
-    implementation(projects.core.navigation)
 
 
     //paging
@@ -66,5 +63,7 @@ dependencies {
     implementation(libs.androidx.foundation)
 
     implementation(projects.core.data)
+    implementation(projects.core.navigation)
+    implementation(projects.core.domain)
     implementation(projects.core.designsystem)
 }
