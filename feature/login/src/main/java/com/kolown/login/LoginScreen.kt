@@ -1,5 +1,6 @@
 package com.kolown.login
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -23,6 +25,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -48,10 +51,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.repeatOnLifecycle
+import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.kolown.designsystem.Primary
 import com.kolown.designsystem.PrimaryUnActive
 import com.kolown.designsystem.component.PorringTextField
@@ -64,36 +66,69 @@ import com.kolown.login.util.LoginButton.PainterIconButton
 import com.kolown.login.util.LoginButton.VectorIconButton
 import com.kolown.login.util.LoginPlatform
 import com.kolown.login.util.getCredential
+import com.kolown.model.UiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
 
 @Composable
 fun LoginRoute(
     updateLoginState: () -> Unit,
     popBackStack: () -> Unit,
+    onShowSnackBar: (String) -> Unit,
     navigateToJoin: () -> Unit,
     loginViewModel: LoginViewModel = hiltViewModel(),
     padding: PaddingValues = PaddingValues(),
 ) {
     val context = LocalContext.current
-    val lifecycle = LocalLifecycleOwner.current
     val isEmailLogin by loginViewModel.isEmailLogin.collectAsStateWithLifecycle()
+    val loginState by loginViewModel.loginState.collectAsStateWithLifecycle()
+    var isLoginProgress by remember { mutableStateOf(false) }
 
-    LaunchedEffect(true) {
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            loginViewModel.loginEnd.collect { loginComplete ->
-                if (loginComplete) {
-                    updateLoginState()
-                    popBackStack()
+    LaunchedEffect(loginState) {
+        when (loginState) {
+            is UiState.Idle -> {
+                isLoginProgress = false
+            }
+
+            is UiState.Success -> {
+                popBackStack()
+                updateLoginState()
+                onShowSnackBar((loginState as UiState.Success<String>).data)
+            }
+
+            is UiState.Failure -> {
+                val error = (loginState as UiState.Failure).error
+
+                when (error) {
+                    is FirebaseAuthInvalidCredentialsException -> {
+                        when (error.errorCode) {
+                            "ERROR_INVALID_EMAIL" -> onShowSnackBar("이메일 형식으로 입력해주세요")
+                            "ERROR_INVALID_CREDENTIAL" -> onShowSnackBar("이메일 혹은 비밀번호를 확인해주세요")
+                            else -> onShowSnackBar("이메일 혹은 비밀번호를 확인해주세요")
+                        }
+                    }
+
+                    is FirebaseNetworkException -> {
+                        onShowSnackBar("인터넷 연결을 확인해주세요")
+                    }
                 }
+
+                (loginState as UiState.Failure).error.let {
+                    Log.e("LoginScreen", "fatal: ${it}")
+                }
+                isLoginProgress = false
+            }
+
+            is UiState.Loading -> {
+                isLoginProgress = true
             }
         }
     }
 
     LoginScreen(
         isEmailLogin = isEmailLogin,
+        isLoginProgress = isLoginProgress,
         navigateToJoin = navigateToJoin,
         onClickGoogleLogin = {
             CoroutineScope(Dispatchers.Main).launch {
@@ -102,8 +137,9 @@ fun LoginRoute(
                 }
             }
         },
-        onClickEmailLogin = { loginViewModel.changeEmailLogin(true) },
-        cancelEmailLogin = { loginViewModel.changeEmailLogin(false) },
+        onClickEmailLogin = loginViewModel::signInWithEmailAndPassword,
+        onClickEmailMode = { loginViewModel.changeEmailLogin(true) },
+        cancelEmailMode = { loginViewModel.changeEmailLogin(false) },
         popBackStack = popBackStack,
         padding = padding
     )
@@ -112,10 +148,12 @@ fun LoginRoute(
 @Composable
 fun LoginScreen(
     isEmailLogin: Boolean = false,
+    isLoginProgress: Boolean = false,
     navigateToJoin: () -> Unit = {},
+    onClickEmailLogin: (String, String) -> Unit = { _, _ -> },
     onClickGoogleLogin: () -> Unit = {},
-    onClickEmailLogin: () -> Unit = {},
-    cancelEmailLogin: () -> Unit = {},
+    onClickEmailMode: () -> Unit = {},
+    cancelEmailMode: () -> Unit = {},
     popBackStack: () -> Unit = {},
     padding: PaddingValues = PaddingValues(),
 ) {
@@ -130,14 +168,16 @@ fun LoginScreen(
 
         LoginContent(
             isEmailLogin = isEmailLogin,
+            isLoginProgress = isLoginProgress,
             navigateToJoin = navigateToJoin,
             onClickGoogleLogin = onClickGoogleLogin,
-            onClickEmailLogin = onClickEmailLogin
+            onClickEmailLogin = onClickEmailLogin,
+            onClickEmailMode = onClickEmailMode
         )
 
         LoginTopAppBar(
             isEmailLogin = isEmailLogin,
-            cancelEmailLogin = cancelEmailLogin,
+            cancelEmailLogin = cancelEmailMode,
             popBackStack = popBackStack
         )
     }
@@ -146,9 +186,11 @@ fun LoginScreen(
 @Composable
 fun LoginContent(
     isEmailLogin: Boolean = false,
+    isLoginProgress: Boolean = false,
     navigateToJoin: () -> Unit = {},
     onClickGoogleLogin: () -> Unit = {},
-    onClickEmailLogin: () -> Unit = {},
+    onClickEmailLogin: (String, String) -> Unit = { _, _ -> },
+    onClickEmailMode: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -159,21 +201,29 @@ fun LoginContent(
 
         Spacer(modifier = Modifier.height(36.dp))
 
-        Box {
-            LoginButtonGroup(
-                PainterIconButton(
-                    icon = drawable.logo_google,
-                    text = stringResource(string.start_with_google),
-                    onClick = onClickGoogleLogin
-                ), VectorIconButton(
-                    icon = Icons.Default.Email, text = "이메일로 로그인", onClick = onClickEmailLogin
-                ), visible = isEmailLogin.not()
+        if (isLoginProgress) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(60.dp),
+                color = Primary
             )
+        } else {
+            Box {
+                LoginButtonGroup(
+                    PainterIconButton(
+                        icon = drawable.logo_google,
+                        text = stringResource(string.start_with_google),
+                        onClick = onClickGoogleLogin
+                    ), VectorIconButton(
+                        icon = Icons.Default.Email, text = "이메일로 로그인", onClick = onClickEmailMode
+                    ), visible = isEmailLogin.not()
+                )
 
-            EmailLoginContent(
-                navigateToJoin = navigateToJoin,
-                isEmailLogin = isEmailLogin,
-            )
+                EmailLoginContent(
+                    navigateToJoin = navigateToJoin,
+                    onClickEmailLogin = onClickEmailLogin,
+                    isEmailLogin = isEmailLogin,
+                )
+            }
         }
 
     }
@@ -182,6 +232,7 @@ fun LoginContent(
 @Composable
 fun EmailLoginContent(
     isEmailLogin: Boolean = true,
+    onClickEmailLogin: (String, String) -> Unit = { _, _ -> },
     navigateToJoin: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
@@ -252,6 +303,7 @@ fun EmailLoginContent(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
                 enabled = isLoginEnable,
                 onClick = {
+                    onClickEmailLogin(idText, pwText)
                     focusManager.clearFocus()
                 },
                 shape = RoundedCornerShape(5.dp),

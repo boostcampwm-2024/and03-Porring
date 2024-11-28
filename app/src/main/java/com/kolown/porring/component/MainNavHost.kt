@@ -107,6 +107,7 @@ internal fun MainNavHost(
             loginNavGraph(
                 updateLoginState = updateLoginState,
                 popBackStack = navigator::popBackStack,
+                onShowSnackBar = onShowSnackBar,
                 navigateToJoin = navigator::navigateToJoin,
                 padding = padding
             )

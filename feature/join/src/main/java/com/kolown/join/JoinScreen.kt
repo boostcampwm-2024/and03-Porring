@@ -76,8 +76,8 @@ fun JoinRoute(
                 when (exception) {
                     is FirebaseAuthUserCollisionException -> onShowSnackBar("이미 가입 된 이메일 입니다.")
                     else -> Log.e(
-                        "porring_test_tag",
-                        "JoinScreen: ${(joinState as UiState.Failure).error}"
+                        "JoinScreen",
+                        "fatal: ${(joinState as UiState.Failure).error}"
                     )
                 }
                 isProgress = false
