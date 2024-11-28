@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.kolown.designsystem.PrimaryUnActive
 import com.kolown.detail.R
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
@@ -66,7 +67,7 @@ private fun ReactionButton(
         modifier = Modifier
             .size(30.dp)
             .background(
-                color = if (didIReact) Color.Blue else Color.Transparent,
+                color = if (didIReact) PrimaryUnActive else Color.Transparent,
                 shape = CircleShape
             ),
         onClick = { onClick(reaction) }

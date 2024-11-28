@@ -34,6 +34,7 @@ internal fun MainNavHost(
     mainItems: Flow<List<PostContentModel>>,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
     onShowSnackBar: (String) -> Unit,
+    onShowLoginSnackBar: () -> Unit,
     detailFirstItem: PostContentModel,
     fetchDetailFirst: (PostContentModel) -> Unit,
     updateFollow: (String) -> Unit,
@@ -54,6 +55,8 @@ internal fun MainNavHost(
             startDestination = navigator.startDestination,
         ) {
             homeNavGraph(
+                isLoggedIn = isLoggedIn,
+                onShowLoginSnackBar = onShowLoginSnackBar,
                 mainItems = mainItems,
                 onSelectReaction = onSelectReaction,
                 fetchDetailFirst = fetchDetailFirst,
@@ -92,6 +95,8 @@ internal fun MainNavHost(
             )
 
             detailNavGraph(
+                isLoggedIn = isLoggedIn,
+                onShowLoginSnackBar = onShowLoginSnackBar,
                 detailFirstItem = detailFirstItem,
                 updateMainPostReaction = onSelectReaction,
                 popBackStack = navigator::popBackStack,

@@ -50,6 +50,8 @@ import com.kolown.model.Reactions
 
 @Composable
 internal fun RandomImageList(
+    isLoggedIn: Boolean = false,
+    onShowLoginSnackBar: () -> Unit = {},
     pagerState: PagerState = rememberPagerState(pageCount = { 10 }),
     imageItems: List<PostContentModel> = emptyList(),
     isReactionDialogVisible: Boolean = false,
@@ -68,6 +70,8 @@ internal fun RandomImageList(
             modifier = Modifier.fillMaxSize()
         ) {
             ImageCard(
+                isLoggedIn = isLoggedIn,
+                onShowLoginSnackBar = onShowLoginSnackBar,
                 imageItem = imageItems[page],
                 isReactionDialogVisible = isReactionDialogVisible,
                 onFollowClick = onFollowClick,
@@ -89,6 +93,8 @@ internal fun RandomImageList(
 
 @Composable
 private fun ImageCard(
+    isLoggedIn: Boolean,
+    onShowLoginSnackBar: () -> Unit,
     imageItem: PostContentModel,
     isReactionDialogVisible: Boolean,
     onFollowClick: (String, String) -> Unit,
@@ -155,10 +161,14 @@ private fun ImageCard(
                 imageItem = imageItem,
                 navigateToTheir = { navigateToTheir(imageItem.authorId) },
                 onFollowClick = {
-                    if (imageItem.isFollower) {
-                        onUnfollowClick(imageItem.authorId)
+                    if (isLoggedIn) {
+                        if (imageItem.isFollower) {
+                            onUnfollowClick(imageItem.authorId)
+                        } else {
+                            isFollowDialogVisible = true
+                        }
                     } else {
-                        isFollowDialogVisible = true
+                        onShowLoginSnackBar()
                     }
                 }
             )
@@ -175,10 +185,10 @@ private fun ImageCard(
         }
 
         IconButton(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
+                    modifier = Modifier
+                    . align (Alignment.CenterHorizontally)
                 .padding(16.dp),
-            onClick = onChangeReactionDialogVisibility,
+            onClick = if (isLoggedIn) onChangeReactionDialogVisibility else onShowLoginSnackBar,
         ) {
             Icon(
                 modifier = Modifier.size(30.dp * sizeAnimation.value),

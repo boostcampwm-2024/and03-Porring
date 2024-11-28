@@ -20,7 +20,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.kolown.designsystem.PrimaryDark
 import com.kolown.designsystem.SnackBarContainer
 import com.kolown.main.component.MainBottomBar
@@ -40,6 +42,8 @@ internal fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator(),
     mainViewModel: MainViewModel = hiltViewModel(),
 ) {
+    val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
+
     val mainItems by mainViewModel.mainItems.collectAsStateWithLifecycle()
     val detailFirstItem by mainViewModel.detailFirstItem.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
@@ -51,7 +55,21 @@ internal fun MainScreen(
     val coroutineScope = rememberCoroutineScope()
 
     val onShowSnackBar: (String) -> Unit = { msg ->
-        coroutineScope.launch { snackBarHostState.showSnackbar(msg) }
+        lifecycleScope.launch { snackBarHostState.showSnackbar(msg) }
+    }
+
+    val onShowLoginSnackBar: () -> Unit = {
+        lifecycleScope.launch {
+            snackBarHostState.showSnackbar(
+                message = "로그인 후 이용 가능한 서비스입니다.",
+                actionLabel = "로그인",
+                duration = SnackbarDuration.Short
+            ).let { result ->
+                if (result == SnackbarResult.ActionPerformed) {
+                    navigator.navigateToLogin()
+                }
+            }
+        }
     }
 
     LaunchedEffect(uploadState) {
@@ -104,6 +122,7 @@ internal fun MainScreen(
         mainItems = mainItems,
         onSelectReaction = mainViewModel::selectReaction,
         onShowSnackBar = onShowSnackBar,
+        onShowLoginSnackBar = onShowLoginSnackBar,
         detailFirstItem = detailFirstItem,
         fetchDetailFirst = mainViewModel::fetchDetailFirst,
         updateFollow = mainViewModel::updateFollow,
@@ -120,6 +139,7 @@ internal fun MainScreen(
 private fun MainScreenContent(
     mainItems: Flow<List<PostContentModel>>,
     onShowSnackBar: (String) -> Unit,
+    onShowLoginSnackBar: () -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
     detailFirstItem: PostContentModel,
     fetchDetailFirst: (PostContentModel) -> Unit,
@@ -139,6 +159,7 @@ private fun MainScreenContent(
                 mainItems = mainItems,
                 onSelectReaction = onSelectReaction,
                 onShowSnackBar = onShowSnackBar,
+                onShowLoginSnackBar = onShowLoginSnackBar,
                 detailFirstItem = detailFirstItem,
                 fetchDetailFirst = fetchDetailFirst,
                 updateFollow = updateFollow,
@@ -151,6 +172,8 @@ private fun MainScreenContent(
         },
         bottomBar = {
             MainBottomBar(
+                isLoggedIn = isLoggedIn,
+                onShowLoginSnackBar = onShowLoginSnackBar,
                 modifier = Modifier
                     .navigationBarsPadding()
                     .padding(top = 12.dp, bottom = 16.dp),

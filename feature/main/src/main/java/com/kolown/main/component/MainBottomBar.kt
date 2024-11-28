@@ -28,11 +28,14 @@ import com.kolown.designsystem.Primary
 import com.kolown.designsystem.PrimaryUnActive
 import com.kolown.main.navigation.MainMenu
 import com.kolown.main.ui.theme.PorringTheme
+import com.kolown.navigation.MainMenuRoute
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 internal fun MainBottomBar(
+    isLoggedIn: Boolean = false,
+    onShowLoginSnackBar: () -> Unit = {},
     modifier: Modifier = Modifier,
     visible: Boolean,
     menus: PersistentList<MainMenu>,
@@ -54,7 +57,13 @@ internal fun MainBottomBar(
                 MainBottomBarItem(
                     menu = menu,
                     selected = menu == currentMenu,
-                    onClick = { onMenuSelected(menu) }
+                    onClick = {
+                        if (menu.route == MainMenuRoute.Camera && isLoggedIn.not()) {
+                            onShowLoginSnackBar()
+                        } else {
+                            onMenuSelected(menu)
+                        }
+                    }
                 )
             }
         }
