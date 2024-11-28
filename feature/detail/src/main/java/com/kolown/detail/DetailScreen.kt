@@ -58,7 +58,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -85,7 +84,8 @@ import com.kolown.detail.component.ReactionGroup
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.model.UiState
-
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -162,7 +162,7 @@ private fun DetailScreen(
     updatePage: (Int) -> Unit,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-    followerState : State<Boolean?>
+    followerState : State<Pair<String,Boolean>?>
 ) {
     Box(
         modifier = Modifier.fillMaxSize().background(Color(0xff151D37)).padding(padding)
@@ -183,7 +183,6 @@ private fun DetailScreen(
             onFollowClick = onFollowClick,
             onUnfollowClick = onUnfollowClick,
             followerState = followerState
-
         )
 
         DetailTopAppBar(
@@ -211,7 +210,7 @@ private fun DetailContent(
     updatePage: (Int) -> Unit,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-    followerState : State<Boolean?>,
+    followerState : State<Pair<String,Boolean>?>,
 ) {
 
     VerticalPager(
@@ -260,9 +259,12 @@ private fun DetailItem(
     updatePage: () -> Unit,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-    followerState : State<Boolean?>,
+    followerState : State<Pair<String,Boolean>?>,
     ) {
     val view = LocalView.current
+    val isConcentrateMode = remember {
+        mutableStateOf(false)
+    }
 
 
     if (isReelsMode) {
@@ -312,7 +314,7 @@ private fun ReelsContent(
     onDoubleTab: () -> Unit,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-    followerState : State<Boolean?>,
+    followerState : State<Pair<String,Boolean>?>,
     ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isReactionVisible = remember { mutableStateOf(false) }
@@ -320,8 +322,8 @@ private fun ReelsContent(
     val isFollowed = rememberSaveable  { mutableStateOf(imageItem.isFollower) }
 
     LaunchedEffect(followerState.value) {
-        followerState.value?.let {
-            isFollowed.value = it
+        followerState.value?.let { pair ->
+            if(pair.first == imageItem.authorId) isFollowed.value = pair.second
         }
     }
 

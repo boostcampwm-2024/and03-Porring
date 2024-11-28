@@ -40,7 +40,7 @@ class DetailViewModel @Inject constructor(
 
     private val reactionStateFlow = MutableStateFlow<Map<String, ReactionState>>(emptyMap())
 
-    private val _followSharedFlow = MutableSharedFlow<Boolean>()
+    private val _followSharedFlow = MutableSharedFlow<Pair<String,Boolean>>(0)
     val followState = _followSharedFlow.asSharedFlow()
 
     private var _currentPage = 0
@@ -116,7 +116,7 @@ class DetailViewModel @Inject constructor(
             followRepository.followUser(id, name)
                 .catch { Log.e("FollowUpload", "viewModel: $it") }
                 .launchIn(viewModelScope)
-            _followSharedFlow.emit(true)
+            _followSharedFlow.emit(Pair(id,true))
         }
     }
 
@@ -125,7 +125,7 @@ class DetailViewModel @Inject constructor(
             followRepository.unFollowUser(id)
                 .catch { Log.e("UnFollowUpload", "viewModel: $it") }
                 .launchIn(viewModelScope)
-            _followSharedFlow.emit(false)
+            _followSharedFlow.emit(Pair(id,false))
         }
     }
 
