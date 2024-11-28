@@ -1,5 +1,6 @@
 package com.kolown.data.datasource.paging
 
+import android.app.usage.NetworkStatsManager
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.kolown.data.datasource.remote.PostDataSource
@@ -34,10 +35,15 @@ class UserPagingDataSource @Inject constructor(
     override suspend fun load(params: LoadParams<UserPagingKey>): LoadResult<UserPagingKey, PostContentModel> {
         val page = params.key?.page ?: 0
         val userId = params.key?.userId ?: ""
-        val posts = getPosts(userId, params)
+        val posts = getPosts(userId, params).getOrElse {
+            return LoadResult.Error(it)
+        }
+        val data = getData(posts).getOrElse {
+            return LoadResult.Error(it)
+        }
 
         return LoadResult.Page(
-            data = getData(posts),
+            data = data,
             prevKey = if (page == 0) null else UserPagingKey(page - 1, userId),
             nextKey = if (posts.isEmpty()) null else UserPagingKey(page + 1, userId)
         )
@@ -46,41 +52,43 @@ class UserPagingDataSource @Inject constructor(
     private suspend fun getPosts(
         userId: String,
         params: LoadParams<UserPagingKey>
-    ): List<PostModel> {
-        return postDataSource.getUserPost(userId, params.loadSize.toLong()).getOrThrow()
+    ): Result<List<PostModel>> {
+        return postDataSource.getUserPost(userId, params.loadSize.toLong())
     }
 
-    private suspend fun getData(posts: List<PostModel>): List<PostContentModel> {
-        val (tags, reactions) = coroutineScope {
-            val tagsDeferred =
-                async {
+    private suspend fun getData(posts: List<PostModel>): Result<List<PostContentModel>> {
+        return runCatching {
+            val (tags, reactions) = coroutineScope {
+                val tagsDeferred =
+                    async {
+                        posts.map {
+                            async {
+                                tagDataSource.getPostTag(it.postId).getOrThrow()
+                            }
+                        }.awaitAll()
+                    }
+                val reactionsDeferred = async {
                     posts.map {
                         async {
-                            tagDataSource.getPostTag(it.postId).getOrThrow()
+                            reactionDataSource.getReactionByPostId(it.postId).getOrThrow()
                         }
                     }.awaitAll()
                 }
-            val reactionsDeferred = async {
-                posts.map {
-                    async {
-                        reactionDataSource.getReactionByPostId(it.postId).getOrThrow()
-                    }
-                }.awaitAll()
+                tagsDeferred.await() to reactionsDeferred.await()
             }
-            tagsDeferred.await() to reactionsDeferred.await()
-        }
 
-        return posts.mapIndexed { index, postModel ->
-            PostContentModel(
-                postId = postModel.postId,
-                authorId = postModel.authorId,
-                imageUrl = postModel.imageUrl,
-                registerAt = postModel.registerAt,
-                description = postModel.description,
-                tags = tags[index].map { it.tagName },
-                isFollower = true,
-                reactions = reactions[index].mapNotNull { it.reaction },
-            )
+            posts.mapIndexed { index, postModel ->
+                PostContentModel(
+                    postId = postModel.postId,
+                    authorId = postModel.authorId,
+                    imageUrl = postModel.imageUrl,
+                    registerAt = postModel.registerAt,
+                    description = postModel.description,
+                    tags = tags[index].map { it.tagName },
+                    isFollower = true,
+                    reactions = reactions[index].mapNotNull { it.reaction },
+                )
+            }
         }
     }
 }
