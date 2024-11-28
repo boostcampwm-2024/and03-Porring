@@ -15,13 +15,15 @@ fun NavController.navigateFollower(navOptions: NavOptions) {
 fun NavGraphBuilder.followerNavGraph(
     isLoggedIn: Boolean,
     navigateToLogin: () -> Unit,
+    navigateToTheir: (String) -> Unit,
     padding: PaddingValues,
 ) {
     composable<MainMenuRoute.Follower> {
         FollowerRoute(
             isLoggedIn = isLoggedIn,
             navigateToLogin = navigateToLogin,
-            padding = padding
+            padding = padding,
+            navigateToTheir = navigateToTheir
         )
     }
 }

@@ -1,6 +1,7 @@
 package com.kolown.follower
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,6 +53,7 @@ import kotlinx.coroutines.flow.Flow
 internal fun FollowerRoute(
     isLoggedIn: Boolean,
     navigateToLogin: () -> Unit,
+    navigateToTheir: (String) -> Unit,
     padding: PaddingValues = PaddingValues(),
     viewModel: FollowerViewModel = hiltViewModel(),
 ) {
@@ -72,11 +74,15 @@ internal fun FollowerRoute(
                 CircularProgressIndicator()
             }
 
+
             is UiState.Success -> {
                 val items =
                     (uiState as UiState.Success<Flow<PagingData<FollowerThumbnail>>>).data.collectAsLazyPagingItems()
                 FollowerScreen(
-                    items = items, pagerState = pagerState, padding = padding
+                    items = items,
+                    pagerState = pagerState,
+                    padding = padding,
+                    navigateToTheir = navigateToTheir
                 )
             }
 
@@ -94,18 +100,26 @@ internal fun FollowerRoute(
 private fun FollowerScreen(
     items: LazyPagingItems<FollowerThumbnail>,
     pagerState: LazyListState,
+    navigateToTheir: (String) -> Unit,
     padding: PaddingValues = PaddingValues(),
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(padding).background(Color.White),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)
+            .background(Color.White),
         contentPadding = PaddingValues(16.dp),
         state = pagerState,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(items.itemCount) { index ->
             items[index]?.let {
-                FollowContent(followerName = it.followerName,
-                    followAlbums = it.posts.take(3).map { post -> post.imageUrl })
+                FollowContent(
+                    followerName = it.followerName,
+                    followAlbums = it.posts.take(3)
+                        .map { post -> post.imageUrl },
+                    navigateToTheir = { navigateToTheir(it.id) }
+                )
             }
         }
         if (items.loadState.append !is LoadState.NotLoading) {
@@ -122,9 +136,15 @@ private fun FollowerScreen(
 internal fun FollowContent(
     followerName: String,
     followAlbums: List<String>,
-) {
+    navigateToTheir: () -> Unit,
+    ) {
     Column(
-        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .clickable {
+                navigateToTheir()
+            },
         verticalArrangement = Arrangement.Center
     ) {
         Row(

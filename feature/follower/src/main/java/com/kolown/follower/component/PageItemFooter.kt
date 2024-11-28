@@ -1,5 +1,6 @@
 package com.kolown.follower.component
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,6 +31,7 @@ fun PageItemFooter(
         }
 
         is LoadState.Error -> {
+            Log.e("에러","로드 에러")
             RetryPageItem(modifier, onRetryClicked)
         }
 
