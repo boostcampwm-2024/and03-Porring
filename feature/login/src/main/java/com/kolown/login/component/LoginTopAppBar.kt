@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.kolown.designsystem.R.drawable
 import com.kolown.login.R
 
 @Composable
@@ -33,7 +32,7 @@ internal fun LoginTopAppBar(
         if (isEmailLogin) {
             IconButton(onClick = { cancelEmailLogin() }) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(drawable.ic_arrow_back),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_back),
                     contentDescription = stringResource(R.string.string_close_button)
                 )
             }
