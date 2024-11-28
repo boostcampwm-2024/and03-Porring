@@ -16,6 +16,9 @@ sealed interface Route {
 
     @Serializable
     data object Join : Route
+
+    @Serializable
+    data object DetailSearch : Route
 }
 
 sealed interface MainMenuRoute : Route {
@@ -36,13 +39,10 @@ sealed interface MainMenuRoute : Route {
 
     @Serializable
     data class Their(val authorId: String) : MainMenuRoute
+
+    @Serializable
+    data object Detail : MainMenuRoute
+
 }
 
 
-sealed interface AppRoute : Route {
-    @Serializable
-    data object Detail : AppRoute
-
-    @Serializable
-    data object DetailSearch : AppRoute
-}

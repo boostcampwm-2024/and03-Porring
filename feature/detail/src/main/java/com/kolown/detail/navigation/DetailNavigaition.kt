@@ -9,10 +9,10 @@ import androidx.navigation.compose.composable
 import com.kolown.detail.DetailRoute
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
-import com.kolown.navigation.AppRoute
+import com.kolown.navigation.MainMenuRoute
 
 fun NavController.navigateToDetail() {
-    navigate(AppRoute.Detail)
+    navigate(MainMenuRoute.Detail)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -25,7 +25,7 @@ fun NavGraphBuilder.detailNavGraph(
     padding: PaddingValues,
     navigateToTheir : (String) -> Unit
 ) {
-    composable<AppRoute.Detail> {
+    composable<MainMenuRoute.Detail> {
         DetailRoute(
             isLoggedIn = isLoggedIn,
             onShowLoginSnackBar = onShowLoginSnackBar,

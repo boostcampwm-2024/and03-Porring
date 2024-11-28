@@ -88,7 +88,8 @@ internal fun DetailSearchRoute(
 ) {
 
     val searchResultPost = viewModel.resultPostList.collectAsLazyPagingItems()
-    val pagerState = rememberPagerState(initialPage = viewModel.firstPage) { searchResultPost.itemCount  }
+
+    val pagerState = rememberPagerState(initialPage = viewModel.firstPage) { searchResultPost.itemCount }
     val followState = viewModel.followState.collectAsStateWithLifecycle(null)
 
     DetailSearchScreen(
@@ -109,7 +110,7 @@ internal fun DetailSearchRoute(
 @Composable
 fun DetailSearchScreen(
     popBackStack: () -> Unit = {},
-    onSelectReaction: (PostContentModel, Reactions) -> Unit = { _ , _ -> },
+    onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     viewModeChange: (Boolean) -> Unit = {},
     isReelsMode: Boolean = true,
     pagingItems: LazyPagingItems<PostContentModel>,
@@ -119,9 +120,8 @@ fun DetailSearchScreen(
     updatePage: (Int) -> Unit = {},
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-    followerState : State<Pair<String, Boolean>?>
+    followerState: State<Pair<String, Boolean>?>
 ) {
-    if(pagingItems.itemCount!=0){
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -142,7 +142,7 @@ fun DetailSearchScreen(
             followerState = followerState
 
         )
-    }
+
 
         if (isReelsMode) {
             DetailTopAppBar(popBackStack)
@@ -162,7 +162,7 @@ fun DetailContent(
     updatePage: (Int) -> Unit,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-    followerState : State<Pair<String, Boolean>?>,
+    followerState: State<Pair<String, Boolean>?>,
 ) {
 
     VerticalPager(
@@ -171,22 +171,21 @@ fun DetailContent(
         userScrollEnabled = isReelsMode,
     ) { page ->
 
-        val imageItem =  pagingItems[page]
+        val imageItem = pagingItems[page] ?: return@VerticalPager
 
-        if (imageItem != null) {
-            DetailItem(
-                onSelectReaction = onSelectReaction,
-                imageItem = imageItem,
-                onDoubleTab = viewModeChange,
-                navigateToTheir = navigateToTheir,
-                updatePage = {
-                    updatePage(pagerState.currentPage)
-                },
-                onFollowClick = onFollowClick,
-                onUnfollowClick = onUnfollowClick,
-                followerState = followerState
-            )
-        }
+        DetailItem(
+            onSelectReaction = onSelectReaction,
+            imageItem = imageItem,
+            onDoubleTab = viewModeChange,
+            navigateToTheir = navigateToTheir,
+            updatePage = {
+                updatePage(pagerState.currentPage)
+            },
+            onFollowClick = onFollowClick,
+            onUnfollowClick = onUnfollowClick,
+            followerState = followerState
+        )
+
     }
 
     //todo: 에러 났을 때(ex.Network Error)
@@ -195,7 +194,7 @@ fun DetailContent(
 
 @Composable
 fun DetailItem(
-    updateMainPostReaction: (PostContentModel, Reactions) -> Unit = { _, _ ->} ,
+    updateMainPostReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
     onDoubleTab: (Boolean) -> Unit,
@@ -203,7 +202,7 @@ fun DetailItem(
     updatePage: () -> Unit,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-    followerState : State<Pair<String, Boolean>?>,
+    followerState: State<Pair<String, Boolean>?>,
 ) {
     val view = LocalView.current
     val isConcentrateMode = remember {
@@ -244,7 +243,7 @@ fun DetailItem(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ReelsContent(
-    updateMainPostReaction: (PostContentModel, Reactions) -> Unit = { _, _ ->},
+    updateMainPostReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
     navigateToTheir: (String) -> Unit,
@@ -252,16 +251,16 @@ fun ReelsContent(
     onDoubleTab: () -> Unit,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-    followerState : State<Pair<String, Boolean>?>,
+    followerState: State<Pair<String, Boolean>?>,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isReactionVisible = remember { mutableStateOf(false) }
     val isFollowDialogVisible = remember { mutableStateOf(false) }
-    val isFollowed = rememberSaveable  { mutableStateOf(imageItem.isFollower) }
+    val isFollowed = rememberSaveable { mutableStateOf(imageItem.isFollower) }
 
     LaunchedEffect(followerState.value) {
         followerState.value?.let { pair ->
-            if(pair.first == imageItem.authorId) isFollowed.value = pair.second
+            if (pair.first == imageItem.authorId) isFollowed.value = pair.second
         }
     }
 
@@ -347,8 +346,12 @@ fun ReelsContent(
                             },
                             id = R.drawable.icon_arrow_back,
                             buttonText = "팔로우",
-                            contentColor = if(isFollowed.value) Color(0xFF151D37) else Color(0xFF00BBFF),
-                            backgroundColor = if(isFollowed.value) Color(0xFF00BBFF) else Color(0xFF151D37)
+                            contentColor = if (isFollowed.value) Color(0xFF151D37) else Color(
+                                0xFF00BBFF
+                            ),
+                            backgroundColor = if (isFollowed.value) Color(0xFF00BBFF) else Color(
+                                0xFF151D37
+                            )
                         )
                     }
                 }
@@ -427,8 +430,8 @@ fun DetailButton(
     onClick: () -> Unit,
     @DrawableRes id: Int,
     buttonText: String,
-    contentColor : Color = Color(0xFF00BBFF),
-    backgroundColor : Color = Color(0xFF151D37)
+    contentColor: Color = Color(0xFF00BBFF),
+    backgroundColor: Color = Color(0xFF151D37)
 ) {
     Button(
         onClick = onClick,

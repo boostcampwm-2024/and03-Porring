@@ -8,8 +8,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.kolown.navigation.AppRoute
 import com.kolown.navigation.MainMenuRoute
+import com.kolown.navigation.Route
 import com.kolown.search.DetailSearchRoute
 import com.kolown.search.SearchRoute
 
@@ -18,7 +18,7 @@ fun NavController.navigateSearch(navOptions: NavOptions) {
 }
 
 fun NavController.navigateSearchDetail() {
-    navigate(AppRoute.DetailSearch)
+    navigate(Route.DetailSearch)
 }
 
 
@@ -40,7 +40,7 @@ fun NavGraphBuilder.searchNavGraph(
         )
     }
 
-    composable<AppRoute.DetailSearch> { backStackEntry ->
+    composable<Route.DetailSearch> { backStackEntry ->
         val parentEntry = remember(backStackEntry) {
             getBackStackEntry()
         }
