@@ -1,5 +1,6 @@
 package com.kolown.data.datasource.paging
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.kolown.data.datasource.remote.AuthDataSource
@@ -19,8 +20,6 @@ import javax.inject.Named
 class FollowerGalleryThumbnailPagingDataSource @Inject constructor(
     private val followerDataSource: FollowDataSource,
     private val postDataSource: PostDataSource,
-    private val tagDataSource: TagDataSource,
-    private val reactionDataSource: ReactionDataSource,
     @Named("google") private val googleAuthDataSource: AuthDataSource,
 ) : PagingSource<String, FollowerThumbnail>() {
 
@@ -42,54 +41,16 @@ class FollowerGalleryThumbnailPagingDataSource @Inject constructor(
                             postDataSource.getUserFollowerPost(
                                 uid = follower.followerId,
                                 perPage = 3
-                            )
-                                .getOrElse { throw Exception("게시물 불러오기 실패") }
-                        val (tags, reactions) = coroutineScope {
-                            val tagsDeferred = async {
-                                posts.map {
-                                    async {
-                                        tagDataSource.getPostTag(it.postId).getOrElse {
-                                            throw IOException("태그 불러오기 실패")
-                                        }
-                                    }
-                                }.awaitAll()
-                            }
-                            val reactionsDeferred = async {
-                                posts.map {
-                                    async {
-                                        reactionDataSource.getReactionByPostId(it.postId)
-                                            .getOrElse {
-                                                throw IOException("리액션 불러오기 실패")
-                                            }
-                                    }
-                                }.awaitAll()
-                            }
-
-                            tagsDeferred.await() to reactionsDeferred.await()
-                        }
-                        val data = posts.mapIndexed { index, postModel ->
-                            PostContentModel(
-                                postId = postModel.postId,
-                                authorId = postModel.authorId,
-                                imageUrl = postModel.imageUrl,
-                                registerAt = postModel.registerAt,
-                                description = postModel.description,
-                                tags = tags[index].map { it.tagName },
-                                isFollower = false,
-                                reactions = reactions[index].mapNotNull { it.reaction },
-                                myReaction = reactions[index].find { it.userId == currentUserId }?.reaction
-                            )
-                        }
+                            ).getOrElse { throw Exception("게시물 불러오기 실패") }
 
                         FollowerThumbnail(
                             id = follower.followerId,
                             followerName = follower.followerName,
-                            posts = data
+                            posts = posts.map { it.imageUrl }
                         )
                     }
                 }.awaitAll()
             }
-
             LoadResult.Page(
                 data = thumbnails,
                 prevKey = if (key == null) null else followers.firstOrNull()?.followerId,

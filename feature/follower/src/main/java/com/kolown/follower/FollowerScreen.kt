@@ -57,36 +57,36 @@ internal fun FollowerRoute(
     padding: PaddingValues = PaddingValues(),
     viewModel: FollowerViewModel = hiltViewModel(),
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val pagingItems = viewModel.followerItems.collectAsLazyPagingItems()
     val pagerState = rememberLazyListState()
 
-    LaunchedEffect(true) {
-        viewModel.getItem()
-    }
-
     if (isLoggedIn) {
-        when (uiState) {
-            is UiState.Idle -> {}
-
-            is UiState.Loading -> Box(
-                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
+        when (pagingItems.loadState.refresh) {
+            is LoadState.Loading -> {
+                Column(
+                    modifier = Modifier
+                        .padding(padding)
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(36.dp)
+                    )
+                }
             }
 
-
-            is UiState.Success -> {
-                val items =
-                    (uiState as UiState.Success<Flow<PagingData<FollowerThumbnail>>>).data.collectAsLazyPagingItems()
+            is LoadState.NotLoading -> {
                 FollowerScreen(
-                    items = items,
+                    items = pagingItems,
                     pagerState = pagerState,
                     padding = padding,
                     navigateToTheir = navigateToTheir
                 )
             }
 
-            is UiState.Failure -> {}
+            is LoadState.Error -> {}
         }
 
     } else {
@@ -116,8 +116,7 @@ private fun FollowerScreen(
             items[index]?.let {
                 FollowContent(
                     followerName = it.followerName,
-                    followAlbums = it.posts.take(3)
-                        .map { post -> post.imageUrl },
+                    followAlbums = it.posts,
                     navigateToTheir = { navigateToTheir(it.id) }
                 )
             }
@@ -137,7 +136,7 @@ internal fun FollowContent(
     followerName: String,
     followAlbums: List<String>,
     navigateToTheir: () -> Unit,
-    ) {
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
