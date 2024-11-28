@@ -14,8 +14,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
-import com.kolown.model.Reactions
 import com.kolown.home.toImage
+import com.kolown.model.Reactions
 
 @Composable
 internal fun ReactionGroup(
