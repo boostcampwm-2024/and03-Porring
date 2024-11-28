@@ -79,7 +79,7 @@ internal class MainNavigator(
         navController.popBackStack()
     }
 
-    val backStackEntry get() = navController.getBackStackEntry(MainMenu.HOME.route)
+    fun getBackStackEntry() : NavBackStackEntry = navController.getBackStackEntry(MainMenu.HOME.route)
 
 
     @Composable
