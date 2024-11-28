@@ -74,4 +74,5 @@ dependencies {
 
     implementation(libs.androidx.credentials)
     implementation(libs.google.android.googleid)
+    implementation(libs.google.firebase.auth.ktx)
 }
