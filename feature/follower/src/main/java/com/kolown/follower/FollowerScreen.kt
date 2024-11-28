@@ -1,8 +1,6 @@
 package com.kolown.follower
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +17,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -45,7 +42,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.kolown.follower.component.FollowContent
 import com.kolown.follower.component.PageItemFooter
 import com.kolown.follower.component.RestrictedLoginContent
 import com.kolown.model.FollowerThumbnail
@@ -57,7 +53,7 @@ internal fun FollowerRoute(
     isLoggedIn: Boolean,
     navigateToLogin: () -> Unit,
     padding: PaddingValues = PaddingValues(),
-    viewModel: FollowerViewModel = hiltViewModel()
+    viewModel: FollowerViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val pagerState = rememberLazyListState()
@@ -68,22 +64,19 @@ internal fun FollowerRoute(
 
     if (isLoggedIn) {
         when (uiState) {
-            is UiState.Loading ->
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+            is UiState.Idle -> {}
 
+            is UiState.Loading -> Box(
+                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
 
             is UiState.Success -> {
                 val items =
                     (uiState as UiState.Success<Flow<PagingData<FollowerThumbnail>>>).data.collectAsLazyPagingItems()
                 FollowerScreen(
-                    items = items,
-                    pagerState = pagerState,
-                    padding = padding
+                    items = items, pagerState = pagerState, padding = padding
                 )
             }
 
@@ -104,21 +97,15 @@ private fun FollowerScreen(
     padding: PaddingValues = PaddingValues(),
 ) {
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)
-            .background(Color.White),
+        modifier = Modifier.fillMaxSize().padding(padding).background(Color.White),
         contentPadding = PaddingValues(16.dp),
         state = pagerState,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(items.itemCount) { index ->
             items[index]?.let {
-                FollowContent(
-                    followerName = it.followerName,
-                    followAlbums = it.posts.take(3)
-                        .map { post -> post.imageUrl }
-                )
+                FollowContent(followerName = it.followerName,
+                    followAlbums = it.posts.take(3).map { post -> post.imageUrl })
             }
         }
         if (items.loadState.append !is LoadState.NotLoading) {
@@ -134,12 +121,10 @@ private fun FollowerScreen(
 @Composable
 internal fun FollowContent(
     followerName: String,
-    followAlbums: List<String>
+    followAlbums: List<String>,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
+        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
         verticalArrangement = Arrangement.Center
     ) {
         Row(
@@ -157,22 +142,17 @@ internal fun FollowContent(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(
-                space = 8.dp,
-                alignment = Alignment.CenterHorizontally
+                space = 8.dp, alignment = Alignment.CenterHorizontally
             )
         ) {
             followAlbums.forEach { imageUrl ->
                 Card(
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(RoundedCornerShape(10.dp)),
+                    modifier = Modifier.size(100.dp).clip(RoundedCornerShape(10.dp)),
                     colors = CardDefaults.cardColors(containerColor = Color.LightGray)
                 ) {
                     AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(imageUrl)
-                            .crossfade(true)
-                            .build(),
+                        model = ImageRequest.Builder(LocalContext.current).data(imageUrl)
+                            .crossfade(true).build(),
                         modifier = Modifier.fillMaxSize(),
                         contentDescription = "follower's image",
                         contentScale = ContentScale.Crop,
