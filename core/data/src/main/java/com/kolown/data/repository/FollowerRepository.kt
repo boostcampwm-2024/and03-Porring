@@ -18,7 +18,7 @@ interface FollowRepository {
     fun getFollowerName(followerId: String): Flow<String>
     suspend fun unFollowUser(followerId: String): Flow<Boolean>
     fun followUser(followerId: String, followerName: String): Flow<Boolean>
-    suspend fun getFollowerDataSourcePagingFlow(): Flow<PagingData<FollowerThumbnail>>
+    fun getFollowerDataSourcePagingFlow(): Flow<PagingData<FollowerThumbnail>>
 }
 
 class FollowRepositoryImpl @Inject constructor(
@@ -66,7 +66,7 @@ class FollowRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getFollowerDataSourcePagingFlow(): Flow<PagingData<FollowerThumbnail>> {
+    override  fun getFollowerDataSourcePagingFlow(): Flow<PagingData<FollowerThumbnail>> {
         return Pager(
             config = PagingConfig(
                 pageSize = FOLLOWER_PER_PAGE,
