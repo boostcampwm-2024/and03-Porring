@@ -44,12 +44,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.kolown.designsystem.Primary
-import com.kolown.home.R
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 
@@ -313,44 +308,6 @@ private fun CustomIconButton(
             imageVector = imageVector,
             contentDescription = null,
             tint = if (isSelected) Color.White else Primary
-        )
-    }
-}
-
-@Composable
-fun LottieFireWorkAnimation(
-    modifier: Modifier,
-    reactions: List<Reactions>,
-    myReaction: Reactions?
-) {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.fireworks))
-    var isAnimationPlaying by remember { mutableStateOf(false) }
-    var isFirstShow by remember { mutableStateOf(true) }
-
-    LaunchedEffect(reactions) {
-        if (reactions.isNotEmpty() && myReaction != null && !isFirstShow) {
-            isAnimationPlaying = true
-        }
-        isFirstShow = false
-    }
-
-    val progress by animateLottieCompositionAsState(
-        composition = composition,
-        isPlaying = isAnimationPlaying,
-        iterations = 1,
-    )
-
-    LaunchedEffect(progress) {
-        if (progress == 1f) {
-            isAnimationPlaying = false
-        }
-    }
-
-    if(isAnimationPlaying) {
-        LottieAnimation(
-            modifier = modifier.size(140.dp),
-            composition = composition,
-            progress = { progress }
         )
     }
 }
