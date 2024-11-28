@@ -1,8 +1,6 @@
 package com.kolown.data.di
 
-import com.kolown.data.datasource.fake.FakeFollowerDataSource
 import com.kolown.data.datasource.fake.FakeGalleryDataSource
-import com.kolown.data.datasource.fake.FollowerDataSource
 import com.kolown.data.datasource.fake.GalleryDataSource
 import com.kolown.data.datasource.remote.AuthDataSource
 import com.kolown.data.datasource.remote.AuthDataSourceImpl
@@ -70,10 +68,5 @@ abstract class DataSourceModule {
     abstract fun provideUploadDataSource(
         followDataSource: FollowDataSourceImpl,
     ): FollowDataSource
-
-    @Binds
-    abstract fun provideFollowerDataSource(
-        followerDataSource: FakeFollowerDataSource,
-    ): FollowerDataSource
 
 }
