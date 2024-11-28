@@ -1,13 +1,17 @@
 package com.kolown.login.util
 
+import android.app.Activity
 import android.content.Context
-import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
+import androidx.credentials.GetCredentialResponse
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.kolown.login.BuildConfig
 
-suspend fun getCredential(platform: LoginPlatform, context: Context): Result<Credential> {
+internal suspend fun getCredential(
+    platform: LoginPlatform,
+    context: Context,
+): Result<GetCredentialResponse> {
     return runCatching {
         val credentialManager = CredentialManager.create(context)
         val credentialOption = when (platform) {
@@ -19,8 +23,8 @@ suspend fun getCredential(platform: LoginPlatform, context: Context): Result<Cre
 
         credentialManager.getCredential(
             request = request,
-            context = context
-        ).credential
+            context = context as Activity
+        )
     }
 }
 

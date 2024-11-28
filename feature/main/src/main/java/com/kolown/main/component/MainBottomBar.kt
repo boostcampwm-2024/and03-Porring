@@ -1,4 +1,4 @@
-package com.kolown.porring.component
+package com.kolown.main.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -26,8 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kolown.designsystem.Primary
 import com.kolown.designsystem.PrimaryUnActive
-import com.kolown.porring.navigation.MainMenu
-import com.kolown.porring.ui.theme.PorringTheme
+import com.kolown.main.navigation.MainMenu
+import com.kolown.main.ui.theme.PorringTheme
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 

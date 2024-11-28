@@ -1,4 +1,4 @@
-package com.kolown.porring
+package com.kolown.main
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -23,14 +23,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kolown.designsystem.PrimaryDark
 import com.kolown.designsystem.SnackBarContainer
+import com.kolown.main.component.MainBottomBar
+import com.kolown.main.component.MainNavHost
+import com.kolown.main.navigation.MainMenu
+import com.kolown.main.navigation.MainNavigator
+import com.kolown.main.navigation.rememberMainNavigator
 import com.kolown.model.InitUiState
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
-import com.kolown.porring.component.MainBottomBar
-import com.kolown.porring.component.MainNavHost
-import com.kolown.porring.navigation.MainMenu
-import com.kolown.porring.navigation.MainNavigator
-import com.kolown.porring.navigation.rememberMainNavigator
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch

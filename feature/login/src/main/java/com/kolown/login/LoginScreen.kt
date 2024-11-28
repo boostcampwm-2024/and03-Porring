@@ -51,7 +51,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleStartEffect
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.kolown.designsystem.Primary
@@ -126,14 +130,19 @@ internal fun LoginRoute(
         }
     }
 
+    val lifecycleOwner = LocalLifecycleOwner.current
     LoginScreen(
         isEmailLogin = isEmailLogin,
         isLoginProgress = isLoginProgress,
         navigateToJoin = navigateToJoin,
         onClickGoogleLogin = {
-            CoroutineScope(Dispatchers.Main).launch {
-                getCredential(LoginPlatform.Google, context).getOrNull()?.let {
-                    loginViewModel.handleSignIn(it)
+            lifecycleOwner.lifecycleScope.launch {
+                try {
+                    getCredential(LoginPlatform.Google, context).getOrThrow()?.let {
+                        loginViewModel.handleSignIn(it.credential)
+                    }
+                } catch (e : Exception) {
+                    Log.e("porring_test_tag", "$e")
                 }
             }
         },

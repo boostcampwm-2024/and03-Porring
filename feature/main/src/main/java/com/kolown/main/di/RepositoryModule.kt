@@ -1,4 +1,4 @@
-package com.kolown.porring.di
+package com.kolown.main.di
 
 import android.content.Context
 import com.kolown.data.repository.FakeImageRepository

@@ -1,12 +1,12 @@
-package com.kolown.porring
+package com.kolown.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.kolown.porring.navigation.MainNavigator
-import com.kolown.porring.navigation.rememberMainNavigator
-import com.kolown.porring.ui.theme.PorringTheme
+import com.kolown.main.navigation.MainNavigator
+import com.kolown.main.navigation.rememberMainNavigator
+import com.kolown.main.ui.theme.PorringTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
