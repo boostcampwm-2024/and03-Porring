@@ -78,6 +78,7 @@ class DetailViewModel @Inject constructor(
                 }
 
                 _uiState.value = UiState.Success(combineFlow)
+
             } catch (e: Exception) {
                 _uiState.value = UiState.Failure(e)
             }

@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
@@ -72,6 +73,10 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
+import com.kolown.search.component.DetailTopAppBar
+import com.kolown.search.component.FollowDialog
+import com.kolown.search.component.ReactionDialog
+import com.kolown.search.component.ReactionGroup
 
 
 @Composable
@@ -84,6 +89,7 @@ internal fun DetailSearchRoute(
 
     val searchResultPost = viewModel.resultPostList.collectAsLazyPagingItems()
     val pagerState = rememberPagerState(initialPage = viewModel.firstPage) { searchResultPost.itemCount  }
+    val followState = viewModel.followState.collectAsStateWithLifecycle(null)
 
     DetailSearchScreen(
         padding = padding,
@@ -91,16 +97,21 @@ internal fun DetailSearchRoute(
         popBackStack = popBackStack,
         navigateToTheir = navigateToTheir,
         pagerState = pagerState,
+        followerState = followState,
+        onFollowClick = viewModel::followUser,
+        onUnfollowClick = viewModel::unFollowUser,
+        updatePage = { page ->
+            viewModel.updatePage(page)
+        },
     )
 }
 
 @Composable
 fun DetailSearchScreen(
     popBackStack: () -> Unit = {},
-    onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
+    onSelectReaction: (PostContentModel, Reactions) -> Unit = { _ , _ -> },
     viewModeChange: (Boolean) -> Unit = {},
     isReelsMode: Boolean = true,
-//    firstItem: PostContentModel,
     pagingItems: LazyPagingItems<PostContentModel>,
     pagerState: PagerState,
     padding: PaddingValues = PaddingValues(),
@@ -108,7 +119,7 @@ fun DetailSearchScreen(
     updatePage: (Int) -> Unit = {},
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-//    followerState : State<Pair<String, Boolean>?>
+    followerState : State<Pair<String, Boolean>?>
 ) {
     if(pagingItems.itemCount!=0){
     Box(
@@ -124,18 +135,17 @@ fun DetailSearchScreen(
             isReelsMode = isReelsMode,
             pagingItems = pagingItems,
             pagerState = pagerState,
-//            firstItem = firstItem,
             navigateToTheir = navigateToTheir,
             updatePage = updatePage,
             onFollowClick = onFollowClick,
             onUnfollowClick = onUnfollowClick,
-//            followerState = followerState
+            followerState = followerState
 
         )
     }
 
         if (isReelsMode) {
-//            DetailTopAppBar(popBackStack)
+            DetailTopAppBar(popBackStack)
         }
     }
 }
@@ -148,12 +158,11 @@ fun DetailContent(
     isReelsMode: Boolean,
     pagingItems: LazyPagingItems<PostContentModel>,
     pagerState: PagerState,
-//    firstItem: PostContentModel,
     navigateToTheir: (String) -> Unit,
     updatePage: (Int) -> Unit,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-//    followerState : State<Pair<String, Boolean>?>,
+    followerState : State<Pair<String, Boolean>?>,
 ) {
 
     VerticalPager(
@@ -161,8 +170,7 @@ fun DetailContent(
         state = pagerState,
         userScrollEnabled = isReelsMode,
     ) { page ->
-        // Our page content
-        // 정상 상태일 때
+
         val imageItem =  pagingItems[page]
 
         if (imageItem != null) {
@@ -176,7 +184,7 @@ fun DetailContent(
                 },
                 onFollowClick = onFollowClick,
                 onUnfollowClick = onUnfollowClick,
-                //            followerState = followerState
+                followerState = followerState
             )
         }
     }
@@ -195,7 +203,7 @@ fun DetailItem(
     updatePage: () -> Unit,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-//    followerState : State<Pair<String, Boolean>?>,
+    followerState : State<Pair<String, Boolean>?>,
 ) {
     val view = LocalView.current
     val isConcentrateMode = remember {
@@ -216,7 +224,7 @@ fun DetailItem(
             updatePage = updatePage,
             onFollowClick = onFollowClick,
             onUnfollowClick = onUnfollowClick,
-//            followerState = followerState,
+            followerState = followerState,
         )
     } else {
         ConcentrateContent(
@@ -244,18 +252,18 @@ fun ReelsContent(
     onDoubleTab: () -> Unit,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-//    followerState : State<Pair<String, Boolean>?>,
+    followerState : State<Pair<String, Boolean>?>,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isReactionVisible = remember { mutableStateOf(false) }
     val isFollowDialogVisible = remember { mutableStateOf(false) }
     val isFollowed = rememberSaveable  { mutableStateOf(imageItem.isFollower) }
-//
-//    LaunchedEffect(followerState.value) {
-//        followerState.value?.let { pair ->
-//            if(pair.first == imageItem.authorId) isFollowed.value = pair.second
-//        }
-//    }
+
+    LaunchedEffect(followerState.value) {
+        followerState.value?.let { pair ->
+            if(pair.first == imageItem.authorId) isFollowed.value = pair.second
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -291,12 +299,12 @@ fun ReelsContent(
                         color = Color.White,
                         fontSize = 16.sp
                     )
-//                    ReactionGroup(
-//                        modifier = Modifier
-//                            .wrapContentWidth()
-//                            .fillMaxHeight(),
-//                        reactions = imageItem.reactions
-//                    )
+                    ReactionGroup(
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .fillMaxHeight(),
+                        reactions = imageItem.reactions
+                    )
                 }
                 val tags = imageItem.tags.joinToString(", ") { "#$it" }
                 Text(
@@ -320,14 +328,14 @@ fun ReelsContent(
                             isReactionVisible.value = true
                         })
                     Row {
-//                        DetailButton(
-//                            onClick = {
-//                                navigateToTheir(imageItem.authorId)
-//                                updatePage()
-//                            },
-//                            id = R.drawable.ic_detail_gallary,
-//                            buttonText = "갤러리"
-//                        )
+                        DetailButton(
+                            onClick = {
+                                navigateToTheir(imageItem.authorId)
+                                updatePage()
+                            },
+                            id = R.drawable.icon_arrow_back,
+                            buttonText = "갤러리"
+                        )
                         Spacer(modifier = Modifier.width(10.dp))
                         DetailButton(
                             onClick = {
@@ -345,24 +353,24 @@ fun ReelsContent(
                     }
                 }
             }
-//            if (isReactionVisible.value) {
-//                ReactionDialog(
-//                    imageItem = imageItem,
-//                    modifier = Modifier
-//                        .padding(16.dp),
-//                    updateMainPostReaction = updateMainPostReaction,
-//                    selectedReaction = onSelectReaction,
-//                    onDismiss = { isReactionVisible.value = false }
-//                )
-//            }
+            if (isReactionVisible.value) {
+                ReactionDialog(
+                    imageItem = imageItem,
+                    modifier = Modifier
+                        .padding(16.dp),
+                    updateMainPostReaction = updateMainPostReaction,
+                    selectedReaction = onSelectReaction,
+                    onDismiss = { isReactionVisible.value = false }
+                )
+            }
         }
     }
-//    if (isFollowDialogVisible.value)
-//        FollowDialog(onClickCancel = {
-//            isFollowDialogVisible.value = false
-//        }, onClickConfirm = { name ->
-//            onFollowClick(imageItem.authorId, name)
-//        })
+    if (isFollowDialogVisible.value)
+        FollowDialog(onClickCancel = {
+            isFollowDialogVisible.value = false
+        }, onClickConfirm = { name ->
+            onFollowClick(imageItem.authorId, name)
+        })
 }
 
 @Composable
