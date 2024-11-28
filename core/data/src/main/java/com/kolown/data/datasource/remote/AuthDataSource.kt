@@ -16,6 +16,7 @@ interface AuthDataSource {
     fun checkUserLoggedIn(): Boolean
     fun logout(): Result<Unit>
     suspend fun joinWithEmailAndPassword(email: String, password: String): Result<Unit>
+    suspend fun signInWithEmailAndPassword(email: String, password: String): Result<Unit>
 }
 
 @Named("google")
@@ -51,6 +52,12 @@ class AuthDataSourceImpl @Inject constructor(
     override fun logout(): Result<Unit> {
         return kotlin.runCatching {
             auth.signOut()
+        }
+    }
+
+    override suspend fun signInWithEmailAndPassword(email: String, password: String): Result<Unit> {
+        return kotlin.runCatching {
+            auth.signInWithEmailAndPassword(email, password).await()
         }
     }
 
