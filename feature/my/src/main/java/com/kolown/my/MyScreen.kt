@@ -64,7 +64,7 @@ internal fun MyRoute(
 }
 
 @Composable
-fun MyScreen(
+private fun MyScreen(
     navigateToSetting: () -> Unit = {},
     padding: PaddingValues = PaddingValues(),
     viewModel: MyViewModel = hiltViewModel(),

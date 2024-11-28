@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TextMenu(
+internal fun TextMenu(
     title: String,
     color: Color = Color.Black,
     modifier: Modifier = Modifier,

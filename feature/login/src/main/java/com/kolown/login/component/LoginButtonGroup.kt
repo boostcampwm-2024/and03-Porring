@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.kolown.login.util.LoginButton
 
 @Composable
-fun LoginButtonGroup(
+internal fun LoginButtonGroup(
     vararg buttons: LoginButton,
     visible: Boolean = true,
     modifier: Modifier = Modifier,

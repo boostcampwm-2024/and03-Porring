@@ -53,6 +53,6 @@ internal fun TheirAppBar(
 
 @Composable
 @Preview
-fun TheirAppBarPreview() {
+private fun TheirAppBarPreview() {
     TheirAppBar()
 }

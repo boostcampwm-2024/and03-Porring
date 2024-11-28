@@ -44,7 +44,7 @@ import com.kolown.designsystem.Surface2
 import com.kolown.search.R
 
 @Composable
-fun TagSearchBar(
+internal fun TagSearchBar(
     text: String,
     modifier: Modifier = Modifier.zIndex(1f),
     onValueChange: (String) -> Unit,
@@ -106,12 +106,11 @@ fun TagSearchBar(
             }
         )
     }
-
 }
 
 @Composable
 @Preview
-fun PreviewSearchBar() {
+private fun PreviewSearchBar() {
 //    TagSearchBar("무니") {
 //
 //    }

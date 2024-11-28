@@ -117,7 +117,7 @@ internal fun DetailRoute(
 }
 
 @Composable
-fun DetailScreen(
+private fun DetailScreen(
     popBackStack: () -> Unit = {},
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
@@ -152,7 +152,7 @@ fun DetailScreen(
 
 
 @Composable
-fun DetailContent(
+private fun DetailContent(
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
     viewModeChange: (Boolean) -> Unit,
@@ -183,7 +183,7 @@ fun DetailContent(
 
 
 @Composable
-fun DetailItem(
+private fun DetailItem(
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
@@ -222,7 +222,7 @@ fun DetailItem(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ReelsContent(
+private fun ReelsContent(
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
@@ -319,7 +319,7 @@ fun ReelsContent(
 }
 
 @Composable
-fun ConcentrateContent(
+private fun ConcentrateContent(
     imageUrl: String,
 ) {
     var scale by remember {
@@ -364,7 +364,7 @@ fun ConcentrateContent(
 
 
 @Composable
-fun DetailButton(
+private fun DetailButton(
     onClick: () -> Unit,
     @DrawableRes id: Int,
     buttonText: String,
@@ -383,7 +383,7 @@ fun DetailButton(
     }
 }
 
-fun requestFullScreen(view: View) {
+private fun requestFullScreen(view: View) {
     // !! should be safe here since the view is part of an Activity
     val window = view.context.getActivity()!!.window
     val insetController = WindowCompat.getInsetsController(window, view)
@@ -394,7 +394,7 @@ fun requestFullScreen(view: View) {
     )
 }
 
-fun showSystembar(view: View) {
+private fun showSystembar(view: View) {
     // !! should be safe here since the view is part of an Activity
     val window = view.context.getActivity()!!.window
     val insetController = WindowCompat.getInsetsController(window, view)
@@ -405,7 +405,7 @@ fun showSystembar(view: View) {
 }
 
 
-fun Context.getActivity(): Activity? = when (this) {
+private fun Context.getActivity(): Activity? = when (this) {
     is Activity -> this
     is ContextWrapper -> baseContext.getActivity()
     else -> null
@@ -413,7 +413,7 @@ fun Context.getActivity(): Activity? = when (this) {
 
 @Preview(showBackground = true, backgroundColor = 0xFF000000)
 @Composable
-fun DetailScreenPreview() {
+private fun DetailScreenPreview() {
 //    DetailContent(
 //        padding = PaddingValues(0.dp),
 //        imageItem = PostContentModel(""),

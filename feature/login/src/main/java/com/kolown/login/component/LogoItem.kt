@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.kolown.login.R
 
 @Composable
-fun LogoItem() {
+internal fun LogoItem() {
     Column(
         modifier = Modifier.fillMaxWidth().wrapContentHeight(),
         horizontalAlignment = Alignment.CenterHorizontally,

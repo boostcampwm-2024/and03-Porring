@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.sp
 import com.kolown.model.Tag
 
 @Composable
-fun PostHeader(tag: Tag) {
+internal fun PostHeader(tag: Tag) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

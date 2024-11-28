@@ -39,7 +39,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.kolown.detail.R
 
 @Composable
-fun FollowDialog(
+internal fun FollowDialog(
     modifier: Modifier = Modifier,
     onClickCancel: () -> Unit = {},
     onClickConfirm: (String) -> Unit = {}

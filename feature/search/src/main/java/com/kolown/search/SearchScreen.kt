@@ -53,9 +53,8 @@ internal fun SearchRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(
+private fun SearchScreen(
     padding: PaddingValues = PaddingValues(),
     viewModel: SearchViewModel = hiltViewModel(),
 ) {
@@ -148,7 +147,7 @@ private fun PreviewSearchScreen() {
 }
 
 @Composable
-fun ExpandableColumnExample() {
+private fun ExpandableColumnExample() {
     // 상태: 확장 여부
     var isExpanded by remember { mutableStateOf(false) }
 

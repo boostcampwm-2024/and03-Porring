@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.kolown.model.Tag
 
 @Composable
-fun TagItem(tag: Tag, onClick: (Tag) -> Unit) {
+internal fun TagItem(tag: Tag, onClick: (Tag) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -23,6 +23,5 @@ fun TagItem(tag: Tag, onClick: (Tag) -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text("# ${tag.name}")
-
     }
 }

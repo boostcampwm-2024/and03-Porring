@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TextLabel(
+internal fun TextLabel(
     title: String,
     modifier: Modifier = Modifier,
 ) {

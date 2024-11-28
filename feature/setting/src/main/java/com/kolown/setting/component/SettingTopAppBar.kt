@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.kolown.setting.R
 
 @Composable
-fun SettingTopAppBar(
+internal fun SettingTopAppBar(
     popBackStack: () -> Unit,
 ) {
     Row(

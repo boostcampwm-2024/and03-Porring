@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.kolown.detail.R
 
 @Composable
-fun DetailTopAppBar(
+internal fun DetailTopAppBar(
     popBackStack: () -> Unit,
 ) {
     Row(

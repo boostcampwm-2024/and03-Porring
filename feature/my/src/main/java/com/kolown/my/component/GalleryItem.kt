@@ -33,10 +33,10 @@ import com.kolown.model.PostContentModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun GalleryItem(
+internal fun GalleryItem(
     postContentModel: PostContentModel,
     width: Dp,
-    onLongClickImage: () -> Unit = {}
+    onLongClickImage: () -> Unit = {},
 ) {
     var isLoading by remember { mutableStateOf(true) }
     var isError by remember { mutableStateOf(false) }

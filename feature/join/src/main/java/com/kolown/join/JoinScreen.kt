@@ -46,7 +46,7 @@ import com.kolown.join.component.JoinTopAppBar
 import com.kolown.model.UiState
 
 @Composable
-fun JoinRoute(
+internal fun JoinRoute(
     onShowSnackBar: (String) -> Unit,
     popBackStack: () -> Unit,
     joinViewModel: JoinViewModel = hiltViewModel(),
@@ -97,7 +97,7 @@ fun JoinRoute(
 }
 
 @Composable
-fun JoinScreen(
+private fun JoinScreen(
     isProgress: Boolean = false,
     joinWithEmailAndPassword: (String, String) -> Unit = { _, _ -> },
     popBackStack: () -> Unit = {},
