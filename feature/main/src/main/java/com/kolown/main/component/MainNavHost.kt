@@ -84,6 +84,7 @@ internal fun MainNavHost(
             followerNavGraph(
                 isLoggedIn = isLoggedIn,
                 navigateToLogin = navigator::navigateToLogin,
+                navigateToTheir = navigator::navigateToTheir,
                 padding = padding
             )
 

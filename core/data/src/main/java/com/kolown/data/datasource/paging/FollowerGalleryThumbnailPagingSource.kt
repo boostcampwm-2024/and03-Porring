@@ -40,7 +40,10 @@ class FollowerGalleryThumbnailPagingDataSource @Inject constructor(
                 followers.map { follower ->
                     async {
                         val posts =
-                            postDataSource.getUserFollowerPost(uid = follower.followerId, perPage = 3)
+                            postDataSource.getUserFollowerPost(
+                                uid = follower.followerId,
+                                perPage = 3
+                            )
                                 .getOrElse { throw Exception("게시물 불러오기 실패") }
                         val (tags, reactions) = coroutineScope {
                             val tagsDeferred = async {
@@ -90,10 +93,10 @@ class FollowerGalleryThumbnailPagingDataSource @Inject constructor(
 
             LoadResult.Page(
                 data = thumbnails,
-                prevKey = if (key == null) null  else followers.firstOrNull()?.followerId,
+                prevKey = if (key == null) null else followers.firstOrNull()?.followerId,
                 nextKey = if (followers.isEmpty()) null else followers.lastOrNull()?.followerId
             )
-        } catch (e: Exception) {
+        } catch (e: IOException) {
             LoadResult.Error(e)
         }
     }
