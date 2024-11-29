@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.kolown.designsystem.Primary
-import com.kolown.designsystem.PrimaryUnActive
+import com.kolown.designsystem.ui.theme.Primary
+import com.kolown.designsystem.ui.theme.PrimaryUnActive
 import com.kolown.designsystem.component.PorringTextField
 import com.kolown.join.component.JoinTopAppBar
 import com.kolown.model.UiState
@@ -84,7 +84,7 @@ internal fun JoinRoute(
             }
         }
         if (joinState is UiState.Success) {
-            popBackStack
+            popBackStack()
         }
     }
 
@@ -103,7 +103,6 @@ private fun JoinScreen(
     popBackStack: () -> Unit = {},
     padding: PaddingValues = PaddingValues(),
 ) {
-    Log.w("porring_test_tag", "in join Screen: $isProgress")
     Box(
         modifier = Modifier.fillMaxSize().padding(padding)
     ) {

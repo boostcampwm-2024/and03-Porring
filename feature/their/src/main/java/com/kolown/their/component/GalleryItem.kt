@@ -25,13 +25,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.kolown.data.mock.MockDataProvider
-import com.kolown.designsystem.Surface2
+import com.kolown.designsystem.ui.theme.Surface2
 import com.kolown.model.PostContentModel
 
 @Composable
 internal fun GalleryItem(
     postContentModel: PostContentModel,
-    width: Dp
+    width: Dp,
 ) {
     var isLoading by remember { mutableStateOf(true) }
     var isError by remember { mutableStateOf(false) }

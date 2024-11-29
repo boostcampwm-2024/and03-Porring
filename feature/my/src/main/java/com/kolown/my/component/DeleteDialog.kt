@@ -25,14 +25,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.kolown.designsystem.Error
-import com.kolown.designsystem.Primary
+import com.kolown.designsystem.ui.theme.Error
+import com.kolown.designsystem.ui.theme.Primary
 
 @Composable
 fun DeleteDialog(
     modifier: Modifier = Modifier,
     onClickCancel: () -> Unit = {},
-    onClickConfirm: (String) -> Unit = {}
+    onClickConfirm: (String) -> Unit = {},
 ) {
     val textValue = remember { mutableStateOf("") }
     Dialog(
