@@ -24,7 +24,7 @@ internal fun MyAppBar(onSettingClicked: () -> Unit = {}) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(64.dp)
             .background(Color.White)
     ) {
         Text(

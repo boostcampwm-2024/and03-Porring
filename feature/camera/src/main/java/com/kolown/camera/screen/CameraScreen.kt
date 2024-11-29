@@ -7,7 +7,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,27 +18,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kolown.camera.PermissionChecker
+import com.kolown.camera.screen.component.CameraTopAppBar
 
 
 @Composable
 internal fun CameraRoute(
     navigateToUpload: (String) -> Unit = {},
     padding: PaddingValues = PaddingValues(),
-    popBackStack: () -> Unit = {}
-) {
-    CameraScreen(
-        padding = padding,
-        navigateToUpload = navigateToUpload,
-        popBackStack = popBackStack
-    )
-}
-
-@Composable
-fun CameraScreen(
-    padding: PaddingValues,
-    navigateToUpload: (String) -> Unit = {},
+    popBackStack: () -> Unit = {},
     viewModel: CameraScreenViewModel = hiltViewModel(),
-    popBackStack: () -> Unit
 ) {
     val context = LocalContext.current
     val activity = LocalView.current.context as android.app.Activity
@@ -50,7 +37,6 @@ fun CameraScreen(
             )
         )
     }
-
     val launcherMultiplePermissions = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { areGranted ->
@@ -63,18 +49,57 @@ fun CameraScreen(
         launcherMultiplePermissions.launch(Manifest.permission.CAMERA)
     }
 
+    val navigateToSystemSettings = {
+        val intent =
+            android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                .apply {
+                    data = android.net.Uri.fromParts("package", context.packageName, null)
+                }
+        context.startActivity(intent)
+    }
+
+    CameraScreen(
+        cameraPermission = cameraPermission,
+        navigateToSystemSettings = navigateToSystemSettings,
+        navigateToUpload = navigateToUpload,
+        popBackStack = popBackStack,
+        padding = padding
+    )
+}
+
+@Composable
+private fun CameraScreen(
+    cameraPermission: Boolean = false,
+    navigateToSystemSettings: () -> Unit = {},
+    navigateToUpload: (String) -> Unit = {},
+    popBackStack: () -> Unit = {},
+    padding: PaddingValues = PaddingValues(),
+) {
+    var cameraFlashState by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(padding)
     ) {
         if (cameraPermission) {
-            CameraXCompose(viewModel, navigateToUpload, popBackStack)
+            CameraXCompose(
+                isFlashOn = cameraFlashState,
+                navigateToUpload = navigateToUpload,
+                padding = padding
+            )
         } else {
             CameraPermissionDeniedScreen(
-                popBackStack
+                navigateToSystemSettings = navigateToSystemSettings,
+                padding = padding
             )
         }
+
+        CameraTopAppBar(
+            cameraPermission = cameraPermission,
+            onChangeFlashState = { cameraFlashState = !cameraFlashState },
+            popBackStack = popBackStack,
+            padding = padding
+        )
     }
 }
 
