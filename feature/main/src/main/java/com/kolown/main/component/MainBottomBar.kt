@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.designsystem.ui.theme.PrimaryUnActive
 import com.kolown.main.navigation.MainMenu
-import com.kolown.main.ui.theme.PorringTheme
 import com.kolown.navigation.MainMenuRoute
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
@@ -113,12 +112,10 @@ private fun RowScope.MainBottomBarItem(
 @Preview(showBackground = true)
 @Composable
 private fun PreviewMainBottomBar() {
-    PorringTheme {
         MainBottomBar(
             visible = true,
             menus = MainMenu.entries.toPersistentList(),
             currentMenu = MainMenu.HOME,
             onMenuSelected = {}
         )
-    }
 }

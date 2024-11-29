@@ -51,15 +51,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.kolown.designsystem.Primary
-import com.kolown.designsystem.PrimaryUnActive
 import com.kolown.designsystem.component.PorringTextField
 import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.designsystem.ui.theme.PrimaryUnActive
@@ -73,8 +69,6 @@ import com.kolown.login.util.LoginButton.VectorIconButton
 import com.kolown.login.util.LoginPlatform
 import com.kolown.login.util.getCredential
 import com.kolown.model.UiState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
@@ -143,7 +137,7 @@ internal fun LoginRoute(
                     getCredential(LoginPlatform.Google, context).getOrThrow()?.let {
                         loginViewModel.handleSignIn(it.credential)
                     }
-                } catch (e : Exception) {
+                } catch (e: Exception) {
                     Log.e("porring_test_tag", "$e")
                 }
             }
@@ -169,7 +163,7 @@ private fun LoginScreen(
     padding: PaddingValues = PaddingValues(),
 ) {
     Box(
-        modifier = Modifier.fillMaxSize().padding(padding),
+        modifier = Modifier.fillMaxSize()
     ) {
         Image(
             contentScale = ContentScale.Crop,
@@ -177,20 +171,25 @@ private fun LoginScreen(
             contentDescription = null
         )
 
-        LoginContent(
-            isEmailLogin = isEmailLogin,
-            isLoginProgress = isLoginProgress,
-            navigateToJoin = navigateToJoin,
-            onClickGoogleLogin = onClickGoogleLogin,
-            onClickEmailLogin = onClickEmailLogin,
-            onClickEmailMode = onClickEmailMode
-        )
+        Box(
+            modifier = Modifier.fillMaxSize().padding(padding),
+        ) {
 
-        LoginTopAppBar(
-            isEmailLogin = isEmailLogin,
-            cancelEmailLogin = cancelEmailMode,
-            popBackStack = popBackStack
-        )
+            LoginContent(
+                isEmailLogin = isEmailLogin,
+                isLoginProgress = isLoginProgress,
+                navigateToJoin = navigateToJoin,
+                onClickGoogleLogin = onClickGoogleLogin,
+                onClickEmailLogin = onClickEmailLogin,
+                onClickEmailMode = onClickEmailMode
+            )
+
+            LoginTopAppBar(
+                isEmailLogin = isEmailLogin,
+                cancelEmailLogin = cancelEmailMode,
+                popBackStack = popBackStack
+            )
+        }
     }
 }
 
