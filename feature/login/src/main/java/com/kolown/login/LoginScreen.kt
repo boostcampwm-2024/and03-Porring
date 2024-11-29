@@ -61,6 +61,8 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.kolown.designsystem.Primary
 import com.kolown.designsystem.PrimaryUnActive
 import com.kolown.designsystem.component.PorringTextField
+import com.kolown.designsystem.ui.theme.Primary
+import com.kolown.designsystem.ui.theme.PrimaryUnActive
 import com.kolown.login.R.drawable
 import com.kolown.login.R.string
 import com.kolown.login.component.LoginButtonGroup

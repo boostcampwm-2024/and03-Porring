@@ -23,8 +23,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import com.kolown.designsystem.PrimaryDark
-import com.kolown.designsystem.SnackBarContainer
+import com.kolown.designsystem.ui.theme.PrimaryDark
+import com.kolown.designsystem.ui.theme.SnackBarContainer
 import com.kolown.main.component.MainBottomBar
 import com.kolown.main.component.MainNavHost
 import com.kolown.main.navigation.MainMenu

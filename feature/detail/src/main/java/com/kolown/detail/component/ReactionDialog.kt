@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.kolown.designsystem.PrimaryUnActive
+import com.kolown.designsystem.ui.theme.PrimaryUnActive
 import com.kolown.detail.R
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions

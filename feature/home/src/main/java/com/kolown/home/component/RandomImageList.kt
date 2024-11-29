@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
-import com.kolown.designsystem.Primary
+import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 
@@ -185,8 +185,8 @@ private fun ImageCard(
         }
 
         IconButton(
-                    modifier = Modifier
-                    . align (Alignment.CenterHorizontally)
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
                 .padding(16.dp),
             onClick = if (isLoggedIn) onChangeReactionDialogVisibility else onShowLoginSnackBar,
         ) {

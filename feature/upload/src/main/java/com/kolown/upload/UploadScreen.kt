@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import com.kolown.designsystem.Primary
+import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.upload.component.CategoryGroup
 import kotlinx.coroutines.launch
 
@@ -52,7 +52,7 @@ internal fun UploadRoute(
     imgUri: String,
     padding: PaddingValues,
     navigateToHome: () -> Unit,
-    uploadPost: (String, String, List<String>) -> Unit
+    uploadPost: (String, String, List<String>) -> Unit,
 ) {
     val description by viewModel.description.collectAsStateWithLifecycle()
     val categoryItems by viewModel.categoryItems.collectAsStateWithLifecycle()
@@ -100,7 +100,7 @@ private fun UploadScreen(
     removeCategory: (String) -> Unit = {},
     changeCategoryName: (Int, String) -> Unit = { _, _ -> },
     uploadPost: () -> Unit = {},
-    navigateToHome: () -> Unit = {}
+    navigateToHome: () -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
     val imeHeight = WindowInsets.ime.getBottom(LocalDensity.current)
@@ -171,7 +171,7 @@ private fun UploadContent(
     categoryItems: List<String>,
     addCategory: () -> Unit,
     removeCategory: (String) -> Unit,
-    changeCategoryName: (Int, String) -> Unit
+    changeCategoryName: (Int, String) -> Unit,
 ) {
     Column(modifier = modifier) {
         val ratio = 4f / 5f // todo 이후에 가로 이미지를 지원할 때는 분기처리 필요
@@ -210,7 +210,7 @@ private fun UploadContent(
 
 @Composable
 private fun UploadTopAppBar(
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -239,7 +239,7 @@ private fun UploadTopAppBar(
 private fun DescriptionTextField(
     modifier: Modifier,
     imageDescription: String,
-    onDescriptionChange: (String) -> Unit
+    onDescriptionChange: (String) -> Unit,
 ) {
     TextField(
         modifier = modifier,
@@ -262,7 +262,7 @@ private fun DescriptionTextField(
 
 @Composable
 private fun TextFieldResetButton(
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     IconButton(
         onClick = onClick

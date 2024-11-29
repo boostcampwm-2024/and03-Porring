@@ -17,7 +17,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kolown.common.R
-import com.kolown.designsystem.Primary
+import com.kolown.designsystem.ui.theme.Primary
 
 @Composable
 fun RestrictedLoginContent(
