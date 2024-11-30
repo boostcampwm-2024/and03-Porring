@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
@@ -186,33 +188,27 @@ private fun HomeScreen(
         Box(
             Modifier.fillMaxSize()
         ) {
-            LazyColumn(
-                Modifier
+            RandomImageList(
+                modifier = Modifier
                     .padding(top = 64.dp)
                     .fillMaxSize()
                     .align(Alignment.Center)
-            ) {
-                if (!isRefreshing) {
-                    item {
-                        RandomImageList(
-                            isLoggedIn = isLoggedIn,
-                            onShowLoginSnackBar = onShowLoginSnackBar,
-                            pagerState = pagerState,
-                            imageItems = mainFeedImages,
-                            isReactionDialogVisible = isReactionDialogVisible,
-                            onFollowClick = onFollowClick,
-                            onUnfollowClick = onUnfollowClick,
-                            onSelectReaction = onSelectReaction,
-                            onChangeReactionDialogVisibility = {
-                                isReactionDialogVisible = !isReactionDialogVisible
-                            },
-                            navigateToTheir = navigateToTheir,
-                            fetchDetailFirst = fetchDetailFirst,
-                            navigateToDetail = navigateToDetail
-                        )
-                    }
-                }
-            }
+                    .verticalScroll(rememberScrollState()),
+                isLoggedIn = isLoggedIn,
+                onShowLoginSnackBar = onShowLoginSnackBar,
+                pagerState = pagerState,
+                imageItems = mainFeedImages,
+                isReactionDialogVisible = isReactionDialogVisible,
+                onFollowClick = onFollowClick,
+                onUnfollowClick = onUnfollowClick,
+                onSelectReaction = onSelectReaction,
+                onChangeReactionDialogVisibility = {
+                    isReactionDialogVisible = !isReactionDialogVisible
+                },
+                navigateToTheir = navigateToTheir,
+                fetchDetailFirst = fetchDetailFirst,
+                navigateToDetail = navigateToDetail
+            )
             Box(
                 Modifier
                     .align(Alignment.TopCenter)
