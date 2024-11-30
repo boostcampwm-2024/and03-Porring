@@ -8,13 +8,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
+import com.kolown.designsystem.component.PorringIconButton
+import com.kolown.designsystem.component.PorringTopAppBar
 import com.kolown.setting.component.MenuDivider
-import com.kolown.setting.component.SettingTopAppBar
 import com.kolown.setting.component.TextLabel
 import com.kolown.setting.component.TextMenu
 
@@ -53,7 +56,16 @@ private fun SettingScreen(
     Column(
         modifier = Modifier.fillMaxSize().padding(padding),
     ) {
-        SettingTopAppBar(popBackStack)
+        PorringTopAppBar(
+            title = "설정",
+            navigationIcon = {
+                PorringIconButton(
+                    icon = ImageVector.vectorResource(R.drawable.ic_arrow_back),
+                    onClick = popBackStack,
+                    contentDescription = stringResource(R.string.string_back_button)
+                )
+            }
+        )
 
         TextLabel(stringResource(R.string.string_label_use_porring))
 

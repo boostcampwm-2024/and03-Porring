@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -18,14 +20,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kolown.common.component.DetailItem
+import com.kolown.designsystem.component.PorringIconButton
+import com.kolown.designsystem.component.PorringTopAppBar
 import com.kolown.designsystem.ui.theme.BackgroundDark
-import com.kolown.detail.component.DetailTopAppBar
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.model.UiState
@@ -129,10 +135,27 @@ private fun DetailScreen(
             followerState = followerState
         )
 
-        DetailTopAppBar(
-            isReelsMode = isReelsMode,
-            onChangeReelsMode = onChangeReelsMode,
-            popBackStack = popBackStack
+        PorringTopAppBar(
+            navigationIcon = {
+                if (isReelsMode) {
+                    PorringIconButton(
+                        icon = ImageVector.vectorResource(R.drawable.ic_arrow_back),
+                        onClick = popBackStack,
+                        contentDescription = "뒤로가기",
+                        color = Color.White
+                    )
+                }
+            },
+            trailingIcon = {
+                if (isReelsMode.not()) {
+                    PorringIconButton(
+                        icon = Icons.Default.Close,
+                        onClick = { onChangeReelsMode(true) },
+                        contentDescription = "집중 모드 종료",
+                        color = Color.White
+                    )
+                }
+            }
         )
     }
 }

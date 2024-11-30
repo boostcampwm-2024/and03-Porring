@@ -3,7 +3,6 @@ package com.kolown.upload
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
@@ -13,12 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,16 +29,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.kolown.designsystem.R.drawable
+import com.kolown.designsystem.component.PorringIconButton
+import com.kolown.designsystem.component.PorringTopAppBar
 import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.upload.component.CategoryGroup
 import kotlinx.coroutines.launch
@@ -125,7 +126,17 @@ private fun UploadScreen(
             .padding(padding)
             .fillMaxSize()
     ) {
-        UploadTopAppBar(navigateToHome = navigateToHome)
+        PorringTopAppBar(
+            title = stringResource(R.string.string_new_post),
+            navigationIcon = {
+                PorringIconButton(
+                    icon = ImageVector.vectorResource(drawable.ic_arrow_back),
+                    onClick = navigateToHome,
+                    contentDescription = "뒤로 가기"
+                )
+            }
+        )
+
         UploadContent(
             imgUri = imgUri,
             modifier = Modifier
@@ -205,33 +216,6 @@ private fun UploadContent(
             changeCategoryName = changeCategoryName
         )
         Spacer(modifier = Modifier.height(100.dp))
-    }
-}
-
-@Composable
-private fun UploadTopAppBar(
-    navigateToHome: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(64.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(
-            modifier = Modifier.size(48.dp),
-            onClick = { navigateToHome() }
-        ) {
-            Icon(
-                modifier = Modifier.size(36.dp),
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = "PostTopAppBar"
-            )
-        }
-        Text(
-            text = "새 게시물",
-            fontSize = 22.sp
-        )
     }
 }
 

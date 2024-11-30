@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -14,11 +15,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.vectorResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kolown.camera.PermissionChecker
-import com.kolown.camera.screen.component.CameraTopAppBar
+import com.kolown.camera.R
+import com.kolown.designsystem.R.drawable
+import com.kolown.designsystem.component.PorringIconButton
+import com.kolown.designsystem.component.PorringTopAppBar
 
 
 @Composable
@@ -94,19 +101,28 @@ private fun CameraScreen(
             )
         }
 
-        CameraTopAppBar(
-            cameraPermission = cameraPermission,
-            onChangeFlashState = { cameraFlashState = !cameraFlashState },
-            popBackStack = popBackStack,
-            padding = padding
+        PorringTopAppBar(
+            navigationIcon = {
+                PorringIconButton(
+                    icon = ImageVector.vectorResource(drawable.ic_arrow_back),
+                    onClick = popBackStack,
+                    contentDescription = "뒤로가기",
+                    color = Color.White
+                )
+            },
+            trailingIcon = {
+                if (cameraPermission) {
+                    PorringIconButton(
+                        icon = ImageVector.vectorResource(R.drawable.ic_flash),
+                        onClick = { cameraFlashState = !cameraFlashState },
+                        contentDescription = "플래시 켜기/끄기",
+                        color = Color.White
+                    )
+                }
+            },
+            modifier = Modifier.padding(top = padding.calculateTopPadding())
         )
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun CameraScreenPreview() {
-//    CameraScreen()
-//}
 
 

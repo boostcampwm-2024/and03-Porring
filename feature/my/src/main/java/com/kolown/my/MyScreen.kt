@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -39,10 +40,11 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import com.kolown.common.component.RestrictedLoginContent
 import com.kolown.designsystem.R
+import com.kolown.designsystem.component.PorringCenterAlignTopAppBar
+import com.kolown.designsystem.component.PorringIconButton
 import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.model.PostContentModel
 import com.kolown.my.component.GalleryItem
-import com.kolown.my.component.MyAppBar
 import com.kolown.my.component.PageItemFooter
 import kotlinx.coroutines.delay
 
@@ -81,8 +83,15 @@ private fun MyScreen(
             .fillMaxSize()
             .padding(padding)
     ) {
-        MyAppBar(
-            onSettingClicked = navigateToSetting
+        PorringCenterAlignTopAppBar(
+            title = "My Gallery",
+            trailingIcon = {
+                PorringIconButton(
+                    icon = Icons.Default.Settings,
+                    onClick = navigateToSetting,
+                    contentDescription = "설정"
+                )
+            }
         )
         StateLazyGrid(
             listState = listState,

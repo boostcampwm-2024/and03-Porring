@@ -14,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
@@ -39,10 +40,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.kolown.designsystem.component.PorringIconButton
+import com.kolown.designsystem.component.PorringTextField
+import com.kolown.designsystem.component.PorringTopAppBar
 import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.designsystem.ui.theme.PrimaryUnActive
-import com.kolown.designsystem.component.PorringTextField
-import com.kolown.join.component.JoinTopAppBar
 import com.kolown.model.UiState
 
 @Composable
@@ -106,12 +108,18 @@ private fun JoinScreen(
     Box(
         modifier = Modifier.fillMaxSize().padding(padding)
     ) {
-        JoinTopAppBar(
-            popBackStack = popBackStack
-        )
-
         JoinContent(
             isProgress = isProgress, joinWithEmailAndPassword = joinWithEmailAndPassword
+        )
+
+        PorringTopAppBar(
+            trailingIcon = {
+                PorringIconButton(
+                    icon = Icons.Default.Close,
+                    onClick = popBackStack,
+                    contentDescription = "뒤로가기"
+                )
+            }
         )
     }
 }
