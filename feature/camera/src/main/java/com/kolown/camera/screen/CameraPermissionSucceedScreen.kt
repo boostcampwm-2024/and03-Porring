@@ -1,5 +1,8 @@
 package com.kolown.camera.screen
 
+import android.content.Context
+import android.media.AudioManager
+import android.media.MediaActionSound
 import androidx.camera.core.CameraSelector
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
@@ -30,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.kolown.camera.R
 import com.kolown.camera.getImagePickerLauncher
 import com.kolown.camera.screen.component.CaptureButton
@@ -37,6 +41,7 @@ import com.kolown.camera.screen.component.GridLineCompose
 import com.kolown.camera.screen.component.PreviewViewCompose
 import com.kolown.camera.takePhoto
 import com.kolown.designsystem.ui.theme.BackgroundDark
+import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
 @Composable
@@ -50,12 +55,10 @@ fun CameraXCompose(
     val lifecycle = LocalLifecycleOwner.current
     val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
     val imagePickerLauncher = getImagePickerLauncher()
-
     val uri = viewModel.uri.collectAsStateWithLifecycle()
     LaunchedEffect(uri.value) {
         uri.value?.let { navigateToUpload(it.toString()) }
     }
-
     val cameraController = remember {
         LifecycleCameraController(context).apply {
             //어떤 카메라를 사용할 지 선택한다.
@@ -73,7 +76,18 @@ fun CameraXCompose(
             isPinchToZoomEnabled = true
         }
     }
+    val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
+    val onShutterClick = {
+        lifecycle.lifecycleScope.launch {
+            audioManager.setStreamVolume(
+                AudioManager.STREAM_SYSTEM,
+                1,
+                AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE
+            )
+            MediaActionSound().play(MediaActionSound.SHUTTER_CLICK)
+        }
+    }
 
     LaunchedEffect(isFlashOn) {
         cameraController.enableTorch(isFlashOn)
@@ -107,6 +121,7 @@ fun CameraXCompose(
                 contentAlignment = Alignment.Center
             ) {
                 CaptureButton {
+                    onShutterClick()
                     cameraController.takePhoto(context) {
                         viewModel.saveBitmapToCache(it)
                     }
