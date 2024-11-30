@@ -191,7 +191,7 @@ private fun LoginScreen(
                 onClickEmailMode = onClickEmailMode
             )
 
-            if (loginState !is UiState.Loading || loginState !is UiState.Success) {
+            if (loginState is UiState.Idle || loginState is UiState.Failure) {
                 PorringTopAppBar(
                     navigationIcon = {
                         if (isEmailLogin) {
