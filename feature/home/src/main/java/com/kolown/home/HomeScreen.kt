@@ -1,6 +1,7 @@
 package com.kolown.home
 
 import android.util.Log
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -13,11 +14,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.pullToRefresh
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -29,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,12 +60,15 @@ internal fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
     navigateToTheir: (String) -> Unit = {},
     navigateToDetail: () -> Unit = {},
+    updateMainItems: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showErrorScreen by remember { mutableStateOf(false) }
+    var isRefreshing by remember { mutableStateOf(false) }
 
-    SideEffect {
+    LaunchedEffect(mainItems) {
         viewModel.updateItems(mainItems)
+        isRefreshing = false
     }
 
     LaunchedEffect(uiState) {
@@ -118,16 +128,22 @@ internal fun HomeRoute(
                         onSelectReaction(post, reaction)
                     },
                     fetchDetailFirst = fetchDetailFirst,
-                    navigateToDetail = navigateToDetail
+                    navigateToDetail = navigateToDetail,
+                    updateMainItems = updateMainItems,
+                    isRefreshing = isRefreshing,
+                    updateRefreshing = { isRefreshing = it }
                 )
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreen(
     isLoggedIn: Boolean = false,
+    isRefreshing: Boolean = false,
+    updateRefreshing: (Boolean) -> Unit = {},
     onShowLoginSnackBar: () -> Unit = {},
     padding: PaddingValues = PaddingValues(),
     mainFeedImages: List<PostContentModel> = emptyList(),
@@ -137,49 +153,77 @@ private fun HomeScreen(
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     fetchDetailFirst: (PostContentModel) -> Unit = {},
     navigateToDetail: () -> Unit = {},
+    updateMainItems: () -> Unit = {}
 ) {
     val pagerState = rememberPagerState(pageCount = { mainFeedImages.size })
     var isReactionDialogVisible by remember { mutableStateOf(false) }
+    val refreshState = rememberPullToRefreshState()
+    val onRefresh: () -> Unit = {
+        updateRefreshing(true)
+        updateMainItems()
+    }
+    val scaleFraction = {
+        if (isRefreshing) 1f
+        else LinearOutSlowInEasing.transform(refreshState.distanceFraction).coerceIn(0f, 1f)
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(padding)
-            .padding(top = 64.dp)
             .pointerInput(isReactionDialogVisible) {
                 if (isReactionDialogVisible) {
                     detectTapGestures { isReactionDialogVisible = false }
                 }
-            }, horizontalAlignment = Alignment.CenterHorizontally
+            }
+            .pullToRefresh(
+                state = refreshState,
+                isRefreshing = isRefreshing,
+                onRefresh = onRefresh
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        RandomImageList(
-            isLoggedIn = isLoggedIn,
-            onShowLoginSnackBar = onShowLoginSnackBar,
-            pagerState = pagerState,
-            imageItems = mainFeedImages,
-            isReactionDialogVisible = isReactionDialogVisible,
-            onFollowClick = onFollowClick,
-            onUnfollowClick = onUnfollowClick,
-            onSelectReaction = onSelectReaction,
-            onChangeReactionDialogVisibility = {
-                isReactionDialogVisible = !isReactionDialogVisible
-            },
-            navigateToTheir = navigateToTheir,
-            fetchDetailFirst = fetchDetailFirst,
-            navigateToDetail = navigateToDetail
-        )
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Transparent, Color.Black
+        Box(
+            Modifier.fillMaxSize()
+        ) {
+            LazyColumn(
+                Modifier
+                    .padding(top = 64.dp)
+                    .fillMaxSize()
+                    .align(Alignment.Center)
+            ) {
+                if (!isRefreshing) {
+                    item {
+                        RandomImageList(
+                            isLoggedIn = isLoggedIn,
+                            onShowLoginSnackBar = onShowLoginSnackBar,
+                            pagerState = pagerState,
+                            imageItems = mainFeedImages,
+                            isReactionDialogVisible = isReactionDialogVisible,
+                            onFollowClick = onFollowClick,
+                            onUnfollowClick = onUnfollowClick,
+                            onSelectReaction = onSelectReaction,
+                            onChangeReactionDialogVisibility = {
+                                isReactionDialogVisible = !isReactionDialogVisible
+                            },
+                            navigateToTheir = navigateToTheir,
+                            fetchDetailFirst = fetchDetailFirst,
+                            navigateToDetail = navigateToDetail
                         )
-                    ), alpha = 0.05f
-                )
-        )
+                    }
+                }
+            }
+            Box(
+                Modifier
+                    .align(Alignment.TopCenter)
+                    .graphicsLayer {
+                        scaleX = scaleFraction()
+                        scaleY = scaleFraction()
+                    }
+            ) {
+                PullToRefreshDefaults.Indicator(state = refreshState, isRefreshing = isRefreshing)
+            }
+        }
     }
 }
 

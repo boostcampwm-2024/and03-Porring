@@ -54,6 +54,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun updateItems(result: Flow<List<PostContentModel>>) {
+        _uiState.update { UiState.Loading }
         result
             .onEach { items ->
                 _uiState.update { UiState.Success(items) }
