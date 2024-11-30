@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
@@ -41,11 +42,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,13 +59,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.kolown.designsystem.R
+import com.kolown.designsystem.component.PorringIconButton
 import com.kolown.designsystem.component.PorringTextField
+import com.kolown.designsystem.component.PorringTopAppBar
 import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.designsystem.ui.theme.PrimaryUnActive
 import com.kolown.login.R.drawable
 import com.kolown.login.R.string
 import com.kolown.login.component.LoginButtonGroup
-import com.kolown.login.component.LoginTopAppBar
 import com.kolown.login.component.LogoItem
 import com.kolown.login.util.LoginButton.PainterIconButton
 import com.kolown.login.util.LoginButton.VectorIconButton
@@ -128,6 +133,7 @@ internal fun LoginRoute(
 
     val lifecycleOwner = LocalLifecycleOwner.current
     LoginScreen(
+        loginState = loginState,
         isEmailLogin = isEmailLogin,
         isLoginProgress = isLoginProgress,
         navigateToJoin = navigateToJoin,
@@ -152,6 +158,7 @@ internal fun LoginRoute(
 
 @Composable
 private fun LoginScreen(
+    loginState: UiState<String> = UiState.Idle,
     isEmailLogin: Boolean = false,
     isLoginProgress: Boolean = false,
     navigateToJoin: () -> Unit = {},
@@ -184,11 +191,26 @@ private fun LoginScreen(
                 onClickEmailMode = onClickEmailMode
             )
 
-            LoginTopAppBar(
-                isEmailLogin = isEmailLogin,
-                cancelEmailLogin = cancelEmailMode,
-                popBackStack = popBackStack
-            )
+            if (loginState !is UiState.Loading || loginState !is UiState.Success) {
+                PorringTopAppBar(
+                    navigationIcon = {
+                        if (isEmailLogin) {
+                            PorringIconButton(
+                                icon = ImageVector.vectorResource(R.drawable.ic_arrow_back),
+                                onClick = cancelEmailMode,
+                                contentDescription = "로그인 메뉴로 돌아가기"
+                            )
+                        }
+                    },
+                    trailingIcon = {
+                        PorringIconButton(
+                            icon = Icons.Default.Close,
+                            onClick = popBackStack,
+                            contentDescription = "뒤로 가기"
+                        )
+                    }
+                )
+            }
         }
     }
 }

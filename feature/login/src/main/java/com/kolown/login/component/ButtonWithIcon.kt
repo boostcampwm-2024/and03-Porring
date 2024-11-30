@@ -1,5 +1,6 @@
 package com.kolown.login.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,7 +20,7 @@ import com.kolown.designsystem.ui.theme.Surface
 
 @Composable
 internal fun ButtonWithIcon(
-    icon: Int,
+    @DrawableRes icon: Int,
     text: String,
     onClick: () -> Unit = {},
 ) {

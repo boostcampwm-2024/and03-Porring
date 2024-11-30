@@ -29,7 +29,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,10 +39,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.kolown.designsystem.R
+import com.kolown.designsystem.component.PorringCenterAlignTopAppBar
+import com.kolown.designsystem.component.PorringIconButton
 import com.kolown.model.PostContentModel
 import com.kolown.their.component.GalleryItem
 import com.kolown.their.component.PageItemFooter
-import com.kolown.their.component.TheirAppBar
 import kotlinx.coroutines.delay
 
 @Composable
@@ -85,9 +89,15 @@ private fun TheirScreen(
             .fillMaxSize()
             .padding(padding)
     ) {
-        TheirAppBar(
-            popBackStack = popBackStack,
-            followerName = followerName
+        PorringCenterAlignTopAppBar(
+            title = "${followerName}'s Gallery",
+            navigationIcon = {
+                PorringIconButton(
+                    icon = ImageVector.vectorResource(R.drawable.ic_arrow_back),
+                    onClick = popBackStack,
+                    contentDescription = "뒤로가기"
+                )
+            }
         )
         StateLazyGrid(
             listState = listState,
