@@ -119,37 +119,39 @@ internal fun MainScreen(
     }
 
     MainScreenContent(
+        navigator = navigator,
         mainItems = mainItems,
-        onSelectReaction = mainViewModel::selectReaction,
+        detailFirstItem = detailFirstItem,
+        isLoggedIn = isLoggedIn,
         onShowSnackBar = onShowSnackBar,
         onShowLoginSnackBar = onShowLoginSnackBar,
-        detailFirstItem = detailFirstItem,
+        snackBarHostState = snackBarHostState,
+        onSelectReaction = mainViewModel::selectReaction,
         fetchDetailFirst = mainViewModel::fetchDetailFirst,
         updateFollow = mainViewModel::updateFollow,
-        isLoggedIn = isLoggedIn,
         updateLoginState = mainViewModel::updateLoginState,
-        navigator = navigator,
-        snackBarHostState = snackBarHostState,
-        uploadPost = mainViewModel::uploadPost
+        uploadPost = mainViewModel::uploadPost,
+        updateMainItems = mainViewModel::loadImageItem
     )
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun MainScreenContent(
-    mainItems: Flow<List<PostContentModel>>,
-    onShowSnackBar: (String) -> Unit,
-    onShowLoginSnackBar: () -> Unit,
-    onSelectReaction: (PostContentModel, Reactions) -> Unit,
-    detailFirstItem: PostContentModel,
-    fetchDetailFirst: (PostContentModel) -> Unit,
-    updateFollow: (String) -> Unit,
-    isLoggedIn: Boolean,
-    updateLoginState: () -> Unit,
     modifier: Modifier = Modifier,
     navigator: MainNavigator,
     snackBarHostState: SnackbarHostState,
+    mainItems: Flow<List<PostContentModel>>,
+    isLoggedIn: Boolean,
+    detailFirstItem: PostContentModel,
+    updateLoginState: () -> Unit,
+    updateMainItems: () -> Unit,
+    onShowLoginSnackBar: () -> Unit,
+    onShowSnackBar: (String) -> Unit,
+    updateFollow: (String) -> Unit,
     uploadPost: (String, String, List<String>) -> Unit,
+    fetchDetailFirst: (PostContentModel) -> Unit,
+    onSelectReaction: (PostContentModel, Reactions) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -162,12 +164,13 @@ private fun MainScreenContent(
                 onShowLoginSnackBar = onShowLoginSnackBar,
                 detailFirstItem = detailFirstItem,
                 fetchDetailFirst = fetchDetailFirst,
-                updateFollow = updateFollow,
                 isLoggedIn = isLoggedIn,
-                updateLoginState = updateLoginState,
                 navigator = navigator,
                 padding = padding,
-                uploadPost = uploadPost
+                updateFollow = updateFollow,
+                updateLoginState = updateLoginState,
+                uploadPost = uploadPost,
+                updateMainItems = updateMainItems
             )
         },
         bottomBar = {

@@ -25,6 +25,7 @@ fun NavGraphBuilder.homeNavGraph(
     padding: PaddingValues,
     navigateToTheir: (String) -> Unit,
     navigateToDetail: () -> Unit,
+    updateMainItems: () -> Unit
 ) {
     composable<MainMenuRoute.Home> {
         HomeRoute(
@@ -36,7 +37,8 @@ fun NavGraphBuilder.homeNavGraph(
             updateFollow = updateFollow,
             padding = padding,
             navigateToTheir = navigateToTheir,
-            navigateToDetail = navigateToDetail
+            navigateToDetail = navigateToDetail,
+            updateMainItems = updateMainItems
         )
     }
 }
