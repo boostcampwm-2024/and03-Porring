@@ -126,7 +126,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun loadImageItem() {
+    fun loadImageItem() {
         postRepository.getRandomPostList(10).let { flow ->
             _mainItems.update { flow }
             flow.onEach { currentItems = it }.launchIn(viewModelScope)

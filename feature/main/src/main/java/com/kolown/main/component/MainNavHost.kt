@@ -44,6 +44,7 @@ internal fun MainNavHost(
     navigator: MainNavigator,
     padding: PaddingValues,
     uploadPost: (String, String, List<String>) -> Unit,
+    updateMainItems: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -63,7 +64,8 @@ internal fun MainNavHost(
                 updateFollow = updateFollow,
                 padding = padding,
                 navigateToTheir = navigator::navigateToTheir,
-                navigateToDetail = navigator::navigateToDetail
+                navigateToDetail = navigator::navigateToDetail,
+                updateMainItems = updateMainItems
             )
 
             searchNavGraph(
