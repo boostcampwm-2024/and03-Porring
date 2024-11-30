@@ -29,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kolown.common.component.DetailItem
+import com.kolown.designsystem.R.*
 import com.kolown.designsystem.component.PorringIconButton
 import com.kolown.designsystem.component.PorringTopAppBar
 import com.kolown.designsystem.ui.theme.BackgroundDark
@@ -139,7 +140,7 @@ private fun DetailScreen(
             navigationIcon = {
                 if (isReelsMode) {
                     PorringIconButton(
-                        icon = ImageVector.vectorResource(R.drawable.ic_arrow_back),
+                        icon = ImageVector.vectorResource(drawable.ic_arrow_back),
                         onClick = popBackStack,
                         contentDescription = "뒤로가기",
                         color = Color.White

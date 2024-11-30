@@ -15,6 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
+import com.kolown.designsystem.R.drawable
 import com.kolown.designsystem.component.PorringIconButton
 import com.kolown.designsystem.component.PorringTopAppBar
 import com.kolown.setting.component.MenuDivider
@@ -60,7 +61,7 @@ private fun SettingScreen(
             title = "설정",
             navigationIcon = {
                 PorringIconButton(
-                    icon = ImageVector.vectorResource(R.drawable.ic_arrow_back),
+                    icon = ImageVector.vectorResource(drawable.ic_arrow_back),
                     onClick = popBackStack,
                     contentDescription = stringResource(R.string.string_back_button)
                 )
