@@ -50,6 +50,7 @@ import com.kolown.model.Reactions
 
 @Composable
 internal fun RandomImageList(
+    modifier: Modifier = Modifier,
     isLoggedIn: Boolean = false,
     onShowLoginSnackBar: () -> Unit = {},
     pagerState: PagerState = rememberPagerState(pageCount = { 10 }),
@@ -64,6 +65,7 @@ internal fun RandomImageList(
     navigateToDetail: () -> Unit = {},
 ) {
     HorizontalPager(
+        modifier = modifier,
         state = pagerState
     ) { page ->
         Box(
