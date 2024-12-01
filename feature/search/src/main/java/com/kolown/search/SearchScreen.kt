@@ -38,7 +38,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.kolown.model.PostContentModel
+import com.kolown.model.Tag
 import com.kolown.search.component.PostHeader
 import com.kolown.search.component.PostItem
 import com.kolown.search.component.TagItem
@@ -50,10 +53,21 @@ internal fun SearchRoute(
     navigateToSearchDetail: () -> Unit,
     viewModel: SearchViewModel
 ) {
+    val searchResultTag = viewModel.searchResult.collectAsLazyPagingItems()
+    val searchResultPost = viewModel.resultPostList.collectAsLazyPagingItems()
+    val tag by viewModel.tag.collectAsStateWithLifecycle()
+    val searchText by viewModel.searchQuery.collectAsStateWithLifecycle()
+
     SearchScreen(
         padding = padding,
-        viewModel = viewModel,
-        navigateToSearchDetail = navigateToSearchDetail
+        navigateToSearchDetail = navigateToSearchDetail,
+        searchResultTag = searchResultTag,
+        searchResultPost = searchResultPost,
+        tag = tag,
+        searchText = searchText,
+        setSearchQuery = viewModel::setSearchQuery,
+        setPage = viewModel::setPage,
+        setTag = viewModel::setTag
     )
 }
 
@@ -61,20 +75,22 @@ internal fun SearchRoute(
 private fun SearchScreen(
     padding: PaddingValues = PaddingValues(),
     navigateToSearchDetail: () -> Unit,
-    viewModel: SearchViewModel,
+    searchResultTag: LazyPagingItems<Tag>,
+    searchResultPost: LazyPagingItems<PostContentModel>,
+    tag: Tag?,
+    searchText: String,
+    setSearchQuery : (String) -> Unit,
+    setPage : (Int) -> Unit,
+    setTag : (Tag) -> Unit
 ) {
 
-    val searchResultTag = viewModel.searchResult.collectAsLazyPagingItems()
-    val searchResultPost = viewModel.resultPostList.collectAsLazyPagingItems()
-    val tag by viewModel.tag.collectAsStateWithLifecycle()
-    val searchText by viewModel.searchQuery.collectAsStateWithLifecycle()
     var focusState by remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
     LaunchedEffect(focusState) {
         if (!focusState) {
             focusManager.clearFocus()
-            viewModel.setSearchQuery(tag?.name ?: "")
+            setSearchQuery(tag?.name ?: "")
         }
     }
     Column(
@@ -91,7 +107,7 @@ private fun SearchScreen(
                 .padding(16.dp)
                 .height(54.dp),
             text = if (focusState) searchText else tag?.name ?: "",
-            onValueChange = viewModel::setSearchQuery,
+            onValueChange = setSearchQuery,
             onFocusChange = {
                 focusState = it
             },
@@ -100,7 +116,7 @@ private fun SearchScreen(
                 focusState = false
             },
             onClearClick = {
-                viewModel.setSearchQuery("")
+               setSearchQuery("")
             }
         )
 
@@ -131,7 +147,7 @@ private fun SearchScreen(
                         PostItem(
                             post,
                             onClick = {
-                                viewModel.setPage(index)
+                                setPage(index)
                                 navigateToSearchDetail()
                             }
                         )
@@ -150,7 +166,7 @@ private fun SearchScreen(
                 items(searchResultTag.itemCount) { index ->
                     searchResultTag[index]?.let { tag ->
                         TagItem(tag) {
-                            viewModel.setTag(it)
+                            setTag(it)
                             focusState = false
                         }
                     }
@@ -160,65 +176,4 @@ private fun SearchScreen(
     }
 }
 
-
-@Composable
-private fun ExpandableColumnExample() {
-    // 상태: 확장 여부
-    var isExpanded by remember { mutableStateOf(false) }
-
-    // 확장 높이 애니메이션
-    val animatedHeight by animateDpAsState(targetValue = if (isExpanded) 200.dp else 0.dp)
-
-    Column(modifier = Modifier.fillMaxSize()) {
-        // 첫 번째 Custom Composable
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .zIndex(1f) // zIndex를 높여 두 번째 Box 위로 렌더링
-                .background(Color.Gray)
-        ) {
-            Column {
-                Text(
-                    text = "Click the button below to expand",
-                    modifier = Modifier.padding(16.dp),
-                    color = Color.White
-                )
-                Button(
-                    onClick = { isExpanded = !isExpanded },
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                ) {
-                    Text(text = if (isExpanded) "Collapse" else "Expand")
-                }
-
-                // 애니메이션 확장 Box
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(animatedHeight)
-                        .background(Color.Blue)
-                ) {
-                    Text(
-                        text = "Expanded Content",
-                        color = Color.White,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }
-        }
-
-        // 두 번째 Composable
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-                .background(Color.Green)
-        ) {
-            Text(
-                text = "Second Composable",
-                modifier = Modifier.align(Alignment.Center),
-                color = Color.White
-            )
-        }
-    }
-}
 

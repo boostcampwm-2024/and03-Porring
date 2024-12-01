@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
 import com.kolown.data.repository.FollowRepository
 import com.kolown.data.repository.PostRepository
 import com.kolown.data.repository.TagRepository
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -49,8 +51,10 @@ class SearchViewModel @Inject constructor(
     val firstPage get() = _firstPage
 
 
-    private var _currentPage = 0
-    val currentPage get() = _currentPage
+    private val reactionStateFlow = MutableStateFlow<Map<String, ReactionState>>(emptyMap())
+
+    private val _followSharedFlow = MutableSharedFlow<Pair<String, Boolean>>(0)
+    val followState = _followSharedFlow.asSharedFlow()
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     val searchResult = _searchQuery
@@ -70,23 +74,40 @@ class SearchViewModel @Inject constructor(
         it != null
     }.flatMapLatest { tag ->
         tag?.let {
-            postRepository.getPostBySearch(tag.id)
+            val pagingFlow = postRepository
+                .getPostBySearch(tag.id)
                 .onStart { emit(PagingData.empty()) }
+                .cachedIn(viewModelScope)
+
+            val combineFlow = combine(
+                pagingFlow, reactionStateFlow
+            ) { paging, reaction ->
+                paging.map { item ->
+                    reaction[item.postId]?.let { reactionState ->
+                        val (myReaction, reactions) = if (reactionState.prev == null) {
+                            reactionState.current to item.reactions + reactionState.current
+                        } else {
+                            if (reactionState.prev == reactionState.current) {
+                                null to item.reactions - reactionState.current
+                            } else {
+                                reactionState.current to item.reactions + reactionState.current - reactionState.prev
+                            }
+                        }
+                        item.copy(reactions = reactions, myReaction = myReaction)
+                    } ?: item.copy()
+                }
+            }.cachedIn(viewModelScope)
+
+            combineFlow
         } ?: flow { emit(PagingData.empty()) }
     }
 
-    private val reactionStateFlow = MutableStateFlow<Map<String, ReactionState>>(emptyMap())
-
-    private val _followSharedFlow = MutableSharedFlow<Pair<String, Boolean>>(0)
-    val followState = _followSharedFlow.asSharedFlow()
 
     fun setSearchQuery(searchText: String) {
         _searchQuery.value = searchText
-        Log.e("test", "set query: $searchText")
     }
 
     fun setTag(tag: Tag) {
-        Log.e("test", "set tag: ${tag.name}")
         _tag.value = tag
     }
 
@@ -137,10 +158,6 @@ class SearchViewModel @Inject constructor(
                 .launchIn(viewModelScope)
             _followSharedFlow.emit(Pair(id, false))
         }
-    }
-
-    fun updatePage(page: Int) {
-        _currentPage = page
     }
 
     fun checkPostIsMine(authorId: String) = userRepository.checkUserId(authorId)
