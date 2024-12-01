@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +53,7 @@ fun PorringTextField(
     hint: String? = null,
     label: String? = null,
     validator: ((String) -> Boolean)? = null,
+    onErrorChange: (Boolean) -> Unit = {},
     leadingIcon: ImageVector? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -59,6 +61,8 @@ fun PorringTextField(
 ) {
     var isError by remember { mutableStateOf(false) }
     var isInitial by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isError) { onErrorChange(isError) }
 
     BasicTextField(
         modifier = modifier
@@ -100,7 +104,7 @@ fun PorringTextField(
                     )
                     .padding(vertical = 8.dp, horizontal = 16.dp),
                 horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 leadingIcon?.let {
                     Icon(

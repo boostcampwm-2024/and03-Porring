@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,7 +33,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,6 +46,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.kolown.designsystem.component.PorringIconButton
 import com.kolown.designsystem.component.PorringTextField
 import com.kolown.designsystem.component.PorringTopAppBar
+import com.kolown.designsystem.ui.theme.Error
 import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.designsystem.ui.theme.PrimaryUnActive
 import com.kolown.model.UiState
@@ -130,50 +134,64 @@ fun JoinContent(
     joinWithEmailAndPassword: (String, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+
     Column(
         modifier = modifier.padding(top = 72.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        var id by remember { mutableStateOf("") }
+        var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var confirm by remember { mutableStateOf("") }
-        var idValidation by remember { mutableStateOf(false) }
+        var emailValidation by remember { mutableStateOf(false) }
         var passwordValidation by remember { mutableStateOf(false) }
         var confirmValidation by remember { mutableStateOf(false) }
+        var errorMsg by remember { mutableStateOf<List<String>>(emptyList()) }
 
         val focusManager = LocalFocusManager.current
         val (focus1, focus2, focus3) = FocusRequester.createRefs()
 
         PorringTextField(
-            value = id,
+            value = email,
             onValueChange = { string ->
-                val regex = Regex("^(?!.*\\.\\.)[a-z0-9.]+@\\w+\\.[A-Za-z]{2,3}$")
+                val regex = Regex(context.getString(R.string.regex_email))
 
-                id = string
-                idValidation = regex.matches(string)
+                email = string
+                emailValidation = regex.matches(string)
             },
-            hint = "이메일을 입력해주세요",
+            hint = stringResource(R.string.string_input_email),
             leadingIcon = Icons.Default.Email,
             label = "Email",
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email, imeAction = ImeAction.Next
             ),
             keyboardActions = KeyboardActions(onNext = { focus2.requestFocus() }),
-            validator = { idValidation.not() },
-            modifier = modifier.padding(horizontal = 32.dp).focusRequester(focus1)
+            validator = { emailValidation.not() },
+            onErrorChange = { isError ->
+                errorMsg = if (isError) {
+                    when {
+                        email.isEmpty() -> errorMsg + context.getString(R.string.string_input_email)
+                        else -> errorMsg + context.getString(R.string.string_invalid_email)
+                    }
+                } else {
+                    emptyList()
+                }
+            },
+            modifier = modifier.padding(horizontal = 32.dp)
+                .focusRequester(focus1)
         )
 
         PorringTextField(
             value = password,
             onValueChange = { string ->
-                val regex =
-                    Regex("^(?!.* )(?=.*[!\"#\$%&'()*+,\\-./:;<=>?@\\[₩\\]^_`{|}~])[a-zA-Z0-9!\"#\$%&'()*+,\\-./:;<=>?@\\[₩\\]^_`{|}~]+$")
+                val regex = Regex(context.getString(R.string.regex_password))
 
                 password = string
                 passwordValidation = regex.matches(string) && password.length > 7
+                confirmValidation = password == confirm && confirm.isNotEmpty()
             },
-            hint = "비밀번호를 입력해주세요",
+            hint = stringResource(R.string.string_input_password),
             leadingIcon = Icons.Default.Lock,
             label = "Password",
             keyboardOptions = KeyboardOptions(
@@ -181,6 +199,17 @@ fun JoinContent(
             ),
             keyboardActions = KeyboardActions(onNext = { focus3.requestFocus() }),
             validator = { passwordValidation.not() },
+            onErrorChange = { isError ->
+                errorMsg = if (isError) {
+                    when {
+                        email.isEmpty() -> errorMsg + context.getString(R.string.string_input_password)
+                        confirmValidation.not() -> errorMsg + context.getString(R.string.string_invalid_password_confirm)
+                        else -> errorMsg + context.getString(R.string.string_invalid_password)
+                    }
+                } else {
+                    emptyList()
+                }
+            },
             modifier = modifier.padding(horizontal = 32.dp).focusRequester(focus2)
         )
 
@@ -190,7 +219,7 @@ fun JoinContent(
                 confirm = it
                 confirmValidation = password == confirm && confirm.isNotEmpty()
             },
-            hint = "비밀번호를 확인해주세요",
+            hint = stringResource(R.string.string_confirm_password),
             leadingIcon = Icons.Default.CheckCircle,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password, imeAction = ImeAction.Done
@@ -198,6 +227,16 @@ fun JoinContent(
             keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
             label = "Confirm",
             validator = { confirmValidation.not() },
+            onErrorChange = { isError ->
+                errorMsg = if (isError) {
+                    when {
+                        email.isEmpty() -> errorMsg + context.getString(R.string.string_confirm_password)
+                        else -> errorMsg + context.getString(R.string.string_invalid_password_confirm)
+                    }
+                } else {
+                    emptyList()
+                }
+            },
             modifier = modifier.padding(horizontal = 32.dp).focusRequester(focus3)
         )
 
@@ -206,10 +245,10 @@ fun JoinContent(
         } else {
             Button(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
-                enabled = idValidation && passwordValidation && confirmValidation,
+                enabled = emailValidation && passwordValidation && confirmValidation,
                 onClick = {
                     focusManager.clearFocus()
-                    joinWithEmailAndPassword(id, password)
+                    joinWithEmailAndPassword(email, password)
                 },
                 shape = RoundedCornerShape(5.dp),
                 colors = ButtonColors(
@@ -220,6 +259,24 @@ fun JoinContent(
                 )
             ) {
                 Text(text = "가입하기")
+            }
+        }
+
+        if (errorMsg.isNotEmpty()) {
+            Column(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                errorMsg.forEach {
+                    Text(
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Error,
+                        text = "- $it"
+                    )
+                }
             }
         }
     }
