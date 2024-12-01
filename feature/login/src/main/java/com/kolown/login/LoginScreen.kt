@@ -35,7 +35,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -89,6 +88,11 @@ internal fun LoginRoute(
     val isEmailLogin by loginViewModel.isEmailLogin.collectAsStateWithLifecycle()
     val loginState by loginViewModel.loginState.collectAsStateWithLifecycle()
     var isLoginProgress by remember { mutableStateOf(false) }
+    val latestEmail by loginViewModel.latestEmail.collectAsStateWithLifecycle()
+
+    LaunchedEffect(true) {
+        loginViewModel.getLatestUserEmail()
+    }
 
     LaunchedEffect(loginState) {
         when (loginState) {
@@ -133,6 +137,7 @@ internal fun LoginRoute(
 
     val lifecycleOwner = LocalLifecycleOwner.current
     LoginScreen(
+        latestEmail = latestEmail,
         loginState = loginState,
         isEmailLogin = isEmailLogin,
         isLoginProgress = isLoginProgress,
@@ -158,6 +163,7 @@ internal fun LoginRoute(
 
 @Composable
 private fun LoginScreen(
+    latestEmail: String = "",
     loginState: UiState<String> = UiState.Idle,
     isEmailLogin: Boolean = false,
     isLoginProgress: Boolean = false,
@@ -183,6 +189,7 @@ private fun LoginScreen(
         ) {
 
             LoginContent(
+                latestEmail = latestEmail,
                 isEmailLogin = isEmailLogin,
                 isLoginProgress = isLoginProgress,
                 navigateToJoin = navigateToJoin,
@@ -192,24 +199,21 @@ private fun LoginScreen(
             )
 
             if (loginState is UiState.Idle || loginState is UiState.Failure) {
-                PorringTopAppBar(
-                    navigationIcon = {
-                        if (isEmailLogin) {
-                            PorringIconButton(
-                                icon = ImageVector.vectorResource(R.drawable.ic_arrow_back),
-                                onClick = cancelEmailMode,
-                                contentDescription = "로그인 메뉴로 돌아가기"
-                            )
-                        }
-                    },
-                    trailingIcon = {
+                PorringTopAppBar(navigationIcon = {
+                    if (isEmailLogin) {
                         PorringIconButton(
-                            icon = Icons.Default.Close,
-                            onClick = popBackStack,
-                            contentDescription = "뒤로 가기"
+                            icon = ImageVector.vectorResource(R.drawable.ic_arrow_back),
+                            onClick = cancelEmailMode,
+                            contentDescription = "로그인 메뉴로 돌아가기"
                         )
                     }
-                )
+                }, trailingIcon = {
+                    PorringIconButton(
+                        icon = Icons.Default.Close,
+                        onClick = popBackStack,
+                        contentDescription = "뒤로 가기"
+                    )
+                })
             }
         }
     }
@@ -217,6 +221,7 @@ private fun LoginScreen(
 
 @Composable
 fun LoginContent(
+    latestEmail: String,
     isEmailLogin: Boolean = false,
     isLoginProgress: Boolean = false,
     navigateToJoin: () -> Unit = {},
@@ -235,8 +240,7 @@ fun LoginContent(
 
         if (isLoginProgress) {
             CircularProgressIndicator(
-                modifier = Modifier.size(60.dp),
-                color = Primary
+                modifier = Modifier.size(60.dp), color = Primary
             )
         } else {
             Box {
@@ -251,6 +255,7 @@ fun LoginContent(
                 )
 
                 EmailLoginContent(
+                    latestEmail = latestEmail,
                     navigateToJoin = navigateToJoin,
                     onClickEmailLogin = onClickEmailLogin,
                     isEmailLogin = isEmailLogin,
@@ -263,6 +268,7 @@ fun LoginContent(
 
 @Composable
 fun EmailLoginContent(
+    latestEmail: String = "",
     isEmailLogin: Boolean = true,
     onClickEmailLogin: (String, String) -> Unit = { _, _ -> },
     navigateToJoin: () -> Unit = {},
@@ -279,20 +285,16 @@ fun EmailLoginContent(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             val focusManager = LocalFocusManager.current
-            var idText by rememberSaveable { mutableStateOf("") }
-            var pwText by rememberSaveable { mutableStateOf("") }
+            var emailText by remember { mutableStateOf(latestEmail) }
+            var pwText by remember { mutableStateOf("") }
             val (idField, pwField) = FocusRequester.createRefs()
             var isLoginEnable by remember { mutableStateOf(false) }
 
             PorringTextField(
-                value = idText,
+                value = emailText,
                 onValueChange = {
-                    idText = it
-                    isLoginEnable = if (idText.isNotEmpty() && pwText.isNotEmpty()) {
-                        true
-                    } else {
-                        false
-                    }
+                    emailText = it
+                    isLoginEnable = emailText.isNotEmpty() && pwText.isNotEmpty()
                 },
                 hint = "이메일을 입력해주세요",
                 label = "Email",
@@ -312,18 +314,13 @@ fun EmailLoginContent(
                 value = pwText,
                 onValueChange = {
                     pwText = it
-                    isLoginEnable = if (idText.isNotEmpty() && pwText.isNotEmpty()) {
-                        true
-                    } else {
-                        false
-                    }
+                    isLoginEnable = emailText.isNotEmpty() && pwText.isNotEmpty()
                 },
                 hint = "비밀번호를 입력해주세요",
                 label = "Password",
                 leadingIcon = Icons.Default.Lock,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
+                    keyboardType = KeyboardType.Password, imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() },
                     onPrevious = { idField.requestFocus() }),
@@ -335,7 +332,7 @@ fun EmailLoginContent(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
                 enabled = isLoginEnable,
                 onClick = {
-                    onClickEmailLogin(idText, pwText)
+                    onClickEmailLogin(emailText, pwText)
                     focusManager.clearFocus()
                 },
                 shape = RoundedCornerShape(5.dp),
