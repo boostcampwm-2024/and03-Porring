@@ -67,6 +67,8 @@ internal fun MainNavHost(
             )
 
             searchNavGraph(
+                isLoggedIn = isLoggedIn,
+                onShowLoginSnackBar = onShowLoginSnackBar,
                 padding = padding,
                 navigateToTheir =  { id ->
                     navigator.navigateToTheir(id)

@@ -76,6 +76,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.kolown.common.component.DetailItem
 import com.kolown.designsystem.Gray
 import com.kolown.designsystem.PrimaryDark
 import com.kolown.detail.component.DetailTopAppBar
@@ -244,315 +245,302 @@ private fun DetailContent(
 
     //todo: 에러 났을 때(ex.Network Error)
 }
-
-
-@Composable
-private fun DetailItem(
-    isLoggedIn: Boolean,
-    isReelsMode: Boolean,
-    onShowLoginSnackBar: () -> Unit,
-    onChangeReelsMode: (Boolean) -> Unit,
-    updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
-    onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
-    imageItem: PostContentModel,
-    onDoubleTab: (Boolean) -> Unit,
-    navigateToTheir: (String) -> Unit,
-    updatePage: () -> Unit,
-    onFollowClick: (String, String) -> Unit = { _, _ -> },
-    onUnfollowClick: (String) -> Unit = {},
-    followerState: State<Pair<String, Boolean>?>,
-) {
-    val view = LocalView.current
-    val isConcentrateMode = remember {
-        mutableStateOf(false)
-    }
-
-
-    if (isReelsMode) {
-        onDoubleTab(true)
-        showSystembar(view = view)
-    }
-
-    if (isReelsMode) {
-        ReelsContent(
-            isLoggedIn = isLoggedIn,
-            onShowLoginSnackBar = onShowLoginSnackBar,
-            updateMainPostReaction = updateMainPostReaction,
-            onSelectReaction = onSelectReaction,
-            imageItem = imageItem,
-            onDoubleTab = {
-                onChangeReelsMode(false)
-                requestFullScreen(view)
-                onDoubleTab(false)
-            },
-            navigateToTheir = navigateToTheir,
-            updatePage = updatePage,
-            onFollowClick = onFollowClick,
-            onUnfollowClick = onUnfollowClick,
-            followerState = followerState,
-        )
-    } else {
-        ConcentrateContent(
-            imageUrl = imageItem.imageUrl
-        )
-        BackHandler(enabled = true) {
-            onChangeReelsMode(true)
-        }
-    }
-}
-
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun ReelsContent(
-    isLoggedIn: Boolean,
-    onShowLoginSnackBar: () -> Unit,
-    updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
-    onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
-    imageItem: PostContentModel,
-    navigateToTheir: (String) -> Unit,
-    updatePage: () -> Unit,
-    onDoubleTab: () -> Unit,
-    onFollowClick: (String, String) -> Unit = { _, _ -> },
-    onUnfollowClick: (String) -> Unit = {},
-    followerState: State<Pair<String, Boolean>?>,
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isReactionVisible = remember { mutableStateOf(false) }
-    val isFollowDialogVisible = remember { mutableStateOf(false) }
-    val isFollowed = rememberSaveable { mutableStateOf(imageItem.isFollower) }
-
-
-    LaunchedEffect(followerState.value) {
-        followerState.value?.let { pair ->
-            if(pair.first == imageItem.authorId) isFollowed.value = pair.second
-        }
-    }
-
-    Column(
-        modifier = Modifier.fillMaxSize().padding(top = 32.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
-    ) {
-        val tags = imageItem.tags.joinToString(", ") { "#$it" }
-
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current).data(imageItem.imageUrl)
-                .crossfade(true)
-                .build(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(4f / 5f)
-                .combinedClickable(indication = null,
-                    interactionSource = interactionSource,
-                    onClick = {},
-                    onDoubleClick = { onDoubleTab() }),
-            contentDescription = "",
-            contentScale = ContentScale.Crop,
-        )
-
-        Box(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Column {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().height(36.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = imageItem.description,
-                            modifier = Modifier.weight(1f),
-                            color = Color.White,
-                            fontSize = 16.sp
-                        )
-                        ReactionGroup(
-                            modifier = Modifier.wrapContentWidth().fillMaxHeight(),
-                            reactions = imageItem.reactions
-                        )
-                    }
-
-                    Text(
-                        text = tags, style = MaterialTheme.typography.labelLarge, color = Gray
-                    )
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(imageVector = if (imageItem.myReaction == null) Icons.Outlined.FavoriteBorder else Icons.Default.Favorite,
-                        tint = PrimaryDark,
-                        contentDescription = "",
-                        modifier = Modifier.clickable {
-                            isReactionVisible.value = true
-                        })
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        DetailButton(
-                            onClick = {
-                                navigateToTheir(imageItem.authorId)
-                                updatePage()
-                            },
-                            id = R.drawable.ic_detail_gallary,
-                            buttonText = "갤러리"
-                        )
-
-                        DetailButton(
-                            onClick = {
-                                if (isLoggedIn) {
-                                    if (isFollowed.value) {
-                                        onUnfollowClick(imageItem.authorId)
-                                    } else {
-                                        isFollowDialogVisible.value = true
-                                    }
-                                } else {
-                                    onShowLoginSnackBar()
-                                }
-                            },
-                            id = R.drawable.ic_detail_follow,
-                            buttonText = "팔로우",
-                            contentColor = if (isFollowed.value) Color(0xFF151D37) else Color(
-                                0xFF00BBFF
-                            ),
-                            backgroundColor = if (isFollowed.value) Color(0xFF00BBFF) else Color(
-                                0xFF151D37
-                            )
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        DetailButton(
-                            onClick = {
-                                navigateToTheir(imageItem.authorId)
-                                updatePage()
-                            },
-                            id = R.drawable.ic_detail_gallary,
-                            buttonText = "갤러리"
-                        )
-                    }
-                }
-            }
-
-            if (isReactionVisible.value) {
-                ReactionDialog(imageItem = imageItem,
-                    modifier = Modifier.padding(16.dp),
-                    updateMainPostReaction = updateMainPostReaction,
-                    selectedReaction = onSelectReaction,
-                    onDismiss = { isReactionVisible.value = false })
-            }
-        }
-    }
-    if (isFollowDialogVisible.value)
-        FollowDialog(onClickCancel = {
-            isFollowDialogVisible.value = false
-        }, onClickConfirm = { name ->
-            onFollowClick(imageItem.authorId, name)
-        })
-}
-
-@Composable
-private fun ConcentrateContent(
-    imageUrl: String,
-) {
-    var scale by remember {
-        mutableStateOf(1f)
-    }
-    var offset by remember {
-        mutableStateOf(Offset.Zero)
-    }
-
-    BoxWithConstraints(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        val state = rememberTransformableState { zoomChange, panChange, rotationChange ->
-            scale = (scale * zoomChange).coerceIn(1f, 5f)
-
-            val extraWidth = (scale - 1) * constraints.maxWidth
-            val extraHeight = (scale - 1) * constraints.maxHeight
-
-            //이동할 수 있는 최대 거리
-            val maxX = extraWidth / 2
-            val maxY = extraHeight / 2
-
-            offset = Offset(
-                x = (offset.x + scale * panChange.x).coerceIn(-maxX, maxX),
-                y = (offset.y + scale * panChange.y).coerceIn(-maxY, maxY)
-            )
-        }
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current).data(imageUrl).crossfade(true)
-                .build(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(4f / 5f)
-                .align(Alignment.Center)
-                .graphicsLayer {
-                    scaleX = scale
-                    scaleY = scale
-                    translationX = offset.x
-                    translationY = offset.y
-                }
-                .transformable(state),
-            contentDescription = "",
-            contentScale = ContentScale.Crop,
-        )
-    }
-}
-
-
-@Composable
-private fun DetailButton(
-    onClick: () -> Unit,
-    @DrawableRes id: Int,
-    buttonText: String,
-    contentColor: Color = Color(0xFF00BBFF),
-    backgroundColor: Color = Color(0xFF151D37)
-) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier.wrapContentSize(),
-        shape = RoundedCornerShape(10.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = backgroundColor)
-    ) {
-        Icon(
-            painter = painterResource(id = id), contentDescription = null, tint = contentColor
-        )
-        Spacer(modifier = Modifier.width(10.dp))
-        Text(text = buttonText, color = contentColor)
-    }
-}
-
-private fun requestFullScreen(view: View) {
-    // !! should be safe here since the view is part of an Activity
-    val window = view.context.getActivity()!!.window
-    val insetController = WindowCompat.getInsetsController(window, view)
-    insetController.systemBarsBehavior =
-        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-    insetController.hide(
-        WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
-    )
-}
-
-private fun showSystembar(view: View) {
-    // !! should be safe here since the view is part of an Activity
-    val window = view.context.getActivity()!!.window
-    val insetController = WindowCompat.getInsetsController(window, view)
-    insetController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
-    insetController.show(
-        WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
-    )
-}
-
-
-private fun Context.getActivity(): Activity? = when (this) {
-    is Activity -> this
-    is ContextWrapper -> baseContext.getActivity()
-    else -> null
-}
+//
+//
+//@Composable
+//private fun DetailItem(
+//    isLoggedIn: Boolean,
+//    isReelsMode: Boolean,
+//    onShowLoginSnackBar: () -> Unit,
+//    onChangeReelsMode: (Boolean) -> Unit,
+//    updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
+//    onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
+//    imageItem: PostContentModel,
+//    onDoubleTab: (Boolean) -> Unit,
+//    navigateToTheir: (String) -> Unit,
+//    updatePage: () -> Unit,
+//    onFollowClick: (String, String) -> Unit = { _, _ -> },
+//    onUnfollowClick: (String) -> Unit = {},
+//    followerState: State<Pair<String, Boolean>?>,
+//) {
+//    val view = LocalView.current
+//
+//    if (isReelsMode) {
+//        onDoubleTab(true)
+//        showSystembar(view = view)
+//    }
+//
+//    if (isReelsMode) {
+//        ReelsContent(
+//            isLoggedIn = isLoggedIn,
+//            onShowLoginSnackBar = onShowLoginSnackBar,
+//            updateMainPostReaction = updateMainPostReaction,
+//            onSelectReaction = onSelectReaction,
+//            imageItem = imageItem,
+//            onDoubleTab = {
+//                onChangeReelsMode(false)
+//                requestFullScreen(view)
+//                onDoubleTab(false)
+//            },
+//            navigateToTheir = navigateToTheir,
+//            updatePage = updatePage,
+//            onFollowClick = onFollowClick,
+//            onUnfollowClick = onUnfollowClick,
+//            followerState = followerState,
+//        )
+//    } else {
+//        ConcentrateContent(
+//            imageUrl = imageItem.imageUrl
+//        )
+//        BackHandler(enabled = true) {
+//            onChangeReelsMode(true)
+//        }
+//    }
+//}
+//
+//
+//@OptIn(ExperimentalFoundationApi::class)
+//@Composable
+//private fun ReelsContent(
+//    isLoggedIn: Boolean,
+//    onShowLoginSnackBar: () -> Unit,
+//    updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
+//    onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
+//    imageItem: PostContentModel,
+//    navigateToTheir: (String) -> Unit,
+//    updatePage: () -> Unit,
+//    onDoubleTab: () -> Unit,
+//    onFollowClick: (String, String) -> Unit = { _, _ -> },
+//    onUnfollowClick: (String) -> Unit = {},
+//    followerState: State<Pair<String, Boolean>?>,
+//) {
+//    val interactionSource = remember { MutableInteractionSource() }
+//    val isReactionVisible = remember { mutableStateOf(false) }
+//    val isFollowDialogVisible = remember { mutableStateOf(false) }
+//    val isFollowed = rememberSaveable { mutableStateOf(imageItem.isFollower) }
+//
+//
+//    LaunchedEffect(followerState.value) {
+//        followerState.value?.let { pair ->
+//            if(pair.first == imageItem.authorId) isFollowed.value = pair.second
+//        }
+//    }
+//
+//    Column(
+//        modifier = Modifier.fillMaxSize().padding(top = 32.dp),
+//        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
+//    ) {
+//        val tags = imageItem.tags.joinToString(", ") { "#$it" }
+//
+//        AsyncImage(
+//            model = ImageRequest.Builder(LocalContext.current).data(imageItem.imageUrl)
+//                .crossfade(true)
+//                .build(),
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .aspectRatio(4f / 5f)
+//                .combinedClickable(indication = null,
+//                    interactionSource = interactionSource,
+//                    onClick = {},
+//                    onDoubleClick = { onDoubleTab() }),
+//            contentDescription = "",
+//            contentScale = ContentScale.Crop,
+//        )
+//
+//        Box(
+//            modifier = Modifier.fillMaxWidth()
+//        ) {
+//            Column(
+//                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+//                verticalArrangement = Arrangement.spacedBy(16.dp)
+//            ) {
+//                Column {
+//                    Row(
+//                        modifier = Modifier.fillMaxWidth().height(36.dp),
+//                        verticalAlignment = Alignment.CenterVertically,
+//                    ) {
+//                        Text(
+//                            text = imageItem.description,
+//                            modifier = Modifier.weight(1f),
+//                            color = Color.White,
+//                            fontSize = 16.sp
+//                        )
+//                        ReactionGroup(
+//                            modifier = Modifier.wrapContentWidth().fillMaxHeight(),
+//                            reactions = imageItem.reactions
+//                        )
+//                    }
+//
+//                    Text(
+//                        text = tags, style = MaterialTheme.typography.labelLarge, color = Gray
+//                    )
+//                }
+//
+//                Row(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    horizontalArrangement = Arrangement.SpaceBetween,
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//                    Icon(imageVector = if (imageItem.myReaction == null) Icons.Outlined.FavoriteBorder else Icons.Default.Favorite,
+//                        tint = PrimaryDark,
+//                        contentDescription = "",
+//                        modifier = Modifier.clickable {
+//                            isReactionVisible.value = true
+//                        })
+//
+//                    Row(
+//                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+//                    ) {
+//                        DetailButton(
+//                            onClick = {
+//                                if (isLoggedIn) {
+//                                    if (isFollowed.value) {
+//                                        onUnfollowClick(imageItem.authorId)
+//                                    } else {
+//                                        isFollowDialogVisible.value = true
+//                                    }
+//                                } else {
+//                                    onShowLoginSnackBar()
+//                                }
+//                            },
+//                            id = R.drawable.ic_detail_follow,
+//                            buttonText = "팔로우",
+//                            contentColor = if (isFollowed.value) Color(0xFF151D37) else Color(
+//                                0xFF00BBFF
+//                            ),
+//                            backgroundColor = if (isFollowed.value) Color(0xFF00BBFF) else Color(
+//                                0xFF151D37
+//                            )
+//                        )
+//
+//                        DetailButton(
+//                            onClick = {
+//                                navigateToTheir(imageItem.authorId)
+//                                updatePage()
+//                            },
+//                            id = R.drawable.ic_detail_gallary,
+//                            buttonText = "갤러리"
+//                        )
+//                    }
+//                }
+//            }
+//
+//            if (isReactionVisible.value) {
+//                ReactionDialog(imageItem = imageItem,
+//                    modifier = Modifier.padding(16.dp),
+//                    updateMainPostReaction = updateMainPostReaction,
+//                    selectedReaction = onSelectReaction,
+//                    onDismiss = { isReactionVisible.value = false })
+//            }
+//        }
+//    }
+//    if (isFollowDialogVisible.value)
+//        FollowDialog(onClickCancel = {
+//            isFollowDialogVisible.value = false
+//        }, onClickConfirm = { name ->
+//            onFollowClick(imageItem.authorId, name)
+//        })
+//}
+//
+//@Composable
+//private fun ConcentrateContent(
+//    imageUrl: String,
+//) {
+//    var scale by remember {
+//        mutableStateOf(1f)
+//    }
+//    var offset by remember {
+//        mutableStateOf(Offset.Zero)
+//    }
+//
+//    BoxWithConstraints(
+//        modifier = Modifier.fillMaxSize(),
+//    ) {
+//        val state = rememberTransformableState { zoomChange, panChange, rotationChange ->
+//            scale = (scale * zoomChange).coerceIn(1f, 5f)
+//
+//            val extraWidth = (scale - 1) * constraints.maxWidth
+//            val extraHeight = (scale - 1) * constraints.maxHeight
+//
+//            //이동할 수 있는 최대 거리
+//            val maxX = extraWidth / 2
+//            val maxY = extraHeight / 2
+//
+//            offset = Offset(
+//                x = (offset.x + scale * panChange.x).coerceIn(-maxX, maxX),
+//                y = (offset.y + scale * panChange.y).coerceIn(-maxY, maxY)
+//            )
+//        }
+//        AsyncImage(
+//            model = ImageRequest.Builder(LocalContext.current).data(imageUrl).crossfade(true)
+//                .build(),
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .aspectRatio(4f / 5f)
+//                .align(Alignment.Center)
+//                .graphicsLayer {
+//                    scaleX = scale
+//                    scaleY = scale
+//                    translationX = offset.x
+//                    translationY = offset.y
+//                }
+//                .transformable(state),
+//            contentDescription = "",
+//            contentScale = ContentScale.Crop,
+//        )
+//    }
+//}
+//
+//
+//@Composable
+//private fun DetailButton(
+//    onClick: () -> Unit,
+//    @DrawableRes id: Int,
+//    buttonText: String,
+//    contentColor: Color = Color(0xFF00BBFF),
+//    backgroundColor: Color = Color(0xFF151D37)
+//) {
+//    Button(
+//        onClick = onClick,
+//        modifier = Modifier.wrapContentSize(),
+//        shape = RoundedCornerShape(10.dp),
+//        colors = ButtonDefaults.buttonColors(containerColor = backgroundColor)
+//    ) {
+//        Icon(
+//            painter = painterResource(id = id), contentDescription = null, tint = contentColor
+//        )
+//        Spacer(modifier = Modifier.width(10.dp))
+//        Text(text = buttonText, color = contentColor)
+//    }
+//}
+//
+//private fun requestFullScreen(view: View) {
+//    // !! should be safe here since the view is part of an Activity
+//    val window = view.context.getActivity()!!.window
+//    val insetController = WindowCompat.getInsetsController(window, view)
+//    insetController.systemBarsBehavior =
+//        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+//    insetController.hide(
+//        WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
+//    )
+//}
+//
+//private fun showSystembar(view: View) {
+//    // !! should be safe here since the view is part of an Activity
+//    val window = view.context.getActivity()!!.window
+//    val insetController = WindowCompat.getInsetsController(window, view)
+//    insetController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
+//    insetController.show(
+//        WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
+//    )
+//}
+//
+//
+//private fun Context.getActivity(): Activity? = when (this) {
+//    is Activity -> this
+//    is ContextWrapper -> baseContext.getActivity()
+//    else -> null
+//}
 
 @Preview(showBackground = true, backgroundColor = 0xFF000000)
 @Composable
