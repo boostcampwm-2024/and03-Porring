@@ -19,6 +19,7 @@ import com.kolown.join.navigation.navigateToJoin
 import com.kolown.login.navigation.navigateLogin
 import com.kolown.model.UploadModel
 import com.kolown.my.navigation.navigateMy
+import com.kolown.navigation.Route
 import com.kolown.search.navigation.navigateSearch
 import com.kolown.search.navigation.navigateSearchDetail
 import com.kolown.setting.navigation.navigateSetting
@@ -66,7 +67,14 @@ internal class MainNavigator(
 
     fun navigateToDetail() = navController.navigateToDetail()
 
-    fun navigateToLogin() = navController.navigateLogin()
+    fun navigateToLogin() {
+        val navOptions = navOptions {
+            launchSingleTop = true
+            restoreState = true
+        }
+
+        navController.navigateLogin(navOptions)
+    }
 
     fun navigateToSetting() = navController.navigateSetting()
 
@@ -76,6 +84,10 @@ internal class MainNavigator(
 
     fun popBackStack() {
         navController.popBackStack()
+    }
+
+    fun popBackStack(destination: Route) {
+        navController.popBackStack(destination, false)
     }
 
     @Composable

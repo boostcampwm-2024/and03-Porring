@@ -13,7 +13,7 @@ fun NavController.navigateToJoin() {
 
 fun NavGraphBuilder.joinNavGraph(
     onShowSnackBar: (String) -> Unit,
-    popBackStack: () -> Unit,
+    popBackStack: (Route) -> Unit,
     padding: PaddingValues,
 ) {
     composable<Route.Join> {

@@ -50,11 +50,12 @@ import com.kolown.designsystem.ui.theme.Error
 import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.designsystem.ui.theme.PrimaryUnActive
 import com.kolown.model.UiState
+import com.kolown.navigation.Route
 
 @Composable
 internal fun JoinRoute(
     onShowSnackBar: (String) -> Unit,
-    popBackStack: () -> Unit,
+    popBackStack: (Route) -> Unit,
     joinViewModel: JoinViewModel = hiltViewModel(),
     padding: PaddingValues,
 ) {
@@ -69,7 +70,7 @@ internal fun JoinRoute(
 
             is UiState.Success -> {
                 onShowSnackBar("회원가입 완료")
-                popBackStack()
+                popBackStack(Route.Login)
             }
 
             is UiState.Loading -> {
@@ -90,7 +91,7 @@ internal fun JoinRoute(
             }
         }
         if (joinState is UiState.Success) {
-            popBackStack()
+            popBackStack(Route.Login)
         }
     }
 
@@ -106,7 +107,7 @@ internal fun JoinRoute(
 private fun JoinScreen(
     isProgress: Boolean = false,
     joinWithEmailAndPassword: (String, String) -> Unit = { _, _ -> },
-    popBackStack: () -> Unit = {},
+    popBackStack: (Route) -> Unit = {},
     padding: PaddingValues = PaddingValues(),
 ) {
     Box(
@@ -120,7 +121,7 @@ private fun JoinScreen(
             trailingIcon = {
                 PorringIconButton(
                     icon = Icons.Default.Close,
-                    onClick = popBackStack,
+                    onClick = { popBackStack(Route.Login) },
                     contentDescription = "뒤로가기"
                 )
             }
@@ -189,7 +190,7 @@ fun JoinContent(
 
                 password = string
                 passwordValidation = regex.matches(string) && password.length > 7
-                confirmValidation = password == confirm && confirm.isNotEmpty()
+                confirmValidation = password == confirm
             },
             hint = stringResource(R.string.string_input_password),
             leadingIcon = Icons.Default.Lock,
@@ -201,11 +202,19 @@ fun JoinContent(
             validator = { passwordValidation.not() },
             onErrorChange = { isError ->
                 errorMsg = if (isError) {
-                    when {
-                        email.isEmpty() -> errorMsg + context.getString(R.string.string_input_password)
-                        confirmValidation.not() -> errorMsg + context.getString(R.string.string_invalid_password_confirm)
-                        else -> errorMsg + context.getString(R.string.string_invalid_password)
+                    val errorList = mutableListOf<String>()
+
+                    if (email.isEmpty()) {
+                        errorList += context.getString(R.string.string_input_password)
+                    } else {
+                        errorList += context.getString(R.string.string_invalid_password)
                     }
+
+                    if (confirmValidation.not()) {
+                        errorList += context.getString(R.string.string_invalid_password_confirm)
+                    }
+
+                    errorList.toList()
                 } else {
                     emptyList()
                 }

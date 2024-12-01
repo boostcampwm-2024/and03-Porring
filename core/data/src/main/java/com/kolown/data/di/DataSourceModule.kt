@@ -2,6 +2,7 @@ package com.kolown.data.di
 
 import com.kolown.data.datasource.fake.FakeGalleryDataSource
 import com.kolown.data.datasource.fake.GalleryDataSource
+import com.kolown.data.datasource.local.UserLocalDataSourceImpl
 import com.kolown.data.datasource.remote.AuthDataSource
 import com.kolown.data.datasource.remote.AuthDataSourceImpl
 import com.kolown.data.datasource.remote.FollowDataSource
@@ -59,9 +60,16 @@ abstract class DataSourceModule {
         authDataSource: AuthDataSourceImpl,
     ): AuthDataSource
 
+    @Named("google")
     @Binds
     abstract fun provideUserDataSource(
         userDataSource: UserDataSourceImpl,
+    ): UserDataSource
+
+    @Named("LDS")
+    @Binds
+    abstract fun provideUserLocalDataSource(
+        userDataSource: UserLocalDataSourceImpl,
     ): UserDataSource
 
     @Binds

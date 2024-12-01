@@ -15,8 +15,8 @@ interface AuthDataSource {
     fun getUserInfo(): UserDto
     fun checkUserLoggedIn(): Boolean
     fun logout(): Result<Unit>
-    suspend fun joinWithEmailAndPassword(email: String, password: String): Result<Unit>
-    suspend fun signInWithEmailAndPassword(email: String, password: String): Result<Unit>
+    suspend fun joinWithEmailAndPassword(email: String, password: String): Result<UserDto>
+    suspend fun signInWithEmailAndPassword(email: String, password: String): Result<UserDto>
 }
 
 @Named("google")
@@ -55,16 +55,31 @@ class AuthDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun signInWithEmailAndPassword(email: String, password: String): Result<Unit> {
+    override suspend fun signInWithEmailAndPassword(
+        email: String,
+        password: String,
+    ): Result<UserDto> {
         return kotlin.runCatching {
-            auth.signInWithEmailAndPassword(email, password).await()
+            auth.signInWithEmailAndPassword(email, password).await().let { user ->
+                UserDto(
+                    userId = "user-${user.user?.uid}",
+                    email = user.user?.email.orEmpty()
+                )
+            }
         }
     }
 
-    override suspend fun joinWithEmailAndPassword(email: String, password: String): Result<Unit> {
+    override suspend fun joinWithEmailAndPassword(
+        email: String,
+        password: String,
+    ): Result<UserDto> {
         return kotlin.runCatching {
-            auth.createUserWithEmailAndPassword(email, password).await()
-            auth.signOut()
+            auth.createUserWithEmailAndPassword(email, password).await().let {
+                UserDto(
+                    userId = "user-${it.user?.uid}",
+                    email = it.user?.email.orEmpty()
+                )
+            }
         }
     }
 }
