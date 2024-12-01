@@ -24,12 +24,14 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -44,6 +46,7 @@ class SearchViewModel @Inject constructor(
 ) : ViewModel() {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
+
     private val _tag = MutableStateFlow<Tag?>(null)
     val tag = _tag.asStateFlow()
 
@@ -70,14 +73,16 @@ class SearchViewModel @Inject constructor(
         .cachedIn(viewModelScope)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val resultPostList = _tag.filter {
+    val resultPostList = _tag
+        .filter {
         it != null
     }.flatMapLatest { tag ->
         tag?.let {
-            val pagingFlow = postRepository
-                .getPostBySearch(tag.id)
-                .onStart { emit(PagingData.empty()) }
-                .cachedIn(viewModelScope)
+
+            val pagingFlow = postRepository.getPostBySearch(tag.id)
+                .onStart {
+                    emit(PagingData.empty())
+                }
 
             val combineFlow = combine(
                 pagingFlow, reactionStateFlow
@@ -96,11 +101,12 @@ class SearchViewModel @Inject constructor(
                         item.copy(reactions = reactions, myReaction = myReaction)
                     } ?: item.copy()
                 }
-            }.cachedIn(viewModelScope)
+            }
 
             combineFlow
+
         } ?: flow { emit(PagingData.empty()) }
-    }
+    }.cachedIn(viewModelScope)
 
 
     fun setSearchQuery(searchText: String) {
