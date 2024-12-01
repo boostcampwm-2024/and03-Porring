@@ -9,15 +9,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.kolown.model.Post
 import com.kolown.model.PostContentModel
 
 @Composable
 fun PostItem(
     post: PostContentModel,
-    onClick : () -> Unit
+    onClick: () -> Unit
 ) {
     AsyncImage(
         modifier = Modifier
@@ -27,7 +30,9 @@ fun PostItem(
             .clickable {
                 onClick()
             },
-        model = post.imageUrl,
+        model = ImageRequest.Builder(LocalContext.current).data(post.imageUrl)
+            .crossfade(true)
+            .build(),
         contentDescription = null,
         contentScale = ContentScale.Crop
     )

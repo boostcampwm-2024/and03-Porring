@@ -51,7 +51,7 @@ class DetailViewModel @Inject constructor(
         getItem()
     }
 
-    fun getItem() {
+    private fun getItem() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             try {
@@ -71,7 +71,6 @@ class DetailViewModel @Inject constructor(
                                     reactionState.current to item.reactions + reactionState.current - reactionState.prev
                                 }
                             }
-
                             item.copy(reactions = reactions, myReaction = myReaction)
                         } ?: item.copy()
                     }
