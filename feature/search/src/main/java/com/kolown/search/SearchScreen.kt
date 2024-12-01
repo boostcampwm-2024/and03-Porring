@@ -57,7 +57,7 @@ internal fun SearchRoute(
     val searchResultPost = viewModel.resultPostList.collectAsLazyPagingItems()
     val tag by viewModel.tag.collectAsStateWithLifecycle()
     val searchText by viewModel.searchQuery.collectAsStateWithLifecycle()
-    Log.e("tag_test_route",tag?.name.toString())
+
     SearchScreen(
         padding = padding,
         navigateToSearchDetail = navigateToSearchDetail,

@@ -80,6 +80,7 @@ class SearchViewModel @Inject constructor(
         tag?.let {
 
             val pagingFlow = postRepository.getPostBySearch(tag.id)
+                .cachedIn(viewModelScope)
                 .onStart {
                     emit(PagingData.empty())
                 }
@@ -101,7 +102,7 @@ class SearchViewModel @Inject constructor(
                         item.copy(reactions = reactions, myReaction = myReaction)
                     } ?: item.copy()
                 }
-            }
+            }.cachedIn(viewModelScope)
 
             combineFlow
 
