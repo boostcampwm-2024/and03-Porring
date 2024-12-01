@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="string_close_button">닫기 버튼</string>
+    <string name="regex_email">^(?!.*\\.\\.)[a-z0-9.]+@\\w+\\.[A-Za-z]{2,3}$</string>
+    <string name="regex_password"><![CDATA[^(?!.* )(?=.*[!\"#$%&\'()*+,\\-./:;<=>?@\\[₩\\]^_`{|}~])[a-zA-Z0-9!\"#$%&\'()*+,\\-./:;<=>?@\\[₩\\]^_`{|}~]+$]]></string>
+    <string name="string_input_email">이메일을 입력해 주세요</string>
+    <string name="string_invalid_email">이메일 형식이 올바르지 않습니다</string>
+    <string name="string_input_password">비밀번호를 입력해 주세요</string>
+    <string name="string_invalid_password">비밀번호는 특수문자를 포함해 8자리 이상이어야 합니다</string>
+    <string name="string_confirm_password">비밀번호를 확인해 주세요</string>
+    <string name="string_invalid_password_confirm">비밀번호가 일치하지 않습니다.</string>
 </resources>
