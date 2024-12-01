@@ -166,10 +166,12 @@ internal fun FollowContent(
         }
         Spacer(modifier = Modifier.height(10.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(
-                space = 8.dp, alignment = Alignment.CenterHorizontally
+                space = 8.dp
             )
         ) {
             followAlbums.forEach { imageUrl ->
