@@ -1,5 +1,6 @@
 package com.kolown.setting
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,8 +45,7 @@ internal fun SettingRoute(
     }
 
     SettingScreen(
-        clickLogout = settingViewModel::logout,
-        popBackStack = popBackStack, padding = padding
+        clickLogout = settingViewModel::logout, popBackStack = popBackStack, padding = padding
     )
 }
 
@@ -57,26 +58,31 @@ private fun SettingScreen(
     Column(
         modifier = Modifier.fillMaxSize().padding(padding),
     ) {
-        PorringTopAppBar(
-            title = "설정",
-            navigationIcon = {
-                PorringIconButton(
-                    icon = ImageVector.vectorResource(drawable.ic_arrow_back),
-                    onClick = popBackStack,
-                    contentDescription = stringResource(R.string.string_back_button)
-                )
-            }
-        )
+        val context = LocalContext.current
+        val showToast = { msg: String -> Toast.makeText(context, msg, Toast.LENGTH_SHORT).show() }
+        val showUpcomingToast = { showToast("아직 준비중인 기능입니다") }
+
+        PorringTopAppBar(title = "설정", navigationIcon = {
+            PorringIconButton(
+                icon = ImageVector.vectorResource(drawable.ic_arrow_back),
+                onClick = popBackStack,
+                contentDescription = stringResource(R.string.string_back_button)
+            )
+        })
 
         TextLabel(stringResource(R.string.string_label_use_porring))
 
-        TextMenu(stringResource(R.string.string_menu_show_my_reaction))
-        TextMenu(stringResource(R.string.string_menu_notify))
+        TextMenu(title = stringResource(R.string.string_menu_show_my_reaction),
+            onClick = { showUpcomingToast() })
+        TextMenu(
+            title = stringResource(R.string.string_menu_notify),
+            onClick = { showUpcomingToast() })
 
         MenuDivider()
 
         TextLabel(stringResource(R.string.string_label_manage_account))
-        TextMenu(stringResource(R.string.string_menu_user_info))
+        TextMenu(title = stringResource(R.string.string_menu_user_info),
+            onClick = { showUpcomingToast() })
 
         MenuDivider()
 
@@ -85,8 +91,8 @@ private fun SettingScreen(
             color = Color.Red,
             onClick = clickLogout
         )
-        TextMenu(
-            title = stringResource(R.string.string_menu_dropout_user), color = Color.Red
-        )
+        TextMenu(title = stringResource(R.string.string_menu_dropout_user),
+            color = Color.Red,
+            onClick = { showUpcomingToast() })
     }
 }
