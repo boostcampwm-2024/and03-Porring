@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.kolown.camera.PermissionChecker
 import com.kolown.camera.R
@@ -42,7 +43,6 @@ internal fun CameraRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
 
-    val activity = LocalView.current.context as android.app.Activity
     var cameraPermission by remember {
         mutableStateOf(
             PermissionChecker.checkCameraPermission(
@@ -59,7 +59,6 @@ internal fun CameraRoute(
     }
 
     LaunchedEffect(lifecycleState) {
-
         if (lifecycleState == androidx.lifecycle.Lifecycle.State.RESUMED) {
             cameraPermission = PermissionChecker.checkCameraPermission(context)
         }

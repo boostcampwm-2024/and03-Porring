@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.AudioManager
 import android.media.MediaActionSound
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.CameraState
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.background
@@ -21,25 +22,37 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.kolown.camera.R
 import com.kolown.camera.getImagePickerLauncher
+import com.kolown.camera.getSuspendedResult
 import com.kolown.camera.screen.component.CaptureButton
 import com.kolown.camera.screen.component.GridLineCompose
 import com.kolown.camera.screen.component.PreviewViewCompose
 import com.kolown.camera.takePhoto
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import com.kolown.designsystem.ui.theme.BackgroundDark
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
@@ -59,6 +72,7 @@ fun CameraXCompose(
     LaunchedEffect(uri.value) {
         uri.value?.let { navigateToUpload(it.toString()) }
     }
+
     val cameraController = remember {
         LifecycleCameraController(context).apply {
             //어떤 카메라를 사용할 지 선택한다.
@@ -78,6 +92,39 @@ fun CameraXCompose(
     }
     val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
+
+    var cameraStateLiveData: LiveData<CameraState>? = null
+    //안전한 사용을 위한 카메라 state 변수
+    var cameraState: CameraState? by remember { mutableStateOf(null) }
+
+    //카메라의 상태를 LiveData로 주기 때문에 그에 대한 대응으로
+    val observer = remember {
+        Observer<CameraState> { state ->
+            cameraState = state
+        }
+    }
+
+
+
+    LaunchedEffect(Unit) {
+        //카메라가 완료될 때 까지 대기
+        cameraController.initializationFuture.getSuspendedResult(context)
+        //livedata 저장
+        cameraStateLiveData = cameraController.cameraInfo?.cameraState
+        //observing
+        cameraStateLiveData?.observeForever(observer)
+    }
+
+    DisposableEffect(Unit) {
+
+        //dispose 될 시 해제
+        onDispose {
+            cameraStateLiveData?.removeObserver(observer)
+        }
+    }
+
+
+    var cameraFlashState = remember { false }
     val onShutterClick = {
         lifecycle.lifecycleScope.launch {
             MediaActionSound.mustPlayShutterSound()
@@ -98,9 +145,32 @@ fun CameraXCompose(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
-                    .background(BackgroundDark.copy(alpha = 0.8f)),
-            )
+                    .height(148.dp)
+                    .background(Color.Black.copy(alpha = 0.6f)),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(onClick = popBackStack, modifier = Modifier.size(48.dp)) {
+                    Icon(
+                        tint = Color.White,
+                        modifier = Modifier.fillMaxSize(),
+                        contentDescription = "icon_back",
+                        imageVector = ImageVector.vectorResource(R.drawable.icon_back_button_white)
+                    )
+                }
+
+                IconButton(onClick = {
+                    cameraFlashState = !cameraFlashState
+                    cameraController.enableTorch(cameraFlashState)
+                }, modifier = Modifier.size(48.dp)) {
+                    Icon(
+                        tint = Color.White,
+                        modifier = Modifier.fillMaxSize(),
+                        contentDescription = "icon_flash",
+                        imageVector = ImageVector.vectorResource(R.drawable.icon_flash)
+                    )
+                }
+            }
 
             GridLineCompose(
                 modifier = Modifier
@@ -112,7 +182,7 @@ fun CameraXCompose(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(104.dp) // 높이 지정
-                    .background(BackgroundDark.copy(alpha = 0.8f)) // 반투명한 색상
+                    .background(Color.Black.copy(alpha = 0.6f)) // 반투명한 색상
                     .padding(20.dp),
                 contentAlignment = Alignment.Center
             ) {
@@ -120,6 +190,11 @@ fun CameraXCompose(
                     onShutterClick()
                     cameraController.takePhoto(context) {
                         viewModel.saveBitmapToCache(it)
+                    //카메라가 완전히 OPEN 되어 있을 때만(모영민님 피드백)
+                    if (cameraState?.type == CameraState.Type.OPEN){
+                        cameraController.takePhoto(context) {
+                            viewModel.saveBitmapToCache(it)
+                        }
                     }
                 }
             }
@@ -171,5 +246,9 @@ fun CameraXCompose(
                 }
             }
         }
+
+
     }
+
+
 }
