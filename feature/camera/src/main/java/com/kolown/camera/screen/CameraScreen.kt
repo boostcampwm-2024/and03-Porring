@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,10 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.kolown.camera.PermissionChecker
 import com.kolown.camera.R
@@ -101,10 +98,9 @@ private fun CameraScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(padding)
     ) {
         if (cameraPermission) {
-            CameraXCompose(
+            CameraPermissionSucceedScreen(
                 isFlashOn = cameraFlashState,
                 navigateToUpload = navigateToUpload,
                 padding = padding

@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun GridLineCompose(modifier: Modifier = Modifier, strokeWidth: Dp = 1.dp) {
+fun GridLineCompose(divideNum: Int = 3, modifier: Modifier = Modifier, strokeWidth: Dp = 1.dp) {
     Canvas(
         modifier = modifier
             .fillMaxSize()
@@ -24,44 +24,39 @@ fun GridLineCompose(modifier: Modifier = Modifier, strokeWidth: Dp = 1.dp) {
         val width = size.width
         val height = size.height
 
-        drawLine(
-            color = Color.White,
-            start = Offset(0f, 0f),
-            end = Offset(width, 0f)
-        )
-        // 세로 줄
-        drawLine(
-            color = Color.White,
-            start = Offset(width / 3, 0f),
-            end = Offset(width / 3, height),
-            strokeWidth = strokeWidthPx
-        )
-        drawLine(
-            color = Color.White,
-            start = Offset(2 * width / 3, 0f),
-            end = Offset(2 * width / 3, height),
-            strokeWidth = strokeWidthPx
-        )
+        repeat(divideNum + 1) {
+            drawLine(
+                color = Color.White,
+                start = Offset(0f, height / (divideNum) * it),
+                end = Offset(width, height / (divideNum) * it),
+                strokeWidth = strokeWidthPx
+            )
+        }
 
-        // 가로 줄
-        drawLine(
-            color = Color.White,
-            start = Offset(0f, height / 3),
-            end = Offset(width, height / 3),
-            strokeWidth = strokeWidthPx
-        )
-        drawLine(
-            color = Color.White,
-            start = Offset(0f, 2 * height / 3),
-            end = Offset(width, 2 * height / 3),
-            strokeWidth = strokeWidthPx
-        )
+        repeat(divideNum + 1) {
+            drawLine(
+                color = Color.White,
+                start = Offset(width / (divideNum) * it, 0f),
+                end = Offset(width / (divideNum) * it, height),
+                strokeWidth = strokeWidthPx
+            )
+        }
 
-        drawLine(
-            color = Color.White,
-            start = Offset(0f, height),
-            end = Offset(width, height)
-        )
+//        // 세로 줄
+//        drawLine(
+//            color = Color.White,
+//            start = Offset(width / 3, 0f),
+//            end = Offset(width / 3, height),
+//            strokeWidth = strokeWidthPx
+//        )
+//        drawLine(
+//            color = Color.White,
+//            start = Offset(2 * width / 3, 0f),
+//            end = Offset(2 * width / 3, height),
+//            strokeWidth = strokeWidthPx
+//        )
+
+
     }
 }
 
