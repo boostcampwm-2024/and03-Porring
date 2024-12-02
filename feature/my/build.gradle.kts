@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.androidx.foundation)
 
     implementation(libs.bundles.android.compose)
+    implementation(libs.androidx.compose.material3)
 
     implementation(projects.core.common)
     implementation(projects.core.data)

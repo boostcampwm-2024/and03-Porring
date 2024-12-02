@@ -1,9 +1,9 @@
 package com.kolown.data.datasource.paging
 
-import android.app.usage.NetworkStatsManager
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.google.firebase.firestore.DocumentSnapshot
 import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.TagDataSource
@@ -22,21 +22,23 @@ data class UserPagingKey(
 class UserPagingDataSource @Inject constructor(
     private val postDataSource: PostDataSource,
     private val tagDataSource: TagDataSource,
-    private val reactionDataSource: ReactionDataSource
+    private val reactionDataSource: ReactionDataSource,
+    private val userId: String
 ) : PagingSource<UserPagingKey, PostContentModel>() {
     override fun getRefreshKey(state: PagingState<UserPagingKey, PostContentModel>): UserPagingKey? {
         return state.anchorPosition?.let { position ->
             val closestPage = state.closestPageToPosition(position)
             val page = closestPage?.prevKey?.page?.plus(1)
                 ?: closestPage?.nextKey?.page?.minus(1)
-            UserPagingKey(page ?: 0, "")
+            postDataSource.resetLastVisible()
+            UserPagingKey(page ?: 0, userId)
         }
     }
 
     override suspend fun load(params: LoadParams<UserPagingKey>): LoadResult<UserPagingKey, PostContentModel> {
         val page = params.key?.page ?: 0
-        val userId = params.key?.userId ?: ""
-        val posts = getPosts(userId, params).getOrElse {
+
+        val posts = getPosts(params).getOrElse {
             return LoadResult.Error(it)
         }
         val data = getData(posts).getOrElse {
@@ -46,14 +48,11 @@ class UserPagingDataSource @Inject constructor(
         return LoadResult.Page(
             data = data,
             prevKey = if (page == 0) null else UserPagingKey(page - 1, userId),
-            nextKey = if (posts.isEmpty()) null else UserPagingKey(page + 1, userId)
+            nextKey = if (data.isEmpty()) null else UserPagingKey(page + 1, userId)
         )
     }
 
-    private suspend fun getPosts(
-        userId: String,
-        params: LoadParams<UserPagingKey>
-    ): Result<List<PostModel>> {
+    private suspend fun getPosts(params: LoadParams<UserPagingKey>): Result<List<PostModel>> {
         return postDataSource.getUserPost(userId, params.loadSize.toLong())
     }
 
@@ -92,4 +91,15 @@ class UserPagingDataSource @Inject constructor(
             }
         }
     }
+
+    class Factory @Inject constructor(
+        private val postDataSource: PostDataSource,
+        private val tagDataSource: TagDataSource,
+        private val reactionDataSource: ReactionDataSource
+    ) {
+        fun create(userId: String): UserPagingDataSource {
+            return UserPagingDataSource(postDataSource, tagDataSource, reactionDataSource, userId)
+        }
+    }
+
 }

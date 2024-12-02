@@ -38,6 +38,6 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
-        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+//        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
     }
 }
