@@ -1,8 +1,11 @@
 package com.kolown.follower
 
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,17 +20,31 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.pullToRefresh
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -43,6 +60,7 @@ import com.kolown.designsystem.component.PorringCenterAlignTopAppBar
 import com.kolown.follower.component.PageItemFooter
 import com.kolown.model.FollowerThumbnail
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun FollowerRoute(
     isLoggedIn: Boolean,
@@ -53,44 +71,79 @@ internal fun FollowerRoute(
 ) {
     val pagingItems = viewModel.followerItems.collectAsLazyPagingItems()
     val pagerState = rememberLazyListState()
+    var isRefreshing by remember { mutableStateOf(false) }
+    val refreshState = rememberPullToRefreshState()
+    val onRefresh: () -> Unit = {
+        isRefreshing = true
+        pagingItems.refresh()
+    }
+    val scaleFraction = {
+        if (isRefreshing) 1f
+        else LinearOutSlowInEasing.transform(refreshState.distanceFraction).coerceIn(0f, 1f)
+    }
+    LaunchedEffect(pagingItems.loadState) {
+        isRefreshing = false
+    }
 
     if (isLoggedIn) {
-        when (pagingItems.loadState.refresh) {
-            is LoadState.Loading -> {
-                Column(
-                    modifier = Modifier
-                        .padding(padding)
-                        .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    CircularProgressIndicator(
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .pullToRefresh(
+                    state = refreshState,
+                    isRefreshing = isRefreshing,
+                    onRefresh = onRefresh
+                )
+        ) {
+            when (pagingItems.loadState.refresh) {
+                is LoadState.Loading -> {
+                    Column(
                         modifier = Modifier
-                            .size(36.dp)
-                    )
-                }
-            }
-
-            is LoadState.NotLoading -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding)
-                ) {
-                    PorringCenterAlignTopAppBar(title = "Following")
-                    if (pagingItems.itemCount != 0) {
-                        FollowerScreen(
-                            items = pagingItems,
-                            pagerState = pagerState,
-                            navigateToTheir = navigateToTheir
+                            .padding(padding)
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(36.dp)
                         )
-                    } else NoFollowerScreen()
+                    }
+                }
+
+                is LoadState.NotLoading -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(padding),
+                    ) {
+                        PorringCenterAlignTopAppBar(title = "Following")
+                        if (pagingItems.itemCount != 0) {
+                            FollowerScreen(
+                                items = pagingItems,
+                                pagerState = pagerState,
+                                navigateToTheir = navigateToTheir
+                            )
+                        } else NoFollowerScreen()
+                    }
+                }
+
+                is LoadState.Error -> {
+                    ErrorScreen()
                 }
             }
-
-            is LoadState.Error -> {}
+            Box(
+                Modifier
+                    .align(Alignment.TopCenter)
+                    .graphicsLayer {
+                        scaleX = scaleFraction()
+                        scaleY = scaleFraction()
+                    }
+            ) {
+                PullToRefreshDefaults.Indicator(state = refreshState, isRefreshing = isRefreshing)
+            }
         }
-
     } else {
         RestrictedLoginContent(
             navigateToLogin = navigateToLogin,
@@ -169,7 +222,9 @@ internal fun FollowContent(
         ) {
             followAlbums.forEach { imageUrl ->
                 Card(
-                    modifier = Modifier.size(100.dp).clip(RoundedCornerShape(10.dp)),
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(RoundedCornerShape(10.dp)),
                     colors = CardDefaults.cardColors(containerColor = Color.LightGray)
                 ) {
                     AsyncImage(
@@ -195,5 +250,27 @@ fun NoFollowerScreen() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("팔로잉 하고 있는 사람이 없습니다.", color = Color.Gray)
+    }
+}
+
+@Composable
+private fun ErrorScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                imageVector = Icons.Default.Warning, contentDescription = null
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "오류가 발생하였습니다!", color = Color.Red
+            )
+        }
     }
 }
