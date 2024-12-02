@@ -80,11 +80,7 @@ fun CameraXCompose(
 
     val onShutterClick = {
         lifecycle.lifecycleScope.launch {
-            audioManager.setStreamVolume(
-                AudioManager.STREAM_SYSTEM,
-                1,
-                AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE
-            )
+            MediaActionSound.mustPlayShutterSound()
             MediaActionSound().play(MediaActionSound.SHUTTER_CLICK)
         }
     }
