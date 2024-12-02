@@ -9,6 +9,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -51,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -156,7 +158,12 @@ private fun ReelsContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 32.dp),
+            .padding(top = 32.dp)
+            .pointerInput(isReactionVisible.value) {
+                if (isReactionVisible.value) {
+                    detectTapGestures { isReactionVisible.value = false }
+                }
+            },
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
     ) {
         val tags = imageItem.tags.joinToString(", ") { "#$it" }
@@ -170,7 +177,11 @@ private fun ReelsContent(
                 .aspectRatio(4f / 5f)
                 .combinedClickable(indication = null,
                     interactionSource = interactionSource,
-                    onClick = {},
+                    onClick = {
+                        if (isReactionVisible.value) {
+                            isReactionVisible.value = false
+                        }
+                    },
                     onDoubleClick = { onDoubleTab() }),
             contentDescription = "",
             contentScale = ContentScale.Crop,
