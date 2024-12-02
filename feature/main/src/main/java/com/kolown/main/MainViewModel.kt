@@ -122,6 +122,9 @@ class MainViewModel @Inject constructor(
         }
 
         _mainItems.update { flow { emit(currentItems) } }
+        currentItems.find { it.authorId == id }?.let { new ->
+            _detailFirstItem.update { new }
+        }
     }
 
     fun fetchDetailFirst(item: PostContentModel) {
