@@ -48,6 +48,7 @@ internal fun DetailRoute(
     padding: PaddingValues = PaddingValues(),
     navigateToTheir: (String) -> Unit,
     detailViewModel: DetailViewModel = hiltViewModel(),
+    updateFollow: (String) -> Unit
 ) {
     var isReelsMode by remember { mutableStateOf(true) }
     val uiState = detailViewModel.uiState.collectAsStateWithLifecycle()
@@ -84,7 +85,8 @@ internal fun DetailRoute(
                 },
                 onFollowClick = detailViewModel::followUser,
                 onUnfollowClick = detailViewModel::unFollowUser,
-                followerState = followState
+                followerState = followState,
+                updateFollow = updateFollow
             )
         }
 
@@ -111,6 +113,7 @@ private fun DetailScreen(
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
     followerState: State<Pair<String, Boolean>?>,
+    updateFollow: (String) -> Unit = {}
 ) {
     Box(
         modifier = Modifier
@@ -133,7 +136,8 @@ private fun DetailScreen(
             updatePage = updatePage,
             onFollowClick = onFollowClick,
             onUnfollowClick = onUnfollowClick,
-            followerState = followerState
+            followerState = followerState,
+            updateFollow = updateFollow
         )
 
         PorringTopAppBar(
@@ -179,6 +183,7 @@ private fun DetailContent(
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
     followerState: State<Pair<String, Boolean>?>,
+    updateFollow: (String) -> Unit = {}
 ) {
 
     VerticalPager(
@@ -205,7 +210,8 @@ private fun DetailContent(
             },
             onFollowClick = onFollowClick,
             onUnfollowClick = onUnfollowClick,
-            followerState = followerState
+            followerState = followerState,
+            updateFollow = updateFollow
         )
     }
 

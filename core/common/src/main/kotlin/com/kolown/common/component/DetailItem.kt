@@ -86,6 +86,7 @@ fun DetailItem(
     onUnfollowClick: (String) -> Unit = {},
     followerState: State<Pair<String, Boolean>?>,
     checkPostIsMine: (String) -> Boolean = { _ -> false },
+    updateFollow: (String) -> Unit = {}
 ) {
     val view = LocalView.current
 
@@ -111,7 +112,8 @@ fun DetailItem(
             onFollowClick = onFollowClick,
             onUnfollowClick = onUnfollowClick,
             followerState = followerState,
-            checkPostIsMine = checkPostIsMine
+            checkPostIsMine = checkPostIsMine,
+            updateFollow = updateFollow
         )
     } else {
         ConcentrateContent(
@@ -139,6 +141,7 @@ private fun ReelsContent(
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
     followerState: State<Pair<String, Boolean>?>,
+    updateFollow: (String) -> Unit = {}
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isReactionVisible = remember { mutableStateOf(false) }
@@ -240,6 +243,7 @@ private fun ReelsContent(
                                     if (isLoggedIn) {
                                         if (isFollowed.value) {
                                             onUnfollowClick(imageItem.authorId)
+                                            updateFollow(imageItem.authorId)
                                         } else {
                                             isFollowDialogVisible.value = true
                                         }
@@ -284,6 +288,7 @@ private fun ReelsContent(
             isFollowDialogVisible.value = false
         }, onClickConfirm = { name ->
             onFollowClick(imageItem.authorId, name)
+            updateFollow(imageItem.authorId)
         })
 }
 

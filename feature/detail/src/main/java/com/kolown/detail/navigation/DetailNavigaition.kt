@@ -23,7 +23,8 @@ fun NavGraphBuilder.detailNavGraph(
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     popBackStack: () -> Unit,
     padding: PaddingValues,
-    navigateToTheir : (String) -> Unit
+    navigateToTheir : (String) -> Unit,
+    updateFollow: (String) -> Unit
 ) {
     composable<MainMenuRoute.Detail> {
         DetailRoute(
@@ -33,7 +34,8 @@ fun NavGraphBuilder.detailNavGraph(
             updateMainPostReaction = updateMainPostReaction,
             popBackStack = popBackStack,
             padding = padding,
-            navigateToTheir = navigateToTheir
+            navigateToTheir = navigateToTheir,
+            updateFollow = updateFollow
         )
     }
 }

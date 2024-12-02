@@ -110,6 +110,7 @@ internal fun MainNavHost(
                 onShowLoginSnackBar = onShowLoginSnackBar,
                 detailFirstItem = detailFirstItem,
                 updateMainPostReaction = onSelectReaction,
+                updateFollow = updateFollow,
                 popBackStack = navigator::popBackStack,
                 padding = padding,
                 navigateToTheir = navigator::navigateToTheir
