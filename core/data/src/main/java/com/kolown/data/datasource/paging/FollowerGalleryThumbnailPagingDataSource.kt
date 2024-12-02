@@ -1,15 +1,11 @@
 package com.kolown.data.datasource.paging
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.kolown.data.datasource.remote.AuthDataSource
 import com.kolown.data.datasource.remote.FollowDataSource
 import com.kolown.data.datasource.remote.PostDataSource
-import com.kolown.data.datasource.remote.ReactionDataSource
-import com.kolown.data.datasource.remote.TagDataSource
 import com.kolown.model.FollowerThumbnail
-import com.kolown.model.PostContentModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -20,12 +16,11 @@ import javax.inject.Named
 class FollowerGalleryThumbnailPagingDataSource @Inject constructor(
     private val followerDataSource: FollowDataSource,
     private val postDataSource: PostDataSource,
-    @Named("google") private val googleAuthDataSource: AuthDataSource,
+    private val currentUserId: String
 ) : PagingSource<String, FollowerThumbnail>() {
 
     override suspend fun load(params: LoadParams<String>): LoadResult<String, FollowerThumbnail> {
         return try {
-            val currentUserId = googleAuthDataSource.getUserId()
             val key = params.key
 
             val followers = followerDataSource.getFollowerList(
@@ -64,6 +59,21 @@ class FollowerGalleryThumbnailPagingDataSource @Inject constructor(
     override fun getRefreshKey(state: PagingState<String, FollowerThumbnail>): String? {
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey
+        }
+    }
+
+    class Factory @Inject constructor(
+        private val followerDataSource: FollowDataSource,
+        private val postDataSource: PostDataSource,
+        @Named("google") private val googleAuthDataSource: AuthDataSource,
+    ) {
+        fun create(): FollowerGalleryThumbnailPagingDataSource {
+            val currentUserId = googleAuthDataSource.getUserId()
+            return FollowerGalleryThumbnailPagingDataSource(
+                followerDataSource,
+                postDataSource,
+                currentUserId
+            )
         }
     }
 }

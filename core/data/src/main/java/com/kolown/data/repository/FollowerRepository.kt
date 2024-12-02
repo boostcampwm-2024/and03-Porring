@@ -24,7 +24,7 @@ interface FollowRepository {
 class FollowRepositoryImpl @Inject constructor(
     private val followDataSource: FollowDataSource,
     @Named("google") private val googleAuthDataSource: AuthDataSource,
-    private val followerGalleryThumbnailPagingDataSource: FollowerGalleryThumbnailPagingDataSource,
+    private val followerGalleryThumbnailPagingDataSource: FollowerGalleryThumbnailPagingDataSource.Factory,
 ) : FollowRepository {
 
     override fun getFollowerName(followerId: String): Flow<String> = flow {
@@ -66,13 +66,14 @@ class FollowRepositoryImpl @Inject constructor(
         }
     }
 
-    override  fun getFollowerDataSourcePagingFlow(): Flow<PagingData<FollowerThumbnail>> {
+    override fun getFollowerDataSourcePagingFlow(): Flow<PagingData<FollowerThumbnail>> {
         return Pager(
             config = PagingConfig(
                 pageSize = FOLLOWER_PER_PAGE,
                 enablePlaceholders = false,
-            ), pagingSourceFactory = {
-                followerGalleryThumbnailPagingDataSource
+            ),
+            pagingSourceFactory = {
+                followerGalleryThumbnailPagingDataSource.create()
             }
         ).flow
     }
