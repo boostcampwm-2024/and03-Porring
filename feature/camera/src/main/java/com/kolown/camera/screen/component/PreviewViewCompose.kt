@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntOffset
@@ -43,39 +44,37 @@ fun PreviewViewCompose(cameraController: LifecycleCameraController) {
         modifier = Modifier
             .fillMaxSize()
             .pointerInput(Unit) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    awaitPointerEventScope {
-                        while (true) {
-                            val event = awaitPointerEvent()
-                            val type = event.type
-                            if (!isZoomAction) {
-                                isZoomAction = event.changes.size > 1
-                                zoomActionCount = event.changes.size
-                            }
-                            if (type == PointerEventType.Release) {
-                                if (isZoomAction) {
-                                    zoomActionCount -= 1
-                                    if (zoomActionCount == 0) {
-                                        isZoomAction = false
-                                    }
-                                    continue
-                                }
-                                val offset = event.changes.first().position
-                                val x = (offset.x - 100).toInt()
-                                val y = (offset.y - 100).toInt()
-                                boxPosition = IntOffset(x, y)
-                                isVisible = true
-                                isZoomAction = false
-                            }
-
+                awaitPointerEventScope {
+                    while (true) {
+                        val event = awaitPointerEvent()
+                        val type = event.type
+                        if (!isZoomAction) {
+                            isZoomAction = event.changes.size > 1
+                            zoomActionCount = event.changes.size
                         }
+                        if (type == PointerEventType.Release) {
+                            if (isZoomAction) {
+                                zoomActionCount -= 1
+                                if (zoomActionCount == 0) {
+                                    isZoomAction = false
+                                }
+                                continue
+                            }
+                            val offset = event.changes.first().position
+                            val x = (offset.x - 100).toInt()
+                            val y = (offset.y - 100).toInt()
+                            boxPosition = IntOffset(x, y)
+                            isVisible = true
+                            isZoomAction = false
+                        }
+
                     }
                 }
             },
         factory = { ctx ->
             PreviewView(ctx).apply {
-                scaleType = PreviewView.ScaleType.FILL_START
-                implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+                scaleType = PreviewView.ScaleType.FIT_CENTER
+                implementationMode = PreviewView.ImplementationMode.PERFORMANCE
                 controller = cameraController
             }
         },

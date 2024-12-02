@@ -1,10 +1,18 @@
 package com.kolown.camera.screen
 
+import android.util.Log
+import android.util.Size
+import androidx.camera.core.AspectRatio
 import android.content.Context
 import android.media.AudioManager
 import android.media.MediaActionSound
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraState
+import androidx.camera.core.Preview
+import androidx.camera.core.UseCase
+import androidx.camera.core.impl.utils.ResolutionSelectorUtil
+import androidx.camera.core.resolutionselector.AspectRatioStrategy
+import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.background
@@ -68,26 +76,33 @@ fun CameraXCompose(
     val lifecycle = LocalLifecycleOwner.current
     val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
     val imagePickerLauncher = getImagePickerLauncher()
-    val uri = viewModel.uri.collectAsStateWithLifecycle()
-    LaunchedEffect(uri.value) {
-        uri.value?.let { navigateToUpload(it.toString()) }
-    }
+    var cameraCaptureState = remember { true }
+    var pictureSize = remember { Size(0, 0) }
+
+
+    val uri by viewModel.uri.collectAsStateWithLifecycle()
+    LaunchedEffect(uri) {
+        Log.e("이미지 클릭3", uri.toString())
+        uri?.let {
+            navigateToUpload(it.toString())
+        }
 
     val cameraController = remember {
         LifecycleCameraController(context).apply {
             //어떤 카메라를 사용할 지 선택한다.
             cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             //이미지, 비디오 캡쳐를 위한 설정을 한다.(UseCase를 활성화 한다.)
-            setEnabledUseCases(CameraController.IMAGE_CAPTURE or CameraController.VIDEO_CAPTURE)
-            //이미지 분석을 위한 설정을 한다.
-            setImageAnalysisAnalyzer(cameraExecutor) { imageProxy ->
-                imageProxy.close()
-            }
+            setEnabledUseCases(CameraController.IMAGE_CAPTURE)
             bindToLifecycle(lifecycle)
 
             //기타 세팅을 설정해 준다.
             isTapToFocusEnabled = true
             isPinchToZoomEnabled = true
+
+            previewResolutionSelector = ResolutionSelector.Builder()
+                .setAspectRatioStrategy(AspectRatioStrategy.RATIO_4_3_FALLBACK_AUTO_STRATEGY)
+                .build()
+
         }
     }
     val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -145,7 +160,7 @@ fun CameraXCompose(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(148.dp)
+                    .weight(1f)
                     .background(Color.Black.copy(alpha = 0.6f)),
                 verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -175,13 +190,13 @@ fun CameraXCompose(
             GridLineCompose(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(4 / 5f)
+                    .aspectRatio(3f/4f)
             )
 
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(104.dp) // 높이 지정
+                    .weight(1f)
                     .background(Color.Black.copy(alpha = 0.6f)) // 반투명한 색상
                     .padding(20.dp),
                 contentAlignment = Alignment.Center
@@ -189,13 +204,15 @@ fun CameraXCompose(
                 CaptureButton {
                     onShutterClick()
                     cameraController.takePhoto(context) {
-                        viewModel.saveBitmapToCache(it)
                     //카메라가 완전히 OPEN 되어 있을 때만(모영민님 피드백)
-                    if (cameraState?.type == CameraState.Type.OPEN){
+                    if (cameraState?.type == CameraState.Type.OPEN && cameraCaptureState) {
+                        cameraCaptureState = false
                         cameraController.takePhoto(context) {
+                            cameraCaptureState = true
                             viewModel.saveBitmapToCache(it)
                         }
                     }
+
                 }
             }
 
@@ -244,7 +261,11 @@ fun CameraXCompose(
                         tint = Color.White
                     )
                 }
+
+
             }
+
+
         }
 
 
