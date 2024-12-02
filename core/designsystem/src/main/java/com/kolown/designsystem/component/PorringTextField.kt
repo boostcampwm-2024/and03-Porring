@@ -55,6 +55,7 @@ fun PorringTextField(
     validator: ((String) -> Boolean)? = null,
     onErrorChange: (Boolean) -> Unit = {},
     leadingIcon: ImageVector? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     modifier: Modifier = Modifier,
@@ -118,7 +119,8 @@ fun PorringTextField(
 
                 Box(
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .weight(1f),
                     contentAlignment = Alignment.CenterStart
                 ) {
                     if (value.isEmpty()) {
@@ -151,6 +153,10 @@ fun PorringTextField(
                         }
                         innerTextField()
                     }
+                }
+                trailingIcon?.let {
+                    Spacer(modifier = Modifier.size(16.dp))
+                    trailingIcon()
                 }
             }
         },

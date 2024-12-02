@@ -16,7 +16,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Porring"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustNothing"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
 

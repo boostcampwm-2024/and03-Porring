@@ -1,7 +1,12 @@
 package com.kolown.upload
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -14,6 +19,8 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Clear
@@ -23,18 +30,23 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,8 +54,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.kolown.designsystem.R.drawable
 import com.kolown.designsystem.component.PorringIconButton
+import com.kolown.designsystem.component.PorringTextField
 import com.kolown.designsystem.component.PorringTopAppBar
+import com.kolown.designsystem.ui.theme.Error
+import com.kolown.designsystem.ui.theme.Gray
 import com.kolown.designsystem.ui.theme.Primary
+import com.kolown.designsystem.ui.theme.PrimaryUnActive
 import com.kolown.upload.component.CategoryGroup
 import kotlinx.coroutines.launch
 
@@ -113,18 +129,10 @@ private fun UploadScreen(
         }
     }
 
-    fun chooseColor(boolean: Boolean): Color {
-        return if (boolean) {
-            Primary
-        } else {
-            Color.White
-        }
-    }
-
     Column(
         modifier = Modifier
-            .padding(padding)
             .fillMaxSize()
+            .padding(padding)
     ) {
         PorringTopAppBar(
             title = stringResource(R.string.string_new_post),
@@ -139,109 +147,136 @@ private fun UploadScreen(
 
         UploadContent(
             imgUri = imgUri,
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .imePadding(),
+            uploadEnable = uploadEnable,
             description = description,
             changeDescription = changeDescription,
             categoryItems = categoryItems,
             addCategory = addCategory,
             removeCategory = removeCategory,
-            changeCategoryName = changeCategoryName
+            changeCategoryName = changeCategoryName,
+            uploadPost = uploadPost,
+            navigateToHome = navigateToHome
         )
-        Button(
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .fillMaxWidth()
-                .height(40.dp),
-            onClick = {
-                uploadPost()
-                navigateToHome()
-            },
-            enabled = uploadEnable,
-            shape = RoundedCornerShape(10.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = chooseColor(uploadEnable))
-        ) {
-            Text(
-                text = "올리기",
-                color = chooseColor(!uploadEnable),
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun UploadContent(
     imgUri: String,
-    modifier: Modifier,
+    uploadEnable: Boolean,
     description: String,
     changeDescription: (String) -> Unit,
     categoryItems: List<String>,
     addCategory: () -> Unit,
     removeCategory: (String) -> Unit,
     changeCategoryName: (Int, String) -> Unit,
+    uploadPost: () -> Unit,
+    navigateToHome: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
-        val ratio = 4f / 5f // todo 이후에 가로 이미지를 지원할 때는 분기처리 필요
-        val horizontalModifier = Modifier
-            .padding(horizontal = 40.dp)
-            .fillMaxWidth()
+    val focusManager = LocalFocusManager.current
+    var scrollState = rememberScrollState()
+    var imeHeightState by remember { mutableStateOf(0) }
+    val imeHeight = WindowInsets.ime.getBottom(LocalDensity.current)
 
-        Spacer(modifier = Modifier.height(16.dp))
-        AsyncImage(
-            modifier = horizontalModifier.aspectRatio(ratio),
-            model = imgUri,
-            contentDescription = null
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        DescriptionTextField(horizontalModifier, description, changeDescription)
-        Spacer(modifier = Modifier.height(4.dp))
-        if (description.length >= 20) {
-            Text(
-                modifier = Modifier.padding(horizontal = 56.dp),
-                text = "설명은 최대 20자까지만 입력이 가능합니다.",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.Red
-            )
-        }
-        Spacer(modifier = Modifier.height(50.dp))
-        CategoryGroup(
-            modifier = horizontalModifier,
-            categoryItems = categoryItems,
-            addCategory = addCategory,
-            removeCategory = removeCategory,
-            changeCategoryName = changeCategoryName
-        )
-        Spacer(modifier = Modifier.height(100.dp))
+    LaunchedEffect(imeHeight) {
+        imeHeightState = imeHeight
+        scrollState.scrollTo(imeHeight)
     }
-}
 
-@Composable
-private fun DescriptionTextField(
-    modifier: Modifier,
-    imageDescription: String,
-    onDescriptionChange: (String) -> Unit,
-) {
-    TextField(
-        modifier = modifier,
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent
-        ),
-        maxLines = 2,
-        value = imageDescription,
-        onValueChange = {
-            if (it.length <= 20) {
-                onDescriptionChange(it)
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 40.dp)
+            .padding(top = 8.dp)
+    ) {
+        val ratio = 4f / 5f // todo 이후에 가로 이미지를 지원할 때는 분기처리 필요
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(1f)
+                .imePadding()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState),
+                verticalArrangement = Arrangement.spacedBy(32.dp)
+            ) {
+                AsyncImage(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(ratio)
+                        .clip(shape = RoundedCornerShape(10.dp)),
+                    model = imgUri,
+                    contentScale = ContentScale.FillWidth,
+                    contentDescription = "upload image"
+                )
+
+                Column {
+                    PorringTextField(
+                        value = description,
+                        onValueChange = changeDescription,
+                        keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Done
+                        ),
+                        trailingIcon = {
+                            PorringIconButton(
+                                icon = ImageVector.vectorResource(com.kolown.common.R.drawable.ic_cancel),
+                                onClick = { changeDescription("") }
+                            )
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    if (description.length >= 20) {
+                        Text(
+                            modifier = Modifier.padding(start = 4.dp),
+                            text = "설명은 최대 20자까지만 입력이 가능합니다.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Error
+                        )
+                    }
+                }
+
+                CategoryGroup(
+                    categoryItems = categoryItems,
+                    addCategory = addCategory,
+                    removeCategory = removeCategory,
+                    changeCategoryName = changeCategoryName
+                )
             }
-        },
-        placeholder = { Text(text = "설명 추가...", style = MaterialTheme.typography.bodyLarge) },
-        trailingIcon = { TextFieldResetButton { onDescriptionChange("") } }
-    )
+        }
+
+
+        androidx.compose.animation.AnimatedVisibility(
+            visible = imeHeightState < 1,
+            enter = fadeIn(),
+            exit = ExitTransition.None
+        ) {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 16.dp)
+                    .height(40.dp),
+                onClick = {
+                    uploadPost()
+                    navigateToHome()
+                },
+                enabled = uploadEnable,
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = if (uploadEnable) Primary else PrimaryUnActive)
+            ) {
+                Text(
+                    text = "올리기",
+                    color = if (uploadEnable) Color.White else Gray,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+    }
 }
 
 @Composable
