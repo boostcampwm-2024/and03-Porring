@@ -74,19 +74,14 @@ fun CameraXCompose(
 ) {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current
-    val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
     val imagePickerLauncher = getImagePickerLauncher()
     var cameraCaptureState = remember { true }
-    var pictureSize = remember { Size(0, 0) }
 
 
     val uri by viewModel.uri.collectAsStateWithLifecycle()
     LaunchedEffect(uri) {
-        Log.e("이미지 클릭3", uri.toString())
-        uri?.let {
-            navigateToUpload(it.toString())
-        }
-
+        uri?.let { navigateToUpload(it.toString()) }
+    }
     val cameraController = remember {
         LifecycleCameraController(context).apply {
             //어떤 카메라를 사용할 지 선택한다.
@@ -139,10 +134,9 @@ fun CameraXCompose(
     }
 
 
-    var cameraFlashState = remember { false }
     val onShutterClick = {
         lifecycle.lifecycleScope.launch {
-            MediaActionSound.mustPlayShutterSound()
+            //MediaActionSound.mustPlayShutterSound()
             MediaActionSound().play(MediaActionSound.SHUTTER_CLICK)
         }
     }
@@ -155,42 +149,21 @@ fun CameraXCompose(
         PreviewViewCompose(cameraController)
 
         Column(
-            modifier = Modifier.fillMaxSize().padding(bottom = padding.calculateBottomPadding())
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = padding.calculateBottomPadding())
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
                     .background(Color.Black.copy(alpha = 0.6f)),
-                verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                IconButton(onClick = popBackStack, modifier = Modifier.size(48.dp)) {
-                    Icon(
-                        tint = Color.White,
-                        modifier = Modifier.fillMaxSize(),
-                        contentDescription = "icon_back",
-                        imageVector = ImageVector.vectorResource(R.drawable.icon_back_button_white)
-                    )
-                }
-
-                IconButton(onClick = {
-                    cameraFlashState = !cameraFlashState
-                    cameraController.enableTorch(cameraFlashState)
-                }, modifier = Modifier.size(48.dp)) {
-                    Icon(
-                        tint = Color.White,
-                        modifier = Modifier.fillMaxSize(),
-                        contentDescription = "icon_flash",
-                        imageVector = ImageVector.vectorResource(R.drawable.icon_flash)
-                    )
-                }
-            }
+            )
 
             GridLineCompose(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(3f/4f)
+                    .aspectRatio(3f / 4f)
             )
 
             Box(
@@ -204,62 +177,66 @@ fun CameraXCompose(
                 CaptureButton {
                     onShutterClick()
                     cameraController.takePhoto(context) {
-                    //카메라가 완전히 OPEN 되어 있을 때만(모영민님 피드백)
-                    if (cameraState?.type == CameraState.Type.OPEN && cameraCaptureState) {
-                        cameraCaptureState = false
-                        cameraController.takePhoto(context) {
-                            cameraCaptureState = true
-                            viewModel.saveBitmapToCache(it)
-                        }
-                    }
-
-                }
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .background(BackgroundDark),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-
-                IconButton(
-                    modifier = Modifier
-                        .size(48.dp),
-
-                    onClick = {
-                        imagePickerLauncher.launch { it ->
-                            it?.let {
-                                viewModel.setUri(it)
-                            } ?: run {
+                        //카메라가 완전히 OPEN 되어 있을 때만(모영민님 피드백)
+                        if (cameraState?.type == CameraState.Type.OPEN && cameraCaptureState) {
+                            cameraCaptureState = false
+                            cameraController.takePhoto(context) {
+                                cameraCaptureState = true
+                                viewModel.saveBitmapToCache(it)
                             }
                         }
-                    }) {
-                    Icon(
-                        modifier = Modifier.fillMaxSize(),
-                        contentDescription = "icon_album",
-                        imageVector = ImageVector.vectorResource(R.drawable.icon_album_white),
-                        tint = Color.White
-                    )
+
+                    }
                 }
-                IconButton(
+
+                Row(
                     modifier = Modifier
-                        .size(48.dp),
-                    onClick = {
-                        val nowSelector = cameraController.cameraSelector
-                        if (nowSelector == CameraSelector.DEFAULT_BACK_CAMERA)
-                            cameraController.cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
-                        else
-                            cameraController.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-                    }) {
-                    Icon(
-                        modifier = Modifier.fillMaxSize(),
-                        contentDescription = "icon_switch_camera",
-                        imageVector = ImageVector.vectorResource(R.drawable.icon_switch_camera_white),
-                        tint = Color.White
-                    )
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .background(BackgroundDark),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+
+                    IconButton(
+                        modifier = Modifier
+                            .size(48.dp),
+
+                        onClick = {
+                            imagePickerLauncher.launch { it ->
+                                it?.let {
+                                    viewModel.setUri(it)
+                                } ?: run {
+                                }
+                            }
+                        }) {
+                        Icon(
+                            modifier = Modifier.fillMaxSize(),
+                            contentDescription = "icon_album",
+                            imageVector = ImageVector.vectorResource(R.drawable.icon_album_white),
+                            tint = Color.White
+                        )
+                    }
+                    IconButton(
+                        modifier = Modifier
+                            .size(48.dp),
+                        onClick = {
+                            val nowSelector = cameraController.cameraSelector
+                            if (nowSelector == CameraSelector.DEFAULT_BACK_CAMERA)
+                                cameraController.cameraSelector =
+                                    CameraSelector.DEFAULT_FRONT_CAMERA
+                            else
+                                cameraController.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                        }) {
+                        Icon(
+                            modifier = Modifier.fillMaxSize(),
+                            contentDescription = "icon_switch_camera",
+                            imageVector = ImageVector.vectorResource(R.drawable.icon_switch_camera_white),
+                            tint = Color.White
+                        )
+                    }
+
+
                 }
 
 
@@ -270,6 +247,4 @@ fun CameraXCompose(
 
 
     }
-
-
 }
