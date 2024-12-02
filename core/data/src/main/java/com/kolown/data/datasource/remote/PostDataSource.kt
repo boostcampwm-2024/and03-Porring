@@ -30,6 +30,7 @@ interface PostDataSource {
 
     suspend fun deletePost(postId: String): Result<Unit>
     suspend fun getUserFollowerPost(uid: String, perPage: Long): Result<List<PostModel>>
+    fun resetLastVisible()
 }
 
 class PostDataSourceImpl @Inject constructor(
@@ -38,6 +39,10 @@ class PostDataSourceImpl @Inject constructor(
     private val postCollection = firestore.collection("post")
     private var randomType = listOf("A", "B", "C", "D", "E").random()
     private var lastVisible: DocumentSnapshot? = null
+
+    override fun resetLastVisible() {
+        lastVisible = null
+    }
 
     override suspend fun getUserPost(uid: String, perPage: Long): Result<List<PostModel>> {
         return runCatching {
