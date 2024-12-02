@@ -1,6 +1,7 @@
 package com.kolown.main
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -37,5 +38,6 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
     }
 }
