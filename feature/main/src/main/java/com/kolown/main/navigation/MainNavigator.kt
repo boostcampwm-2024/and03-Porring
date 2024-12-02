@@ -38,20 +38,13 @@ internal class MainNavigator(
     fun navigate(menu: MainMenu) {
         val navOptions = navOptions {
             popUpTo(navController.graph.findStartDestination().id) {
-                saveState = true
+                inclusive = menu == MainMenu.HOME
             }
             launchSingleTop = true
-            restoreState = true
         }
 
         when (menu) {
-            MainMenu.HOME -> navController.navigateHome(navOptions {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    inclusive = true
-                }
-                launchSingleTop = true
-            })
-
+            MainMenu.HOME -> navController.navigateHome(navOptions)
             MainMenu.SEARCH -> navController.navigateSearch(navOptions)
             MainMenu.CAMERA -> navController.navigateCamera(navOptions)
             MainMenu.FOLLOWER -> navController.navigateFollower(navOptions)

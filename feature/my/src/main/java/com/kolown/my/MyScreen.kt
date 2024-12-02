@@ -1,5 +1,6 @@
 package com.kolown.my
 
+import android.util.Log
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -25,9 +26,11 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.pullToRefresh
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,31 +59,15 @@ import com.kolown.my.component.GalleryItem
 import com.kolown.my.component.PageItemFooter
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MyRoute(
     isLoggedIn: Boolean,
     navigateToLogin: () -> Unit,
     navigateToSetting: () -> Unit,
     padding: PaddingValues = PaddingValues(),
-) {
-    if (isLoggedIn) {
-        MyScreen(
-            navigateToSetting = navigateToSetting,
-            padding = padding
-        )
-    } else {
-        RestrictedLoginContent(navigateToLogin)
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun MyScreen(
-    navigateToSetting: () -> Unit = {},
-    padding: PaddingValues = PaddingValues(),
     viewModel: MyViewModel = hiltViewModel(),
 ) {
-    val width = LocalConfiguration.current.screenWidthDp.dp / 2
     val pagingItems = viewModel.galleryFlow.collectAsLazyPagingItems()
     val listState = rememberLazyStaggeredGridState()
     var isRefreshing by remember { mutableStateOf(false) }
@@ -93,12 +80,49 @@ private fun MyScreen(
         if (isRefreshing) 1f
         else LinearOutSlowInEasing.transform(refreshState.distanceFraction).coerceIn(0f, 1f)
     }
+
     LaunchedEffect(pagingItems.loadState) {
         isRefreshing = false
     }
     LaunchedEffect(pagingItems) {
         listState.scrollToItem(0)
     }
+
+    if (isLoggedIn) {
+        LaunchedEffect(Unit) {
+            viewModel.resetGalleryFlow()
+        }
+        MyScreen(
+            navigateToSetting = navigateToSetting,
+            padding = padding,
+            listState = listState,
+            pagingItems = pagingItems,
+            deletePost = viewModel::deletePost,
+            onRefresh = onRefresh,
+            isRefreshing = isRefreshing,
+            refreshState = refreshState,
+            scaleFraction = scaleFraction
+        )
+    } else {
+        RestrictedLoginContent(navigateToLogin)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun MyScreen(
+    navigateToSetting: () -> Unit = {},
+    padding: PaddingValues = PaddingValues(),
+    listState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
+    pagingItems: LazyPagingItems<PostContentModel>,
+    deletePost: (String) -> Unit = {},
+    onRefresh: () -> Unit = {},
+    isRefreshing: Boolean = false,
+    refreshState: PullToRefreshState = rememberPullToRefreshState(),
+    scaleFraction: () -> Float = { 1f },
+) {
+    val width = LocalConfiguration.current.screenWidthDp.dp / 2
+    Log.d("GalleryItem", "MyRoute: ${pagingItems.itemCount}")
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -126,7 +150,7 @@ private fun MyScreen(
                 listState = listState,
                 pagingItems = pagingItems,
                 width = width,
-                deletePost = viewModel::deletePost
+                deletePost = deletePost
             )
             Box(
                 Modifier
@@ -265,8 +289,3 @@ private fun ErrorScreen() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun PreviewMyScreen() {
-    MyScreen()
-}
