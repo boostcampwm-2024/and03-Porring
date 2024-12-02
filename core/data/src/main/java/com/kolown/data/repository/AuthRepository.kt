@@ -58,6 +58,7 @@ class AuthRepositoryImpl @Inject constructor(
                     localUserDataSource.createUserData(userDto)
                     googleAuthDataSource.logout()
                 }
+                .onFailure { e -> throw e }
         }
     }
 }
