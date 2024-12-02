@@ -6,6 +6,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
@@ -34,6 +35,10 @@ internal class MainNavigator(
         @Composable get() = MainMenu.find { m ->
             currentDestination?.hasRoute(m::class) == true
         }
+    private val singleTopOptions = navOptions {
+        launchSingleTop = true
+        restoreState = true
+    }
 
     fun navigate(menu: MainMenu) {
         val navOptions = navOptions {
@@ -52,7 +57,7 @@ internal class MainNavigator(
         }
     }
 
-    fun navigateToTheir(authorId: String) = navController.navigateTheir(authorId)
+    fun navigateToTheir(authorId: String) = navController.navigateTheir(authorId = authorId,navOptions = singleTopOptions)
 
     fun navigateToUpload(imgUri: String, uploadModel: UploadModel) =
         navController.navigateUpload(imgUri, uploadModel)

@@ -228,7 +228,8 @@ private fun ReelsContent(
                         tint = PrimaryDark,
                         contentDescription = "",
                         modifier = Modifier.clickable {
-                            isReactionVisible.value = true
+                            if(isLoggedIn) isReactionVisible.value = true
+                            else onShowLoginSnackBar()
                         })
 
                     Row(
