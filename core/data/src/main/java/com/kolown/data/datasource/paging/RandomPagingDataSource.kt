@@ -29,63 +29,70 @@ class RandomPagingDataSource @Inject constructor(
     }
 
     override suspend fun load(params: LoadParams<Long>): LoadResult<Long, PostContentModel> {
-        val currentUserId = googleAuthDataSource.getUserId()
-        val page = params.key ?: randomSeed
-        val posts =
-            postDataSource.getRandomPost(currentUserId, page, params.loadSize.toLong()).getOrElse {
-                throw IOException("랜덤 게시글 불러오기 실패")
-            }
-        val (tags, reactions, isFollowers) = coroutineScope {
-            val tagsDeferred = async {
-                posts.map {
-                    async {
-                        tagDataSource.getPostTag(it.postId).getOrElse {
-                            throw IOException("태그 불러오기 실패")
-                        }
+        return try {
+            val currentUserId = googleAuthDataSource.getUserId()
+            val page = params.key ?: randomSeed
+            val posts =
+                postDataSource.getRandomPost(currentUserId, page, params.loadSize.toLong())
+                    .getOrElse {
+                        throw IOException("랜덤 게시글 불러오기 실패")
                     }
-                }.awaitAll()
-            }
-            val reactionsDeferred = async {
-                posts.map {
-                    async {
-                        reactionDataSource.getReactionByPostId(it.postId).getOrElse {
-                            throw IOException("리액션 불러오기 실패")
+            val (tags, reactions, isFollowers) = coroutineScope {
+                val tagsDeferred = async {
+                    posts.map {
+                        async {
+                            tagDataSource.getPostTag(it.postId).getOrElse {
+                                throw IOException("태그 불러오기 실패")
+                            }
                         }
-                    }
-                }.awaitAll()
-            }
-            val followDeferred = async {
-                posts.map {
-                    async {
-                        followDataSource.getIsFollower(
-                            userId = currentUserId,
-                            followerId = it.authorId
-                        ).getOrElse {
-                            throw IOException("팔로우 확인 실패")
+                    }.awaitAll()
+                }
+                val reactionsDeferred = async {
+                    posts.map {
+                        async {
+                            reactionDataSource.getReactionByPostId(it.postId).getOrElse {
+                                throw IOException("리액션 불러오기 실패")
+                            }
                         }
-                    }
-                }.awaitAll()
+                    }.awaitAll()
+                }
+                val followDeferred = async {
+                    posts.map {
+                        async {
+                            followDataSource.getIsFollower(
+                                userId = currentUserId,
+                                followerId = it.authorId
+                            ).getOrElse {
+                                throw IOException("팔로우 확인 실패")
+                            }
+                        }
+                    }.awaitAll()
+                }
+
+                Triple(tagsDeferred.await(), reactionsDeferred.await(), followDeferred.await())
             }
 
-            Triple(tagsDeferred.await(), reactionsDeferred.await(), followDeferred.await())
+             LoadResult.Page(
+                data = posts.mapIndexed { index, postModel ->
+                    PostContentModel(
+                        postId = postModel.postId,
+                        authorId = postModel.authorId,
+                        imageUrl = postModel.imageUrl,
+                        registerAt = postModel.registerAt,
+                        description = postModel.description,
+                        tags = tags[index].map { it.tagName },
+                        isFollower = isFollowers[index],
+                        reactions = reactions[index].mapNotNull { it.reaction },
+                        myReaction = reactions[index].find { it.userId == currentUserId }?.reaction
+                    )
+                },
+                prevKey = if (page == randomSeed) null else posts.lastOrNull()?.random,
+                nextKey = if (posts.isEmpty()) null else posts.last().random + 1
+            )
+        } catch (e: IOException) {
+            LoadResult.Error(e)
+        } catch (e: Exception) {
+            LoadResult.Error(e)
         }
-
-        return LoadResult.Page(
-            data = posts.mapIndexed { index, postModel ->
-                PostContentModel(
-                    postId = postModel.postId,
-                    authorId = postModel.authorId,
-                    imageUrl = postModel.imageUrl,
-                    registerAt = postModel.registerAt,
-                    description = postModel.description,
-                    tags = tags[index].map { it.tagName },
-                    isFollower = isFollowers[index],
-                    reactions = reactions[index].mapNotNull { it.reaction },
-                    myReaction = reactions[index].find { it.userId == currentUserId }?.reaction
-                )
-            },
-            prevKey = if (page == randomSeed) null else posts.lastOrNull()?.random,
-            nextKey = if (posts.isEmpty()) null else posts.last().random + 1
-        )
     }
 }

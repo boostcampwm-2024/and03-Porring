@@ -1,5 +1,6 @@
 package com.kolown.follower
 
+import android.util.Log
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -59,6 +60,7 @@ import com.kolown.common.component.RestrictedLoginContent
 import com.kolown.designsystem.component.PorringCenterAlignTopAppBar
 import com.kolown.follower.component.PageItemFooter
 import com.kolown.model.FollowerThumbnail
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,6 +73,7 @@ internal fun FollowerRoute(
 ) {
     val pagingItems = viewModel.followerItems.collectAsLazyPagingItems()
     val pagerState = rememberLazyListState()
+    var showErrorScreen by remember { mutableStateOf(false) }
     var isRefreshing by remember { mutableStateOf(false) }
     val refreshState = rememberPullToRefreshState()
     val onRefresh: () -> Unit = {
@@ -81,12 +84,15 @@ internal fun FollowerRoute(
         if (isRefreshing) 1f
         else LinearOutSlowInEasing.transform(refreshState.distanceFraction).coerceIn(0f, 1f)
     }
+
     LaunchedEffect(pagingItems.loadState) {
         isRefreshing = false
-    }
-
-    LaunchedEffect(isLoggedIn) {
-        pagingItems.refresh()
+        if (pagingItems.loadState.refresh == LoadState.Loading) {
+            delay(7000)
+            showErrorScreen = true
+        } else {
+            showErrorScreen = false
+        }
     }
 
     if (isLoggedIn) {
@@ -102,8 +108,12 @@ internal fun FollowerRoute(
                     onRefresh = onRefresh
                 )
         ) {
-            when (pagingItems.loadState.refresh) {
-                is LoadState.Loading -> {
+            when {
+                showErrorScreen -> {
+                    ErrorScreen()
+                }
+
+                pagingItems.loadState.refresh is LoadState.Loading -> {
                     Column(
                         modifier = Modifier
                             .padding(padding)
@@ -119,7 +129,7 @@ internal fun FollowerRoute(
                     }
                 }
 
-                is LoadState.NotLoading -> {
+                pagingItems.loadState.refresh is LoadState.NotLoading -> {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -136,10 +146,11 @@ internal fun FollowerRoute(
                     }
                 }
 
-                is LoadState.Error -> {
+                pagingItems.loadState.refresh is LoadState.Error -> {
                     ErrorScreen()
                 }
             }
+
             Box(
                 Modifier
                     .align(Alignment.TopCenter)
@@ -151,6 +162,7 @@ internal fun FollowerRoute(
                 PullToRefreshDefaults.Indicator(state = refreshState, isRefreshing = isRefreshing)
             }
         }
+
     } else {
         RestrictedLoginContent(
             navigateToLogin = navigateToLogin,

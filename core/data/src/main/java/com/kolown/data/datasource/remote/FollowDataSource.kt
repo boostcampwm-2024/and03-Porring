@@ -106,7 +106,6 @@ class FollowDataSourceImpl @Inject constructor(
             .runCatching {
                 emit(true)
             }.onFailure { e ->
-                Log.e("FollowUpload", "datasource: $e")
                 emit(false)
             }
     }

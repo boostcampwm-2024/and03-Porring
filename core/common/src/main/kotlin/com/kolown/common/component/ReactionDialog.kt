@@ -22,7 +22,7 @@ import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 
 @Composable
-internal fun ReactionDialog(
+fun ReactionDialog(
     modifier: Modifier = Modifier,
     imageItem: PostContentModel,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,

@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.bundles.android.compose)
 
     implementation(projects.core.data)
+    implementation(projects.core.common)
     implementation(projects.core.designsystem)
     implementation(projects.core.navigation)
 }
