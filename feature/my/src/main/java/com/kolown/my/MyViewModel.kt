@@ -26,7 +26,7 @@ class MyViewModel @Inject constructor(
 
     val galleryFlow = trigger.flatMapLatest { key ->
         combine(
-            postRepository.getUserPosts().cachedIn(viewModelScope),
+            postRepository.getUserPosts(),
             deletedPostIds
         ) { pagingData, deletedIds ->
             pagingData.filter { post -> post.postId !in deletedIds }
