@@ -79,7 +79,6 @@ fun DetailItem(
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
-    onDoubleTab: (Boolean) -> Unit,
     navigateToTheir: (String) -> Unit,
     updatePage: () -> Unit,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
@@ -91,7 +90,6 @@ fun DetailItem(
     val view = LocalView.current
 
     if (isReelsMode) {
-        onDoubleTab(true)
         showSystembar(view = view)
     }
 
@@ -105,7 +103,6 @@ fun DetailItem(
             onDoubleTab = {
                 onChangeReelsMode(false)
                 requestFullScreen(view)
-                onDoubleTab(false)
             },
             navigateToTheir = navigateToTheir,
             updatePage = updatePage,
