@@ -49,6 +49,5 @@ class MyViewModel @Inject constructor(
     fun resetGalleryFlow() {
         deletedPostIds.value = emptySet()
         trigger.value++
-        val test = postRepository.getUserPosts().cachedIn(viewModelScope)
     }
 }
