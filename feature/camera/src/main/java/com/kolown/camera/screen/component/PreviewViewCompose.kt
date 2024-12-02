@@ -5,6 +5,7 @@ import androidx.camera.view.PreviewView
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
@@ -33,17 +35,21 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun PreviewViewCompose(cameraController: LifecycleCameraController) {
+fun PreviewViewCompose(
+    cameraController: LifecycleCameraController,
+    modifier: Modifier = Modifier,
+) {
 
     var boxPosition by remember { mutableStateOf(IntOffset(0, 0)) }
     var isVisible by remember { mutableStateOf(false) }
     var isZoomAction = remember { false }
     var zoomActionCount = remember { 0 }
 
-    AndroidView(
-        modifier = Modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
+    Box(modifier = modifier){
+
+
+        AndroidView(
+            modifier = modifier.pointerInput(Unit) {
                 awaitPointerEventScope {
                     while (true) {
                         val event = awaitPointerEvent()
@@ -71,17 +77,23 @@ fun PreviewViewCompose(cameraController: LifecycleCameraController) {
                     }
                 }
             },
-        factory = { ctx ->
-            PreviewView(ctx).apply {
-                scaleType = PreviewView.ScaleType.FIT_CENTER
-                implementationMode = PreviewView.ImplementationMode.PERFORMANCE
-                controller = cameraController
+            factory = { ctx ->
+                PreviewView(ctx).apply {
+                    scaleType = PreviewView.ScaleType.FIT_CENTER
+                    implementationMode = PreviewView.ImplementationMode.PERFORMANCE
+                    controller = cameraController
+                }
+            },
+            onRelease = {
+                cameraController.unbind()
             }
-        },
-        onRelease = {
-            cameraController.unbind()
-        }
-    )
+        )
+        GridLineCompose()
+
+    }
+
+
+
 
     AnimatedVisibility(
         visible = isVisible,
