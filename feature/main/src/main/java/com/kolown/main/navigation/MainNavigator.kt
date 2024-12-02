@@ -1,9 +1,7 @@
 package com.kolown.main.navigation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -30,7 +28,7 @@ internal class MainNavigator(
     val navController: NavHostController,
 ) {
     val startDestination = MainMenu.HOME.route
-    private val currentDestination: NavDestination?
+    internal val currentDestination: NavDestination?
         @Composable get() = navController.currentBackStackEntryAsState().value?.destination
     val currentMenu: MainMenu?
         @Composable get() = MainMenu.find { m ->
@@ -63,7 +61,8 @@ internal class MainNavigator(
 
     fun navigateToTheir(authorId: String) = navController.navigateTheir(authorId)
 
-    fun navigateToUpload(imgUri: String, uploadModel: UploadModel) = navController.navigateUpload(imgUri, uploadModel)
+    fun navigateToUpload(imgUri: String, uploadModel: UploadModel) =
+        navController.navigateUpload(imgUri, uploadModel)
 
     fun navigateToDetail() = navController.navigateToDetail()
 

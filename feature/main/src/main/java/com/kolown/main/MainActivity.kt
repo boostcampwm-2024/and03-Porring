@@ -11,7 +11,6 @@ import androidx.compose.runtime.setValue
 import com.kolown.designsystem.ui.theme.PorringTheme
 import com.kolown.main.navigation.MainNavigator
 import com.kolown.main.navigation.rememberMainNavigator
-import com.kolown.navigation.AppRoute
 import com.kolown.navigation.MainMenuRoute
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,7 +26,7 @@ class MainActivity : ComponentActivity() {
 
             currentRoute = navigator.currentDestination?.route?.substringAfterLast(".").orEmpty()
             isLightBars = when (currentRoute) {
-                AppRoute.Detail.toString() -> false
+                MainMenuRoute.Detail.toString() -> false
                 MainMenuRoute.Camera.toString() -> false
                 else -> true
             }
