@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -21,10 +22,15 @@ class MyViewModel @Inject constructor(
     private val postRepository: PostRepository,
 ) : ViewModel() {
     private val deletedPostIds = MutableStateFlow<Set<String>>(emptySet())
-    private val originalGalleryFlow = postRepository.getUserPosts().cachedIn(viewModelScope)
+    private val trigger = MutableStateFlow(0)
 
-    val galleryFlow = combine(originalGalleryFlow, deletedPostIds) { pagingData, deletedIds ->
-        pagingData.filter { post -> post.postId !in deletedIds }
+    val galleryFlow = trigger.flatMapLatest { key ->
+        combine(
+            postRepository.getUserPosts().cachedIn(viewModelScope),
+            deletedPostIds
+        ) { pagingData, deletedIds ->
+            pagingData.filter { post -> post.postId !in deletedIds }
+        }
     }
 
     fun deletePost(postId: String) {
@@ -38,5 +44,11 @@ class MyViewModel @Inject constructor(
                 }
                 .launchIn(viewModelScope)
         }
+    }
+
+    fun resetGalleryFlow() {
+        deletedPostIds.value = emptySet()
+        trigger.value++
+        val test = postRepository.getUserPosts().cachedIn(viewModelScope)
     }
 }

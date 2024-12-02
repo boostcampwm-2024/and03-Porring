@@ -65,7 +65,7 @@ class PostRepositoryImpl @Inject constructor(
         return Pager(
             config = PagingConfig(
                 pageSize = GALLERY_PAGE_SIZE,
-                enablePlaceholders = false
+                enablePlaceholders = false,
             ),
             initialKey = initialKey,
             pagingSourceFactory = { userPagingDataSource.create(userId ?: authorId) }
