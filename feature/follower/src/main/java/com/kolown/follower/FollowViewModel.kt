@@ -15,7 +15,7 @@ class FollowerViewModel @Inject constructor(
 ) : ViewModel() {
     private val trigger = MutableStateFlow(0)
     val followerItems = trigger.flatMapLatest { key ->
-        followerRepository.getFollowerDataSourcePagingFlow().cachedIn(viewModelScope)
+        followerRepository.getFollowerDataSourcePagingFlow()
     }
 
     fun resetGalleryFlow() {
