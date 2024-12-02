@@ -3,6 +3,7 @@ package com.kolown.camera.screen
 import android.content.Context
 import android.media.AudioManager
 import android.media.MediaActionSound
+import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraState
 import androidx.camera.core.resolutionselector.AspectRatioStrategy
@@ -47,11 +48,9 @@ import com.kolown.camera.R
 import com.kolown.camera.getImagePickerLauncher
 import com.kolown.camera.getSuspendedResult
 import com.kolown.camera.screen.component.CaptureButton
-import com.kolown.camera.screen.component.GridLineCompose
 import com.kolown.camera.screen.component.PreviewViewCompose
 import com.kolown.camera.takePhoto
 import kotlinx.coroutines.launch
-import com.kolown.designsystem.ui.theme.BackgroundDark
 
 @Composable
 fun CameraPermissionSucceedScreen(
@@ -66,10 +65,11 @@ fun CameraPermissionSucceedScreen(
     var cameraCaptureState = remember { true }
 
 
-    val uri by viewModel.uri.collectAsStateWithLifecycle()
+    val imageUri by viewModel.uri.collectAsStateWithLifecycle()
 
-    LaunchedEffect(uri) {
-        uri?.let { navigateToUpload(it.toString()) }
+    LaunchedEffect(imageUri) {
+        Log.e("test","image Url: ${imageUri.toString()}")
+        imageUri?.let { navigateToUpload(it.toString()) }
     }
 
 
@@ -149,7 +149,7 @@ fun CameraPermissionSucceedScreen(
 
         PreviewViewCompose(
             cameraController,
-            modifier = Modifier
+            modifier = Modifier.background(Color.Yellow)
                 .fillMaxWidth()
                 .aspectRatio(3f / 4f)
         )
@@ -167,11 +167,11 @@ fun CameraPermissionSucceedScreen(
                 contentAlignment = Alignment.Center
             ){
                 CaptureButton {
-                    onShutterClick()
                     cameraController.takePhoto(context) {
                         //카메라가 완전히 OPEN 되어 있을 때만(모영민님 피드백)
-                        if (cameraState?.type == CameraState.Type.OPEN && cameraCaptureState) {
+                        if (cameraState?.type == CameraState.Type.OPEN && cameraCaptureState && imageUri == null) {
                             cameraCaptureState = false
+                            onShutterClick()
                             cameraController.takePhoto(context) {
                                 cameraCaptureState = true
                                 viewModel.saveBitmapToCache(it)

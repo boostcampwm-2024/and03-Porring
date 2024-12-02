@@ -88,6 +88,22 @@ fun PreviewViewCompose(
                 cameraController.unbind()
             }
         )
+        AnimatedVisibility(
+            visible = isVisible,
+            enter = fadeIn(),//visible이 false에서 true로 바뀔 때, Trigger되는 애니메이션
+            exit = fadeOut()//visible이 true에서 false로 바뀔 때, Trigger되는 애니메이션
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(100.dp)
+                    .offset { boxPosition }
+                    .background(
+                        color = Color.Transparent,
+                        shape = MaterialTheme.shapes.medium
+                    )
+                    .border(2.dp, Color.Yellow)
+            )
+        }
         GridLineCompose()
 
     }
@@ -95,22 +111,7 @@ fun PreviewViewCompose(
 
 
 
-    AnimatedVisibility(
-        visible = isVisible,
-        enter = fadeIn(),//visible이 false에서 true로 바뀔 때, Trigger되는 애니메이션
-        exit = fadeOut()//visible이 true에서 false로 바뀔 때, Trigger되는 애니메이션
-    ) {
-        Box(
-            modifier = Modifier
-                .size(100.dp)
-                .offset { boxPosition }
-                .background(
-                    color = Color.Transparent,
-                    shape = MaterialTheme.shapes.medium
-                )
-                .border(2.dp, Color.Yellow)
-        )
-    }
+
     LaunchedEffect(isVisible) {
         if (isVisible) {
             delay(1000) // 1초 후에 상자 사라짐
