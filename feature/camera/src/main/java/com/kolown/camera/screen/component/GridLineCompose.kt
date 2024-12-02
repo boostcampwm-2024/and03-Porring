@@ -42,21 +42,6 @@ fun GridLineCompose(divideNum: Int = 3, modifier: Modifier = Modifier, strokeWid
             )
         }
 
-//        // 세로 줄
-//        drawLine(
-//            color = Color.White,
-//            start = Offset(width / 3, 0f),
-//            end = Offset(width / 3, height),
-//            strokeWidth = strokeWidthPx
-//        )
-//        drawLine(
-//            color = Color.White,
-//            start = Offset(2 * width / 3, 0f),
-//            end = Offset(2 * width / 3, height),
-//            strokeWidth = strokeWidthPx
-//        )
-
-
     }
 }
 

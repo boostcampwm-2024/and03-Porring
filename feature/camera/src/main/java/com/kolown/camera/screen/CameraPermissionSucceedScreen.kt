@@ -147,12 +147,6 @@ fun CameraPermissionSucceedScreen(
                 .background(Color.Black),
         )
 
-//        GridLineCompose(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .aspectRatio(3f / 4f)
-//        )
-
         PreviewViewCompose(
             cameraController,
             modifier = Modifier
@@ -161,34 +155,38 @@ fun CameraPermissionSucceedScreen(
         )
 
 
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
                 .background(Color.Black)
                 .padding(20.dp),
-            contentAlignment = Alignment.Center
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            CaptureButton {
-                onShutterClick()
-                cameraController.takePhoto(context) {
-                    //카메라가 완전히 OPEN 되어 있을 때만(모영민님 피드백)
-                    if (cameraState?.type == CameraState.Type.OPEN && cameraCaptureState) {
-                        cameraCaptureState = false
-                        cameraController.takePhoto(context) {
-                            cameraCaptureState = true
-                            viewModel.saveBitmapToCache(it)
+            Box(modifier = Modifier.fillMaxWidth().weight(1f),
+                contentAlignment = Alignment.Center
+            ){
+                CaptureButton {
+                    onShutterClick()
+                    cameraController.takePhoto(context) {
+                        //카메라가 완전히 OPEN 되어 있을 때만(모영민님 피드백)
+                        if (cameraState?.type == CameraState.Type.OPEN && cameraCaptureState) {
+                            cameraCaptureState = false
+                            cameraController.takePhoto(context) {
+                                cameraCaptureState = true
+                                viewModel.saveBitmapToCache(it)
+                            }
                         }
-                    }
 
+                    }
                 }
             }
+
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp)
-                    .background(BackgroundDark),
+                    .height(48.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
