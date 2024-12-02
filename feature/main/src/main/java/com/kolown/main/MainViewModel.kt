@@ -1,5 +1,6 @@
 package com.kolown.main
 
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,6 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -42,6 +44,8 @@ class MainViewModel @Inject constructor(
     val detailFirstItem = _detailFirstItem.asStateFlow()
 
     private var currentItems: List<PostContentModel> = emptyList()
+
+    private var randomType = listOf("A", "B", "C", "D", "E").random()
 
     init {
         updateLoginState()
@@ -126,8 +130,13 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun loadImageItem() {
-        postRepository.getRandomPostList(10).let { flow ->
+    fun refreshImageItem() {
+        randomType = listOf("A", "B", "C", "D", "E").random()
+        loadImageItem()
+    }
+
+    private fun loadImageItem() {
+        postRepository.getRandomPostList(10, randomType).let { flow ->
             _mainItems.update { flow }
             flow.onEach { currentItems = it }.launchIn(viewModelScope)
         }

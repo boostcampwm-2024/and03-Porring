@@ -57,7 +57,7 @@ class HomeViewModel @Inject constructor(
         _uiState.update { UiState.Loading }
         result
             .onEach { items ->
-                _uiState.update { UiState.Success(items) }
+                _uiState.update { UiState.Success(items.toList()) }
             }.catch { e ->
                 _uiState.update { UiState.Failure(e) }
             }
