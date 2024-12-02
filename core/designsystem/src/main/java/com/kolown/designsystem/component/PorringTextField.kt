@@ -11,9 +11,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -58,42 +57,46 @@ fun PorringTextField(
     trailingIcon: (@Composable () -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    maxLine: Int = 1,
     modifier: Modifier = Modifier,
 ) {
     var isError by remember { mutableStateOf(false) }
     var isInitial by remember { mutableStateOf(false) }
+    var maxHeight by remember { mutableStateOf(0.dp) }
 
     LaunchedEffect(isError) { onErrorChange(isError) }
 
     BasicTextField(
-        modifier = modifier
-            .height(56.dp)
-            .onFocusChanged {
-                if (isInitial) {
-                    validator?.let { validate ->
-                        if (it.hasFocus.not()) {
-                            isError = validate(value)
-                        }
+        modifier = modifier.fillMaxWidth().onFocusChanged {
+            if (isInitial) {
+                validator?.let { validate ->
+                    if (it.hasFocus.not()) {
+                        isError = validate(value)
                     }
-                } else {
-                    isInitial = true
                 }
-            },
+            } else {
+                isInitial = true
+            }
+        },
         value = value,
         onValueChange = {
             onValueChange(it)
             isError = false
         },
-        maxLines = 1,
+        maxLines = maxLine,
         cursorBrush = SolidColor(Primary),
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
+        onTextLayout = {
+            maxHeight = (it.lineCount * 56).dp
+        },
         visualTransformation = if (keyboardOptions.keyboardType == KeyboardType.Password) PasswordVisualTransformation() else VisualTransformation.None,
         textStyle = MaterialTheme.typography.bodyLarge,
         decorationBox = { innerTextField ->
             Row(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
+                    .heightIn(min = 56.dp, max = maxHeight)
                     .border(
                         width = if (isError) 2.dp else 1.dp,
                         shape = RoundedCornerShape(10.dp),
@@ -118,9 +121,7 @@ fun PorringTextField(
                 }
 
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f),
+                    modifier = Modifier.fillMaxWidth().weight(1f),
                     contentAlignment = Alignment.CenterStart
                 ) {
                     if (value.isEmpty()) {
@@ -134,8 +135,6 @@ fun PorringTextField(
                     }
 
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth(),
                         horizontalAlignment = Alignment.Start
                     ) {
                         label?.let { l ->

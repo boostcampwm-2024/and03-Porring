@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -160,7 +161,6 @@ private fun UploadScreen(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun UploadContent(
     imgUri: String,
@@ -176,9 +176,10 @@ private fun UploadContent(
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
-    var scrollState = rememberScrollState()
-    var imeHeightState by remember { mutableStateOf(0) }
+    val scrollState = rememberScrollState()
+    var imeHeightState by remember { mutableIntStateOf(0) }
     val imeHeight = WindowInsets.ime.getBottom(LocalDensity.current)
+    var isDescriptionMax by remember { mutableStateOf(false) }
 
     LaunchedEffect(imeHeight) {
         imeHeightState = imeHeight
@@ -188,7 +189,7 @@ private fun UploadContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 40.dp)
+            .padding(horizontal = 16.dp)
             .padding(top = 8.dp)
     ) {
         val ratio = 4f / 5f // todo 이후에 가로 이미지를 지원할 때는 분기처리 필요
@@ -197,13 +198,14 @@ private fun UploadContent(
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f)
+                .padding(horizontal = 24.dp)
                 .imePadding()
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(scrollState),
-                verticalArrangement = Arrangement.spacedBy(32.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 AsyncImage(
                     modifier = Modifier
@@ -215,23 +217,31 @@ private fun UploadContent(
                     contentDescription = "upload image"
                 )
 
-                Column {
+                Column(
+                    verticalArrangement = Arrangement.Top
+                ) {
                     PorringTextField(
                         value = description,
-                        onValueChange = changeDescription,
+                        onValueChange = {
+                            changeDescription(it.substring(0, minOf(20, it.length)))
+                            isDescriptionMax = it.length > 20
+                        },
+                        hint = "간단한 소개를 입력해 주세요",
                         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Done
                         ),
                         trailingIcon = {
                             PorringIconButton(
-                                icon = ImageVector.vectorResource(com.kolown.common.R.drawable.ic_cancel),
+                                icon = ImageVector.vectorResource(com.kolown.common.R.drawable.ic_cancel_circle),
                                 onClick = { changeDescription("") }
                             )
-                        }
+                        },
+                        maxLine = 3,
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    if (description.length >= 20) {
+
+                    if (isDescriptionMax) {
+                        Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             modifier = Modifier.padding(start = 4.dp),
                             text = "설명은 최대 20자까지만 입력이 가능합니다.",

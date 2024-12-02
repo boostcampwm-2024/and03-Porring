@@ -43,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.home.component.RandomImageList
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
@@ -101,7 +102,7 @@ internal fun HomeRoute(
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(modifier = Modifier.size(64.dp))
+                CircularProgressIndicator(modifier = Modifier.size(64.dp), color = Primary)
             }
         }
 

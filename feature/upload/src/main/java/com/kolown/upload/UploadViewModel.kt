@@ -24,7 +24,7 @@ import kotlin.reflect.typeOf
 @HiltViewModel
 class UploadViewModel @Inject constructor(
     private val repository: ImageCacheRepository,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val _description = MutableStateFlow("")
     val description = _description.asStateFlow()
@@ -69,7 +69,7 @@ class UploadViewModel @Inject constructor(
     }
 
     fun removeCategory(category: String) {
-        _categoryItems.value -= category
+        _categoryItems.value = _categoryItems.value.filterNot { it == category }
     }
 
     fun getUriWebP(uri: String) {
