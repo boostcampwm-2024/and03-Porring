@@ -28,8 +28,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -62,13 +60,12 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.paging.compose.LazyPagingItems
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.kolown.common.R
-import com.kolown.designsystem.Gray
-import com.kolown.designsystem.PrimaryDark
+import com.kolown.designsystem.ui.theme.Gray
+import com.kolown.designsystem.ui.theme.PrimaryDark
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 
@@ -88,7 +85,7 @@ fun DetailItem(
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
     followerState: State<Pair<String, Boolean>?>,
-    checkPostIsMine: (String) -> Boolean = { _ -> false }
+    checkPostIsMine: (String) -> Boolean = { _ -> false },
 ) {
     val view = LocalView.current
 
@@ -347,7 +344,7 @@ private fun DetailButton(
     @DrawableRes id: Int,
     buttonText: String,
     contentColor: Color = Color(0xFF00BBFF),
-    backgroundColor: Color = Color(0xFF151D37)
+    backgroundColor: Color = Color(0xFF151D37),
 ) {
     Button(
         onClick = onClick,
