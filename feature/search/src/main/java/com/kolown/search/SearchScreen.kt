@@ -86,6 +86,8 @@ private fun SearchScreen(
 
     var focusState by remember { mutableStateOf(false) }
 
+
+
     val focusManager = LocalFocusManager.current
     LaunchedEffect(focusState) {
         if (!focusState) {

@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.kolown.camera.PermissionChecker
 import com.kolown.camera.R
 import com.kolown.designsystem.R.drawable
@@ -36,6 +39,9 @@ internal fun CameraRoute(
     viewModel: CameraScreenViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
+
     val activity = LocalView.current.context as android.app.Activity
     var cameraPermission by remember {
         mutableStateOf(
@@ -52,8 +58,17 @@ internal fun CameraRoute(
         cameraPermission = areGranted
     }
 
+    LaunchedEffect(lifecycleState) {
+
+        if (lifecycleState == androidx.lifecycle.Lifecycle.State.RESUMED) {
+            cameraPermission = PermissionChecker.checkCameraPermission(context)
+        }
+    }
+
     LaunchedEffect(cameraPermission) {
-        launcherMultiplePermissions.launch(Manifest.permission.CAMERA)
+        if (!cameraPermission) {
+            launcherMultiplePermissions.launch(Manifest.permission.CAMERA)
+        }
     }
 
     val navigateToSystemSettings = {
@@ -87,6 +102,7 @@ private fun CameraScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .padding(padding)
     ) {
         if (cameraPermission) {
             CameraXCompose(
