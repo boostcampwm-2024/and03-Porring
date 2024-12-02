@@ -45,8 +45,6 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.kolown.detail.component.FollowDialog
-import com.kolown.detail.component.ReactionDialog
 import com.kolown.detail.component.shimmerEffect
 import com.kolown.model.ImageItem
 

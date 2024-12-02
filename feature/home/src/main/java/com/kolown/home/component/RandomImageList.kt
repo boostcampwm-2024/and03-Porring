@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
+import com.kolown.common.component.FollowDialog
 import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions

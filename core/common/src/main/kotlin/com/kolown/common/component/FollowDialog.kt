@@ -3,15 +3,18 @@ package com.kolown.common.component
 import android.widget.Space
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -21,6 +24,7 @@ import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -34,17 +38,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.kolown.common.R
+import com.kolown.designsystem.ui.theme.Error
+import com.kolown.designsystem.ui.theme.Primary
+import com.kolown.designsystem.ui.theme.Surface2
 
 @Composable
-internal fun FollowDialog(
+fun FollowDialog(
     modifier: Modifier = Modifier,
     onClickCancel: () -> Unit = {},
     onClickConfirm: (String) -> Unit = {}
 ) {
     val textValue = remember { mutableStateOf("") }
+    val isFollowerNameEmpty = remember { mutableStateOf(false) }
     Dialog(
         onDismissRequest = { onClickCancel() },
         properties = DialogProperties(
@@ -72,25 +81,46 @@ internal fun FollowDialog(
                 Spacer(modifier = Modifier.height(15.dp))
                 Text(text = "원하는 이름을 입력해 주세요.", style = MaterialTheme.typography.bodyMedium)
                 Spacer(modifier = Modifier.height(15.dp))
-                TextField(
+                OutlinedTextField(
                     value = textValue.value,
-                    onValueChange = { textValue.value = it },
+                    onValueChange = {
+                        textValue.value = it.take(10)
+                        if(it.isNotEmpty()) isFollowerNameEmpty.value = false
+                    },
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color(0xFFEAEEFF),
-                        unfocusedContainerColor = Color(0xFFEAEEFF),
-                        focusedTextColor = Color(0xFF598AFF),
-                        unfocusedTextColor = Color(0xFF598AFF)
+                        focusedIndicatorColor = Primary,
+                        unfocusedIndicatorColor = Surface2,
+                        focusedContainerColor = Surface2,
+                        unfocusedContainerColor = Surface2,
+                        focusedTextColor = Primary,
+                        unfocusedTextColor = Primary
                     ),
                     trailingIcon = {
                         Icon(
-                            painter = painterResource(R.drawable.icon_delete),
+                            imageVector = Icons.Default.Close,
+                            tint = Primary,
                             contentDescription = null,
                             modifier = Modifier.clickable {
                                 textValue.value = ""
                             }
                         )
-                    }
+                    },
+                    maxLines = 1
                 )
+                Spacer(modifier = Modifier.height(5.dp))
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    if(isFollowerNameEmpty.value) Text(
+                        text ="이름을 입력해주세요.",
+                        fontSize = 10.sp,
+                        modifier = Modifier.align(Alignment.CenterStart),
+                        color = Error
+                    )
+                    Text(
+                        text = "(${textValue.value.length}/10)",
+                        modifier = Modifier.align(Alignment.CenterEnd),
+                        color = Primary
+                    )
+                }
                 Spacer(modifier = Modifier.height(20.dp))
                 Row {
                     TextButton(
@@ -101,12 +131,14 @@ internal fun FollowDialog(
                     }
                     TextButton(
                         onClick = {
-                            onClickConfirm(textValue.value)
-                            onClickCancel()
+                            if(textValue.value.isNotEmpty()) {
+                                onClickConfirm(textValue.value)
+                                onClickCancel()
+                            } else isFollowerNameEmpty.value = true
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color.White)
                     ) {
-                        Text(text = "팔로우 추가", color = Color(0xFF598AFF))
+                        Text(text = "팔로우 추가", color = Primary)
                     }
                 }
             }
@@ -116,6 +148,6 @@ internal fun FollowDialog(
 
 @Preview
 @Composable
-fun PreviewDialog(){
+fun PreviewDialog() {
     FollowDialog() { }
 }
