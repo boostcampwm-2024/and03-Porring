@@ -85,6 +85,10 @@ internal fun FollowerRoute(
         isRefreshing = false
     }
 
+    LaunchedEffect(isLoggedIn) {
+        pagingItems.refresh()
+    }
+
     if (isLoggedIn) {
         LaunchedEffect(Unit) {
             viewModel.resetGalleryFlow()

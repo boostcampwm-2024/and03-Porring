@@ -48,6 +48,7 @@ internal fun DetailSearchRoute(
         padding = padding,
         pagingItems = searchResultPost,
         popBackStack = popBackStack,
+        isReelsMode = isReelsMode,
         onChangeReelsMode = { isReelsMode = it },
         navigateToTheir = navigateToTheir,
         pagerState = pagerState,
@@ -145,7 +146,6 @@ fun DetailContent(
             onChangeReelsMode = onChangeReelsMode,
             onSelectReaction = onSelectReaction,
             imageItem = imageItem,
-            onDoubleTab = viewModeChange,
             navigateToTheir = navigateToTheir,
             updatePage = {
                 updatePage(pagerState.currentPage)
