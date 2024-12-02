@@ -1,15 +1,13 @@
 package com.kolown.camera.screen
 
-import android.content.Context
-import android.media.AudioManager
 import android.media.MediaActionSound
-import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraState
 import androidx.camera.core.resolutionselector.AspectRatioStrategy
 import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,13 +32,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -50,6 +50,7 @@ import com.kolown.camera.getSuspendedResult
 import com.kolown.camera.screen.component.CaptureButton
 import com.kolown.camera.screen.component.PreviewViewCompose
 import com.kolown.camera.takePhoto
+import com.kolown.designsystem.ui.theme.BackgroundDark
 import kotlinx.coroutines.launch
 
 @Composable
@@ -62,15 +63,14 @@ fun CameraPermissionSucceedScreen(
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current
     val imagePickerLauncher = getImagePickerLauncher()
-    var cameraCaptureState = remember { true }
-
 
     val imageUri by viewModel.uri.collectAsStateWithLifecycle()
+    var isCaptured by remember { mutableStateOf(false) }
+    var capturedImage: android.graphics.Bitmap? by remember { mutableStateOf(null) }
 
     LaunchedEffect(imageUri) {
         imageUri?.let { navigateToUpload(it.toString()) }
     }
-
 
     val cameraController = remember {
         LifecycleCameraController(context).apply {
@@ -120,8 +120,6 @@ fun CameraPermissionSucceedScreen(
         }
     }
 
-    val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
     val onShutterClick = {
         lifecycle.lifecycleScope.launch {
             //MediaActionSound.mustPlayShutterSound()
@@ -136,103 +134,100 @@ fun CameraPermissionSucceedScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(BackgroundDark)
             .padding(bottom = padding.calculateBottomPadding())
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .background(Color.Black),
+                .background(BackgroundDark),
         )
 
-        PreviewViewCompose(
-            cameraController,
-            modifier = Modifier.background(Color.Yellow)
-                .fillMaxWidth()
-                .aspectRatio(3f / 4f)
-        )
+        if (capturedImage != null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    bitmap = capturedImage!!.asImageBitmap(),
+                    contentDescription = "Captured Image",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(3f / 4f),
+                    contentScale = ContentScale.Crop
+                )
+            }
+        } else {
+            PreviewViewCompose(
+                cameraController,
+                modifier = Modifier.background(Color.Yellow)
+                    .fillMaxWidth()
+                    .aspectRatio(3f / 4f)
+            )
+        }
 
-
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
-                .background(Color.Black)
-                .padding(20.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+                .weight(1f),
+            contentAlignment = Alignment.Center
         ) {
-            Box(modifier = Modifier.fillMaxWidth().weight(1f),
-                contentAlignment = Alignment.Center
-            ){
-                CaptureButton {
-                    cameraController.takePhoto(context) {
-                        //카메라가 완전히 OPEN 되어 있을 때만(모영민님 피드백)
-                        if (cameraState?.type == CameraState.Type.OPEN && cameraCaptureState && imageUri == null) {
-                            cameraCaptureState = false
-                            onShutterClick()
-                            cameraController.takePhoto(context) {
-                                viewModel.saveBitmapToCache(it)
-                            }
+            CaptureButton {
+                cameraController.takePhoto(context) {
+                    //카메라가 완전히 OPEN 되어 있을 때만(모영민님 피드백)
+                    if (cameraState?.type == CameraState.Type.OPEN && isCaptured.not() && imageUri == null) {
+                        onShutterClick()
+                        cameraController.takePhoto(context) {
+                            viewModel.saveBitmapToCache(it)
                         }
-
+                        isCaptured = true
                     }
                 }
             }
-
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-
-                IconButton(
-                    modifier = Modifier
-                        .size(48.dp),
-
-                    onClick = {
-                        imagePickerLauncher.launch { it ->
-                            it?.let {
-                                viewModel.setUri(it)
-                            } ?: run {
-                            }
-                        }
-                    }) {
-                    Icon(
-                        modifier = Modifier.fillMaxSize(),
-                        contentDescription = "icon_album",
-                        imageVector = ImageVector.vectorResource(R.drawable.icon_album_white),
-                        tint = Color.White
-                    )
-                }
-                IconButton(
-                    modifier = Modifier
-                        .size(48.dp),
-                    onClick = {
-                        val nowSelector = cameraController.cameraSelector
-                        if (nowSelector == CameraSelector.DEFAULT_BACK_CAMERA)
-                            cameraController.cameraSelector =
-                                CameraSelector.DEFAULT_FRONT_CAMERA
-                        else
-                            cameraController.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-                    }) {
-                    Icon(
-                        modifier = Modifier.fillMaxSize(),
-                        contentDescription = "icon_switch_camera",
-                        imageVector = ImageVector.vectorResource(R.drawable.icon_switch_camera_white),
-                        tint = Color.White
-                    )
-                }
-
-
-            }
-
-
         }
 
-
+        Row(
+            modifier = Modifier.fillMaxWidth().height(48.dp).background(BackgroundDark),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            IconButton(
+                modifier = Modifier
+                    .size(48.dp),
+                onClick = {
+                    imagePickerLauncher.launch { it ->
+                        it?.let { viewModel.setUri(it) } ?: run {}
+                    }
+                }
+            ) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    contentDescription = "icon_album",
+                    imageVector = ImageVector.vectorResource(R.drawable.icon_album_white),
+                    tint = Color.White
+                )
+            }
+            IconButton(
+                modifier = Modifier
+                    .size(48.dp),
+                onClick = {
+                    val nowSelector = cameraController.cameraSelector
+                    if (nowSelector == CameraSelector.DEFAULT_BACK_CAMERA)
+                        cameraController.cameraSelector =
+                            CameraSelector.DEFAULT_FRONT_CAMERA
+                    else
+                        cameraController.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                }
+            ) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    contentDescription = "icon_switch_camera",
+                    imageVector = ImageVector.vectorResource(R.drawable.icon_switch_camera_white),
+                    tint = Color.White
+                )
+            }
+        }
     }
 }
