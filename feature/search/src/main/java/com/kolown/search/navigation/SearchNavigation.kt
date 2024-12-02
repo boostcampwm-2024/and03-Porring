@@ -17,8 +17,8 @@ fun NavController.navigateSearch(navOptions: NavOptions) {
     navigate(MainMenuRoute.Search, navOptions)
 }
 
-fun NavController.navigateSearchDetail() {
-    navigate(Route.DetailSearch)
+fun NavController.navigateSearchDetail(navOptions: NavOptions) {
+    navigate(Route.DetailSearch, navOptions = navOptions)
 }
 
 

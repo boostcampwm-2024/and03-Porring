@@ -85,7 +85,7 @@ internal fun FollowerRoute(
         else LinearOutSlowInEasing.transform(refreshState.distanceFraction).coerceIn(0f, 1f)
     }
 
-    LaunchedEffect(pagingItems.loadState) {
+    LaunchedEffect(pagingItems.loadState.refresh) {
         isRefreshing = false
         if (pagingItems.loadState.refresh == LoadState.Loading) {
             delay(7000)
@@ -99,6 +99,7 @@ internal fun FollowerRoute(
         LaunchedEffect(Unit) {
             viewModel.resetGalleryFlow()
         }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
