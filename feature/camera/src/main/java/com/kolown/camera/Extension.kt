@@ -9,6 +9,20 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
 import androidx.camera.view.CameraController
 import androidx.core.content.ContextCompat
+import com.google.common.util.concurrent.ListenableFuture
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
+
+suspend fun <T>ListenableFuture<T>.getSuspendedResult(context: Context):T= suspendCoroutine{ continuation ->
+    this.addListener({
+        try {
+            continuation.resume(get())
+        } catch (e: Exception) {
+            continuation.resumeWithException(e)
+        }
+    },ContextCompat.getMainExecutor(context))
+}
 
 fun CameraController.takePhoto(
     context: Context,
