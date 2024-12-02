@@ -86,6 +86,9 @@ internal fun FollowerRoute(
     }
 
     if (isLoggedIn) {
+        LaunchedEffect(Unit) {
+            viewModel.resetGalleryFlow()
+        }
         Box(
             modifier = Modifier
                 .fillMaxSize()
