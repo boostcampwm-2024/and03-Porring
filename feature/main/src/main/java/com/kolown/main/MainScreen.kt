@@ -131,7 +131,7 @@ internal fun MainScreen(
         updateFollow = mainViewModel::updateFollow,
         updateLoginState = mainViewModel::updateLoginState,
         uploadPost = mainViewModel::uploadPost,
-        updateMainItems = mainViewModel::loadImageItem
+        updateMainItems = mainViewModel::refreshImageItem
     )
 }
 

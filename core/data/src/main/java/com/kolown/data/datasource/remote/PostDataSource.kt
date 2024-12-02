@@ -14,8 +14,12 @@ import javax.inject.Inject
 interface PostDataSource {
     suspend fun uploadPost(authorId: String, description: String): Result<String>
     suspend fun updateImageUrl(documentId: String, imageUrl: String)
-    suspend fun getRandomPost(uid: String, count: Int): Result<List<PostModel>>
     suspend fun getRandomPost(uid: String, page: Long, perPage: Long): Result<List<PostModel>>
+    suspend fun getRandomPost(
+        uid: String,
+        count: Int,
+        randomType: String
+    ): Result<List<PostModel>>
     suspend fun getUserPost(uid: String, perPage: Long): Result<List<PostModel>>
     suspend fun getPostBySearch(
         currentUserId : String,
@@ -32,7 +36,7 @@ class PostDataSourceImpl @Inject constructor(
     firestore: FirebaseFirestore
 ) : PostDataSource {
     private val postCollection = firestore.collection("post")
-    private val randomType = listOf("A", "B", "C", "D", "E").random()
+    private var randomType = listOf("A", "B", "C", "D", "E").random()
     private var lastVisible: DocumentSnapshot? = null
 
     override suspend fun getUserPost(uid: String, perPage: Long): Result<List<PostModel>> {
@@ -94,21 +98,26 @@ class PostDataSourceImpl @Inject constructor(
         postCollection.document(documentId).update("imageUrl", imageUrl)
     }
 
-    override suspend fun getRandomPost(uid: String, count: Int): Result<List<PostModel>> {
+    override suspend fun getRandomPost(
+        uid: String,
+        count: Int,
+        randomType: String
+    ): Result<List<PostModel>> {
+        this.randomType = randomType
         val randomValue = (0..Long.MAX_VALUE).random()
 
         return runCatching {
             val fetchPosts: suspend (Long) -> List<PostModel> = { key ->
                 postCollection
                     .whereNotEqualTo("authorId", uid)
-                    .whereGreaterThan("random$randomType", key)
-                    .orderBy("random$randomType", Query.Direction.ASCENDING)
+                    .whereGreaterThan("random${this.randomType}", key)
+                    .orderBy("random${this.randomType}", Query.Direction.ASCENDING)
                     .limit(count.toLong())
                     .get()
                     .addOnFailureListener {
                     }
                     .await()
-                    .map { it.toObject(PostDto::class.java).toPostModel(randomType) }
+                    .map { it.toObject(PostDto::class.java).toPostModel(this.randomType) }
             }
             val result = fetchPosts(randomValue)
 

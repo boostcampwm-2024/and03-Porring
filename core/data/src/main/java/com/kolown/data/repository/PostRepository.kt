@@ -33,13 +33,13 @@ import javax.inject.Named
 
 interface PostRepository {
     suspend fun uploadPost(fileUri: Uri, description: String, tags: List<String>): Result<Unit>
-    fun getRandomPostList(count: Int): Flow<List<PostContentModel>>
     suspend fun getRandomDetailPostList(): Flow<PagingData<PostContentModel>>
     suspend fun reactPost(postId: String, reaction: Reactions): Result<Unit>
     suspend fun removePostReaction(postId: String): Result<Unit>
     fun getUserPosts(userId: String? = null): Flow<PagingData<PostContentModel>>
     suspend fun getPostBySearch(tagId: String): Flow<PagingData<PostContentModel>>
     suspend fun deletePost(postId: String): Flow<Boolean>
+    fun getRandomPostList(count: Int, randomType: String): Flow<List<PostContentModel>>
 }
 
 class PostRepositoryImpl @Inject constructor(
@@ -116,10 +116,10 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getRandomPostList(count: Int): Flow<List<PostContentModel>> = flow {
+    override fun getRandomPostList(count: Int, randomType: String): Flow<List<PostContentModel>> = flow {
         val currentUserId = googleAuthDataSource.getUserId()
 
-        val posts = postDataSource.getRandomPost(currentUserId, count).getOrElse {
+        val posts = postDataSource.getRandomPost(currentUserId, count, randomType).getOrElse {
             throw IOException("게시물 불러오기 실패")
         }
         val (tags, reactions, isFollowers) = coroutineScope {
