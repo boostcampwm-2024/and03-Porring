@@ -18,6 +18,7 @@ import com.kolown.join.navigation.navigateToJoin
 import com.kolown.login.navigation.navigateLogin
 import com.kolown.model.UploadModel
 import com.kolown.my.navigation.navigateMy
+import com.kolown.navigation.MainMenuRoute
 import com.kolown.navigation.Route
 import com.kolown.search.navigation.navigateSearch
 import com.kolown.search.navigation.navigateSearchDetail
@@ -62,22 +63,15 @@ internal class MainNavigator(
     fun navigateToUpload(imgUri: String, uploadModel: UploadModel) =
         navController.navigateUpload(imgUri, uploadModel)
 
-    fun navigateToDetail() = navController.navigateToDetail()
+    fun navigateToDetail() = navController.navigateToDetail(navOptions  = singleTopOptions)
 
-    fun navigateToLogin() {
-        val navOptions = navOptions {
-            launchSingleTop = true
-            restoreState = true
-        }
+    fun navigateToLogin() = navController.navigateLogin(navOptions = singleTopOptions)
 
-        navController.navigateLogin(navOptions)
-    }
+    fun navigateToSetting() = navController.navigateSetting(navOptions = singleTopOptions)
 
-    fun navigateToSetting() = navController.navigateSetting()
+    fun navigateToJoin() = navController.navigateToJoin(navOptions  = singleTopOptions)
 
-    fun navigateToJoin() = navController.navigateToJoin()
-
-    fun navigateToDetailSearch() = navController.navigateSearchDetail()
+    fun navigateToDetailSearch() = navController.navigateSearchDetail(navOptions =singleTopOptions)
 
     fun popBackStack() {
         navController.popBackStack()

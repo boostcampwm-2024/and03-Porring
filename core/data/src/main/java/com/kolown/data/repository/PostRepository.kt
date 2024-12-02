@@ -55,7 +55,6 @@ class PostRepositoryImpl @Inject constructor(
 
     override fun getUserPosts(userId: String?): Flow<PagingData<PostContentModel>> {
         val authorId = googleAuthDataSource.getUserId()
-
         val initialKey = if(userId == null) {
             UserPagingKey(0, authorId)
         } else {

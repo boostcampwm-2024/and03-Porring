@@ -3,6 +3,7 @@ package com.kolown.data.datasource.paging
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.google.firebase.firestore.DocumentSnapshot
 import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.TagDataSource
@@ -36,7 +37,6 @@ class UserPagingDataSource @Inject constructor(
 
     override suspend fun load(params: LoadParams<UserPagingKey>): LoadResult<UserPagingKey, PostContentModel> {
         val page = params.key?.page ?: 0
-        Log.d("MyRoute", "MyRoute: $userId")
         val posts = getPosts(params).getOrElse {
             return LoadResult.Error(it)
         }
