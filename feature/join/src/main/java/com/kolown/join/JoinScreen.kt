@@ -61,6 +61,7 @@ internal fun JoinRoute(
 ) {
     val joinState by joinViewModel.joinState.collectAsStateWithLifecycle()
     var isProgress by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     LaunchedEffect(joinState) {
         when (joinState) {
@@ -69,7 +70,7 @@ internal fun JoinRoute(
             }
 
             is UiState.Success -> {
-                onShowSnackBar("회원가입 완료")
+                onShowSnackBar(context.getString(R.string.string_complete_signup))
                 popBackStack(Route.Login)
             }
 
@@ -81,7 +82,7 @@ internal fun JoinRoute(
                 val exception = (joinState as UiState.Failure).error
 
                 when (exception) {
-                    is FirebaseAuthUserCollisionException -> onShowSnackBar("이미 가입 된 이메일 입니다.")
+                    is FirebaseAuthUserCollisionException -> onShowSnackBar(context.getString(R.string.string_already_exist))
                     else -> Log.e(
                         "JoinScreen",
                         "fatal: ${(joinState as UiState.Failure).error}"
@@ -111,7 +112,9 @@ private fun JoinScreen(
     padding: PaddingValues = PaddingValues(),
 ) {
     Box(
-        modifier = Modifier.fillMaxSize().padding(padding)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)
     ) {
         JoinContent(
             isProgress = isProgress, joinWithEmailAndPassword = joinWithEmailAndPassword
@@ -122,7 +125,7 @@ private fun JoinScreen(
                 PorringIconButton(
                     icon = Icons.Default.Close,
                     onClick = { popBackStack(Route.Login) },
-                    contentDescription = "뒤로가기"
+                    contentDescription = stringResource(R.string.string_go_back)
                 )
             }
         )
@@ -179,7 +182,8 @@ fun JoinContent(
                     emptyList()
                 }
             },
-            modifier = modifier.padding(horizontal = 32.dp)
+            modifier = modifier
+                .padding(horizontal = 32.dp)
                 .focusRequester(focus1)
         )
 
@@ -219,7 +223,9 @@ fun JoinContent(
                     emptyList()
                 }
             },
-            modifier = modifier.padding(horizontal = 32.dp).focusRequester(focus2)
+            modifier = modifier
+                .padding(horizontal = 32.dp)
+                .focusRequester(focus2)
         )
 
         PorringTextField(
@@ -246,14 +252,18 @@ fun JoinContent(
                     emptyList()
                 }
             },
-            modifier = modifier.padding(horizontal = 32.dp).focusRequester(focus3)
+            modifier = modifier
+                .padding(horizontal = 32.dp)
+                .focusRequester(focus3)
         )
 
         if (isProgress) {
             CircularProgressIndicator(modifier = Modifier.size(40.dp))
         } else {
             Button(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp),
                 enabled = emailValidation && passwordValidation && confirmValidation,
                 onClick = {
                     focusManager.clearFocus()
@@ -267,7 +277,7 @@ fun JoinContent(
                     disabledContentColor = Color.White
                 )
             ) {
-                Text(text = "가입하기")
+                Text(text = stringResource(R.string.string_let_join))
             }
         }
 
