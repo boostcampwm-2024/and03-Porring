@@ -9,8 +9,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.kolown.model.Tag
+import com.kolown.search.R
 
 @Composable
 internal fun TagItem(tag: Tag, onClick: (Tag) -> Unit) {
@@ -22,6 +24,6 @@ internal fun TagItem(tag: Tag, onClick: (Tag) -> Unit) {
             .clickable { onClick(tag) },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text("# ${tag.name}")
+        Text(stringResource(R.string.string_tag_name, tag.name))
     }
 }

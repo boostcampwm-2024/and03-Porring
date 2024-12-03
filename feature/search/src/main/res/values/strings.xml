@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="string_input_keyword">검색어를 입력하세요</string>
+    <string name="string_go_back_button">뒤로가기 버튼</string>
+    <string name="string_disable_mode">집중모드 해제 버튼</string>
+    <string name="string_add_follow">팔로우 추가하기</string>
+    <string name="string_need_input_name">원하는 이름을 입력해 주세요.</string>
+    <string name="string_cancel">취소하기</string>
+    <string name="string_add_follow_2">팔로우 추가</string>
+    <string name="string_no_result">검색 결과가 없습니다.</string>
+    <string name="string_tag_name"># %1$s</string>
+    <string name="string_search_back">search_back</string>
+    <string name="string_search">search</string>
+</resources>

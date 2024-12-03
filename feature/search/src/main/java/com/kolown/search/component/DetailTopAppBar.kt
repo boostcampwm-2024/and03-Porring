@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.kolown.search.R
@@ -26,7 +27,10 @@ internal fun DetailTopAppBar(
     popBackStack: () -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().height(64.dp).background(Color.Transparent),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp)
+            .background(Color.Transparent),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = if (isReelsMode) {
             Arrangement.spacedBy(8.dp, Alignment.Start)
@@ -40,7 +44,7 @@ internal fun DetailTopAppBar(
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.icon_arrow_back),
-                    contentDescription = "뒤로가기 버튼",
+                    contentDescription = stringResource(R.string.string_go_back_button),
                     tint = Color.White,
                     modifier = Modifier.size(24.dp)
                 )
@@ -52,7 +56,7 @@ internal fun DetailTopAppBar(
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "집중모드 해제 버튼",
+                    contentDescription = stringResource(R.string.string_disable_mode),
                     tint = Color.White,
                     modifier = Modifier.size(24.dp)
                 )

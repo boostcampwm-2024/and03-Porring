@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -123,7 +124,7 @@ private fun SearchScreen(
         )
 
         if (searchText.isEmpty() && !focusState) Text(
-            text = "검색어를 입력하세요",
+            text = stringResource(R.string.string_input_keyword),
             color = Color.DarkGray,
             modifier = Modifier.padding(vertical = 16.dp)
         )

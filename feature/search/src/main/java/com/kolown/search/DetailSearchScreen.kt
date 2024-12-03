@@ -25,8 +25,6 @@ import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.search.component.DetailTopAppBar
 
-
-
 @Composable
 internal fun DetailSearchRoute(
     padding: PaddingValues = PaddingValues(),
@@ -126,7 +124,7 @@ fun DetailContent(
     followerState: State<Pair<String, Boolean>?> = mutableStateOf(null),
     isLoggedIn: Boolean,
     onShowLoginSnackBar: () -> Unit,
-    checkPostIsMine: (String) -> Boolean = { _ -> false}
+    checkPostIsMine: (String) -> Boolean = { _ -> false }
 ) {
 
     VerticalPager(
