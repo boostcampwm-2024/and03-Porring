@@ -1,6 +1,7 @@
 package com.kolown.detail
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -28,9 +29,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kolown.common.component.DetailItem
+import com.kolown.common.component.LoadingDetailContent
 import com.kolown.designsystem.R.*
 import com.kolown.designsystem.component.PorringIconButton
 import com.kolown.designsystem.component.PorringTopAppBar
@@ -38,6 +41,7 @@ import com.kolown.designsystem.ui.theme.BackgroundDark
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.model.UiState
+import kotlinx.coroutines.delay
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -53,21 +57,45 @@ internal fun DetailRoute(
     updateFollow: (String) -> Unit
 ) {
     var isReelsMode by remember { mutableStateOf(true) }
+    var isError by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
+
+
     val uiState = detailViewModel.uiState.collectAsStateWithLifecycle()
     val currentPage = detailViewModel.currentPage
     val followState = detailViewModel.followState.collectAsStateWithLifecycle(null)
     val state = uiState.value
+
     when (state) {
         is UiState.Idle -> {}
-        is UiState.Loading -> LoadingDetailScreen()
+        is UiState.Loading -> {
+            LoadingDetailContent()
+        }
         is UiState.Success -> {
             val pagingItems = state.data.collectAsLazyPagingItems()
-            val pagerState = rememberPagerState(initialPage = currentPage) { pagingItems.itemCount + 1 }
+            val pagerState = rememberPagerState(initialPage = currentPage) {
+                   pagingItems.itemCount + 2
+            }
+
             LaunchedEffect(pagingItems.itemCount) {
                 if (pagerState.currentPage == 0) pagerState.scrollToPage(currentPage)
             }
+
+            when (pagingItems.loadState.append) {
+                is LoadState.Loading -> {
+                    isLoading = true
+                }
+
+                is LoadState.NotLoading -> {
+                    isLoading = false
+                    isError = false
+                }
+
+                is LoadState.Error -> {}
+            }
             DetailScreen(
                 isLoggedIn = isLoggedIn,
+                isError = isError,
                 onShowLoginSnackBar = onShowLoginSnackBar,
                 onChangeReelsMode = { isReelsMode = it },
                 popBackStack = popBackStack,
@@ -89,13 +117,17 @@ internal fun DetailRoute(
             )
         }
 
-        is UiState.Failure -> {}
+        is UiState.Failure -> {
+            Log.e("pagerState_failure","")
+
+        }
     }
 }
 
 @Composable
 private fun DetailScreen(
     isLoggedIn: Boolean = false,
+    isError : Boolean = false,
     onShowLoginSnackBar: () -> Unit = {},
     onChangeReelsMode: (Boolean) -> Unit = {},
     popBackStack: () -> Unit = {},
@@ -122,6 +154,7 @@ private fun DetailScreen(
         DetailContent(
             isLoggedIn = isLoggedIn,
             isReelsMode = isReelsMode,
+            isError =  isError ,
             onShowLoginSnackBar = onShowLoginSnackBar,
             onChangeReelsMode = onChangeReelsMode,
             updateMainPostReaction = updateMainPostReaction,
@@ -166,6 +199,7 @@ private fun DetailScreen(
 @Composable
 private fun DetailContent(
     isLoggedIn: Boolean,
+    isError : Boolean = false,
     onShowLoginSnackBar: () -> Unit,
     onChangeReelsMode: (Boolean) -> Unit,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
@@ -189,7 +223,13 @@ private fun DetailContent(
         beyondViewportPageCount = 3
     ) { page ->
 
-        val imageItem = if (page == 0) firstItem else pagingItems[page - 1] ?: return@VerticalPager
+        val imageItem = when (page) {
+            0 -> firstItem
+            pagingItems.itemCount + 1 -> null
+            else -> {
+                pagingItems[page - 1] ?: return@VerticalPager
+            }
+        }
 
         DetailItem(
             isLoggedIn = isLoggedIn,
