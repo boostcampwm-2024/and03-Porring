@@ -1,7 +1,6 @@
 package com.kolown.detail
 
 import android.os.Build
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -17,7 +16,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,12 +23,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kolown.common.component.DetailItem
@@ -42,7 +39,6 @@ import com.kolown.designsystem.ui.theme.BackgroundDark
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.model.UiState
-import kotlinx.coroutines.delay
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -61,10 +57,9 @@ internal fun DetailRoute(
     val uiState = detailViewModel.uiState.collectAsStateWithLifecycle()
     val currentPage = detailViewModel.currentPage
     val followState = detailViewModel.followState.collectAsStateWithLifecycle(null)
-    val state = uiState.value
     var isPopBackStack by remember { mutableStateOf(false) }
 
-    when (state) {
+    when (val state = uiState.value) {
         is UiState.Idle -> {}
         is UiState.Loading -> {
             LoadingDetailContent()
@@ -165,7 +160,7 @@ private fun DetailScreen(
                     PorringIconButton(
                         icon = ImageVector.vectorResource(drawable.ic_arrow_back),
                         onClick = popBackStack,
-                        contentDescription = "뒤로가기",
+                        contentDescription = stringResource(R.string.string_go_back),
                         color = Color.White
                     )
                 }
@@ -175,7 +170,7 @@ private fun DetailScreen(
                     PorringIconButton(
                         icon = Icons.Default.Close,
                         onClick = { onChangeReelsMode(true) },
-                        contentDescription = "집중 모드 종료",
+                        contentDescription = stringResource(R.string.string_end_mode),
                         color = Color.White
                     )
                 }

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="string_back_button">뒤로 가기 버튼</string>
+    <string name="string_go_back">뒤로 가기</string>
+    <string name="string_end_mode">집중 모드 종료</string>
 </resources>
