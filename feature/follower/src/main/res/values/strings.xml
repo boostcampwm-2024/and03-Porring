@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="string_following">Following</string>
+    <string name="string_not_follow">팔로잉 하고 있는 사람이 없습니다.</string>
+    <string name="string_error">오류가 발생하였습니다!</string>
+    <string name="string_retry">Retry</string>
+</resources>

@@ -1,6 +1,5 @@
 package com.kolown.follower.component
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,9 +13,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
+import com.kolown.follower.R
 
 @Composable
 fun PageItemFooter(
@@ -31,7 +32,6 @@ fun PageItemFooter(
         }
 
         is LoadState.Error -> {
-            Log.e("에러","로드 에러")
             RetryPageItem(modifier, onRetryClicked)
         }
 
@@ -61,7 +61,7 @@ fun RetryPageItem(modifier: Modifier = Modifier, onRetryClicked: () -> Unit) {
             modifier = Modifier.align(Alignment.Center),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Retry")
+            Text(text = stringResource(R.string.string_retry))
             IconButton(onClick = onRetryClicked) {
                 Icon(Icons.Filled.Refresh, contentDescription = null)
             }
