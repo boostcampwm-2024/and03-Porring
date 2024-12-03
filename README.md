@@ -22,13 +22,89 @@
 </div>
 
 <br/>
+<br/>
+<br/>
+<br/>
 
-## Porring?
+## 🤔 What is 'Porring'?
 
-포링(Porring)은 `사진(Photo)`과 `연결(Link)`의 합성어로
+<div align="center">
 
-과도한 관심으로 지쳐가는 분들을 위해 오로지 사진만으로 소통하는 서비스를 제공합니다.
+![포링소개-프레임02](https://github.com/user-attachments/assets/4fa7e8f5-8fb5-41f6-a346-12d9eff704f4)
 
+***포링(Porring)*** 은 `사진(Photo)`과 `링크(Link)`의 합성어로
+
+과도한 관심으로 발생하는 기존 SNS 문제를 해결하기 위해
+
+익명으로 사진을 공유하는 서비스를 제공하는 ***PNS(Photo Network Service)*** 입니다.
+
+</div>
+
+
+<br/>
+<br/>
+
+
+## ⚙ 주요 기능
+
+### 랜덤 메인 피드
+
+홈 화면에서 10개의 랜덤한 사진을 썸네일 형태로 제공합니다.
+
+<br/>
+
+<div align="center">
+
+![MainFeed](https://github.com/user-attachments/assets/5e457b4e-f2cf-48a1-bfa7-8961508ca4ae)
+
+</div>
+
+
+- **릴레이 콘텐츠**<br/>
+  디테일 화면에서 릴레이 콘텐츠로 사진을 계속해서 제공합니다.
+
+<br/>
+
+- **익명 팔로우**<br/>
+  팔로우 하고자 하는 대상의 이름을 직접 지정해 익명성을 유지하며 팔로우 기능을 사용할 수 있습니다.
+
+<br/>
+
+- **사용자 갤러리**<br/>
+  사용자가 업로드한 사진은 갤러리에 저장되며 모든 사용자의 갤러리는 조회가 가능합니다.<br/>
+  기본적으로 다른 사용자의 갤러리는 Anonymous's Gallery로 표시되며, 팔로우 하고 있는 사용자는 지정한 팔로우 네임으로 표시됩니다.
+
+<br/>
+
+- **간편한 업로드**<br/>
+  포링은 익명 서비스이기 때문에 사진 설명과 태그만 입력하면 손쉽게 업로드가 가능합니다.
+
+<br/>
+
+- **캡쳐 방지**<br/>
+  익명으로 업로드된 사진이 무단으로 사용되지 않도록 캡처를 방지하고 있습니다.
+
+<br/>
+
+
+<br/>
+<br/>
+
+## 🧱 Architecture
+
+<div align="center">
+
+### Module
+
+<img width="1200" alt="module_structure" src="https://github.com/user-attachments/assets/2b6677a0-4d9a-4bec-9583-e5ae5748f7f7">
+
+`Multi-Module`을 사용해 구성하였으며, 각 화면을 `feature`로 구분해 모듈 형태로 구성했습니다.
+
+</div>
+
+
+<br/>
+<br/>
 <br/>
 
 ## 🛠 Skill Stack
@@ -42,14 +118,6 @@
 |DesignSystem|<img src="https://img.shields.io/badge/material_design-757575?style=for-the-badge&logo=materialdesign&logoColor=white">|
 |Co-Work|<img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white"> <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"> <img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white"> <img src="https://img.shields.io/badge/slack-4A154B?style=for-the-badge&logo=slack&logoColor=white"> <img src="https://img.shields.io/badge/figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white">|
 
-<br/>
-
-## 🧱 Data Structure
-
-<img width="1000" alt="data_structure" src="https://github.com/user-attachments/assets/beacc8df-d469-4686-8706-f4150ccdf1cb">
-
-<br/>
-<br/>
 <br/>
 
 <div align="center">
