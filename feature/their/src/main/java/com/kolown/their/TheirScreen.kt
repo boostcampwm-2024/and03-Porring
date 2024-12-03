@@ -2,7 +2,9 @@ package com.kolown.their
 
 import android.util.Log
 import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +30,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.pullToRefresh
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -147,6 +150,7 @@ private fun TheirScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun StateLazyGrid(
     listState: LazyStaggeredGridState,
@@ -195,30 +199,34 @@ private fun StateLazyGrid(
         pagingItems.loadState.refresh is LoadState.NotLoading -> {
             Log.d("LazyVertical", "성공 ${pagingItems.itemCount}")
             showErrorScreen = false
-            LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Fixed(2),
-                modifier = Modifier
-                    .fillMaxSize(),
-                state = listState,
-                contentPadding = PaddingValues(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalItemSpacing = 8.dp,
-                content = {
-                    items(pagingItems.itemCount) { index ->
-                        pagingItems[index]?.let {
-                            GalleryItem(it, width)
+            CompositionLocalProvider(
+                LocalOverscrollConfiguration provides null
+            ) {
+                LazyVerticalStaggeredGrid(
+                    columns = StaggeredGridCells.Fixed(2),
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    state = listState,
+                    contentPadding = PaddingValues(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalItemSpacing = 8.dp,
+                    content = {
+                        items(pagingItems.itemCount) { index ->
+                            pagingItems[index]?.let {
+                                GalleryItem(it, width)
+                            }
                         }
-                    }
 
-                    if (pagingItems.loadState.append !is LoadState.NotLoading) {
-                        item(key = "", span = StaggeredGridItemSpan.FullLine) {
-                            PageItemFooter(loadState = pagingItems.loadState.append) {
-                                pagingItems.retry()
+                        if (pagingItems.loadState.append !is LoadState.NotLoading) {
+                            item(key = "", span = StaggeredGridItemSpan.FullLine) {
+                                PageItemFooter(loadState = pagingItems.loadState.append) {
+                                    pagingItems.retry()
+                                }
                             }
                         }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }
