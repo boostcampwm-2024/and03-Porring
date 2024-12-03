@@ -63,19 +63,4 @@ class FollowerGalleryThumbnailPagingDataSource @Inject constructor(
             state.closestPageToPosition(anchorPosition)?.prevKey
         }
     }
-
-    class Factory @Inject constructor(
-        private val followerDataSource: FollowDataSource,
-        private val postDataSource: PostDataSource,
-        @Named("google") private val googleAuthDataSource: AuthDataSource,
-    ) {
-        fun create(): FollowerGalleryThumbnailPagingDataSource {
-            val currentUserId = googleAuthDataSource.getUserId()
-            return FollowerGalleryThumbnailPagingDataSource(
-                followerDataSource,
-                postDataSource,
-                currentUserId
-            )
-        }
-    }
 }

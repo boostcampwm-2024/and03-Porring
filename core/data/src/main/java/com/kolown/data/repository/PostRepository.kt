@@ -50,7 +50,6 @@ class PostRepositoryImpl @Inject constructor(
     private val randomPagingDataSource: RandomPagingDataSource,
     @Named("google") private val googleAuthDataSource: AuthDataSource,
     private val followDataSource: FollowDataSource,
-    private val userPagingDataSource: UserPagingDataSource.Factory,
 ) : PostRepository {
 
     override fun getUserPosts(userId: String?): Flow<PagingData<PostContentModel>> {
@@ -67,7 +66,14 @@ class PostRepositoryImpl @Inject constructor(
                 enablePlaceholders = false,
             ),
             initialKey = initialKey,
-            pagingSourceFactory = { userPagingDataSource.create(userId ?: authorId) }
+            pagingSourceFactory = {
+                UserPagingDataSource(
+                    postDataSource = postDataSource,
+                    tagDataSource = tagDataSource,
+                    reactionDataSource = reactionDataSource,
+                    userId = userId ?: authorId
+                )
+            }
         ).flow
     }
 
