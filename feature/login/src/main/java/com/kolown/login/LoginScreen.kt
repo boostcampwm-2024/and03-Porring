@@ -112,20 +112,17 @@ internal fun LoginRoute(
                 when (error) {
                     is FirebaseAuthInvalidCredentialsException -> {
                         when (error.errorCode) {
-                            "ERROR_INVALID_EMAIL" -> onShowSnackBar("이메일 형식으로 입력해주세요")
-                            "ERROR_INVALID_CREDENTIAL" -> onShowSnackBar("이메일 혹은 비밀번호를 확인해주세요")
-                            else -> onShowSnackBar("이메일 혹은 비밀번호를 확인해주세요")
+                            "ERROR_INVALID_EMAIL" -> onShowSnackBar(context.getString(string.string_need_email_form))
+                            "ERROR_INVALID_CREDENTIAL" -> onShowSnackBar(context.getString(string.string_need_to_check_email_or_pw))
+                            else -> onShowSnackBar(context.getString(string.string_check_email_pw))
                         }
                     }
 
                     is FirebaseNetworkException -> {
-                        onShowSnackBar("인터넷 연결을 확인해주세요")
+                        onShowSnackBar(context.getString(string.string_check_network))
                     }
                 }
 
-                (loginState as UiState.Failure).error.let {
-                    Log.e("LoginScreen", "fatal: ${it}")
-                }
                 isLoginProgress = false
             }
 
@@ -145,7 +142,7 @@ internal fun LoginRoute(
         onClickGoogleLogin = {
             lifecycleOwner.lifecycleScope.launch {
                 try {
-                    getCredential(LoginPlatform.Google, context).getOrThrow()?.let {
+                    getCredential(LoginPlatform.Google, context).getOrThrow().let {
                         loginViewModel.handleSignIn(it.credential)
                     }
                 } catch (e: Exception) {
@@ -185,7 +182,9 @@ private fun LoginScreen(
         )
 
         Box(
-            modifier = Modifier.fillMaxSize().padding(padding),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
         ) {
 
             LoginContent(
@@ -204,14 +203,14 @@ private fun LoginScreen(
                         PorringIconButton(
                             icon = ImageVector.vectorResource(R.drawable.ic_arrow_back),
                             onClick = cancelEmailMode,
-                            contentDescription = "로그인 메뉴로 돌아가기"
+                            contentDescription = stringResource(string.string_back_to_login)
                         )
                     }
                 }, trailingIcon = {
                     PorringIconButton(
                         icon = Icons.Default.Close,
                         onClick = popBackStack,
-                        contentDescription = "뒤로 가기"
+                        contentDescription = stringResource(string.string_go_back)
                     )
                 })
             }
@@ -231,7 +230,9 @@ fun LoginContent(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.fillMaxSize().padding(top = 80.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(top = 80.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         LogoItem()
@@ -250,7 +251,7 @@ fun LoginContent(
                         text = stringResource(string.start_with_google),
                         onClick = onClickGoogleLogin
                     ), VectorIconButton(
-                        icon = Icons.Default.Email, text = "이메일로 로그인", onClick = onClickEmailMode
+                        icon = Icons.Default.Email, text = stringResource(string.string_email_login), onClick = onClickEmailMode
                     ), visible = isEmailLogin.not()
                 )
 
@@ -296,8 +297,8 @@ fun EmailLoginContent(
                     emailText = it
                     isLoginEnable = emailText.isNotEmpty() && pwText.isNotEmpty()
                 },
-                hint = "이메일을 입력해주세요",
-                label = "Email",
+                hint = stringResource(string.string_input_email),
+                label = stringResource(string.string_email),
                 leadingIcon = Icons.Default.Email,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
@@ -306,7 +307,9 @@ fun EmailLoginContent(
                 keyboardActions = KeyboardActions(onNext = {
                     pwField.requestFocus()
                 }),
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp)
                     .focusRequester(idField)
             )
 
@@ -316,20 +319,24 @@ fun EmailLoginContent(
                     pwText = it
                     isLoginEnable = emailText.isNotEmpty() && pwText.isNotEmpty()
                 },
-                hint = "비밀번호를 입력해주세요",
-                label = "Password",
+                hint = stringResource(string.string_input_pw),
+                label = stringResource(string.string_pw),
                 leadingIcon = Icons.Default.Lock,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password, imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() },
                     onPrevious = { idField.requestFocus() }),
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp)
                     .focusRequester(pwField)
             )
 
             Button(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp),
                 enabled = isLoginEnable,
                 onClick = {
                     onClickEmailLogin(emailText, pwText)
@@ -343,14 +350,14 @@ fun EmailLoginContent(
                     disabledContentColor = Color.White
                 )
             ) {
-                Text(text = "로그인")
+                Text(text = stringResource(string.string_login))
             }
 
             TextButton(
                 onClick = { navigateToJoin() },
             ) {
                 Text(
-                    text = "회원가입", color = Primary, style = MaterialTheme.typography.labelLarge
+                    text = stringResource(string.string_signup), color = Primary, style = MaterialTheme.typography.labelLarge
                 )
             }
         }
