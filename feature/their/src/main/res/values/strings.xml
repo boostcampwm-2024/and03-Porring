@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="string_empty"> </string>
     <string name="string_use_after_login">로그인 후 서비스 이용이 가능합니다</string>
     <string name="string_move_to_login">로그인 화면으로 이동</string>
     <string name="string_back_button">뒤로 가기 버튼</string>
+    <string name="string_go_back">뒤로가기</string>
+    <string name="string_others_gallery_name">%1$s\'s Gallery</string>
+    <string name="string_fail">실패</string>
+    <string name="string_loading">로딩</string>
+    <string name="string_error">오류가 발생하였습니다!</string>
+    <string name="string_can_not_load">이미지를 로드할 수 없음.\n 다시 시도해주세요.</string>
+    <string name="string_retry">Retry</string>
 </resources>
