@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="string_error">오류가 발생하였습니다!</string>
+    <string name="string_can_not_load">이미지를 로드할 수 없음. 다시 시도해주세요.</string>
+    <string name="string_reaction_icon">reaction icon</string>
+</resources>
