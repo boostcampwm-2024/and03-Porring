@@ -33,7 +33,6 @@ import androidx.compose.material3.pulltorefresh.pullToRefresh
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,7 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -125,7 +124,6 @@ private fun MyScreen(
     scaleFraction: () -> Float = { 1f },
 ) {
     val width = LocalConfiguration.current.screenWidthDp.dp / 2
-    Log.d("GalleryItem", "MyRoute: ${pagingItems.itemCount}")
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -142,7 +140,7 @@ private fun MyScreen(
                 PorringIconButton(
                     icon = Icons.Default.Settings,
                     onClick = navigateToSetting,
-                    contentDescription = "설정"
+                    contentDescription = stringResource(com.kolown.my.R.string.string_setting)
                 )
             }
         )
@@ -234,7 +232,7 @@ fun StateLazyGrid(
                         )
                         Spacer(modifier = Modifier.height(40.dp))
                         Text(
-                            text = "게시물이 존재하지 않습니다!",
+                            text = stringResource(com.kolown.my.R.string.string_no_post),
                             color = Primary
                         )
                     }
@@ -291,7 +289,7 @@ private fun ErrorScreen() {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "오류가 발생하였습니다!", color = Color.Red
+                text = stringResource(com.kolown.my.R.string.string_error), color = Color.Red
             )
         }
     }

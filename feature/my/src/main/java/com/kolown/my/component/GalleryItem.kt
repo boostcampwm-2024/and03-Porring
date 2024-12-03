@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -30,6 +31,7 @@ import coil3.compose.AsyncImage
 import com.kolown.data.mock.MockDataProvider
 import com.kolown.designsystem.ui.theme.Surface2
 import com.kolown.model.PostContentModel
+import com.kolown.my.R
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 
@@ -43,7 +45,6 @@ internal fun GalleryItem(
     var isLoading by remember { mutableStateOf(true) }
     var isError by remember { mutableStateOf(false) }
 
-    //비율은 그냥 테스트
     val heightNum = postContentModel.postId.filter { it.isDigit() }
         .takeIf { it.isNotEmpty() }?.toIntOrNull() ?: 0
     val height = if (heightNum % 2 == 0) (width.value * 1.4).dp else width + 20.dp
@@ -65,7 +66,6 @@ internal fun GalleryItem(
                     },
                     onLongClick = {
                         isDialogVisible.value = true
-                        Log.d("GalleryItem", "GalleryItem: LongClick")
                     }
                 ),
             model = postContentModel.imageUrl,
@@ -97,7 +97,7 @@ internal fun GalleryItem(
         if (isError) {
             Text(
                 modifier = Modifier.align(Alignment.Center),
-                text = "이미지를 로드할 수 없음.\n 다시 시도해주세요.",
+                text = stringResource(R.string.string_can_not_load),
                 style = MaterialTheme.typography.labelMedium,
             )
         }
