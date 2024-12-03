@@ -1,6 +1,5 @@
 package com.kolown.common.component
 
-import android.widget.Space
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,19 +14,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -42,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.kolown.common.R
 import com.kolown.designsystem.ui.theme.Error
 import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.designsystem.ui.theme.Surface2
@@ -86,7 +79,7 @@ fun FollowDialog(
                     value = textValue.value,
                     onValueChange = {
                         textValue.value = it.take(10)
-                        if(it.isNotEmpty()) isFollowerNameEmpty.value = false
+                        if (it.isNotEmpty()) isFollowerNameEmpty.value = false
                     },
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Primary,
@@ -110,8 +103,8 @@ fun FollowDialog(
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Box(modifier = Modifier.fillMaxWidth()) {
-                    if(isFollowerNameEmpty.value) Text(
-                        text ="이름을 입력해주세요.",
+                    if (isFollowerNameEmpty.value) Text(
+                        text = "이름을 입력해주세요.",
                         fontSize = 10.sp,
                         modifier = Modifier.align(Alignment.CenterStart),
                         color = Error
@@ -132,7 +125,7 @@ fun FollowDialog(
                     }
                     TextButton(
                         onClick = {
-                            if(textValue.value.isNotEmpty()) {
+                            if (textValue.value.isNotEmpty()) {
                                 onClickConfirm(textValue.value)
                                 onClickCancel()
                             } else isFollowerNameEmpty.value = true
