@@ -78,11 +78,12 @@ import kotlinx.coroutines.launch
 fun DetailItem(
     isLoggedIn: Boolean,
     isReelsMode: Boolean,
+    isError: Boolean = false,
     onShowLoginSnackBar: () -> Unit,
     onChangeReelsMode: (Boolean) -> Unit,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
-    imageItem: PostContentModel,
+    imageItem: PostContentModel?,
     navigateToTheir: (String) -> Unit,
     updatePage: () -> Unit,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
@@ -96,33 +97,36 @@ fun DetailItem(
     if (isReelsMode) {
         showSystembar(view = view)
     }
-
-    if (isReelsMode) {
-        ReelsContent(
-            isLoggedIn = isLoggedIn,
-            onShowLoginSnackBar = onShowLoginSnackBar,
-            updateMainPostReaction = updateMainPostReaction,
-            onSelectReaction = onSelectReaction,
-            imageItem = imageItem,
-            onDoubleTab = {
-                onChangeReelsMode(false)
-                requestFullScreen(view)
-            },
-            navigateToTheir = navigateToTheir,
-            updatePage = updatePage,
-            onFollowClick = onFollowClick,
-            onUnfollowClick = onUnfollowClick,
-            followerState = followerState,
-            checkPostIsMine = checkPostIsMine,
-            updateFollow = updateFollow
-        )
-    } else {
-        ConcentrateContent(
-            imageUrl = imageItem.imageUrl
-        )
-        BackHandler(enabled = true) {
-            onChangeReelsMode(true)
+    if (imageItem != null) {
+        if (isReelsMode) {
+            ReelsContent(
+                isLoggedIn = isLoggedIn,
+                onShowLoginSnackBar = onShowLoginSnackBar,
+                updateMainPostReaction = updateMainPostReaction,
+                onSelectReaction = onSelectReaction,
+                imageItem = imageItem,
+                onDoubleTab = {
+                    onChangeReelsMode(false)
+                    requestFullScreen(view)
+                },
+                navigateToTheir = navigateToTheir,
+                updatePage = updatePage,
+                onFollowClick = onFollowClick,
+                onUnfollowClick = onUnfollowClick,
+                followerState = followerState,
+                checkPostIsMine = checkPostIsMine,
+                updateFollow = updateFollow
+            )
+        } else {
+            ConcentrateContent(
+                imageUrl = imageItem.imageUrl
+            )
+            BackHandler(enabled = true) {
+                onChangeReelsMode(true)
+            }
         }
+    } else {
+        LoadingDetailContent()
     }
 }
 
@@ -132,6 +136,7 @@ fun DetailItem(
 private fun ReelsContent(
     isLoggedIn: Boolean,
     onShowLoginSnackBar: () -> Unit,
+    isError: Boolean = false,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
@@ -413,3 +418,6 @@ private fun Context.getActivity(): Activity? = when (this) {
     is ContextWrapper -> baseContext.getActivity()
     else -> null
 }
+
+
+
