@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">main</string>
+    <string name="string_need_login">로그인 후 이용 가능한 서비스입니다.</string>
+    <string name="string_login">로그인</string>
+    <string name="string_upload_fail">업로드에 실패하였습니다. 다시 시도하시려면 업로드 화면으로 이동하세요!.</string>
+    <string name="string_move">이동</string>
+    <string name="string_uploading">업로드 중입니다.</string>
+    <string name="string_upload_success">업로드 성공! MyGallery로 이동하시려면 이동을 눌러주세요!</string>
 </resources>
