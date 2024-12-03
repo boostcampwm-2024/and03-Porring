@@ -14,6 +14,27 @@
 
 ![cover](https://github.com/user-attachments/assets/ae822a79-52c2-400f-967b-70873530170d)
 
+<img src="https://img.shields.io/badge/Camera_X-3DDC84?style=for-the-badge&logo=android&logoColor=white">
+<img src="https://img.shields.io/badge/Hilt-3DDC84?style=for-the-badge&logo=android&logoColor=white">
+<img src="https://img.shields.io/badge/JetPack_Compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white">
+<img src="https://img.shields.io/badge/coil-3B6BB4?style=for-the-badge&logo=android&logoColor=white">
+<img src="https://img.shields.io/badge/material_design-757575?style=for-the-badge&logo=materialdesign&logoColor=white">
+<br/>
+<img src="https://img.shields.io/badge/kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white">
+<img src="https://img.shields.io/badge/coroutine-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white">
+<img src="https://img.shields.io/badge/kotlin_Serialization-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white">
+<img src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white">
+<img src="https://img.shields.io/badge/firebase-DD2C00?style=for-the-badge&logo=firebase&logoColor=white">
+<br/>
+<img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
+<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
+<img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white">
+<img src="https://img.shields.io/badge/slack-4A154B?style=for-the-badge&logo=slack&logoColor=white">
+<img src="https://img.shields.io/badge/figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white">
+
+<br/>
+<br/>
+
 ### ✨ 순간으로 이어지는 진짜 연결의 시작 ✨
 
 낯선 사람과 공유하는 나만의 순간들!<br>
