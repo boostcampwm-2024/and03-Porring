@@ -3,6 +3,7 @@ package com.kolown.common.component
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.util.Log
 import android.view.View
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
@@ -43,6 +44,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -68,6 +70,8 @@ import com.kolown.designsystem.ui.theme.Gray
 import com.kolown.designsystem.ui.theme.PrimaryDark
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -144,7 +148,8 @@ private fun ReelsContent(
     val isReactionVisible = remember { mutableStateOf(false) }
     val isFollowDialogVisible = remember { mutableStateOf(false) }
     val isFollowed = rememberSaveable { mutableStateOf(imageItem.isFollower) }
-
+    val isLoading = remember { mutableStateOf(true) }
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(followerState.value) {
         followerState.value?.let { pair ->
@@ -165,25 +170,43 @@ private fun ReelsContent(
     ) {
         val tags = imageItem.tags.joinToString(", ") { "#$it" }
 
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current).data(imageItem.imageUrl)
-                .crossfade(true)
-                .build(),
-            modifier = Modifier
+        Box(
+            modifier = if (!isLoading.value)
+                Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(4f / 5f)
+            else Modifier
                 .fillMaxWidth()
                 .aspectRatio(4f / 5f)
-                .combinedClickable(indication = null,
-                    interactionSource = interactionSource,
-                    onClick = {
-                        if (isReactionVisible.value) {
-                            isReactionVisible.value = false
-                        }
-                    },
-                    onDoubleClick = { onDoubleTab() }),
-            contentDescription = "",
-            contentScale = ContentScale.Crop,
-        )
-
+                .shimmerEffect()
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current).data(imageItem.imageUrl)
+                    .crossfade(true)
+                    .build(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .combinedClickable(indication = null,
+                        interactionSource = interactionSource,
+                        onClick = {
+                            if (isReactionVisible.value) {
+                                isReactionVisible.value = false
+                            }
+                        },
+                        onDoubleClick = { onDoubleTab() }),
+                contentDescription = "",
+                contentScale = ContentScale.Crop,
+                onLoading = {
+                    isLoading.value = true
+                },
+                onSuccess = {
+                    coroutineScope.launch {
+                        delay(2000)
+                        isLoading.value = false
+                    }
+                }
+            )
+        }
         Box(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -228,7 +251,7 @@ private fun ReelsContent(
                         tint = PrimaryDark,
                         contentDescription = "",
                         modifier = Modifier.clickable {
-                            if(isLoggedIn) isReactionVisible.value = true
+                            if (isLoggedIn) isReactionVisible.value = true
                             else onShowLoginSnackBar()
                         })
 
