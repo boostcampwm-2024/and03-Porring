@@ -12,9 +12,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
+import com.kolown.home.R
 import com.kolown.home.toImage
 import com.kolown.model.Reactions
 
@@ -58,7 +60,7 @@ private fun ReactionIcons(
     ) {
         AsyncImage(
             model = reaction.toImage(),
-            contentDescription = "reaction icon",
+            contentDescription = stringResource(R.string.string_reaction_icon),
             modifier = Modifier.fillMaxSize()
         )
     }
