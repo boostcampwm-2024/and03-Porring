@@ -8,4 +8,6 @@
     <string name="string_menu_user_info">사용자 정보</string>
     <string name="string_menu_logout">로그아웃</string>
     <string name="string_menu_dropout_user">탈퇴하기</string>
+    <string name="string_not_ready_feature">아직 준비중인 기능입니다</string>
+    <string name="string_settomg">설정</string>
 </resources>
