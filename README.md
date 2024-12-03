@@ -26,7 +26,7 @@
 <br/>
 <br/>
 
-## 🤔 What is 'Porring'?
+# 🤔 What is 'Porring'?
 
 <div align="center">
 
@@ -45,7 +45,7 @@
 <br/>
 
 
-## ⚙ 주요 기능
+# ⚙ 주요 기능
 
 ### 랜덤 메인 피드
 
@@ -145,13 +145,26 @@
 <br/>
 <br/>
 
-## 🧱 Architecture
+# 🧱 Architecture
+
+## Android App
 
 <div align="center">
 
-### Module
+<img width="800" alt="architecture" src="https://github.com/user-attachments/assets/c8afeb66-20a2-4cf1-937a-f099e811b057">
 
-<img width="1200" alt="module_structure" src="https://github.com/user-attachments/assets/2b6677a0-4d9a-4bec-9583-e5ae5748f7f7">
+**Porring**은 ***Android App Architecture***를 기반으로 설계 되었습니다. 
+
+</div>
+
+<br/>
+<br/>
+  
+## Module
+
+<div align="center">
+
+<img width="800" alt="module_structure" src="https://github.com/user-attachments/assets/2b6677a0-4d9a-4bec-9583-e5ae5748f7f7">
 
 `Multi-Module`을 사용해 구성하였으며, 각 화면을 `feature`로 구분해 모듈 형태로 구성했습니다.
 
