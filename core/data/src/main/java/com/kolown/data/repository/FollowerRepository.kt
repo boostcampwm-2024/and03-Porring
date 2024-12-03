@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import com.kolown.data.datasource.paging.FollowerGalleryThumbnailPagingDataSource
 import com.kolown.data.datasource.remote.AuthDataSource
 import com.kolown.data.datasource.remote.FollowDataSource
+import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.model.FollowerThumbnail
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -23,8 +24,9 @@ interface FollowRepository {
 
 class FollowRepositoryImpl @Inject constructor(
     private val followDataSource: FollowDataSource,
+    private val followerDataSource: FollowDataSource,
+    private val postDataSource: PostDataSource,
     @Named("google") private val googleAuthDataSource: AuthDataSource,
-    private val followerGalleryThumbnailPagingDataSource: FollowerGalleryThumbnailPagingDataSource.Factory,
 ) : FollowRepository {
 
     override fun getFollowerName(followerId: String): Flow<String> = flow {
@@ -67,13 +69,19 @@ class FollowRepositoryImpl @Inject constructor(
     }
 
     override fun getFollowerDataSourcePagingFlow(): Flow<PagingData<FollowerThumbnail>> {
+        val currentUserId = googleAuthDataSource.getUserId()
+
         return Pager(
             config = PagingConfig(
                 pageSize = FOLLOWER_PER_PAGE,
                 enablePlaceholders = false,
             ),
             pagingSourceFactory = {
-                followerGalleryThumbnailPagingDataSource.create()
+                FollowerGalleryThumbnailPagingDataSource(
+                    followerDataSource,
+                    postDataSource,
+                    currentUserId
+                )
             }
         ).flow
     }

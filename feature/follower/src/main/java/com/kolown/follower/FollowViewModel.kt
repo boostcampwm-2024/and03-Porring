@@ -7,7 +7,6 @@ import com.kolown.data.repository.FollowRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 @HiltViewModel
@@ -16,7 +15,7 @@ class FollowerViewModel @Inject constructor(
 ) : ViewModel() {
     private val trigger = MutableStateFlow(0)
     val followerItems = trigger.flatMapLatest { key ->
-        followerRepository.getFollowerDataSourcePagingFlow()
+        followerRepository.getFollowerDataSourcePagingFlow().cachedIn(viewModelScope)
     }
 
     fun resetGalleryFlow() {

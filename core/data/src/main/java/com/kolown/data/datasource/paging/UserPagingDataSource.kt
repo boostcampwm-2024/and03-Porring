@@ -90,15 +90,4 @@ class UserPagingDataSource @Inject constructor(
             }
         }
     }
-
-    class Factory @Inject constructor(
-        private val postDataSource: PostDataSource,
-        private val tagDataSource: TagDataSource,
-        private val reactionDataSource: ReactionDataSource
-    ) {
-        fun create(userId: String): UserPagingDataSource {
-            return UserPagingDataSource(postDataSource, tagDataSource, reactionDataSource, userId)
-        }
-    }
-
 }
