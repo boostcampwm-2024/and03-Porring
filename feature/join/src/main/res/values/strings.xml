@@ -9,4 +9,8 @@
     <string name="string_invalid_password">비밀번호는 특수문자를 포함해 8자리 이상이어야 합니다</string>
     <string name="string_confirm_password">비밀번호를 확인해 주세요</string>
     <string name="string_invalid_password_confirm">비밀번호가 일치하지 않습니다.</string>
+    <string name="string_complete_signup">회원가입 완료</string>
+    <string name="string_already_exist">이미 가입 된 이메일 입니다.</string>
+    <string name="string_go_back">뒤로가기</string>
+    <string name="string_let_join">가입하기</string>
 </resources>
