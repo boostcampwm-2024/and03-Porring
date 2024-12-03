@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -53,6 +54,7 @@ internal fun MainScreen(
     val uploadModel by mainViewModel.uploadModel.collectAsStateWithLifecycle()
 
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val onShowSnackBar: (String) -> Unit = { msg ->
         lifecycleScope.launch { snackBarHostState.showSnackbar(msg) }
@@ -61,8 +63,8 @@ internal fun MainScreen(
     val onShowLoginSnackBar: () -> Unit = {
         lifecycleScope.launch {
             snackBarHostState.showSnackbar(
-                message = "로그인 후 이용 가능한 서비스입니다.",
-                actionLabel = "로그인",
+                message = context.getString(R.string.string_need_login),
+                actionLabel = context.getString(R.string.string_login),
                 duration = SnackbarDuration.Short
             ).let { result ->
                 if (result == SnackbarResult.ActionPerformed) {
@@ -83,8 +85,8 @@ internal fun MainScreen(
             is InitUiState.Failure -> {
                 coroutineScope.launch {
                     val result = snackBarHostState.showSnackbar(
-                        message = "업로드에 실패하였습니다. 다시 시도하시려면 업로드 화면으로 이동하세요!.",
-                        actionLabel = "이동",
+                        message = context.getString(R.string.string_upload_fail),
+                        actionLabel = context.getString(R.string.string_move),
                         duration = SnackbarDuration.Short
                     )
                     if (result == SnackbarResult.ActionPerformed) {
@@ -96,7 +98,7 @@ internal fun MainScreen(
             InitUiState.Loading -> {
                 coroutineScope.launch {
                     snackBarHostState.showSnackbar(
-                        message = "업로드 중입니다.",
+                        message = context.getString(R.string.string_uploading),
                         duration = SnackbarDuration.Indefinite
                     )
                 }
@@ -105,8 +107,8 @@ internal fun MainScreen(
             is InitUiState.Success -> {
                 coroutineScope.launch {
                     val result = snackBarHostState.showSnackbar(
-                        message = "업로드 성공! MyGallery로 이동하시려면 이동을 눌러주세요!",
-                        actionLabel = "이동",
+                        message = context.getString(R.string.string_upload_success),
+                        actionLabel = context.getString(R.string.string_move),
                         duration = SnackbarDuration.Short
                     )
                     if (result == SnackbarResult.ActionPerformed) {
