@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +26,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -60,12 +62,10 @@ internal fun DetailRoute(
         is UiState.Loading -> LoadingDetailScreen()
         is UiState.Success -> {
             val pagingItems = state.data.collectAsLazyPagingItems()
-            val pagerState =
-                rememberPagerState(initialPage = currentPage) { pagingItems.itemCount + 1 }
+            val pagerState = rememberPagerState(initialPage = currentPage) { pagingItems.itemCount + 1 }
             LaunchedEffect(pagingItems.itemCount) {
                 if (pagerState.currentPage == 0) pagerState.scrollToPage(currentPage)
             }
-
             DetailScreen(
                 isLoggedIn = isLoggedIn,
                 onShowLoginSnackBar = onShowLoginSnackBar,
@@ -186,9 +186,9 @@ private fun DetailContent(
         modifier = Modifier.fillMaxSize(),
         state = pagerState,
         userScrollEnabled = isReelsMode,
+        beyondViewportPageCount = 3
     ) { page ->
-        // Our page content
-        // 정상 상태일 때
+
         val imageItem = if (page == 0) firstItem else pagingItems[page - 1] ?: return@VerticalPager
 
         DetailItem(
