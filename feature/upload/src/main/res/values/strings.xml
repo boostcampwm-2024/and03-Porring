@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="string_new_post">새 게시물</string>
+    <string name="string_mock_uri">https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png</string>
+    <string name="string_go_back">뒤로 가기</string>
+    <string name="string_upload">올리기</string>
+    <string name="string_max_twenty">설명은 최대 20자까지만 입력이 가능합니다.</string>
+    <string name="string_add_description">설명 추가...</string>
+    <string name="string_trailing_icon">trailing icon</string>
 </resources>
