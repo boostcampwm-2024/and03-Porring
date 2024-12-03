@@ -1,6 +1,5 @@
 package com.kolown.follower
 
-import android.util.Log
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,6 +19,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -232,7 +233,7 @@ internal fun FollowContent(
             Text(text = "Edit", color = Color.Black, style = MaterialTheme.typography.labelMedium)
         }
         Spacer(modifier = Modifier.height(10.dp))
-        Row(
+        LazyRow (
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally),
@@ -241,7 +242,7 @@ internal fun FollowContent(
                 space = 8.dp
             )
         ) {
-            followAlbums.forEach { imageUrl ->
+            items(followAlbums) { imageUrl ->
                 Card(
                     modifier = Modifier
                         .size(100.dp)
