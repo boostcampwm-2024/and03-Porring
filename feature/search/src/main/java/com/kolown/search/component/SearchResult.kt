@@ -15,12 +15,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
 import com.kolown.designsystem.ui.theme.Gray
 import com.kolown.model.Tag
+import com.kolown.search.R
 
 @Composable
 fun SearchResult(
@@ -39,7 +41,7 @@ fun SearchResult(
     ) {
         if (text.isBlank()) {
             Text(
-                "검색어를 입력해주세요",
+                stringResource(R.string.string_input_keyword),
                 fontSize = 16.sp,
                 modifier = Modifier.align(Alignment.Center),
                 color = Gray
@@ -48,7 +50,7 @@ fun SearchResult(
         }
         if (searchResultTag.itemCount == 0) {
             Text(
-                "검색 결과가 없습니다.",
+                stringResource(R.string.string_no_result),
                 fontSize = 16.sp,
                 modifier = Modifier.align(Alignment.Center),
                 color = Gray

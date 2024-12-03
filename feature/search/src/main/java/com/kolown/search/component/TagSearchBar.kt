@@ -17,11 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.zIndex
 import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.designsystem.ui.theme.Surface2
@@ -68,12 +67,13 @@ fun TagSearchBar(
                 IconButton(onClick = onBackButtonClicked) {
                     if (focusState) Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.icon_arrow_back),
-                        contentDescription = "search_back", tint = Primary
+                        contentDescription = stringResource(R.string.string_search_back),
+                        tint = Primary
                     )
                     else Icon(
                         imageVector = Icons.Default.Search,
                         tint = Primary,
-                        contentDescription = "search"
+                        contentDescription = stringResource(R.string.string_search)
                     )
                 }
             },
@@ -82,7 +82,8 @@ fun TagSearchBar(
                     IconButton(onClick = onClearClick) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "search_back", tint = Primary
+                            contentDescription = stringResource(R.string.string_search_back),
+                            tint = Primary
                         )
                     }
                 }
