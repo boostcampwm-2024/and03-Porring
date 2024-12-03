@@ -62,7 +62,7 @@ private fun SettingScreen(
     ) {
         val context = LocalContext.current
         val showToast = { msg: String -> Toast.makeText(context, msg, Toast.LENGTH_SHORT).show() }
-        val showUpcomingToast = { showToast(stringResource(R.string.string_not_ready_feature)) }
+        val showUpcomingToast = { showToast(context.getString(R.string.string_not_ready_feature)) }
 
         PorringTopAppBar(title = stringResource(R.string.string_settomg), navigationIcon = {
             PorringIconButton(
