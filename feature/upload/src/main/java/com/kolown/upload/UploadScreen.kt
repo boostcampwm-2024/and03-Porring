@@ -108,7 +108,7 @@ internal fun UploadRoute(
 
 @Composable
 private fun UploadScreen(
-    imgUri: String = "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png",
+    imgUri: String = stringResource(R.string.string_mock_uri),
     padding: PaddingValues = PaddingValues(),
     description: String = "",
     uploadEnable: Boolean = false,
@@ -141,7 +141,7 @@ private fun UploadScreen(
                 PorringIconButton(
                     icon = ImageVector.vectorResource(drawable.ic_arrow_back),
                     onClick = navigateToHome,
-                    contentDescription = "뒤로 가기"
+                    contentDescription = stringResource(R.string.string_go_back)
                 )
             }
         )
@@ -298,7 +298,7 @@ private fun TextFieldResetButton(
     ) {
         Icon(
             imageVector = Icons.Outlined.Clear,
-            contentDescription = "trailing icon"
+            contentDescription = stringResource(R.string.string_trailing_icon)
         )
     }
 }
