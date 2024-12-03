@@ -55,38 +55,93 @@
 
 <div align="center">
 
-![MainFeed](https://github.com/user-attachments/assets/5e457b4e-f2cf-48a1-bfa7-8961508ca4ae)
+<img width="230" alt="MainFeed" src="https://github.com/user-attachments/assets/5e457b4e-f2cf-48a1-bfa7-8961508ca4ae"><br/>
+<img width="300" alt="Shadow" src="https://github.com/user-attachments/assets/8c048f1c-81ab-484f-8ae3-778a639ae1ff">
 
 </div>
 
+<br/>
+<br/>
 
-- **릴레이 콘텐츠**<br/>
-  디테일 화면에서 릴레이 콘텐츠로 사진을 계속해서 제공합니다.
+### 릴레이 콘텐츠
+
+디테일 화면에서 릴레이 콘텐츠로 사진을 계속해서 제공합니다.
 
 <br/>
 
-- **익명 팔로우**<br/>
+<div align="center">
+
+<img width="230" alt="ReelsContent" src="https://github.com/user-attachments/assets/49667b05-4ee5-4485-b22c-2cbd6e240480"><br/>
+<img width="300" alt="Shadow" src="https://github.com/user-attachments/assets/8c048f1c-81ab-484f-8ae3-778a639ae1ff">
+
+</div>
+
+<br/>
+<br/>
+
+### 익명 팔로우
   팔로우 하고자 하는 대상의 이름을 직접 지정해 익명성을 유지하며 팔로우 기능을 사용할 수 있습니다.
 
 <br/>
 
-- **사용자 갤러리**<br/>
-  사용자가 업로드한 사진은 갤러리에 저장되며 모든 사용자의 갤러리는 조회가 가능합니다.<br/>
-  기본적으로 다른 사용자의 갤러리는 Anonymous's Gallery로 표시되며, 팔로우 하고 있는 사용자는 지정한 팔로우 네임으로 표시됩니다.
+<div align="center">
+
+<img width="230" alt="Follow" src="https://github.com/user-attachments/assets/3f57d917-40df-4201-abb6-582bbce384e0"><br/>
+<img width="300" alt="Shadow" src="https://github.com/user-attachments/assets/8c048f1c-81ab-484f-8ae3-778a639ae1ff">
+
+</div>
+
+<br/>
+<br/>
+
+### 사용자 갤러리
+
+사용자가 업로드한 사진은 갤러리에 저장되며 모든 사용자의 갤러리는 조회가 가능합니다.<br/>
+기본적으로 다른 사용자의 갤러리는 Anonymous's Gallery로 표시되며, 팔로우 하고 있는 사용자는 지정한 팔로우 네임으로 표시됩니다.
 
 <br/>
 
-- **간편한 업로드**<br/>
-  포링은 익명 서비스이기 때문에 사진 설명과 태그만 입력하면 손쉽게 업로드가 가능합니다.
+<div align="center">
+
+<img width="230" alt="Gallery" src="https://github.com/user-attachments/assets/1b979280-ede7-4bde-8635-24de6083dd5f"><br/>
+<img width="300" alt="Shadow" src="https://github.com/user-attachments/assets/8c048f1c-81ab-484f-8ae3-778a639ae1ff">
+
+</div>
+
+<br/>
+<br/>
+
+### 간편한 업로드
+
+포링은 익명 서비스이기 때문에 사진 설명과 태그만 입력하면 손쉽게 업로드가 가능합니다.
 
 <br/>
 
-- **캡쳐 방지**<br/>
-  익명으로 업로드된 사진이 무단으로 사용되지 않도록 캡처를 방지하고 있습니다.
+<div align="center">
+
+<img width="230" alt="Upload" src="https://github.com/user-attachments/assets/56babd41-e716-49a6-956b-b08c401666e2"><br/>
+<img width="300" alt="Shadow" src="https://github.com/user-attachments/assets/8c048f1c-81ab-484f-8ae3-778a639ae1ff">
+
+</div>
+
+<br/>
+<br/>
+
+### 캡쳐 방지
+
+익명으로 업로드된 사진이 무단으로 사용되지 않도록 캡처를 방지하고 있습니다.
 
 <br/>
 
+<div align="center">
 
+<img width="230" alt="Secure" src="https://github.com/user-attachments/assets/2a4f6078-165d-4911-b227-0c760a8b3909"><br/>
+<img width="300" alt="Shadow" src="https://github.com/user-attachments/assets/8c048f1c-81ab-484f-8ae3-778a639ae1ff">
+
+</div>
+
+<br/>
+<br/>
 <br/>
 <br/>
 
