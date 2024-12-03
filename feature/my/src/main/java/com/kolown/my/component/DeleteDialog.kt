@@ -44,8 +44,8 @@ fun DeleteDialog(
     ) {
         Card(
             modifier = modifier.size(
-                width = 380.dp,
-                height = 100.dp
+                width = 250.dp,
+                height = 130.dp
             ),
             shape = RoundedCornerShape(10.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -54,7 +54,8 @@ fun DeleteDialog(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 20.dp),
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
