@@ -68,7 +68,6 @@ fun CameraPermissionSucceedScreen(
     val imageUri by viewModel.uri.collectAsStateWithLifecycle()
 
     LaunchedEffect(imageUri) {
-        Log.e("test","image Url: ${imageUri.toString()}")
         imageUri?.let { navigateToUpload(it.toString()) }
     }
 
@@ -173,7 +172,6 @@ fun CameraPermissionSucceedScreen(
                             cameraCaptureState = false
                             onShutterClick()
                             cameraController.takePhoto(context) {
-                                cameraCaptureState = true
                                 viewModel.saveBitmapToCache(it)
                             }
                         }
