@@ -21,12 +21,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.kolown.designsystem.ui.theme.Error
 import com.kolown.designsystem.ui.theme.Primary
+import com.kolown.my.R
 
 @Composable
 fun DeleteDialog(
@@ -59,14 +61,14 @@ fun DeleteDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(text = "이 게시물을 삭제하시겠어요?", style = MaterialTheme.typography.titleMedium)
+                Text(text = stringResource(R.string.string_question_delete), style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(20.dp))
                 Row {
                     TextButton(
                         onClick = onClickCancel,
                         colors = ButtonDefaults.buttonColors(containerColor = Color.White)
                     ) {
-                        Text(text = "취소", color = Error)
+                        Text(text = stringResource(R.string.string_cancel), color = Error)
                     }
                     TextButton(
                         onClick = {
@@ -75,7 +77,7 @@ fun DeleteDialog(
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color.White)
                     ) {
-                        Text(text = "삭제", color = Primary)
+                        Text(text = stringResource(R.string.string_remove), color = Primary)
                     }
                 }
             }
