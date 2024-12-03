@@ -23,7 +23,7 @@ class TheirViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val followRepository: FollowRepository,
 ) : ViewModel() {
-    private val _followerName = MutableStateFlow("Anonymous")
+    private val _followerName = MutableStateFlow("")
     val followerName = _followerName.asStateFlow()
 
     private val _userId = MutableStateFlow("")
@@ -32,6 +32,11 @@ class TheirViewModel @Inject constructor(
     }.cachedIn(viewModelScope)
 
     fun setFollowerName(followerId: String) {
+        if(followerId.isBlank()) {
+            _followerName.update { "Anonymous" }
+            return
+        }
+
         _userId.update { followerId }
         followRepository.getFollowerName(followerId)
             .onEach { name -> _followerName.update { name } }

@@ -119,7 +119,11 @@ private fun TheirScreen(
             )
     ) {
         PorringCenterAlignTopAppBar(
-            title = "${followerName}'s Gallery",
+            title = if (followerName.isBlank()) {
+                ""
+            } else {
+                "${followerName}'s Gallery"
+            },
             navigationIcon = {
                 PorringIconButton(
                     icon = ImageVector.vectorResource(R.drawable.ic_arrow_back),
