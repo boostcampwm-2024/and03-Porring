@@ -13,9 +13,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
+import com.kolown.their.R
 
 @Composable
 internal fun PageItemFooter(
@@ -59,7 +61,7 @@ private fun RetryPageItem(modifier: Modifier = Modifier, onRetryClicked: () -> U
             modifier = Modifier.align(Alignment.Center),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Retry")
+            Text(text = stringResource(R.string.string_retry))
             IconButton(onClick = onRetryClicked) {
                 Icon(Icons.Filled.Refresh, contentDescription = null)
             }

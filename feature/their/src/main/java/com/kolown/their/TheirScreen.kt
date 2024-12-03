@@ -1,6 +1,5 @@
 package com.kolown.their
 
-import android.util.Log
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -42,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -50,7 +50,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.kolown.designsystem.R
 import com.kolown.designsystem.component.PorringCenterAlignTopAppBar
 import com.kolown.designsystem.component.PorringIconButton
 import com.kolown.model.PostContentModel
@@ -120,15 +119,15 @@ private fun TheirScreen(
     ) {
         PorringCenterAlignTopAppBar(
             title = if (followerName.isBlank()) {
-                ""
+                stringResource(R.string.string_empty)
             } else {
-                "${followerName}'s Gallery"
+                stringResource(R.string.string_others_gallery_name, followerName)
             },
             navigationIcon = {
                 PorringIconButton(
                     icon = ImageVector.vectorResource(R.drawable.ic_arrow_back),
                     onClick = popBackStack,
-                    contentDescription = "뒤로가기"
+                    contentDescription = stringResource(R.string.string_go_back)
                 )
             }
         )
@@ -179,13 +178,11 @@ private fun StateLazyGrid(
         }
 
         pagingItems.loadState.refresh is LoadState.Error -> {
-            Log.d("LazyVertical", "실패")
             showErrorScreen = false
             ErrorScreen()
         }
 
         pagingItems.loadState.refresh is LoadState.Loading -> {
-            Log.d("LazyVertical", "로딩")
             showErrorScreen = false
             Box(
                 modifier = Modifier
@@ -201,7 +198,6 @@ private fun StateLazyGrid(
         }
 
         pagingItems.loadState.refresh is LoadState.NotLoading -> {
-            Log.d("LazyVertical", "성공 ${pagingItems.itemCount}")
             showErrorScreen = false
             CompositionLocalProvider(
                 LocalOverscrollConfiguration provides null
@@ -251,7 +247,7 @@ private fun ErrorScreen() {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "오류가 발생하였습니다!", color = Color.Red
+                text = stringResource(R.string.string_error), color = Color.Red
             )
         }
     }
