@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_sub_title">✨ 순간으로 이어지는 진짜 연결의 시작 ✨</string>
-    <string name="login_singup">로그인</string>
+    <string name="string_login">로그인</string>
     <string name="start_with_google">구글로 시작하기</string>
     <string name="string_close_button">닫기 버튼</string>
+    <string name="string_need_email_form">이메일 형식으로 입력해주세요</string>
+    <string name="string_need_to_check_email_or_pw">이메일 혹은 비밀번호를 확인해주세요</string>
+    <string name="string_check_email_pw">이메일 혹은 비밀번호를 확인해주세요</string>
+    <string name="string_check_network">인터넷 연결을 확인해주세요</string>
+    <string name="string_back_to_login">로그인 메뉴로 돌아가기</string>
+    <string name="string_go_back">뒤로 가기</string>
+    <string name="string_email_login">이메일로 로그인</string>
+    <string name="string_input_email">이메일을 입력해주세요</string>
+    <string name="string_email">Email</string>
+    <string name="string_input_pw">비밀번호를 입력해주세요</string>
+    <string name="string_pw">Password</string>
+    <string name="string_signup">회원가입</string>
+
 </resources>
