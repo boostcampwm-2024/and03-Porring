@@ -49,6 +49,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
@@ -138,7 +139,7 @@ internal fun FollowerRoute(
                             .fillMaxSize()
                             .padding(padding),
                     ) {
-                        PorringCenterAlignTopAppBar(title = "Following")
+                        PorringCenterAlignTopAppBar(title = stringResource(R.string.string_following))
                         if (pagingItems.itemCount != 0) {
                             FollowerScreen(
                                 items = pagingItems,
@@ -271,7 +272,7 @@ fun NoFollowerScreen() {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("팔로잉 하고 있는 사람이 없습니다.", color = Color.Gray)
+        Text(text = stringResource(R.string.string_not_follow), color = Color.Gray)
     }
 }
 
@@ -291,7 +292,7 @@ private fun ErrorScreen() {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "오류가 발생하였습니다!", color = Color.Red
+                text = stringResource(R.string.string_error), color = Color.Red
             )
         }
     }
