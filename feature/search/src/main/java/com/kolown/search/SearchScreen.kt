@@ -44,6 +44,7 @@ import com.kolown.model.PostContentModel
 import com.kolown.model.Tag
 import com.kolown.search.component.PostHeader
 import com.kolown.search.component.PostItem
+import com.kolown.search.component.SearchResult
 import com.kolown.search.component.TagItem
 import com.kolown.search.component.TagSearchBar
 
@@ -79,13 +80,12 @@ private fun SearchScreen(
     searchResultPost: LazyPagingItems<PostContentModel>,
     tag: Tag?,
     searchText: String,
-    setSearchQuery : (String) -> Unit,
-    setPage : (Int) -> Unit,
-    setTag : (Tag) -> Unit
+    setSearchQuery: (String) -> Unit,
+    setPage: (Int) -> Unit,
+    setTag: (Tag) -> Unit
 ) {
 
     var focusState by remember { mutableStateOf(false) }
-
 
 
     val focusManager = LocalFocusManager.current
@@ -118,7 +118,7 @@ private fun SearchScreen(
                 focusState = false
             },
             onClearClick = {
-               setSearchQuery("")
+                setSearchQuery("")
             }
         )
 
@@ -157,22 +157,9 @@ private fun SearchScreen(
                 }
             }
 
-            LazyColumn(
-                modifier = Modifier
-                    .background(Color.White)
-                    .animateContentSize()
-                    .height(if (focusState) 800.dp else 0.dp)
-                    .fillMaxWidth()
-
-            ) {
-                items(searchResultTag.itemCount) { index ->
-                    searchResultTag[index]?.let { tag ->
-                        TagItem(tag) {
-                            setTag(it)
-                            focusState = false
-                        }
-                    }
-                }
+            SearchResult(focusState, searchResultTag,searchText) {
+                setTag(it)
+                focusState = false
             }
         }
     }
