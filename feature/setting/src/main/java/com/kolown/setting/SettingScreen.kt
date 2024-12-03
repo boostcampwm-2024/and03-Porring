@@ -56,13 +56,15 @@ private fun SettingScreen(
     padding: PaddingValues = PaddingValues(),
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(padding),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(padding),
     ) {
         val context = LocalContext.current
         val showToast = { msg: String -> Toast.makeText(context, msg, Toast.LENGTH_SHORT).show() }
-        val showUpcomingToast = { showToast("아직 준비중인 기능입니다") }
+        val showUpcomingToast = { showToast(stringResource(R.string.string_not_ready_feature)) }
 
-        PorringTopAppBar(title = "설정", navigationIcon = {
+        PorringTopAppBar(title = stringResource(R.string.string_settomg), navigationIcon = {
             PorringIconButton(
                 icon = ImageVector.vectorResource(drawable.ic_arrow_back),
                 onClick = popBackStack,
