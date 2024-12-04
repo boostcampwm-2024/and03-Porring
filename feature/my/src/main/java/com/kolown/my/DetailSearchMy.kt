@@ -1,6 +1,7 @@
-package com.kolown.search
+package com.kolown.my
 
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,95 +11,69 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.graphics.Color
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kolown.common.component.DetailItem
-import com.kolown.designsystem.ui.theme.PrimaryContainerDark
 import com.kolown.common.component.DetailTopAppBar
 import com.kolown.model.PostContentModel
-import com.kolown.model.Reactions
 
 @Composable
-internal fun DetailSearchRoute(
+internal fun DetailMyRoute(
     padding: PaddingValues = PaddingValues(),
     popBackStack: () -> Unit,
-    navigateToTheir: (String) -> Unit,
-    isLoggedIn: Boolean,
     onShowLoginSnackBar: () -> Unit,
-    viewModel: SearchViewModel
+    viewModel: MyViewModel
 ) {
 
-    val searchResultPost = viewModel.resultPostList.collectAsLazyPagingItems()
+    val searchResultPost = viewModel.galleryFlow.collectAsLazyPagingItems()
     var isReelsMode by remember { mutableStateOf(true) }
 
     val pagerState =
         rememberPagerState(initialPage = viewModel.firstPage) { searchResultPost.itemCount }
-    val followState = viewModel.followState.collectAsStateWithLifecycle(null)
 
-    DetailSearchScreen(
+    DetailMyScreen(
         padding = padding,
         pagingItems = searchResultPost,
         popBackStack = popBackStack,
         isReelsMode = isReelsMode,
         onChangeReelsMode = { isReelsMode = it },
-        navigateToTheir = navigateToTheir,
         pagerState = pagerState,
-        followerState = followState,
-        onFollowClick = viewModel::followUser,
-        onUnfollowClick = viewModel::unFollowUser,
-        onSelectReaction = viewModel::selectReaction,
-        checkPostIsMine = viewModel::checkPostIsMine,
-        isLoggedIn = isLoggedIn,
         onShowLoginSnackBar = onShowLoginSnackBar
     )
 }
 
 @Composable
-fun DetailSearchScreen(
+fun DetailMyScreen(
     popBackStack: () -> Unit = {},
-    onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     isReelsMode: Boolean = true,
     pagingItems: LazyPagingItems<PostContentModel>,
     pagerState: PagerState,
     padding: PaddingValues = PaddingValues(),
-    navigateToTheir: (String) -> Unit,
     updatePage: (Int) -> Unit = {},
-    onFollowClick: (String, String) -> Unit = { _, _ -> },
-    onUnfollowClick: (String) -> Unit = {},
-    isLoggedIn: Boolean,
     onChangeReelsMode: (Boolean) -> Unit,
     onShowLoginSnackBar: () -> Unit,
-    followerState: State<Pair<String, Boolean>?>,
-    checkPostIsMine: (String) -> Boolean
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(PrimaryContainerDark)
+            .background(Color(0xff151D37))
             .padding(padding)
     ) {
 
         DetailContent(
-            onSelectReaction = onSelectReaction,
             isReelsMode = isReelsMode,
             onChangeReelsMode = onChangeReelsMode,
             pagingItems = pagingItems,
             pagerState = pagerState,
-            navigateToTheir = navigateToTheir,
             updatePage = updatePage,
-            onFollowClick = onFollowClick,
-            onUnfollowClick = onUnfollowClick,
-            followerState = followerState,
-            checkPostIsMine = checkPostIsMine,
-            isLoggedIn = isLoggedIn,
-            onShowLoginSnackBar = onShowLoginSnackBar
+            onShowLoginSnackBar = onShowLoginSnackBar,
         )
 
         DetailTopAppBar(
@@ -112,19 +87,13 @@ fun DetailSearchScreen(
 
 @Composable
 fun DetailContent(
-    onSelectReaction: (PostContentModel, Reactions) -> Unit,
     isReelsMode: Boolean,
     onChangeReelsMode: (Boolean) -> Unit,
     pagingItems: LazyPagingItems<PostContentModel>,
     pagerState: PagerState,
-    navigateToTheir: (String) -> Unit,
     updatePage: (Int) -> Unit,
-    onFollowClick: (String, String) -> Unit = { _, _ -> },
-    onUnfollowClick: (String) -> Unit = {},
-    followerState: State<Pair<String, Boolean>?> = mutableStateOf(null),
-    isLoggedIn: Boolean,
     onShowLoginSnackBar: () -> Unit,
-    checkPostIsMine: (String) -> Boolean = { _ -> false }
+    checkPostIsMine: (String) -> Boolean = { _ -> true }
 ) {
 
     VerticalPager(
@@ -136,22 +105,20 @@ fun DetailContent(
         val imageItem = pagingItems[page] ?: return@VerticalPager
 
         DetailItem(
-            isLoggedIn = isLoggedIn,
+            isLoggedIn = true,
             isReelsMode = isReelsMode,
             onChangeReelsMode = onChangeReelsMode,
-            onSelectReaction = onSelectReaction,
             imageItem = imageItem,
-            navigateToTheir = navigateToTheir,
+            navigateToTheir = {},
             updatePage = {
                 updatePage(pagerState.currentPage)
             },
-            onFollowClick = onFollowClick,
-            onUnfollowClick = onUnfollowClick,
-            followerState = followerState,
             checkPostIsMine = checkPostIsMine,
             onShowLoginSnackBar = onShowLoginSnackBar
         )
 
     }
+
+    //todo: 에러 났을 때(ex.Network Error)
 }
 

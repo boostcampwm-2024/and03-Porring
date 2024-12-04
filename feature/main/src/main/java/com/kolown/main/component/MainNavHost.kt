@@ -72,7 +72,7 @@ internal fun MainNavHost(
                 isLoggedIn = isLoggedIn,
                 onShowLoginSnackBar = onShowLoginSnackBar,
                 padding = padding,
-                navigateToTheir =  { id ->
+                navigateToTheir = { id ->
                     navigator.navigateToTheir(id)
                 },
                 navigateToSearchDetail = navigator::navigateToDetailSearch,
@@ -100,9 +100,12 @@ internal fun MainNavHost(
 
             myNavGraph(
                 isLoggedIn = isLoggedIn,
+                padding = padding,
                 navigateToLogin = navigator::navigateToLogin,
                 navigateToSetting = navigator::navigateToSetting,
-                padding = padding
+                navigateToDetailMy = navigator::navigateToDetailMy,
+                popBackStack = navigator::popBackStack,
+                getBackStackEntry = { navigator.navController.getBackStackEntry(MainMenu.HOME.route) }
             )
 
             detailNavGraph(

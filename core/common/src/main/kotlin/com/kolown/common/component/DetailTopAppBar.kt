@@ -1,4 +1,4 @@
-package com.kolown.search.component
+package com.kolown.common.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,10 +18,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.kolown.search.R
+import com.kolown.common.R
 
 @Composable
-internal fun DetailTopAppBar(
+fun DetailTopAppBar(
     isReelsMode: Boolean,
     onChangeReelsMode: (Boolean) -> Unit,
     popBackStack: () -> Unit,
@@ -43,7 +43,7 @@ internal fun DetailTopAppBar(
                 onClick = { popBackStack() }, modifier = Modifier.size(48.dp)
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.icon_arrow_back),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_back),
                     contentDescription = stringResource(R.string.string_go_back_button),
                     tint = Color.White,
                     modifier = Modifier.size(24.dp)
