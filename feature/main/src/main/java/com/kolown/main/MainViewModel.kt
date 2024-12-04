@@ -12,11 +12,15 @@ import com.kolown.data.repository.PostRepository
 import com.kolown.model.InitUiState
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
+import com.kolown.model.SnackBarData
 import com.kolown.model.UploadModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -52,6 +56,13 @@ class MainViewModel @Inject constructor(
         MutableStateFlow(PostContentModel("", "", "", "", "", emptyList(), false, emptyList()))
     val detailFirstItem = _detailFirstItem.asStateFlow()
 
+    private val _snackBarFlow = MutableSharedFlow<SnackBarData>(
+//        replay = 0,
+//        extraBufferCapacity = 4,
+//        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val snackBarFlow = _snackBarFlow.asSharedFlow()
+
     private var currentItems: List<PostContentModel> = emptyList()
 
     private var randomType = listOf("A", "B", "C", "D", "E").random()
@@ -59,6 +70,13 @@ class MainViewModel @Inject constructor(
     init {
         updateLoginState()
         loadImageItem()
+    }
+
+
+    fun postSnackBarData(data: SnackBarData) {
+        viewModelScope.launch {
+            _snackBarFlow.emit(data)
+        }
     }
 
     fun updateLoginState() {

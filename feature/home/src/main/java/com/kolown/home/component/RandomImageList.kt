@@ -2,6 +2,7 @@ package com.kolown.home.component
 
 import IconFollow
 import IconGallery
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -173,6 +174,7 @@ private fun ImageCard(
                             isFollowDialogVisible = true
                         }
                     } else {
+                        Log.e("test","나 여깄다... 허어...")
                         onShowLoginSnackBar()
                     }
                 }

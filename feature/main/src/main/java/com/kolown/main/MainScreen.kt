@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.kolown.common.component.showSnackBarWithData
 import com.kolown.designsystem.ui.theme.PrimaryDark
 import com.kolown.designsystem.ui.theme.SnackBarContainer
 import com.kolown.main.component.MainBottomBar
@@ -58,6 +59,14 @@ internal fun MainScreen(
 
     val onShowSnackBar: (String) -> Unit = { msg ->
         lifecycleScope.launch { snackBarHostState.showSnackbar(msg) }
+    }
+
+    LaunchedEffect(Unit) {
+        mainViewModel.snackBarFlow.collect {
+            snackBarHostState.showSnackBarWithData(it).let { result ->
+
+            }
+        }
     }
 
     val onShowLoginSnackBar: () -> Unit = {
