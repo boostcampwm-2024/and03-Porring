@@ -50,15 +50,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.kolown.common.component.GalleryItem
 import com.kolown.designsystem.component.PorringCenterAlignTopAppBar
 import com.kolown.designsystem.component.PorringIconButton
 import com.kolown.model.PostContentModel
-import com.kolown.their.component.GalleryItem
 import com.kolown.their.component.PageItemFooter
 import kotlinx.coroutines.delay
 
 @Composable
 internal fun TheirRoute(
+    navigateToDetailTheir: () -> Unit,
     popBackStack: () -> Unit,
     padding: PaddingValues = PaddingValues(),
     followerId: String,
@@ -73,7 +74,9 @@ internal fun TheirRoute(
     val listState = rememberLazyStaggeredGridState()
 
     TheirScreen(
+        navigateToDetailTheir = navigateToDetailTheir,
         popBackStack = popBackStack,
+        setPage = viewModel::setPage,
         padding = padding,
         followerName = followerName.value,
         pagingItems = pagingItems,
@@ -84,7 +87,9 @@ internal fun TheirRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TheirScreen(
+    navigateToDetailTheir: () -> Unit = {},
     popBackStack: () -> Unit = {},
+    setPage: (Int) -> Unit = {},
     padding: PaddingValues = PaddingValues(),
     followerName: String = "",
     pagingItems: LazyPagingItems<PostContentModel>,
@@ -137,7 +142,9 @@ private fun TheirScreen(
             StateLazyGrid(
                 listState = listState,
                 pagingItems = pagingItems,
-                width = width
+                width = width,
+                navigateToDetailTheir = navigateToDetailTheir,
+                setPage = setPage
             )
             Box(
                 Modifier
@@ -159,6 +166,8 @@ private fun StateLazyGrid(
     listState: LazyStaggeredGridState,
     pagingItems: LazyPagingItems<PostContentModel>,
     width: Dp,
+    navigateToDetailTheir: () -> Unit,
+    setPage: (Int) -> Unit
 ) {
     var showErrorScreen by remember { mutableStateOf(false) }
 
@@ -170,7 +179,6 @@ private fun StateLazyGrid(
             showErrorScreen = false
         }
     }
-
 
     when {
         showErrorScreen -> {
@@ -213,7 +221,14 @@ private fun StateLazyGrid(
                     content = {
                         items(pagingItems.itemCount) { index ->
                             pagingItems[index]?.let {
-                                GalleryItem(it, width)
+                                GalleryItem(
+                                    postContentModel = it,
+                                    width = width,
+                                    onClickImage = {
+                                        navigateToDetailTheir()
+                                        setPage(index)
+                                    }
+                                )
                             }
                         }
 

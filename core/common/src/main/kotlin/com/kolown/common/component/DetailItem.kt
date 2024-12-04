@@ -82,6 +82,7 @@ import kotlinx.coroutines.launch
 fun DetailItem(
     isLoggedIn: Boolean,
     isReelsMode: Boolean,
+    isButtonGroupNeed: Boolean = true,
     onShowLoginSnackBar: () -> Unit,
     isPopBackStack: Boolean = false,
     onChangeReelsMode: (Boolean) -> Unit,
@@ -101,6 +102,7 @@ fun DetailItem(
         if (isReelsMode) {
             ReelsContent(
                 isLoggedIn = isLoggedIn,
+                isButtonGroupNeed = isButtonGroupNeed,
                 onShowLoginSnackBar = onShowLoginSnackBar,
                 updateMainPostReaction = updateMainPostReaction,
                 onSelectReaction = onSelectReaction,
@@ -130,11 +132,11 @@ fun DetailItem(
     }
 }
 
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ReelsContent(
     isLoggedIn: Boolean,
+    isButtonGroupNeed: Boolean,
     onShowLoginSnackBar: () -> Unit,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
@@ -275,35 +277,37 @@ private fun ReelsContent(
                             }
                         )
 
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            DetailButton(
-                                onClick = {
-                                    if (isLoggedIn) {
-                                        if (isFollowed.value) {
-                                            onUnfollowClick(imageItem.authorId)
-                                            updateFollow(imageItem.authorId)
+                        if (isButtonGroupNeed) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                DetailButton(
+                                    onClick = {
+                                        if (isLoggedIn) {
+                                            if (isFollowed.value) {
+                                                onUnfollowClick(imageItem.authorId)
+                                                updateFollow(imageItem.authorId)
+                                            } else {
+                                                isFollowDialogVisible.value = true
+                                            }
                                         } else {
-                                            isFollowDialogVisible.value = true
+                                            onShowLoginSnackBar()
                                         }
-                                    } else {
-                                        onShowLoginSnackBar()
-                                    }
-                                },
-                                id = R.drawable.ic_detail_follow,
-                                buttonText = "팔로우",
-                                contentColor = if (isFollowed.value) PrimaryContainerDark else PrimaryDark,
-                                backgroundColor = if (isFollowed.value) PrimaryDark else PrimaryContainerDark
-                            )
-                            DetailButton(
-                                onClick = {
-                                    navigateToTheir(imageItem.authorId)
-                                    updatePage()
-                                },
-                                id = R.drawable.ic_detail_gallary,
-                                buttonText = "갤러리"
-                            )
+                                    },
+                                    id = R.drawable.ic_detail_follow,
+                                    buttonText = stringResource(R.string.string_follow),
+                                    contentColor = if (isFollowed.value) PrimaryContainerDark else PrimaryDark,
+                                    backgroundColor = if (isFollowed.value) PrimaryDark else PrimaryContainerDark
+                                )
+                                DetailButton(
+                                    onClick = {
+                                        navigateToTheir(imageItem.authorId)
+                                        updatePage()
+                                    },
+                                    id = R.drawable.ic_detail_gallary,
+                                    buttonText = stringResource(R.string.string_gallery)
+                                )
+                            }
                         }
                     }
                 }
@@ -356,7 +360,6 @@ private fun ConcentrateContent(
             val extraWidth = (scale - 1) * constraints.maxWidth
             val extraHeight = (scale - 1) * constraints.maxHeight
 
-            //이동할 수 있는 최대 거리
             val maxX = extraWidth / 2
             val maxY = extraHeight / 2
 
@@ -387,9 +390,7 @@ private fun ConcentrateContent(
             backHandle()
         }
     }
-
 }
-
 
 @Composable
 private fun DetailButton(

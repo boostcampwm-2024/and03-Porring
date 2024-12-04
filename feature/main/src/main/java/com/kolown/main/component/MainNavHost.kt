@@ -141,6 +141,8 @@ internal fun MainNavHost(
 
             theirNavGraph(
                 popBackStack = navigator::popBackStack,
+                navigateToDetailTheir = navigator::navigateToDetailTheir,
+                getBackStackEntry = { navigator.navController.getBackStackEntry(MainMenu.HOME.route) },
                 padding = padding
             )
 

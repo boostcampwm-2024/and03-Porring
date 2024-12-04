@@ -25,6 +25,7 @@ import com.kolown.search.navigation.navigateSearch
 import com.kolown.search.navigation.navigateSearchDetail
 import com.kolown.setting.navigation.navigateSetting
 import com.kolown.their.navigation.navigateTheir
+import com.kolown.their.navigation.navigateTheirDetail
 import com.kolown.upload.navigation.navigateUpload
 
 internal class MainNavigator(
@@ -77,7 +78,7 @@ internal class MainNavigator(
 
     fun navigateToDetailMy() = navController.navigateMyDetail(navOptions = singleTopOptions)
 
-    fun navigateToDetailTheir() = navController.navigateSearchDetail(navOptions = singleTopOptions)
+    fun navigateToDetailTheir() = navController.navigateTheirDetail(navOptions = singleTopOptions)
 
     fun popBackStack() {
         navController.popBackStack()
