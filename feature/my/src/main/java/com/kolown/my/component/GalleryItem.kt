@@ -1,6 +1,5 @@
 package com.kolown.my.component
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -32,8 +31,6 @@ import com.kolown.data.mock.MockDataProvider
 import com.kolown.designsystem.ui.theme.Surface2
 import com.kolown.model.PostContentModel
 import com.kolown.my.R
-import kotlin.math.absoluteValue
-import kotlin.random.Random
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -41,6 +38,7 @@ internal fun GalleryItem(
     postContentModel: PostContentModel,
     width: Dp,
     onLongClickImage: () -> Unit = {},
+    onClickImage: () -> Unit = {}
 ) {
     var isLoading by remember { mutableStateOf(true) }
     var isError by remember { mutableStateOf(false) }
@@ -62,7 +60,7 @@ internal fun GalleryItem(
                 .fillMaxSize()
                 .combinedClickable(
                     onClick = {
-                        // todo navigateToDetail
+                        onClickImage()
                     },
                     onLongClick = {
                         isDialogVisible.value = true

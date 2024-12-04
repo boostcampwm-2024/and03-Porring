@@ -18,6 +18,7 @@ import com.kolown.join.navigation.navigateToJoin
 import com.kolown.login.navigation.navigateLogin
 import com.kolown.model.UploadModel
 import com.kolown.my.navigation.navigateMy
+import com.kolown.my.navigation.navigateMyDetail
 import com.kolown.navigation.MainMenuRoute
 import com.kolown.navigation.Route
 import com.kolown.search.navigation.navigateSearch
@@ -58,20 +59,25 @@ internal class MainNavigator(
         }
     }
 
-    fun navigateToTheir(authorId: String) = navController.navigateTheir(authorId = authorId,navOptions = singleTopOptions)
+    fun navigateToTheir(authorId: String) =
+        navController.navigateTheir(authorId = authorId, navOptions = singleTopOptions)
 
     fun navigateToUpload(imgUri: String, uploadModel: UploadModel) =
         navController.navigateUpload(imgUri, uploadModel)
 
-    fun navigateToDetail() = navController.navigateToDetail(navOptions  = singleTopOptions)
+    fun navigateToDetail() = navController.navigateToDetail(navOptions = singleTopOptions)
 
     fun navigateToLogin() = navController.navigateLogin(navOptions = singleTopOptions)
 
     fun navigateToSetting() = navController.navigateSetting(navOptions = singleTopOptions)
 
-    fun navigateToJoin() = navController.navigateToJoin(navOptions  = singleTopOptions)
+    fun navigateToJoin() = navController.navigateToJoin(navOptions = singleTopOptions)
 
-    fun navigateToDetailSearch() = navController.navigateSearchDetail(navOptions =singleTopOptions)
+    fun navigateToDetailSearch() = navController.navigateSearchDetail(navOptions = singleTopOptions)
+
+    fun navigateToDetailMy() = navController.navigateMyDetail(navOptions = singleTopOptions)
+
+    fun navigateToDetailTheir() = navController.navigateSearchDetail(navOptions = singleTopOptions)
 
     fun popBackStack() {
         navController.popBackStack()

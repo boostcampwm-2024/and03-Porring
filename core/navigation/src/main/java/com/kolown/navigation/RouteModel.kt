@@ -1,6 +1,5 @@
 package com.kolown.navigation
 
-import com.kolown.model.PostContentModel
 import com.kolown.model.UploadModel
 import kotlinx.serialization.Serializable
 
@@ -19,6 +18,12 @@ sealed interface Route {
 
     @Serializable
     data object DetailSearch : Route
+
+    @Serializable
+    data object DetailMy : Route
+
+    @Serializable
+    data object DetailTheir : Route
 }
 
 sealed interface MainMenuRoute : Route {

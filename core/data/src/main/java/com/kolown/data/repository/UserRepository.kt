@@ -10,6 +10,7 @@ interface UserRepository {
     suspend fun createUserData(): Result<Unit>
     fun checkUserId(authorId: String): Boolean
     suspend fun getLatestUserEmail(): Flow<String>
+    fun getUserData(): Result<String>
 }
 
 class UserRepositoryImpl @Inject constructor(
@@ -31,5 +32,11 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun getLatestUserEmail(): Flow<String> {
         return localUserDataSource.getUserEmail(authDataSource.getUserId())
+    }
+
+    override fun getUserData(): Result<String> {
+        return runCatching {
+            authDataSource.getUserId()
+        }
     }
 }

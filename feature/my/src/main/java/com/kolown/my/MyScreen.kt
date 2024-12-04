@@ -47,6 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -67,10 +68,12 @@ internal fun MyRoute(
     isLoggedIn: Boolean,
     navigateToLogin: () -> Unit,
     navigateToSetting: () -> Unit,
+    navigateToDetailMy: () -> Unit,
     padding: PaddingValues = PaddingValues(),
     viewModel: MyViewModel = hiltViewModel(),
 ) {
     val pagingItems = viewModel.galleryFlow.collectAsLazyPagingItems()
+    val isDeleteSuccess by viewModel.isDeleteSuccess.collectAsStateWithLifecycle(null)
     val listState = rememberLazyStaggeredGridState()
     var isRefreshing by remember { mutableStateOf(false) }
     val refreshState = rememberPullToRefreshState()
@@ -83,6 +86,15 @@ internal fun MyRoute(
         else LinearOutSlowInEasing.transform(refreshState.distanceFraction).coerceIn(0f, 1f)
     }
 
+    LaunchedEffect(isDeleteSuccess) {
+        Log.e("isDeleteSuccess", "$isDeleteSuccess")
+        isDeleteSuccess?.let { isSuccess ->
+            if(isSuccess) {
+                Log.e("isDeleteSuccess", "$isDeleteSuccess")
+                pagingItems.refresh()
+            }
+        }
+    }
     LaunchedEffect(pagingItems.loadState) {
         isRefreshing = false
     }
@@ -92,10 +104,12 @@ internal fun MyRoute(
 
     if (isLoggedIn) {
         LaunchedEffect(Unit) {
-            viewModel.resetGalleryFlow()
+            viewModel.setUserId()
         }
         MyScreen(
             navigateToSetting = navigateToSetting,
+            navigateToDetailMy = navigateToDetailMy,
+            setPage = viewModel::setPage,
             padding = padding,
             listState = listState,
             pagingItems = pagingItems,
@@ -114,6 +128,8 @@ internal fun MyRoute(
 @Composable
 private fun MyScreen(
     navigateToSetting: () -> Unit = {},
+    navigateToDetailMy: () -> Unit = {},
+    setPage: (Int) -> Unit = {},
     padding: PaddingValues = PaddingValues(),
     listState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
     pagingItems: LazyPagingItems<PostContentModel>,
@@ -151,7 +167,9 @@ private fun MyScreen(
                 listState = listState,
                 pagingItems = pagingItems,
                 width = width,
-                deletePost = deletePost
+                deletePost = deletePost,
+                navigateToDetailMy = navigateToDetailMy,
+                setPage = setPage
             )
             Box(
                 Modifier
@@ -175,6 +193,8 @@ fun StateLazyGrid(
     pagingItems: LazyPagingItems<PostContentModel>,
     width: Dp,
     deletePost: (String) -> Unit,
+    navigateToDetailMy: () -> Unit,
+    setPage: (Int) -> Unit
 ) {
     var showErrorScreen by remember { mutableStateOf(false) }
 
@@ -252,9 +272,15 @@ fun StateLazyGrid(
                         content = {
                             items(pagingItems.itemCount) { index ->
                                 pagingItems[index]?.let {
-                                    GalleryItem(it, width) {
-                                        deletePost(it.postId)
-                                    }
+                                    GalleryItem(
+                                        postContentModel = it,
+                                        width = width,
+                                        onLongClickImage = { deletePost(it.postId) },
+                                        onClickImage = {
+                                            setPage(index)
+                                            navigateToDetailMy()
+                                        },
+                                    )
                                 }
                             }
 

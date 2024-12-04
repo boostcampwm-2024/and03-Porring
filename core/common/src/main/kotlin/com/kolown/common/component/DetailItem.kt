@@ -58,6 +58,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
@@ -91,7 +92,7 @@ fun DetailItem(
     updatePage: () -> Unit,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-    followerState: State<Pair<String, Boolean>?>,
+    followerState: State<Pair<String, Boolean>?> = mutableStateOf(null),
     checkPostIsMine: (String) -> Boolean = { _ -> false },
     updateFollow: (String) -> Unit = {}
 ) {
@@ -248,7 +249,9 @@ private fun ReelsContent(
                     }
 
                     Text(
-                        text = tags, style = MaterialTheme.typography.labelLarge, color = Gray
+                        text = tags,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = Gray
                     )
                 }
 
@@ -257,18 +260,24 @@ private fun ReelsContent(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(imageVector = if (imageItem.myReaction == null) Icons.Outlined.FavoriteBorder else Icons.Default.Favorite,
-                        tint = PrimaryDark,
-                        contentDescription = "",
-                        modifier = Modifier.clickable {
-                            if (isLoggedIn) isReactionVisible.value = true
-                            else onShowLoginSnackBar()
-                        })
+                    if (!checkPostIsMine(imageItem.authorId)) {
+                        Icon(
+                            imageVector = if (imageItem.myReaction == null) {
+                                Icons.Outlined.FavoriteBorder
+                            } else {
+                                Icons.Default.Favorite
+                            },
+                            tint = PrimaryDark,
+                            contentDescription = stringResource(R.string.string_reaction_button),
+                            modifier = Modifier.clickable {
+                                if (isLoggedIn) isReactionVisible.value = true
+                                else onShowLoginSnackBar()
+                            }
+                        )
 
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        if (!checkPostIsMine(imageItem.authorId)) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
                             DetailButton(
                                 onClick = {
                                     if (isLoggedIn) {
@@ -287,15 +296,15 @@ private fun ReelsContent(
                                 contentColor = if (isFollowed.value) PrimaryContainerDark else PrimaryDark,
                                 backgroundColor = if (isFollowed.value) PrimaryDark else PrimaryContainerDark
                             )
+                            DetailButton(
+                                onClick = {
+                                    navigateToTheir(imageItem.authorId)
+                                    updatePage()
+                                },
+                                id = R.drawable.ic_detail_gallary,
+                                buttonText = "갤러리"
+                            )
                         }
-                        DetailButton(
-                            onClick = {
-                                navigateToTheir(imageItem.authorId)
-                                updatePage()
-                            },
-                            id = R.drawable.ic_detail_gallary,
-                            buttonText = "갤러리"
-                        )
                     }
                 }
             }
@@ -405,7 +414,6 @@ private fun DetailButton(
 }
 
 private fun requestFullScreen(view: View) {
-
     val window = view.context.getActivity()!!.window
     val insetController = WindowCompat.getInsetsController(window, view)
     insetController.systemBarsBehavior =
@@ -416,7 +424,6 @@ private fun requestFullScreen(view: View) {
 }
 
 private fun showSystembar(view: View) {
-    // !! should be safe here since the view is part of an Activity
     val window = view.context.getActivity()!!.window
     val insetController = WindowCompat.getInsetsController(window, view)
     insetController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
@@ -425,12 +432,8 @@ private fun showSystembar(view: View) {
     )
 }
 
-
 private fun Context.getActivity(): Activity? = when (this) {
     is Activity -> this
     is ContextWrapper -> baseContext.getActivity()
     else -> null
 }
-
-
-

@@ -1,15 +1,15 @@
 package com.kolown.my
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import androidx.paging.filter
 import com.kolown.data.repository.PostRepository
+import com.kolown.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -20,16 +20,32 @@ import javax.inject.Inject
 @HiltViewModel
 class MyViewModel @Inject constructor(
     private val postRepository: PostRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
-    private val deletedPostIds = MutableStateFlow<Set<String>>(emptySet())
-    private val trigger = MutableStateFlow(0)
+    private var _firstPage = 0
+    val firstPage get() = _firstPage
 
-    val galleryFlow = trigger.flatMapLatest { key ->
-        combine(
-            postRepository.getUserPosts().cachedIn(viewModelScope),
-            deletedPostIds
-        ) { pagingData, deletedIds ->
-            pagingData.filter { post -> post.postId !in deletedIds }
+    private val currentUserId = MutableStateFlow("")
+
+    private val _isDeleteSuccess = MutableSharedFlow<Boolean>()
+    val isDeleteSuccess = _isDeleteSuccess.asSharedFlow()
+
+    val galleryFlow = currentUserId.flatMapLatest {
+        postRepository.getUserPosts().cachedIn(viewModelScope)
+    }.cachedIn(viewModelScope)
+
+    init {
+        setUserId()
+    }
+
+    fun setPage(page: Int) {
+        _firstPage = page
+    }
+
+    fun setUserId() {
+        val newId = userRepository.getUserData().getOrThrow()
+        if(currentUserId.value != newId) {
+            currentUserId.update { newId }
         }
     }
 
@@ -37,17 +53,12 @@ class MyViewModel @Inject constructor(
         viewModelScope.launch {
             postRepository.deletePost(postId)
                 .onEach {
-                    deletedPostIds.update { deletedPostIds.value + postId }
+                    _isDeleteSuccess.emit(true)
                 }
                 .catch {
-                    Log.e("GalleryItem", "deletePost error: $it")
+                    _isDeleteSuccess.emit(false)
                 }
                 .launchIn(viewModelScope)
         }
-    }
-
-    fun resetGalleryFlow() {
-        deletedPostIds.value = emptySet()
-        trigger.value++
     }
 }
