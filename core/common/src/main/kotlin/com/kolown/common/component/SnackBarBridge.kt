@@ -1,15 +1,15 @@
 package com.kolown.common.component
 
-import com.kolown.model.SnackBarData
+import com.kolown.model.SnackBarEvent
 
 class SnackBarBridge(
-    private val onSnackBarDataAdded: (SnackBarData) -> Unit
+    private val onSnackBarDataAdded: (SnackBarEvent) -> Unit
 ) {
-    fun postSnackBarData(data: SnackBarData) {
-        onSnackBarDataAdded(data)
+    fun postSnackBarEvent(event: SnackBarEvent) {
+        onSnackBarDataAdded(event)
     }
 
     fun postSnackBarString(message: String) {
-        onSnackBarDataAdded(SnackBarData.Message(message, null))
+        onSnackBarDataAdded(SnackBarEvent.Message(message, null))
     }
 }

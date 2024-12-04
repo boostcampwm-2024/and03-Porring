@@ -3,7 +3,6 @@ package com.kolown.common.component
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
-import android.util.Log
 import android.view.View
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
@@ -73,10 +72,9 @@ import com.kolown.designsystem.ui.theme.PrimaryContainerDark
 import com.kolown.designsystem.ui.theme.PrimaryDark
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import com.kolown.model.SnackBarData
+import com.kolown.model.SnackBarEvent
 
 
 @Composable
@@ -273,7 +271,7 @@ private fun ReelsContent(
                             contentDescription = stringResource(R.string.string_reaction_button),
                             modifier = Modifier.clickable {
                                 if (isLoggedIn) isReactionVisible.value = true
-                                else snackBarBridge.postSnackBarData(SnackBarData.LoginRequired())
+                                else snackBarBridge.postSnackBarEvent(SnackBarEvent.LoginRequired())
                             }
                         )
 
@@ -291,7 +289,7 @@ private fun ReelsContent(
                                                 isFollowDialogVisible.value = true
                                             }
                                         } else {
-                                            snackBarBridge.postSnackBarData(SnackBarData.LoginRequired())
+                                            snackBarBridge.postSnackBarEvent(SnackBarEvent.LoginRequired())
                                         }
                                     },
                                     id = R.drawable.ic_detail_follow,

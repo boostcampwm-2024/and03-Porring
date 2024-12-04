@@ -2,7 +2,6 @@ package com.kolown.home.component
 
 import IconFollow
 import IconGallery
-import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -52,7 +51,7 @@ import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.home.R
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
-import com.kolown.model.SnackBarData
+import com.kolown.model.SnackBarEvent
 
 @Composable
 internal fun RandomImageList(
@@ -179,7 +178,7 @@ private fun ImageCard(
                             isFollowDialogVisible = true
                         }
                     } else {
-                        snackBarBridge.postSnackBarData(SnackBarData.LoginRequired())
+                        snackBarBridge.postSnackBarEvent(SnackBarEvent.LoginRequired())
                     }
                 }
             )
@@ -201,8 +200,8 @@ private fun ImageCard(
                 .padding(16.dp),
             onClick = {
                 if (isLoggedIn) onChangeReactionDialogVisibility()
-                else snackBarBridge.postSnackBarData(
-                    SnackBarData.LoginRequired()
+                else snackBarBridge.postSnackBarEvent(
+                    SnackBarEvent.LoginRequired()
                 )
             },
         ) {

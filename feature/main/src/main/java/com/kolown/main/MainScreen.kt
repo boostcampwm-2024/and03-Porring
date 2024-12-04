@@ -1,8 +1,5 @@
 package com.kolown.main
 
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -36,7 +33,7 @@ import com.kolown.main.navigation.rememberMainNavigator
 import com.kolown.model.InitUiState
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
-import com.kolown.model.SnackBarData
+import com.kolown.model.SnackBarEvent
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -63,7 +60,7 @@ internal fun MainScreen(
     LaunchedEffect(Unit) {
         mainViewModel.snackBarFlow.collect {
             when (it) {
-                is SnackBarData.LoginRequired -> {
+                is SnackBarEvent.LoginRequired -> {
                     snackBarHostState.showSnackBarWithData(it).let { result ->
                         if (result == SnackbarResult.ActionPerformed) {
                             if (!isLoggedIn) navigator.navigateToLogin()
@@ -72,7 +69,7 @@ internal fun MainScreen(
 
                 }
 
-                is SnackBarData.Message -> {
+                is SnackBarEvent.Message -> {
                     snackBarHostState.showSnackBarWithData(it)
                 }
             }

@@ -28,7 +28,7 @@ import com.kolown.common.component.LocalSnackBarBridge
 import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.designsystem.ui.theme.PrimaryUnActive
 import com.kolown.main.navigation.MainMenu
-import com.kolown.model.SnackBarData
+import com.kolown.model.SnackBarEvent
 import com.kolown.navigation.MainMenuRoute
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
@@ -63,7 +63,7 @@ internal fun MainBottomBar(
                     selected = menu == currentMenu,
                     onClick = {
                         if (menu.route == MainMenuRoute.Camera && isLoggedIn.not()) {
-                            snackBarBridge.postSnackBarData(SnackBarData.LoginRequired())
+                            snackBarBridge.postSnackBarEvent(SnackBarEvent.LoginRequired())
                         } else {
                             onMenuSelected(menu)
                         }
