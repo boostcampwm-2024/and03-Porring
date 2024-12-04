@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kolown.common.component.DetailItem
+import com.kolown.designsystem.ui.theme.PrimaryContainerDark
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.search.component.DetailTopAppBar
@@ -84,7 +85,7 @@ fun DetailSearchScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xff151D37))
+            .background(PrimaryContainerDark)
             .padding(padding)
     ) {
 

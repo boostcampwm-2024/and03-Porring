@@ -16,6 +16,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
+import com.kolown.designsystem.ui.theme.ShimmerDarkGray
+import com.kolown.designsystem.ui.theme.ShimmerLightGray
 
 internal fun Modifier.shimmerEffect(): Modifier = composed {
     var size by remember {
@@ -34,9 +36,9 @@ internal fun Modifier.shimmerEffect(): Modifier = composed {
     background(
         brush = Brush.linearGradient(
             colors = listOf(
-                Color(0xFFB8B5B5),
-                Color(0xFF8F8B8B),
-                Color(0xFFB8B5B5)
+                ShimmerLightGray,
+                ShimmerDarkGray,
+                ShimmerLightGray
             ),
             start = Offset(startOffsetX, 0f),
             end = Offset(startOffsetX + size.width.toFloat(), size.height.toFloat())

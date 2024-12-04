@@ -58,6 +58,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.kolown.common.component.RestrictedLoginContent
 import com.kolown.designsystem.component.PorringCenterAlignTopAppBar
+import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.follower.component.PageItemFooter
 import com.kolown.model.FollowerThumbnail
 import kotlinx.coroutines.delay
@@ -224,7 +225,7 @@ internal fun FollowContent(
         ) {
             Text(
                 text = followerName,
-                color = Color(0xFF598AFF),
+                color = Primary,
                 style = MaterialTheme.typography.titleLarge
             )
             Spacer(modifier = Modifier.width(10.dp))
