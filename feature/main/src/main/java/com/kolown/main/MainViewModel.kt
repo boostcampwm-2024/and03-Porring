@@ -1,9 +1,12 @@
 package com.kolown.main
 
+import android.content.Context
+import android.net.http.NetworkException
 import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kolown.common.component.NetworkStateManager
 import com.kolown.data.repository.AuthRepository
 import com.kolown.data.repository.PostRepository
 import com.kolown.model.InitUiState
@@ -11,6 +14,7 @@ import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.model.UploadModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,6 +31,11 @@ class MainViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val postRepository: PostRepository,
 ) : ViewModel() {
+
+    @Inject
+    @ApplicationContext
+    lateinit var appContext: Context
+
     private var _loginState = MutableStateFlow(false)
     val loginState = _loginState.asStateFlow()
 
@@ -65,6 +74,13 @@ class MainViewModel @Inject constructor(
                     categoryItems = categoryItems
                 )
             }
+            //네트워크 체크
+            if (!NetworkStateManager.checkNetworkState(appContext)) {
+                _uploadUiState.update { InitUiState.Failure(Exception()) }
+                return@launch
+            }
+
+
 
             _uploadUiState.value = InitUiState.Loading
             postRepository.uploadPost(
