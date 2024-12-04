@@ -1,6 +1,7 @@
 package com.kolown.my
 
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,19 +33,24 @@ internal fun DetailMyRoute(
 
     val searchResultPost = viewModel.galleryFlow.collectAsLazyPagingItems()
     var isReelsMode by remember { mutableStateOf(true) }
-
-    val pagerState =
-        rememberPagerState(initialPage = viewModel.firstPage) { searchResultPost.itemCount }
+    val pagerState = rememberPagerState(initialPage = viewModel.firstPage) { searchResultPost.itemCount }
+    var blockDoubleTab by remember { mutableStateOf(false) }
 
     DetailMyScreen(
         padding = padding,
         pagingItems = searchResultPost,
         popBackStack = popBackStack,
+        blockDoubleTab = blockDoubleTab,
         isReelsMode = isReelsMode,
         onChangeReelsMode = { isReelsMode = it },
         pagerState = pagerState,
         onShowLoginSnackBar = onShowLoginSnackBar
     )
+
+    BackHandler(enabled = true) {
+        blockDoubleTab = true
+        popBackStack()
+    }
 }
 
 @Composable
@@ -53,6 +59,7 @@ fun DetailMyScreen(
     isReelsMode: Boolean = true,
     pagingItems: LazyPagingItems<PostContentModel>,
     pagerState: PagerState,
+    blockDoubleTab: Boolean = false,
     padding: PaddingValues = PaddingValues(),
     updatePage: (Int) -> Unit = {},
     onChangeReelsMode: (Boolean) -> Unit,
@@ -70,6 +77,7 @@ fun DetailMyScreen(
             onChangeReelsMode = onChangeReelsMode,
             pagingItems = pagingItems,
             pagerState = pagerState,
+            blockDoubleTab = blockDoubleTab,
             updatePage = updatePage,
             onShowLoginSnackBar = onShowLoginSnackBar,
         )
@@ -90,6 +98,7 @@ fun DetailContent(
     pagingItems: LazyPagingItems<PostContentModel>,
     pagerState: PagerState,
     updatePage: (Int) -> Unit,
+    blockDoubleTab:Boolean = false,
     onShowLoginSnackBar: () -> Unit,
     checkPostIsMine: (String) -> Boolean = { _ -> true }
 ) {
@@ -107,6 +116,7 @@ fun DetailContent(
             isReelsMode = isReelsMode,
             onChangeReelsMode = onChangeReelsMode,
             imageItem = imageItem,
+            isPopBackStack = blockDoubleTab,
             navigateToTheir = {},
             updatePage = {
                 updatePage(pagerState.currentPage)

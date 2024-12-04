@@ -180,7 +180,7 @@ private fun ReelsContent(
                 Modifier
                     .fillMaxWidth()
                     .aspectRatio(4f / 5f)
-            else Modifier
+            else Modifier 
                 .fillMaxWidth()
                 .aspectRatio(4f / 5f)
                 .shimmerEffect()
