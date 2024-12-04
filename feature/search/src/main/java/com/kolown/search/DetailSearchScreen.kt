@@ -123,7 +123,7 @@ fun DetailContent(
     updatePage: (Int) -> Unit,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
-    followerState: State<Pair<String, Boolean>?>,
+    followerState: State<Pair<String, Boolean>?> = mutableStateOf(null),
     isLoggedIn: Boolean,
     onShowLoginSnackBar: () -> Unit,
     checkPostIsMine: (String) -> Boolean = { _ -> false}
