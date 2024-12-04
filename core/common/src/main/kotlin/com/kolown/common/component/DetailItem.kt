@@ -76,6 +76,7 @@ import com.kolown.model.Reactions
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.kolown.model.SnackBarData
 
 
 @Composable
@@ -83,7 +84,6 @@ fun DetailItem(
     isLoggedIn: Boolean,
     isReelsMode: Boolean,
     isButtonGroupNeed: Boolean = true,
-    onShowLoginSnackBar: () -> Unit,
     isPopBackStack: Boolean = false,
     onChangeReelsMode: (Boolean) -> Unit,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
@@ -103,7 +103,6 @@ fun DetailItem(
             ReelsContent(
                 isLoggedIn = isLoggedIn,
                 isButtonGroupNeed = isButtonGroupNeed,
-                onShowLoginSnackBar = onShowLoginSnackBar,
                 updateMainPostReaction = updateMainPostReaction,
                 onSelectReaction = onSelectReaction,
                 imageItem = imageItem,
@@ -137,7 +136,6 @@ fun DetailItem(
 private fun ReelsContent(
     isLoggedIn: Boolean,
     isButtonGroupNeed: Boolean,
-    onShowLoginSnackBar: () -> Unit,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
@@ -157,6 +155,8 @@ private fun ReelsContent(
     val isFollowed = rememberSaveable { mutableStateOf(imageItem.isFollower) }
     val isLoading = remember { mutableStateOf(true) }
     val coroutineScope = rememberCoroutineScope()
+
+    val snackBarBridge = LocalSnackBarBridge.current
 
     LaunchedEffect(followerState.value) {
         followerState.value?.let { pair ->
@@ -273,7 +273,7 @@ private fun ReelsContent(
                             contentDescription = stringResource(R.string.string_reaction_button),
                             modifier = Modifier.clickable {
                                 if (isLoggedIn) isReactionVisible.value = true
-                                else onShowLoginSnackBar()
+                                else snackBarBridge.postSnackBarData(SnackBarData.LoginRequired())
                             }
                         )
 
@@ -291,7 +291,7 @@ private fun ReelsContent(
                                                 isFollowDialogVisible.value = true
                                             }
                                         } else {
-                                            onShowLoginSnackBar()
+                                            snackBarBridge.postSnackBarData(SnackBarData.LoginRequired())
                                         }
                                     },
                                     id = R.drawable.ic_detail_follow,

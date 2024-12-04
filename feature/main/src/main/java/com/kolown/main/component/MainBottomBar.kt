@@ -24,9 +24,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kolown.common.component.LocalSnackBarBridge
 import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.designsystem.ui.theme.PrimaryUnActive
 import com.kolown.main.navigation.MainMenu
+import com.kolown.model.SnackBarData
 import com.kolown.navigation.MainMenuRoute
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
@@ -34,13 +36,16 @@ import kotlinx.collections.immutable.toPersistentList
 @Composable
 internal fun MainBottomBar(
     isLoggedIn: Boolean = false,
-    onShowLoginSnackBar: () -> Unit = {},
+    
     modifier: Modifier = Modifier,
     visible: Boolean,
     menus: PersistentList<MainMenu>,
     currentMenu: MainMenu?,
     onMenuSelected: (MainMenu) -> Unit,
 ) {
+
+    val snackBarBridge = LocalSnackBarBridge.current
+
     AnimatedVisibility(
         visible = visible,
         enter = EnterTransition.None,
@@ -58,7 +63,7 @@ internal fun MainBottomBar(
                     selected = menu == currentMenu,
                     onClick = {
                         if (menu.route == MainMenuRoute.Camera && isLoggedIn.not()) {
-                            onShowLoginSnackBar()
+                            snackBarBridge.postSnackBarData(SnackBarData.LoginRequired())
                         } else {
                             onMenuSelected(menu)
                         }
@@ -112,10 +117,10 @@ private fun RowScope.MainBottomBarItem(
 @Preview(showBackground = true)
 @Composable
 private fun PreviewMainBottomBar() {
-        MainBottomBar(
-            visible = true,
-            menus = MainMenu.entries.toPersistentList(),
-            currentMenu = MainMenu.HOME,
-            onMenuSelected = {}
-        )
+    MainBottomBar(
+        visible = true,
+        menus = MainMenu.entries.toPersistentList(),
+        currentMenu = MainMenu.HOME,
+        onMenuSelected = {}
+    )
 }

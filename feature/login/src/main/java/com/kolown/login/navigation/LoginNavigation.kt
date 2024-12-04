@@ -15,7 +15,6 @@ fun NavController.navigateLogin(navOptions: NavOptions) {
 fun NavGraphBuilder.loginNavGraph(
     updateLoginState: () -> Unit,
     popBackStack: () -> Unit,
-    onShowSnackBar: (String) -> Unit,
     navigateToJoin: () -> Unit,
     padding: PaddingValues,
 ) {
@@ -23,7 +22,6 @@ fun NavGraphBuilder.loginNavGraph(
         LoginRoute(
             updateLoginState = updateLoginState,
             popBackStack = popBackStack,
-            onShowSnackBar = onShowSnackBar,
             navigateToJoin = navigateToJoin,
             padding = padding,
         )

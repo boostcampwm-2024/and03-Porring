@@ -1,6 +1,7 @@
 package com.kolown.main
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -35,6 +36,7 @@ import com.kolown.main.navigation.rememberMainNavigator
 import com.kolown.model.InitUiState
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
+import com.kolown.model.SnackBarData
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -57,15 +59,24 @@ internal fun MainScreen(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    val onShowSnackBar: (String) -> Unit = { msg ->
-        lifecycleScope.launch { snackBarHostState.showSnackbar(msg) }
-    }
 
     LaunchedEffect(Unit) {
         mainViewModel.snackBarFlow.collect {
-            snackBarHostState.showSnackBarWithData(it).let { result ->
+            when (it) {
+                is SnackBarData.LoginRequired -> {
+                    snackBarHostState.showSnackBarWithData(it).let { result ->
+                        if (result == SnackbarResult.ActionPerformed) {
+                            if (!isLoggedIn) navigator.navigateToLogin()
+                        }
+                    }
 
+                }
+
+                is SnackBarData.Message -> {
+                    snackBarHostState.showSnackBarWithData(it)
+                }
             }
+
         }
     }
 
@@ -134,8 +145,7 @@ internal fun MainScreen(
         mainItems = mainItems,
         detailFirstItem = detailFirstItem,
         isLoggedIn = isLoggedIn,
-        onShowSnackBar = onShowSnackBar,
-        onShowLoginSnackBar = onShowLoginSnackBar,
+
         snackBarHostState = snackBarHostState,
         onSelectReaction = mainViewModel::selectReaction,
         fetchDetailFirst = mainViewModel::fetchDetailFirst,
@@ -146,7 +156,7 @@ internal fun MainScreen(
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
+//@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun MainScreenContent(
     modifier: Modifier = Modifier,
@@ -157,8 +167,6 @@ private fun MainScreenContent(
     detailFirstItem: PostContentModel,
     updateLoginState: () -> Unit,
     updateMainItems: () -> Unit,
-    onShowLoginSnackBar: () -> Unit,
-    onShowSnackBar: (String) -> Unit,
     updateFollow: (String) -> Unit,
     uploadPost: (String, String, List<String>) -> Unit,
     fetchDetailFirst: (PostContentModel) -> Unit,
@@ -171,8 +179,6 @@ private fun MainScreenContent(
             MainNavHost(
                 mainItems = mainItems,
                 onSelectReaction = onSelectReaction,
-                onShowSnackBar = onShowSnackBar,
-                onShowLoginSnackBar = onShowLoginSnackBar,
                 detailFirstItem = detailFirstItem,
                 fetchDetailFirst = fetchDetailFirst,
                 isLoggedIn = isLoggedIn,
@@ -187,7 +193,7 @@ private fun MainScreenContent(
         bottomBar = {
             MainBottomBar(
                 isLoggedIn = isLoggedIn,
-                onShowLoginSnackBar = onShowLoginSnackBar,
+
                 modifier = Modifier
                     .navigationBarsPadding()
                     .padding(top = 12.dp, bottom = 16.dp),

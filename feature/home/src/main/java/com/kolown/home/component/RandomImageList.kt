@@ -47,16 +47,18 @@ import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import com.kolown.common.component.FollowDialog
+import com.kolown.common.component.LocalSnackBarBridge
 import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.home.R
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
+import com.kolown.model.SnackBarData
 
 @Composable
 internal fun RandomImageList(
     modifier: Modifier = Modifier,
     isLoggedIn: Boolean = false,
-    onShowLoginSnackBar: () -> Unit = {},
+
     pagerState: PagerState = rememberPagerState(pageCount = { 10 }),
     imageItems: List<PostContentModel> = emptyList(),
     isReactionDialogVisible: Boolean = false,
@@ -77,7 +79,7 @@ internal fun RandomImageList(
         ) {
             ImageCard(
                 isLoggedIn = isLoggedIn,
-                onShowLoginSnackBar = onShowLoginSnackBar,
+
                 imageItem = imageItems[page],
                 isReactionDialogVisible = isReactionDialogVisible,
                 onFollowClick = onFollowClick,
@@ -100,7 +102,7 @@ internal fun RandomImageList(
 @Composable
 private fun ImageCard(
     isLoggedIn: Boolean,
-    onShowLoginSnackBar: () -> Unit,
+
     imageItem: PostContentModel,
     isReactionDialogVisible: Boolean,
     onFollowClick: (String, String) -> Unit,
@@ -116,6 +118,9 @@ private fun ImageCard(
     var isFollowDialogVisible by remember { mutableStateOf(false) }
     var isFirstRenderer by remember { mutableStateOf(true) }
     val sizeAnimation = remember { Animatable(1f) }
+
+    val snackBarBridge = LocalSnackBarBridge.current
+
 
     LaunchedEffect(imageItem.myReaction) {
         if (!isFirstRenderer) {
@@ -174,8 +179,7 @@ private fun ImageCard(
                             isFollowDialogVisible = true
                         }
                     } else {
-                        Log.e("test","나 여깄다... 허어...")
-                        onShowLoginSnackBar()
+                        snackBarBridge.postSnackBarData(SnackBarData.LoginRequired())
                     }
                 }
             )
@@ -195,7 +199,12 @@ private fun ImageCard(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(16.dp),
-            onClick = if (isLoggedIn) onChangeReactionDialogVisibility else onShowLoginSnackBar,
+            onClick = {
+                if (isLoggedIn) onChangeReactionDialogVisibility()
+                else snackBarBridge.postSnackBarData(
+                    SnackBarData.LoginRequired()
+                )
+            },
         ) {
             Icon(
                 modifier = Modifier.size(30.dp * sizeAnimation.value),

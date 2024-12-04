@@ -28,13 +28,12 @@ import com.kolown.their.navigation.theirNavGraph
 import com.kolown.upload.navigation.uploadNavGraph
 import kotlinx.coroutines.flow.Flow
 
-@RequiresApi(Build.VERSION_CODES.O)
+//@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 internal fun MainNavHost(
     mainItems: Flow<List<PostContentModel>>,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
-    onShowSnackBar: (String) -> Unit,
-    onShowLoginSnackBar: () -> Unit,
+
     detailFirstItem: PostContentModel,
     fetchDetailFirst: (PostContentModel) -> Unit,
     updateFollow: (String) -> Unit,
@@ -57,7 +56,7 @@ internal fun MainNavHost(
         ) {
             homeNavGraph(
                 isLoggedIn = isLoggedIn,
-                onShowLoginSnackBar = onShowLoginSnackBar,
+                
                 mainItems = mainItems,
                 onSelectReaction = onSelectReaction,
                 fetchDetailFirst = fetchDetailFirst,
@@ -70,7 +69,7 @@ internal fun MainNavHost(
 
             searchNavGraph(
                 isLoggedIn = isLoggedIn,
-                onShowLoginSnackBar = onShowLoginSnackBar,
+                
                 padding = padding,
                 navigateToTheir = { id ->
                     navigator.navigateToTheir(id)
@@ -110,7 +109,7 @@ internal fun MainNavHost(
 
             detailNavGraph(
                 isLoggedIn = isLoggedIn,
-                onShowLoginSnackBar = onShowLoginSnackBar,
+                
                 detailFirstItem = detailFirstItem,
                 updateMainPostReaction = onSelectReaction,
                 updateFollow = updateFollow,
@@ -128,7 +127,6 @@ internal fun MainNavHost(
             loginNavGraph(
                 updateLoginState = updateLoginState,
                 popBackStack = navigator::popBackStack,
-                onShowSnackBar = onShowSnackBar,
                 navigateToJoin = navigator::navigateToJoin,
                 padding = padding
             )
@@ -147,7 +145,6 @@ internal fun MainNavHost(
             )
 
             joinNavGraph(
-                onShowSnackBar = onShowSnackBar,
                 popBackStack = navigator::popBackStack,
                 padding = padding
             )

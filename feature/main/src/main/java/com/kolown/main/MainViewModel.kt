@@ -57,9 +57,9 @@ class MainViewModel @Inject constructor(
     val detailFirstItem = _detailFirstItem.asStateFlow()
 
     private val _snackBarFlow = MutableSharedFlow<SnackBarData>(
-//        replay = 0,
-//        extraBufferCapacity = 4,
-//        onBufferOverflow = BufferOverflow.DROP_OLDEST
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
     val snackBarFlow = _snackBarFlow.asSharedFlow()
 
