@@ -75,7 +75,7 @@ internal fun HomeRoute(
 
     LaunchedEffect(uiState) {
         if (uiState is UiState.Loading) {
-            delay(5000)
+            delay(7000)
             showErrorScreen = true
         } else {
             showErrorScreen = false
@@ -130,7 +130,8 @@ internal fun HomeRoute(
                     navigateToDetail = navigateToDetail,
                     updateMainItems = updateMainItems,
                     isRefreshing = isRefreshing,
-                    updateRefreshing = { isRefreshing = it }
+                    updateRefreshing = { isRefreshing = it },
+                    changeLoading = viewModel::changeLoading
                 )
             }
         }
@@ -151,13 +152,15 @@ private fun HomeScreen(
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     fetchDetailFirst: (PostContentModel) -> Unit = {},
     navigateToDetail: () -> Unit = {},
-    updateMainItems: () -> Unit = {}
+    updateMainItems: () -> Unit = {},
+    changeLoading: () -> Unit = {},
 ) {
     val pagerState = rememberPagerState(pageCount = { mainFeedImages.size })
     var isReactionDialogVisible by remember { mutableStateOf(false) }
     val refreshState = rememberPullToRefreshState()
     val onRefresh: () -> Unit = {
         updateRefreshing(true)
+        changeLoading()
         updateMainItems()
     }
     val scaleFraction = {

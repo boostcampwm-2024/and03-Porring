@@ -27,6 +27,10 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState<List<PostContentModel>>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
+    fun changeLoading() {
+        _uiState.update { UiState.Loading }
+    }
+
     fun followUser(id: String, name: String) {
         followRepository.followUser(id, name)
             .catch { Log.e("FollowUpload", "viewModel: $it") }
@@ -54,13 +58,25 @@ class HomeViewModel @Inject constructor(
     }
 
     fun updateItems(result: Flow<List<PostContentModel>>) {
+        if (uiState.value is UiState.Success) {
+            result.onEach { new ->
+                if (uiState.value is UiState.Success) {
+                    val old = (uiState.value as UiState.Success<List<PostContentModel>>).data
+
+                    if (new != old) fetchNewPosts(result)
+                }
+            }.launchIn(viewModelScope)
+        } else {
+            fetchNewPosts(result)
+        }
+    }
+
+    private fun fetchNewPosts(result: Flow<List<PostContentModel>>) {
         _uiState.update { UiState.Loading }
-        result
-            .onEach { items ->
-                _uiState.update { UiState.Success(items.toList()) }
-            }.catch { e ->
-                _uiState.update { UiState.Failure(e) }
-            }
-            .launchIn(viewModelScope)
+        result.onEach { items ->
+            _uiState.update { UiState.Success(items.toList()) }
+        }.catch { e ->
+            _uiState.update { UiState.Failure(e) }
+        }.launchIn(viewModelScope)
     }
 }
