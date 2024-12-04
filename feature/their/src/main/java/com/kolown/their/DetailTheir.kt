@@ -1,6 +1,7 @@
 package com.kolown.their
 
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,23 +31,29 @@ internal fun DetailTheirRoute(
     onShowLoginSnackBar: () -> Unit,
     viewModel: TheirViewModel
 ) {
-
     val searchResultPost = viewModel.galleryFlow.collectAsLazyPagingItems()
     var isReelsMode by remember { mutableStateOf(true) }
 
     val pagerState =
         rememberPagerState(initialPage = viewModel.firstPage) { searchResultPost.itemCount }
+    var blockDoubleTab by remember { mutableStateOf(false) }
 
     DetailMyScreen(
         padding = padding,
         pagingItems = searchResultPost,
         popBackStack = popBackStack,
         isReelsMode = isReelsMode,
+        blockDoubleTab = blockDoubleTab,
         onChangeReelsMode = { isReelsMode = it },
         pagerState = pagerState,
         onShowLoginSnackBar = onShowLoginSnackBar,
         selectReaction = viewModel::selectReaction,
     )
+
+    BackHandler(enabled = true) {
+        blockDoubleTab = true
+        popBackStack()
+    }
 }
 
 @Composable
@@ -56,6 +63,7 @@ fun DetailMyScreen(
     pagerState: PagerState,
     padding: PaddingValues = PaddingValues(),
     updatePage: (Int) -> Unit = {},
+    blockDoubleTab:Boolean = false,
     onChangeReelsMode: (Boolean) -> Unit,
     onShowLoginSnackBar: () -> Unit,
     popBackStack: () -> Unit = {},
@@ -74,6 +82,7 @@ fun DetailMyScreen(
             pagingItems = pagingItems,
             pagerState = pagerState,
             updatePage = updatePage,
+            blockDoubleTab = blockDoubleTab,
             onShowLoginSnackBar = onShowLoginSnackBar,
             selectReaction = selectReaction
         )
@@ -94,6 +103,7 @@ fun DetailContent(
     pagingItems: LazyPagingItems<PostContentModel>,
     pagerState: PagerState,
     updatePage: (Int) -> Unit,
+    blockDoubleTab:Boolean = false,
     onShowLoginSnackBar: () -> Unit,
     checkPostIsMine: (String) -> Boolean = { _ -> true },
     selectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> }
@@ -114,6 +124,7 @@ fun DetailContent(
             onChangeReelsMode = onChangeReelsMode,
             onSelectReaction = selectReaction,
             imageItem = imageItem,
+            isPopBackStack = blockDoubleTab,
             navigateToTheir = {},
             updatePage = {
                 updatePage(pagerState.currentPage)

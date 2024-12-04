@@ -1,6 +1,7 @@
 package com.kolown.detail
 
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -19,6 +20,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,11 +41,12 @@ import com.kolown.designsystem.ui.theme.BackgroundDark
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.model.UiState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun DetailRoute(
     isLoggedIn: Boolean,
-    
     detailFirstItem: PostContentModel,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     popBackStack: () -> Unit,
@@ -57,6 +60,7 @@ internal fun DetailRoute(
     val currentPage = detailViewModel.currentPage
     val followState = detailViewModel.followState.collectAsStateWithLifecycle(null)
     var isPopBackStack by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     when (val state = uiState.value) {
         is UiState.Idle -> {}
@@ -86,7 +90,14 @@ internal fun DetailRoute(
                 pagingItems = pagingItems,
                 pagerState = pagerState,
                 padding = padding,
-                navigateToTheir = navigateToTheir,
+                navigateToTheir = { id ->
+                    coroutineScope.launch {
+                        isPopBackStack = true
+                        navigateToTheir(id)
+                        delay(300)
+                        isPopBackStack = false
+                    }
+                },
                 updatePage = { page ->
                     detailViewModel.updatePage(page)
                 },
@@ -109,7 +120,6 @@ internal fun DetailRoute(
 @Composable
 private fun DetailScreen(
     isLoggedIn: Boolean = false,
-    
     onChangeReelsMode: (Boolean) -> Unit = {},
     popBackStack: () -> Unit = {},
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
@@ -136,7 +146,6 @@ private fun DetailScreen(
         DetailContent(
             isLoggedIn = isLoggedIn,
             isReelsMode = isReelsMode,
-            
             onChangeReelsMode = onChangeReelsMode,
             updateMainPostReaction = updateMainPostReaction,
             onSelectReaction = onSelectReaction,
@@ -181,7 +190,6 @@ private fun DetailScreen(
 @Composable
 private fun DetailContent(
     isLoggedIn: Boolean,
-    
     onChangeReelsMode: (Boolean) -> Unit,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
