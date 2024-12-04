@@ -1,8 +1,6 @@
 package com.kolown.main
 
 import android.content.Context
-import android.net.http.NetworkException
-import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,7 +10,7 @@ import com.kolown.data.repository.PostRepository
 import com.kolown.model.InitUiState
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
-import com.kolown.model.SnackBarData
+import com.kolown.model.SnackBarEvent
 import com.kolown.model.UploadModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -22,7 +20,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -56,7 +53,7 @@ class MainViewModel @Inject constructor(
         MutableStateFlow(PostContentModel("", "", "", "", "", emptyList(), false, emptyList()))
     val detailFirstItem = _detailFirstItem.asStateFlow()
 
-    private val _snackBarFlow = MutableSharedFlow<SnackBarData>(
+    private val _snackBarFlow = MutableSharedFlow<SnackBarEvent>(
         replay = 0,
         extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
@@ -73,7 +70,7 @@ class MainViewModel @Inject constructor(
     }
 
 
-    fun postSnackBarData(data: SnackBarData) {
+    fun postSnackBarData(data: SnackBarEvent) {
         viewModelScope.launch {
             _snackBarFlow.emit(data)
         }
