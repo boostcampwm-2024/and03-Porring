@@ -21,6 +21,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.kolown.common.component.DetailItem
 import com.kolown.common.component.DetailTopAppBar
 import com.kolown.model.PostContentModel
+import com.kolown.model.Reactions
 
 @Composable
 internal fun DetailTheirRoute(
@@ -43,13 +44,13 @@ internal fun DetailTheirRoute(
         isReelsMode = isReelsMode,
         onChangeReelsMode = { isReelsMode = it },
         pagerState = pagerState,
-        onShowLoginSnackBar = onShowLoginSnackBar
+        onShowLoginSnackBar = onShowLoginSnackBar,
+        selectReaction = viewModel::selectReaction,
     )
 }
 
 @Composable
 fun DetailMyScreen(
-    popBackStack: () -> Unit = {},
     isReelsMode: Boolean = true,
     pagingItems: LazyPagingItems<PostContentModel>,
     pagerState: PagerState,
@@ -57,6 +58,8 @@ fun DetailMyScreen(
     updatePage: (Int) -> Unit = {},
     onChangeReelsMode: (Boolean) -> Unit,
     onShowLoginSnackBar: () -> Unit,
+    popBackStack: () -> Unit = {},
+    selectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> }
 ) {
     Box(
         modifier = Modifier
@@ -72,6 +75,7 @@ fun DetailMyScreen(
             pagerState = pagerState,
             updatePage = updatePage,
             onShowLoginSnackBar = onShowLoginSnackBar,
+            selectReaction = selectReaction
         )
 
         DetailTopAppBar(
@@ -91,7 +95,8 @@ fun DetailContent(
     pagerState: PagerState,
     updatePage: (Int) -> Unit,
     onShowLoginSnackBar: () -> Unit,
-    checkPostIsMine: (String) -> Boolean = { _ -> false }
+    checkPostIsMine: (String) -> Boolean = { _ -> true },
+    selectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> }
 ) {
 
     VerticalPager(
@@ -107,6 +112,7 @@ fun DetailContent(
             isReelsMode = isReelsMode,
             isButtonGroupNeed = false,
             onChangeReelsMode = onChangeReelsMode,
+            onSelectReaction = selectReaction,
             imageItem = imageItem,
             navigateToTheir = {},
             updatePage = {

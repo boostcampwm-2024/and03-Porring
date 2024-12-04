@@ -13,6 +13,7 @@ import com.kolown.designsystem.ui.theme.PorringTheme
 import com.kolown.main.navigation.MainNavigator
 import com.kolown.main.navigation.rememberMainNavigator
 import com.kolown.navigation.MainMenuRoute
+import com.kolown.navigation.Route
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,6 +30,9 @@ class MainActivity : ComponentActivity() {
             isLightBars = when (currentRoute) {
                 MainMenuRoute.Detail.toString() -> false
                 MainMenuRoute.Camera.toString() -> false
+                Route.DetailMy.toString() -> false
+                Route.DetailSearch.toString() -> false
+                Route.DetailTheir.toString() -> false
                 else -> true
             }
 

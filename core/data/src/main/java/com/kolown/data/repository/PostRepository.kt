@@ -54,7 +54,7 @@ class PostRepositoryImpl @Inject constructor(
 
     override fun getUserPosts(userId: String?): Flow<PagingData<PostContentModel>> {
         val authorId = googleAuthDataSource.getUserId()
-        val initialKey = if(userId == null) {
+        val initialKey = if (userId == null) {
             UserPagingKey(0, authorId)
         } else {
             UserPagingKey(0, userId)
@@ -71,6 +71,7 @@ class PostRepositoryImpl @Inject constructor(
                     postDataSource = postDataSource,
                     tagDataSource = tagDataSource,
                     reactionDataSource = reactionDataSource,
+                    googleAuthDataSource = googleAuthDataSource,
                     userId = userId ?: authorId
                 )
             }
@@ -122,64 +123,65 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getRandomPostList(count: Int, randomType: String): Flow<List<PostContentModel>> = flow {
-        val currentUserId = googleAuthDataSource.getUserId()
+    override fun getRandomPostList(count: Int, randomType: String): Flow<List<PostContentModel>> =
+        flow {
+            val currentUserId = googleAuthDataSource.getUserId()
 
-        val posts = postDataSource.getRandomPost(currentUserId, count, randomType).getOrElse {
-            throw IOException("게시물 불러오기 실패")
-        }
-        val (tags, reactions, isFollowers) = coroutineScope {
-            val tagsDeferred = async {
-                posts.map {
-                    async {
-                        tagDataSource.getPostTag(it.postId).getOrElse {
-                            throw IOException("태그 불러오기 실패")
-                        }
-                    }
-                }.awaitAll()
+            val posts = postDataSource.getRandomPost(currentUserId, count, randomType).getOrElse {
+                throw IOException("게시물 불러오기 실패")
             }
-            val reactionsDeferred = async {
-                posts.map {
-                    async {
-                        reactionDataSource.getReactionByPostId(it.postId).getOrElse {
-                            throw IOException("리액션 불러오기 실패")
+            val (tags, reactions, isFollowers) = coroutineScope {
+                val tagsDeferred = async {
+                    posts.map {
+                        async {
+                            tagDataSource.getPostTag(it.postId).getOrElse {
+                                throw IOException("태그 불러오기 실패")
+                            }
                         }
-                    }
-                }.awaitAll()
-            }
-            val followDeferred = async {
-                posts.map {
-                    async {
-                        followDataSource.getIsFollower(
-                            userId = currentUserId,
-                            followerId = it.authorId
-                        ).getOrElse {
-                            throw IOException("팔로우 확인 실패")
+                    }.awaitAll()
+                }
+                val reactionsDeferred = async {
+                    posts.map {
+                        async {
+                            reactionDataSource.getReactionByPostId(it.postId).getOrElse {
+                                throw IOException("리액션 불러오기 실패")
+                            }
                         }
-                    }
-                }.awaitAll()
+                    }.awaitAll()
+                }
+                val followDeferred = async {
+                    posts.map {
+                        async {
+                            followDataSource.getIsFollower(
+                                userId = currentUserId,
+                                followerId = it.authorId
+                            ).getOrElse {
+                                throw IOException("팔로우 확인 실패")
+                            }
+                        }
+                    }.awaitAll()
+                }
+
+                Triple(tagsDeferred.await(), reactionsDeferred.await(), followDeferred.await())
             }
 
-            Triple(tagsDeferred.await(), reactionsDeferred.await(), followDeferred.await())
+            val postContentModels = posts.mapIndexed { index, postModel ->
+                PostContentModel(
+                    postId = postModel.postId,
+                    authorId = postModel.authorId,
+                    imageUrl = postModel.imageUrl,
+                    registerAt = postModel.registerAt,
+                    description = postModel.description,
+                    tags = tags[index].map { it.tagName },
+                    isFollower = isFollowers[index],
+                    reactions = reactions[index].mapNotNull { it.reaction },
+                    myReaction = reactions[index].find { it.userId == currentUserId }?.reaction
+                )
+            }
+            emit(postContentModels)
+        }.catch { e ->
+            throw e
         }
-
-        val postContentModels = posts.mapIndexed { index, postModel ->
-            PostContentModel(
-                postId = postModel.postId,
-                authorId = postModel.authorId,
-                imageUrl = postModel.imageUrl,
-                registerAt = postModel.registerAt,
-                description = postModel.description,
-                tags = tags[index].map { it.tagName },
-                isFollower = isFollowers[index],
-                reactions = reactions[index].mapNotNull { it.reaction },
-                myReaction = reactions[index].find { it.userId == currentUserId }?.reaction
-            )
-        }
-        emit(postContentModels)
-    }.catch { e ->
-        throw e
-    }
 
     override suspend fun getRandomDetailPostList(): Flow<PagingData<PostContentModel>> {
         return Pager(
@@ -216,8 +218,11 @@ class PostRepositoryImpl @Inject constructor(
             config = PagingConfig(pageSize = SEARCH_PER_PAGE, enablePlaceholders = false),
             pagingSourceFactory = {
                 SearchPagingSource(
-                    postDataSource = postDataSource, reactionDataSource = reactionDataSource,
-                    tagId = tagId, tagDataSource = tagDataSource, followerDataSource = followDataSource,
+                    postDataSource = postDataSource,
+                    reactionDataSource = reactionDataSource,
+                    tagId = tagId,
+                    tagDataSource = tagDataSource,
+                    followerDataSource = followDataSource,
                     googleAuthDataSource = googleAuthDataSource
                 )
             }
@@ -256,7 +261,7 @@ class PostRepositoryImpl @Inject constructor(
 
             val allSuccess = results.all { it.isSuccess }
 
-            if(allSuccess) {
+            if (allSuccess) {
                 emit(true)
             } else {
                 throw IOException("하나 이상의 작업이 실패하였습니다.")
@@ -285,7 +290,7 @@ class PostRepositoryImpl @Inject constructor(
             try {
                 return Result.success(block())
             } catch (e: Exception) {
-                if(attempt < maxAttempts - 1) {
+                if (attempt < maxAttempts - 1) {
                     delay(delayMillis)
                 }
             }

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.google.firebase.firestore.DocumentSnapshot
+import com.kolown.data.datasource.remote.AuthDataSource
 import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.TagDataSource
@@ -13,6 +14,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
+import javax.inject.Named
 
 data class UserPagingKey(
     val page: Int,
@@ -23,6 +25,7 @@ class UserPagingDataSource @Inject constructor(
     private val postDataSource: PostDataSource,
     private val tagDataSource: TagDataSource,
     private val reactionDataSource: ReactionDataSource,
+    @Named("google") private val googleAuthDataSource: AuthDataSource,
     private val userId: String
 ) : PagingSource<UserPagingKey, PostContentModel>() {
     override fun getRefreshKey(state: PagingState<UserPagingKey, PostContentModel>): UserPagingKey? {
@@ -57,6 +60,8 @@ class UserPagingDataSource @Inject constructor(
 
     private suspend fun getData(posts: List<PostModel>): Result<List<PostContentModel>> {
         return runCatching {
+            val currentUserId = googleAuthDataSource.getUserId()
+
             val (tags, reactions) = coroutineScope {
                 val tagsDeferred =
                     async {
@@ -86,6 +91,7 @@ class UserPagingDataSource @Inject constructor(
                     tags = tags[index].map { it.tagName },
                     isFollower = true,
                     reactions = reactions[index].mapNotNull { it.reaction },
+                    myReaction = reactions[index].find { it.userId == currentUserId }?.reaction
                 )
             }
         }
