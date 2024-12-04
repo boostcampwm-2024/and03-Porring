@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -127,7 +128,7 @@ fun FollowDialog(
                         onClick = onClickCancel,
                         colors = ButtonDefaults.buttonColors(containerColor = Color.White)
                     ) {
-                        Text(text = "취소하기", color = Error)
+                        Text(text = stringResource(R.string.string_follow_cancel), color = Error)
                     }
                     TextButton(
                         onClick = {
@@ -138,7 +139,7 @@ fun FollowDialog(
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color.White)
                     ) {
-                        Text(text = "팔로우 추가", color = Primary)
+                        Text(text = stringResource(R.string.string_add_follow), color = Primary)
                     }
                 }
             }

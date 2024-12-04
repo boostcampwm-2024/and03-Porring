@@ -4,6 +4,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kolown.data.remote.TagDto
 import com.kolown.data.remote.toTagModel
+import com.kolown.data.repository.PostRepositoryImpl.Companion.SEARCH_PER_PAGE
 import com.kolown.model.Tag
 import com.kolown.model.TagModel
 import kotlinx.coroutines.async
@@ -104,28 +105,36 @@ class TagDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getTagBySearch(searchText: String,key:String?,perPage:Long): Result<List<Tag>> {
+    override suspend fun getTagBySearch(searchText: String, key: String?, perPage: Long): Result<List<Tag>> {
         return kotlin.runCatching {
             val tags = mutableListOf<Tag>()
             val documents = if (key == null) {
                 tagCollection.whereGreaterThanOrEqualTo("tagName", searchText)
                     .whereLessThanOrEqualTo("tagName", searchText + "\uf8ff")
-                    .limit(SEARCH_TAG_PER_PAGE.toLong())
+                    .limit(SEARCH_PER_PAGE.toLong())
                     .get()
                     .await()
             } else {
                 tagCollection.whereGreaterThan("tagName", key)
                     .whereGreaterThanOrEqualTo("tagName", searchText)
                     .whereLessThanOrEqualTo("tagName", searchText + "\uf8ff")
-                    .limit(SEARCH_TAG_PER_PAGE.toLong()).get().await()
+                    .limit(SEARCH_PER_PAGE.toLong())
+                    .get()
+                    .await()
             }
-
 
             for (document in documents) {
                 val tagName = document.getString("tagName")
                 val tagId = document.getString("tagId")
-                if (tagName != null && tagId != null ) {
-                    tags.add(Tag(tagId,tagName))
+                if (tagName != null && tagId != null) {
+                    val existsInPostTags = postTagCollection.whereEqualTo("tagId", tagId)
+                        .get()
+                        .await()
+                        .isEmpty
+
+                    if (!existsInPostTags) {
+                        tags.add(Tag(tagId, tagName))
+                    }
                 }
             }
             tags.toList()
