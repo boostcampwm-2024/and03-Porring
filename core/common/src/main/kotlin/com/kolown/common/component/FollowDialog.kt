@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.kolown.common.R
 import com.kolown.designsystem.ui.theme.Error
 import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.designsystem.ui.theme.Surface2
