@@ -1,7 +1,6 @@
-package com.kolown.my
+package com.kolown.their
 
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,7 +10,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,11 +23,11 @@ import com.kolown.common.component.DetailTopAppBar
 import com.kolown.model.PostContentModel
 
 @Composable
-internal fun DetailMyRoute(
+internal fun DetailTheirRoute(
     padding: PaddingValues = PaddingValues(),
     popBackStack: () -> Unit,
     onShowLoginSnackBar: () -> Unit,
-    viewModel: MyViewModel
+    viewModel: TheirViewModel
 ) {
 
     val searchResultPost = viewModel.galleryFlow.collectAsLazyPagingItems()
@@ -93,7 +91,7 @@ fun DetailContent(
     pagerState: PagerState,
     updatePage: (Int) -> Unit,
     onShowLoginSnackBar: () -> Unit,
-    checkPostIsMine: (String) -> Boolean = { _ -> true }
+    checkPostIsMine: (String) -> Boolean = { _ -> false }
 ) {
 
     VerticalPager(
@@ -107,6 +105,7 @@ fun DetailContent(
         DetailItem(
             isLoggedIn = true,
             isReelsMode = isReelsMode,
+            isButtonGroupNeed = false,
             onChangeReelsMode = onChangeReelsMode,
             imageItem = imageItem,
             navigateToTheir = {},

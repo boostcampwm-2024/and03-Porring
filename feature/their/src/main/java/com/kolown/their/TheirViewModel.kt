@@ -23,10 +23,17 @@ class TheirViewModel @Inject constructor(
     private val _followerName = MutableStateFlow("")
     val followerName = _followerName.asStateFlow()
 
+    private var _firstPage = 0
+    val firstPage get() = _firstPage
+
     private val _userId = MutableStateFlow("")
     val galleryFlow = _userId.flatMapLatest { userId ->
-        postRepository.getUserPosts(userId)
+        postRepository.getUserPosts(userId).cachedIn(viewModelScope)
     }.cachedIn(viewModelScope)
+
+    fun setPage(page: Int) {
+        _firstPage = page
+    }
 
     fun setFollowerName(followerId: String) {
         _userId.update { followerId }

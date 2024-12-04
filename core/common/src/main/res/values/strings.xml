@@ -5,6 +5,13 @@
     <string name="string_reaction_button">Reaction Button</string>
     <string name="string_go_back_button">뒤로가기 버튼</string>
     <string name="string_disable_mode">집중모드 해제 버튼</string>
+    <string name="string_question_delete">이 게시물을 삭제하시겠어요?</string>
+    <string name="string_cancel">취소</string>
+    <string name="string_remove">삭제</string>
+    <string name="string_can_not_load">이미지를 로드할 수 없음.\n 다시 시도해주세요.</string>
+    <string name="string_retry">Retry</string>
+    <string name="string_follow">팔로우</string>
+    <string name="string_gallery">갤러리</string>
     <string name="string_follow_cancel">취소하기</string>
     <string name="string_add_follow">팔로우 추가</string>
 </resources>

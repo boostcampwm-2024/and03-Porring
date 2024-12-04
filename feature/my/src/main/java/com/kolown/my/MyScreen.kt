@@ -52,13 +52,13 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
+import com.kolown.common.component.GalleryItem
 import com.kolown.common.component.RestrictedLoginContent
 import com.kolown.designsystem.R
 import com.kolown.designsystem.component.PorringCenterAlignTopAppBar
 import com.kolown.designsystem.component.PorringIconButton
 import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.model.PostContentModel
-import com.kolown.my.component.GalleryItem
 import com.kolown.my.component.PageItemFooter
 import kotlinx.coroutines.delay
 
@@ -89,7 +89,7 @@ internal fun MyRoute(
     LaunchedEffect(isDeleteSuccess) {
         Log.e("isDeleteSuccess", "$isDeleteSuccess")
         isDeleteSuccess?.let { isSuccess ->
-            if(isSuccess) {
+            if (isSuccess) {
                 Log.e("isDeleteSuccess", "$isDeleteSuccess")
                 pagingItems.refresh()
             }
