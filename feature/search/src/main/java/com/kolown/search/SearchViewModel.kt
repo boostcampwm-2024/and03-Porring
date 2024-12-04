@@ -53,7 +53,6 @@ class SearchViewModel @Inject constructor(
     private var _firstPage = 0
     val firstPage get() = _firstPage
 
-
     private val reactionStateFlow = MutableStateFlow<Map<String, ReactionState>>(emptyMap())
 
     private val _followSharedFlow = MutableSharedFlow<Pair<String, Boolean>>(0)
