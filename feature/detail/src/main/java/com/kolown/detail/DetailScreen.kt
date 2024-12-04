@@ -40,11 +40,10 @@ import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.model.UiState
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 internal fun DetailRoute(
     isLoggedIn: Boolean,
-    onShowLoginSnackBar: () -> Unit,
+    
     detailFirstItem: PostContentModel,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     popBackStack: () -> Unit,
@@ -77,7 +76,6 @@ internal fun DetailRoute(
 
             DetailScreen(
                 isLoggedIn = isLoggedIn,
-                onShowLoginSnackBar = onShowLoginSnackBar,
                 onChangeReelsMode = { isReelsMode = it },
                 popBackStack = popBackStack,
                 updateMainPostReaction = updateMainPostReaction,
@@ -111,7 +109,7 @@ internal fun DetailRoute(
 @Composable
 private fun DetailScreen(
     isLoggedIn: Boolean = false,
-    onShowLoginSnackBar: () -> Unit = {},
+    
     onChangeReelsMode: (Boolean) -> Unit = {},
     popBackStack: () -> Unit = {},
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
@@ -138,7 +136,7 @@ private fun DetailScreen(
         DetailContent(
             isLoggedIn = isLoggedIn,
             isReelsMode = isReelsMode,
-            onShowLoginSnackBar = onShowLoginSnackBar,
+            
             onChangeReelsMode = onChangeReelsMode,
             updateMainPostReaction = updateMainPostReaction,
             onSelectReaction = onSelectReaction,
@@ -183,7 +181,7 @@ private fun DetailScreen(
 @Composable
 private fun DetailContent(
     isLoggedIn: Boolean,
-    onShowLoginSnackBar: () -> Unit,
+    
     onChangeReelsMode: (Boolean) -> Unit,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
@@ -218,7 +216,7 @@ private fun DetailContent(
         DetailItem(
             isLoggedIn = isLoggedIn,
             isReelsMode = isReelsMode,
-            onShowLoginSnackBar = onShowLoginSnackBar,
+            
             onChangeReelsMode = onChangeReelsMode,
             updateMainPostReaction = updateMainPostReaction,
             onSelectReaction = onSelectReaction,

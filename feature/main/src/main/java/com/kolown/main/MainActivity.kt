@@ -1,7 +1,6 @@
 package com.kolown.main
 
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -40,13 +39,14 @@ class MainActivity : ComponentActivity() {
                 Route.DetailTheir.toString() -> false
                 else -> true
             }
-            val snackBarBridge = remember { SnackBarBridge() }
+            val snackBarBridge = remember { SnackBarBridge(mainViewModel::postSnackBarData) }
             PorringTheme(isLightBars = isLightBars) {
-                CompositionLocalProvider(LocalSnackBarBridge.provides(snackBarBridge)) { }
-                MainScreen(
-                    navigator = navigator,
-                    mainViewModel
-                )
+                CompositionLocalProvider(LocalSnackBarBridge.provides(snackBarBridge)) {
+                    MainScreen(
+                        navigator = navigator,
+                        mainViewModel
+                    )
+                }
             }
         }
 //        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)

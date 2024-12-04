@@ -26,7 +26,7 @@ fun NavGraphBuilder.searchNavGraph(
     padding: PaddingValues,
     navigateToTheir: (String) -> Unit,
     isLoggedIn: Boolean,
-    onShowLoginSnackBar: () -> Unit,
+    
     navigateToSearchDetail: () -> Unit,
     popBackStack: () -> Unit,
     getBackStackEntry: () -> NavBackStackEntry
@@ -52,7 +52,6 @@ fun NavGraphBuilder.searchNavGraph(
             navigateToTheir = navigateToTheir,
             popBackStack = popBackStack,
             isLoggedIn = isLoggedIn,
-            onShowLoginSnackBar = onShowLoginSnackBar
         )
     }
 }

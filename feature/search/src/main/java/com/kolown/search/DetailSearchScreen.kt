@@ -31,7 +31,6 @@ internal fun DetailSearchRoute(
     popBackStack: () -> Unit,
     navigateToTheir: (String) -> Unit,
     isLoggedIn: Boolean,
-    onShowLoginSnackBar: () -> Unit,
     viewModel: SearchViewModel
 ) {
 
@@ -56,7 +55,6 @@ internal fun DetailSearchRoute(
         onSelectReaction = viewModel::selectReaction,
         checkPostIsMine = viewModel::checkPostIsMine,
         isLoggedIn = isLoggedIn,
-        onShowLoginSnackBar = onShowLoginSnackBar
     )
 }
 
@@ -74,7 +72,6 @@ fun DetailSearchScreen(
     onUnfollowClick: (String) -> Unit = {},
     isLoggedIn: Boolean,
     onChangeReelsMode: (Boolean) -> Unit,
-    onShowLoginSnackBar: () -> Unit,
     followerState: State<Pair<String, Boolean>?>,
     checkPostIsMine: (String) -> Boolean
 ) {
@@ -98,7 +95,6 @@ fun DetailSearchScreen(
             followerState = followerState,
             checkPostIsMine = checkPostIsMine,
             isLoggedIn = isLoggedIn,
-            onShowLoginSnackBar = onShowLoginSnackBar
         )
 
         DetailTopAppBar(
@@ -123,8 +119,7 @@ fun DetailContent(
     onUnfollowClick: (String) -> Unit = {},
     followerState: State<Pair<String, Boolean>?> = mutableStateOf(null),
     isLoggedIn: Boolean,
-    onShowLoginSnackBar: () -> Unit,
-    checkPostIsMine: (String) -> Boolean = { _ -> false }
+    checkPostIsMine: (String) -> Boolean = { _ -> false}
 ) {
 
     VerticalPager(
@@ -149,7 +144,6 @@ fun DetailContent(
             onUnfollowClick = onUnfollowClick,
             followerState = followerState,
             checkPostIsMine = checkPostIsMine,
-            onShowLoginSnackBar = onShowLoginSnackBar
         )
 
     }

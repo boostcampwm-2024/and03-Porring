@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.kolown.common.component.LocalSnackBarBridge
 import com.kolown.designsystem.component.PorringIconButton
 import com.kolown.designsystem.component.PorringTextField
 import com.kolown.designsystem.component.PorringTopAppBar
@@ -54,7 +55,6 @@ import com.kolown.navigation.Route
 
 @Composable
 internal fun JoinRoute(
-    onShowSnackBar: (String) -> Unit,
     popBackStack: (Route) -> Unit,
     joinViewModel: JoinViewModel = hiltViewModel(),
     padding: PaddingValues,
@@ -63,6 +63,7 @@ internal fun JoinRoute(
     var isProgress by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
+    val snackBarBridge= LocalSnackBarBridge.current
     LaunchedEffect(joinState) {
         when (joinState) {
             is UiState.Idle -> {
@@ -70,7 +71,7 @@ internal fun JoinRoute(
             }
 
             is UiState.Success -> {
-                onShowSnackBar(context.getString(R.string.string_complete_signup))
+                snackBarBridge.postSnackBarString(context.getString(R.string.string_complete_signup))
                 popBackStack(Route.Login)
             }
 
@@ -82,7 +83,7 @@ internal fun JoinRoute(
                 val exception = (joinState as UiState.Failure).error
 
                 when (exception) {
-                    is FirebaseAuthUserCollisionException -> onShowSnackBar(context.getString(R.string.string_already_exist))
+                    is FirebaseAuthUserCollisionException -> snackBarBridge.postSnackBarString(context.getString(R.string.string_already_exist))
                     else -> Log.e(
                         "JoinScreen",
                         "fatal: ${(joinState as UiState.Failure).error}"

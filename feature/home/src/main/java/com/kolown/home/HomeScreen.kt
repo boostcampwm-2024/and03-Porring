@@ -53,7 +53,7 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 internal fun HomeRoute(
     isLoggedIn: Boolean,
-    onShowLoginSnackBar: () -> Unit,
+    
     mainItems: Flow<List<PostContentModel>>,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
     fetchDetailFirst: (PostContentModel) -> Unit,
@@ -111,7 +111,7 @@ internal fun HomeRoute(
             } else {
                 HomeScreen(
                     isLoggedIn = isLoggedIn,
-                    onShowLoginSnackBar = onShowLoginSnackBar,
+                    
                     padding = padding,
                     mainFeedImages = images,
                     onFollowClick = { id, name ->
@@ -144,7 +144,7 @@ private fun HomeScreen(
     isLoggedIn: Boolean = false,
     isRefreshing: Boolean = false,
     updateRefreshing: (Boolean) -> Unit = {},
-    onShowLoginSnackBar: () -> Unit = {},
+    
     padding: PaddingValues = PaddingValues(),
     mainFeedImages: List<PostContentModel> = emptyList(),
     onFollowClick: (String, String) -> Unit = { _, _ -> },
@@ -193,7 +193,7 @@ private fun HomeScreen(
                     .align(Alignment.Center)
                     .verticalScroll(rememberScrollState()),
                 isLoggedIn = isLoggedIn,
-                onShowLoginSnackBar = onShowLoginSnackBar,
+                
                 pagerState = pagerState,
                 imageItems = mainFeedImages,
                 isReactionDialogVisible = isReactionDialogVisible,

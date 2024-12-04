@@ -58,6 +58,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.kolown.common.component.LocalSnackBarBridge
 import com.kolown.designsystem.R
 import com.kolown.designsystem.component.PorringIconButton
 import com.kolown.designsystem.component.PorringTextField
@@ -79,7 +80,6 @@ import kotlinx.coroutines.launch
 internal fun LoginRoute(
     updateLoginState: () -> Unit,
     popBackStack: () -> Unit,
-    onShowSnackBar: (String) -> Unit,
     navigateToJoin: () -> Unit,
     loginViewModel: LoginViewModel = hiltViewModel(),
     padding: PaddingValues = PaddingValues(),
@@ -89,6 +89,8 @@ internal fun LoginRoute(
     val loginState by loginViewModel.loginState.collectAsStateWithLifecycle()
     var isLoginProgress by remember { mutableStateOf(false) }
     val latestEmail by loginViewModel.latestEmail.collectAsStateWithLifecycle()
+
+    val snackBarBridge = LocalSnackBarBridge.current
 
     LaunchedEffect(true) {
         loginViewModel.getLatestUserEmail()
@@ -103,7 +105,8 @@ internal fun LoginRoute(
             is UiState.Success -> {
                 popBackStack()
                 updateLoginState()
-                onShowSnackBar((loginState as UiState.Success<String>).data)
+                val message = (loginState as UiState.Success<String>).data
+                snackBarBridge.postSnackBarString(message)
             }
 
             is UiState.Failure -> {
@@ -112,14 +115,14 @@ internal fun LoginRoute(
                 when (error) {
                     is FirebaseAuthInvalidCredentialsException -> {
                         when (error.errorCode) {
-                            "ERROR_INVALID_EMAIL" -> onShowSnackBar(context.getString(string.string_need_email_form))
-                            "ERROR_INVALID_CREDENTIAL" -> onShowSnackBar(context.getString(string.string_need_to_check_email_or_pw))
-                            else -> onShowSnackBar(context.getString(string.string_check_email_pw))
+                            "ERROR_INVALID_EMAIL" -> snackBarBridge.postSnackBarString(context.getString(string.string_need_email_form))
+                            "ERROR_INVALID_CREDENTIAL" -> snackBarBridge.postSnackBarString(context.getString(string.string_need_to_check_email_or_pw))
+                            else -> snackBarBridge.postSnackBarString(context.getString(string.string_check_email_pw))
                         }
                     }
 
                     is FirebaseNetworkException -> {
-                        onShowSnackBar(context.getString(string.string_check_network))
+                        snackBarBridge.postSnackBarString(context.getString(string.string_check_network))
                     }
                 }
 
