@@ -16,7 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -67,7 +66,6 @@ internal fun DetailSearchRoute(
 fun DetailSearchScreen(
     popBackStack: () -> Unit = {},
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
-    viewModeChange: (Boolean) -> Unit = {},
     isReelsMode: Boolean = true,
     pagingItems: LazyPagingItems<PostContentModel>,
     pagerState: PagerState,
@@ -91,7 +89,6 @@ fun DetailSearchScreen(
 
         DetailContent(
             onSelectReaction = onSelectReaction,
-            viewModeChange = viewModeChange,
             isReelsMode = isReelsMode,
             onChangeReelsMode = onChangeReelsMode,
             pagingItems = pagingItems,
@@ -118,7 +115,6 @@ fun DetailSearchScreen(
 @Composable
 fun DetailContent(
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
-    viewModeChange: (Boolean) -> Unit,
     isReelsMode: Boolean,
     onChangeReelsMode: (Boolean) -> Unit,
     pagingItems: LazyPagingItems<PostContentModel>,
@@ -159,7 +155,5 @@ fun DetailContent(
         )
 
     }
-
-    //todo: 에러 났을 때(ex.Network Error)
 }
 
