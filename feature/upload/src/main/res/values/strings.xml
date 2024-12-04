@@ -7,4 +7,9 @@
     <string name="string_max_twenty">설명은 최대 20자까지만 입력이 가능합니다.</string>
     <string name="string_add_description">설명 추가...</string>
     <string name="string_trailing_icon">trailing icon</string>
+    <string name="string_input_description">설명을 입력해 주세요</string>
+    <string name="string_upload_image">upload image</string>
+    <string name="string_max_description">설명은 최대 20자까지만 입력이 가능합니다.</string>
+    <string name="string_input_tag">태그 입력</string>
+    <string name="string_delete_tag">태그 삭제</string>
 </resources>

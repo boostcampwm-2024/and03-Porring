@@ -32,16 +32,12 @@ class TheirViewModel @Inject constructor(
     }.cachedIn(viewModelScope)
 
     fun setFollowerName(followerId: String) {
-        if(followerId.isBlank()) {
-            _followerName.update { "Anonymous" }
-            return
-        }
-
         _userId.update { followerId }
         followRepository.getFollowerName(followerId)
             .onEach { name -> _followerName.update { name } }
             .catch {
                 Log.e("GetFollowerName", "Error: ${it.message}")
+                _followerName.update { "Anonymous" }
             }
             .launchIn(viewModelScope)
     }

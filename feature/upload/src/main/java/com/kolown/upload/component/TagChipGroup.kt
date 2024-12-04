@@ -19,13 +19,14 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.kolown.common.R.drawable
 import com.kolown.designsystem.component.PorringIconButton
 import com.kolown.designsystem.component.PorringInputChip
 import com.kolown.designsystem.ui.theme.Primary
+import com.kolown.upload.R
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -54,7 +55,7 @@ internal fun CategoryGroup(
                         changeCategoryName(idx, it.filter { char -> char.isLetterOrDigit() })
                     }
                 },
-                hint = "태그 입력",
+                hint = stringResource(R.string.string_input_tag),
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done
                 ),
@@ -67,8 +68,8 @@ internal fun CategoryGroup(
                         onClick = { removeCategory(item) }
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(drawable.ic_cancel_circle),
-                            contentDescription = "태그 삭제",
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_cancel_circle),
+                            contentDescription = stringResource(R.string.string_delete_tag),
                             tint = Primary
                         )
                     }
@@ -80,7 +81,7 @@ internal fun CategoryGroup(
         }
         if (categoryItems.size < 6) {
             PorringIconButton(
-                icon = ImageVector.vectorResource(drawable.ic_add_circle),
+                icon = ImageVector.vectorResource(R.drawable.ic_add_circle),
                 onClick = { addCategory() },
                 modifier = Modifier.size(32.dp)
             )
