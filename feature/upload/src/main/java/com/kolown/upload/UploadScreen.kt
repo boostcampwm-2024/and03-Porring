@@ -213,8 +213,8 @@ private fun UploadContent(
                         .aspectRatio(ratio)
                         .clip(shape = RoundedCornerShape(10.dp)),
                     model = imgUri,
-                    contentScale = ContentScale.FillWidth,
-                    contentDescription = "upload image"
+                    contentScale = ContentScale.Crop,
+                    contentDescription = stringResource(R.string.string_upload_image)
                 )
 
                 Column(
@@ -226,14 +226,14 @@ private fun UploadContent(
                             changeDescription(it.substring(0, minOf(20, it.length)))
                             isDescriptionMax = it.length > 20
                         },
-                        hint = "간단한 소개를 입력해 주세요",
+                        hint = stringResource(R.string.string_input_description),
                         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Done
                         ),
                         trailingIcon = {
                             PorringIconButton(
-                                icon = ImageVector.vectorResource(com.kolown.common.R.drawable.ic_cancel_circle),
+                                icon = ImageVector.vectorResource(R.drawable.ic_cancel_circle),
                                 onClick = { changeDescription("") }
                             )
                         },
@@ -244,7 +244,7 @@ private fun UploadContent(
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             modifier = Modifier.padding(start = 4.dp),
-                            text = "설명은 최대 20자까지만 입력이 가능합니다.",
+                            text = stringResource(R.string.string_max_description),
                             style = MaterialTheme.typography.bodySmall,
                             color = Error
                         )
@@ -280,7 +280,7 @@ private fun UploadContent(
                 colors = ButtonDefaults.buttonColors(containerColor = if (uploadEnable) Primary else PrimaryUnActive)
             ) {
                 Text(
-                    text = "올리기",
+                    text = stringResource(R.string.string_upload),
                     color = if (uploadEnable) Color.White else Gray,
                     style = MaterialTheme.typography.bodyMedium
                 )
