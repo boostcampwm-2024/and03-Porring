@@ -42,6 +42,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -70,6 +71,7 @@ import com.kolown.designsystem.ui.theme.Gray
 import com.kolown.designsystem.ui.theme.PrimaryDark
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -78,8 +80,8 @@ import kotlinx.coroutines.launch
 fun DetailItem(
     isLoggedIn: Boolean,
     isReelsMode: Boolean,
-    isError: Boolean = false,
     onShowLoginSnackBar: () -> Unit,
+    isPopBackStack: Boolean = false,
     onChangeReelsMode: (Boolean) -> Unit,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
@@ -92,11 +94,7 @@ fun DetailItem(
     checkPostIsMine: (String) -> Boolean = { _ -> false },
     updateFollow: (String) -> Unit = {}
 ) {
-    val view = LocalView.current
 
-    if (isReelsMode) {
-        showSystembar(view = view)
-    }
     if (imageItem != null) {
         if (isReelsMode) {
             ReelsContent(
@@ -107,8 +105,8 @@ fun DetailItem(
                 imageItem = imageItem,
                 onDoubleTab = {
                     onChangeReelsMode(false)
-                    requestFullScreen(view)
                 },
+                isPopBackStack = isPopBackStack,
                 navigateToTheir = navigateToTheir,
                 updatePage = updatePage,
                 onFollowClick = onFollowClick,
@@ -119,11 +117,11 @@ fun DetailItem(
             )
         } else {
             ConcentrateContent(
-                imageUrl = imageItem.imageUrl
+                imageUrl = imageItem.imageUrl,
+                backHandle = {
+                    onChangeReelsMode(true)
+                }
             )
-            BackHandler(enabled = true) {
-                onChangeReelsMode(true)
-            }
         }
     } else {
         LoadingDetailContent()
@@ -136,12 +134,12 @@ fun DetailItem(
 private fun ReelsContent(
     isLoggedIn: Boolean,
     onShowLoginSnackBar: () -> Unit,
-    isError: Boolean = false,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     imageItem: PostContentModel,
     navigateToTheir: (String) -> Unit,
     updatePage: () -> Unit,
+    isPopBackStack: Boolean = false,
     onDoubleTab: () -> Unit,
     checkPostIsMine: (String) -> Boolean,
     onFollowClick: (String, String) -> Unit = { _, _ -> },
@@ -191,14 +189,20 @@ private fun ReelsContent(
                     .build(),
                 modifier = Modifier
                     .fillMaxSize()
-                    .combinedClickable(indication = null,
+                    .combinedClickable(
+                        indication = null,
                         interactionSource = interactionSource,
                         onClick = {
                             if (isReactionVisible.value) {
                                 isReactionVisible.value = false
                             }
                         },
-                        onDoubleClick = { onDoubleTab() }),
+                        onDoubleClick = {
+                            if (!isPopBackStack) {
+                                onDoubleTab()
+                            }
+                        }
+                    ),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
                 onLoading = {
@@ -206,7 +210,7 @@ private fun ReelsContent(
                 },
                 onSuccess = {
                     coroutineScope.launch {
-                        delay(2000)
+                        delay(3000)
                         isLoading.value = false
                     }
                 }
@@ -322,9 +326,16 @@ private fun ReelsContent(
 @Composable
 private fun ConcentrateContent(
     imageUrl: String,
+    backHandle: () -> Unit,
 ) {
+    val view = LocalView.current
+
+    LaunchedEffect(true) {
+        requestFullScreen(view)
+    }
+
     var scale by remember {
-        mutableStateOf(1f)
+        mutableFloatStateOf(1f)
     }
     var offset by remember {
         mutableStateOf(Offset.Zero)
@@ -365,7 +376,12 @@ private fun ConcentrateContent(
             contentDescription = "",
             contentScale = ContentScale.Crop,
         )
+        BackHandler {
+            showSystembar(view)
+            backHandle()
+        }
     }
+
 }
 
 
@@ -392,7 +408,7 @@ private fun DetailButton(
 }
 
 private fun requestFullScreen(view: View) {
-    // !! should be safe here since the view is part of an Activity
+
     val window = view.context.getActivity()!!.window
     val insetController = WindowCompat.getInsetsController(window, view)
     insetController.systemBarsBehavior =

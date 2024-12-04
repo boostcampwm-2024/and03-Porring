@@ -2,6 +2,7 @@ package com.kolown.detail
 
 import android.os.Build
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -57,20 +58,18 @@ internal fun DetailRoute(
     updateFollow: (String) -> Unit
 ) {
     var isReelsMode by remember { mutableStateOf(true) }
-    var isError by remember { mutableStateOf(false) }
-    var isLoading by remember { mutableStateOf(false) }
-
-
     val uiState = detailViewModel.uiState.collectAsStateWithLifecycle()
     val currentPage = detailViewModel.currentPage
     val followState = detailViewModel.followState.collectAsStateWithLifecycle(null)
     val state = uiState.value
+    var isPopBackStack by remember { mutableStateOf(false) }
 
     when (state) {
         is UiState.Idle -> {}
         is UiState.Loading -> {
             LoadingDetailContent()
         }
+
         is UiState.Success -> {
             val pagingItems = state.data.collectAsLazyPagingItems()
             val pagerState = rememberPagerState(initialPage = currentPage) {
@@ -78,30 +77,18 @@ internal fun DetailRoute(
             }
 
             LaunchedEffect(pagingItems.itemCount) {
-                if (pagerState.currentPage == 0) pagerState.scrollToPage(currentPage)
+                if (pagerState.currentPage == 1 && currentPage != 0) pagerState.scrollToPage(currentPage)
             }
 
-            when (pagingItems.loadState.append) {
-                is LoadState.Loading -> {
-                    isLoading = true
-                }
-
-                is LoadState.NotLoading -> {
-                    isLoading = false
-                    isError = false
-                }
-
-                is LoadState.Error -> {}
-            }
             DetailScreen(
                 isLoggedIn = isLoggedIn,
-                isError = isError,
                 onShowLoginSnackBar = onShowLoginSnackBar,
                 onChangeReelsMode = { isReelsMode = it },
                 popBackStack = popBackStack,
                 updateMainPostReaction = updateMainPostReaction,
                 onSelectReaction = detailViewModel::selectReaction,
                 isReelsMode = isReelsMode,
+                isPopBackStack = isPopBackStack,
                 firstItem = detailFirstItem,
                 pagingItems = pagingItems,
                 pagerState = pagerState,
@@ -117,23 +104,25 @@ internal fun DetailRoute(
             )
         }
 
-        is UiState.Failure -> {
-            Log.e("pagerState_failure","")
+        is UiState.Failure -> LoadingDetailContent()
+    }
 
-        }
+    BackHandler(enabled = true) {
+        isPopBackStack = true
+        popBackStack()
     }
 }
 
 @Composable
 private fun DetailScreen(
     isLoggedIn: Boolean = false,
-    isError : Boolean = false,
     onShowLoginSnackBar: () -> Unit = {},
     onChangeReelsMode: (Boolean) -> Unit = {},
     popBackStack: () -> Unit = {},
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     isReelsMode: Boolean = true,
+    isPopBackStack:Boolean = false,
     firstItem: PostContentModel,
     pagingItems: LazyPagingItems<PostContentModel>,
     pagerState: PagerState,
@@ -154,13 +143,13 @@ private fun DetailScreen(
         DetailContent(
             isLoggedIn = isLoggedIn,
             isReelsMode = isReelsMode,
-            isError =  isError ,
             onShowLoginSnackBar = onShowLoginSnackBar,
             onChangeReelsMode = onChangeReelsMode,
             updateMainPostReaction = updateMainPostReaction,
             onSelectReaction = onSelectReaction,
             pagingItems = pagingItems,
             pagerState = pagerState,
+            isPopBackStack = isPopBackStack,
             firstItem = firstItem,
             navigateToTheir = navigateToTheir,
             updatePage = updatePage,
@@ -199,13 +188,13 @@ private fun DetailScreen(
 @Composable
 private fun DetailContent(
     isLoggedIn: Boolean,
-    isError : Boolean = false,
     onShowLoginSnackBar: () -> Unit,
     onChangeReelsMode: (Boolean) -> Unit,
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
     isReelsMode: Boolean,
     pagingItems: LazyPagingItems<PostContentModel>,
+    isPopBackStack:Boolean = false,
     pagerState: PagerState,
     firstItem: PostContentModel,
     navigateToTheir: (String) -> Unit,
@@ -239,6 +228,7 @@ private fun DetailContent(
             updateMainPostReaction = updateMainPostReaction,
             onSelectReaction = onSelectReaction,
             imageItem = imageItem,
+            isPopBackStack = isPopBackStack,
             navigateToTheir = navigateToTheir,
             updatePage = {
                 updatePage(pagerState.currentPage)
@@ -250,7 +240,6 @@ private fun DetailContent(
         )
     }
 
-    //todo: 에러 났을 때(ex.Network Error)
 }
 
 

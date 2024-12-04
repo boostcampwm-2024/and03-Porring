@@ -119,8 +119,6 @@ class PostDataSourceImpl @Inject constructor(
                     .orderBy("random${this.randomType}", Query.Direction.ASCENDING)
                     .limit(count.toLong())
                     .get()
-                    .addOnFailureListener {
-                    }
                     .await()
                     .map { it.toObject(PostDto::class.java).toPostModel(this.randomType) }
             }
