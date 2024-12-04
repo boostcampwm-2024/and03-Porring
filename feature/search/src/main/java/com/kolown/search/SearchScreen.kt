@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kolown.model.PostContentModel
@@ -87,9 +88,8 @@ private fun SearchScreen(
 ) {
 
     var focusState by remember { mutableStateOf(false) }
-
-
     val focusManager = LocalFocusManager.current
+
     LaunchedEffect(focusState) {
         if (!focusState) {
             focusManager.clearFocus()
@@ -128,6 +128,8 @@ private fun SearchScreen(
             color = Color.DarkGray,
             modifier = Modifier.padding(vertical = 16.dp)
         )
+
+
         Box(modifier = Modifier.fillMaxSize()) {
             LazyVerticalGrid(
                 modifier = Modifier
@@ -154,11 +156,12 @@ private fun SearchScreen(
                                 navigateToSearchDetail()
                             }
                         )
+
                     }
                 }
             }
 
-            SearchResult(focusState, searchResultTag,searchText) {
+            SearchResult(focusState, searchResultTag, searchText) {
                 setTag(it)
                 focusState = false
             }

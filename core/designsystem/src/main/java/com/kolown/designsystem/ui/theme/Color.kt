@@ -16,5 +16,5 @@ val Surface2 = Color(0xFFEAEEFF)
 val Gray = Color(0xFF8D8D8D)
 val PrimaryUnActiveDark = Color(0xFF8D8D8D)
 val SnackBarContainer = Color(0xFF363535)
-val ShimmerLightGray =  Color(0xFFB8B5B5)
-val ShimmerDarkGray =  Color(0xFF8F8B8B)
+val ShimmerLightGray = Color(0xFFBFBFBF) // 중간 연한 그레이
+val ShimmerDarkGray = Color(0xFFADADAD) // 중간 진한 그레이

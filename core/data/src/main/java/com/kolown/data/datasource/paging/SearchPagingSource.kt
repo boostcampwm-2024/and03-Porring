@@ -85,7 +85,8 @@ class SearchPagingSource(
                         description = postModel.description,
                         tags = tags[index].map { it.tagName },
                         isFollower = isFollowers[index],
-                        reactions = reactions[index].mapNotNull { it.reaction }
+                        reactions = reactions[index].mapNotNull { it.reaction },
+                        myReaction = reactions[index].find { it.userId == currentUserId }?. reaction
                     )
                 },
                 prevKey = if (page == null) null else posts.firstOrNull()?.postId,
