@@ -119,7 +119,6 @@ fun DetailContent(
                 updatePage(pagerState.currentPage)
             },
             checkPostIsMine = checkPostIsMine,
-            onShowLoginSnackBar = onShowLoginSnackBar
         )
 
     }

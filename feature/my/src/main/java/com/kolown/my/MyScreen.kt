@@ -59,7 +59,6 @@ import com.kolown.designsystem.component.PorringCenterAlignTopAppBar
 import com.kolown.designsystem.component.PorringIconButton
 import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.model.PostContentModel
-import com.kolown.my.component.GalleryItem
 import com.kolown.my.component.PageItemFooter
 import kotlinx.coroutines.delay
 
