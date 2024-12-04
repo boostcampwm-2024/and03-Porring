@@ -1,6 +1,5 @@
 package com.kolown.data.repository
 
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -10,13 +9,12 @@ import com.kolown.data.datasource.remote.FollowDataSource
 import com.kolown.data.datasource.remote.PostDataSource
 import com.kolown.model.FollowerThumbnail
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Named
 
 interface FollowRepository {
-    fun getFollowerName(followerId: String): Flow<String>
+    suspend fun getFollowerName(followerId: String): Flow<String>
     suspend fun unFollowUser(followerId: String): Flow<Boolean>
     fun followUser(followerId: String, followerName: String): Flow<Boolean>
     fun getFollowerDataSourcePagingFlow(): Flow<PagingData<FollowerThumbnail>>
@@ -29,15 +27,10 @@ class FollowRepositoryImpl @Inject constructor(
     @Named("google") private val googleAuthDataSource: AuthDataSource,
 ) : FollowRepository {
 
-    override fun getFollowerName(followerId: String): Flow<String> = flow {
+    override suspend fun getFollowerName(followerId: String): Flow<String> {
         val currentUserId = googleAuthDataSource.getUserId()
 
-        followDataSource.getFollowerName(currentUserId, followerId)
-            .collect { name ->
-                emit(name)
-            }
-    }.catch { e ->
-        Log.e("GetFollowerName", "repository: $e")
+        return followDataSource.getFollowerName(currentUserId, followerId)
     }
 
     override fun followUser(

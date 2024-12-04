@@ -63,8 +63,6 @@ class FollowDataSourceImpl @Inject constructor(
         val name = prevFollow.first().data["followerName"].toString()
 
         emit(name)
-    }.catch { e ->
-        Log.e("GetFollowerName", "datasource: $e")
     }
 
     override suspend fun getFollowerList(
