@@ -1,5 +1,6 @@
 package com.kolown.their
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -66,18 +68,23 @@ class TheirViewModel @Inject constructor(
 
     fun setFollowerName(followerId: String) {
         _userId.update { followerId }
-        followRepository.getFollowerName(followerId)
-            .onEach { name -> _followerName.update {
-                if(name == "") {
-                    "Anonymous"
-                } else {
-                    name
+        viewModelScope.launch {
+            followRepository.getFollowerName(followerId)
+                .onStart {
+                    _followerName.update { "" }
                 }
-            } }
-            .catch {
-                _followerName.update { "Anonymous" }
-            }
-            .launchIn(viewModelScope)
+                .onEach { name -> _followerName.update {
+                    if(name == "") {
+                        "Anonymous"
+                    } else {
+                        name
+                    }
+                } }
+                .catch { e ->
+                    _followerName.update { "Anonymous" }
+                }
+                .launchIn(viewModelScope)
+        }
     }
 
     fun selectReaction(imageItem: PostContentModel, reaction: Reactions) {

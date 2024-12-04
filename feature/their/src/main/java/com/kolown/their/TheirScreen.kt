@@ -69,7 +69,7 @@ internal fun TheirRoute(
         viewModel.setFollowerName(followerId)
     }
 
-    val followerName = viewModel.followerName.collectAsStateWithLifecycle()
+    val followerName by viewModel.followerName.collectAsStateWithLifecycle()
     val pagingItems = viewModel.galleryFlow.collectAsLazyPagingItems()
     val listState = rememberLazyStaggeredGridState()
 
@@ -78,7 +78,7 @@ internal fun TheirRoute(
         popBackStack = popBackStack,
         setPage = viewModel::setPage,
         padding = padding,
-        followerName = followerName.value,
+        followerName = followerName,
         pagingItems = pagingItems,
         listState = listState
     )
