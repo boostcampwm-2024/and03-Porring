@@ -127,7 +127,7 @@ fun FollowDialog(
                         onClick = onClickCancel,
                         colors = ButtonDefaults.buttonColors(containerColor = Color.White)
                     ) {
-                        Text(text = "취소하기", color = Color(0xFFFF568A))
+                        Text(text = "취소하기", color = Error)
                     }
                     TextButton(
                         onClick = {

@@ -68,6 +68,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.kolown.common.R
 import com.kolown.designsystem.ui.theme.Gray
+import com.kolown.designsystem.ui.theme.PrimaryContainerDark
 import com.kolown.designsystem.ui.theme.PrimaryDark
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
@@ -283,12 +284,8 @@ private fun ReelsContent(
                                 },
                                 id = R.drawable.ic_detail_follow,
                                 buttonText = "팔로우",
-                                contentColor = if (isFollowed.value) Color(0xFF151D37) else Color(
-                                    0xFF00BBFF
-                                ),
-                                backgroundColor = if (isFollowed.value) Color(0xFF00BBFF) else Color(
-                                    0xFF151D37
-                                )
+                                contentColor = if (isFollowed.value) PrimaryContainerDark else PrimaryDark,
+                                backgroundColor = if (isFollowed.value) PrimaryDark else PrimaryContainerDark
                             )
                         }
                         DetailButton(
@@ -390,8 +387,8 @@ private fun DetailButton(
     onClick: () -> Unit,
     @DrawableRes id: Int,
     buttonText: String,
-    contentColor: Color = Color(0xFF00BBFF),
-    backgroundColor: Color = Color(0xFF151D37),
+    contentColor: Color = PrimaryDark,
+    backgroundColor: Color = PrimaryContainerDark,
 ) {
     Button(
         onClick = onClick,
