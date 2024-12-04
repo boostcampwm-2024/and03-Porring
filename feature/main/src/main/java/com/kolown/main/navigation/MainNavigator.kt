@@ -46,7 +46,7 @@ internal class MainNavigator(
     fun navigate(menu: MainMenu) {
         val navOptions = navOptions {
             popUpTo(navController.graph.findStartDestination().id) {
-                inclusive = menu == MainMenu.HOME
+                inclusive = false
             }
             launchSingleTop = true
         }
@@ -81,7 +81,9 @@ internal class MainNavigator(
     fun navigateToDetailTheir() = navController.navigateTheirDetail(navOptions = singleTopOptions)
 
     fun popBackStack() {
-        navController.popBackStack()
+        navController.previousBackStackEntry?.let{
+            navController.popBackStack()
+        }
     }
 
     fun popBackStack(destination: Route) {
