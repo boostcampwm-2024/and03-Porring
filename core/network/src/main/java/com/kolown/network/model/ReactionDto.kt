@@ -1,4 +1,4 @@
-package com.kolown.data.remote
+package com.kolown.network.model
 
 import com.kolown.model.ReactionModel
 import com.kolown.model.toReactions

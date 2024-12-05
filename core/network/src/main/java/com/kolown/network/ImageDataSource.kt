@@ -4,8 +4,6 @@ import android.net.Uri
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 import java.security.MessageDigest
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 interface ImageDataSource {
@@ -29,7 +27,7 @@ class ImageDataSourceImpl @Inject constructor(
     }
 
     private fun String.toRefName(): String {
-        val timeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
+        val timeStamp = PorringDateTime.getNowDateTimeString()
 
         return (this + timeStamp).toHash()
     }

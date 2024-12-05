@@ -2,11 +2,10 @@ package com.kolown.network
 
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.kolown.data.remote.TagDto
-import com.kolown.data.remote.toTagModel
-import com.kolown.data.repository.PostRepositoryImpl.Companion.SEARCH_PER_PAGE
 import com.kolown.model.Tag
 import com.kolown.model.TagModel
+import com.kolown.network.model.TagDto
+import com.kolown.network.model.toTagModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -111,14 +110,14 @@ class TagDataSourceImpl @Inject constructor(
             val documents = if (key == null) {
                 tagCollection.whereGreaterThanOrEqualTo("tagName", searchText)
                     .whereLessThanOrEqualTo("tagName", searchText + "\uf8ff")
-                    .limit(SEARCH_PER_PAGE.toLong())
+                    .limit(SEARCH_TAG_PER_PAGE.toLong())
                     .get()
                     .await()
             } else {
                 tagCollection.whereGreaterThan("tagName", key)
                     .whereGreaterThanOrEqualTo("tagName", searchText)
                     .whereLessThanOrEqualTo("tagName", searchText + "\uf8ff")
-                    .limit(SEARCH_PER_PAGE.toLong())
+                    .limit(SEARCH_TAG_PER_PAGE.toLong())
                     .get()
                     .await()
             }

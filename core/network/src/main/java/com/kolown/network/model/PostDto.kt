@@ -1,7 +1,7 @@
-package com.kolown.data.remote
+package com.kolown.network.model
 
-import com.kolown.data.Util.randomValue
 import com.kolown.model.PostModel
+import com.kolown.network.Util.randomValue
 
 data class PostDto(
     val postId: String = "",

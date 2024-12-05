@@ -13,7 +13,7 @@ interface TagRepository {
     suspend fun getTagBySearch(search: String): Flow<PagingData<Tag>>
 }
 
-class TagRepositoryImpl  @Inject constructor(private val tagDataSource: com.kolown.network.TagDataSource) : TagRepository {
+class TagRepositoryImpl  @Inject constructor(private val tagDataSource: TagDataSource) : TagRepository {
 
     override suspend fun getTagBySearch(search: String): Flow<PagingData<Tag>> {
         return Pager(
