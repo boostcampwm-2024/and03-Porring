@@ -71,11 +71,13 @@ internal fun DetailRoute(
         is UiState.Success -> {
             val pagingItems = state.data.collectAsLazyPagingItems()
             val pagerState = rememberPagerState(initialPage = currentPage) {
-                   pagingItems.itemCount + 2
+                pagingItems.itemCount + 2
             }
 
             LaunchedEffect(pagingItems.itemCount) {
-                if (pagerState.currentPage == 1 && currentPage != 0) pagerState.scrollToPage(currentPage)
+                if (pagerState.currentPage == 1 && currentPage != 0) pagerState.scrollToPage(
+                    currentPage
+                )
             }
 
             DetailScreen(
@@ -125,7 +127,7 @@ private fun DetailScreen(
     updateMainPostReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     onSelectReaction: (PostContentModel, Reactions) -> Unit = { _, _ -> },
     isReelsMode: Boolean = true,
-    isPopBackStack:Boolean = false,
+    isPopBackStack: Boolean = false,
     firstItem: PostContentModel,
     pagingItems: LazyPagingItems<PostContentModel>,
     pagerState: PagerState,
@@ -176,7 +178,10 @@ private fun DetailScreen(
                 if (isReelsMode.not()) {
                     PorringIconButton(
                         icon = Icons.Default.Close,
-                        onClick = { onChangeReelsMode(true) },
+                        onClick = {
+                            onChangeReelsMode(true)
+
+                        },
                         contentDescription = stringResource(R.string.string_end_mode),
                         color = Color.White
                     )
@@ -195,7 +200,7 @@ private fun DetailContent(
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
     isReelsMode: Boolean,
     pagingItems: LazyPagingItems<PostContentModel>,
-    isPopBackStack:Boolean = false,
+    isPopBackStack: Boolean = false,
     pagerState: PagerState,
     firstItem: PostContentModel,
     navigateToTheir: (String) -> Unit,

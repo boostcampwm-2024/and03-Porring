@@ -401,7 +401,6 @@ private fun requestFullScreen(view: View) {
 private fun showSystembar(view: View) {
     val window = view.context.getActivity()!!.window
     val insetController = WindowCompat.getInsetsController(window, view)
-    insetController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
     insetController.show(
         WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
     )
