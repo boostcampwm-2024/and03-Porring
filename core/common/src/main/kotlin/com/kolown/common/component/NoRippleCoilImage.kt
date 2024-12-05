@@ -106,7 +106,6 @@ fun NoRippleCoilImage(
                     }
                 },
                 onError = {
-                    Log.e("에러", "")
                     isLoading = false
                     isError = true
                 }

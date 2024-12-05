@@ -183,13 +183,11 @@ private fun ReelsContent(
                 .aspectRatio(4f / 5f),
             imageUrl = imageItem.imageUrl,
             onClick = {
-                Log.e("클릭1","")
                 if (isReactionVisible.value) {
                     isReactionVisible.value = false
                 }
             },
             onDoubleClick = {
-                Log.e("클릭2","")
                 if (!isPopBackStack && !isError.value) {
                     onDoubleTab()
                 }
