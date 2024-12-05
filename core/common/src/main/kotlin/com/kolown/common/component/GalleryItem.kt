@@ -40,7 +40,8 @@ fun GalleryItem(
     postContentModel: PostContentModel,
     width: Dp,
     onLongClickImage: () -> Unit = {},
-    onClickImage: () -> Unit = {}
+    onClickImage: () -> Unit = {},
+    longClickEnabled: Boolean = true
 ) {
     val heightNum = postContentModel.postId.filter { it.isDigit() }
         .takeIf { it.isNotEmpty() }?.toIntOrNull() ?: 0
@@ -57,7 +58,7 @@ fun GalleryItem(
             onClickImage()
         },
         onLongClick = {
-            isDialogVisible.value = true
+            if(longClickEnabled) isDialogVisible.value = true
         },
         imageUrl = postContentModel.imageUrl
     )
