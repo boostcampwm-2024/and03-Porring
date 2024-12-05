@@ -53,11 +53,7 @@ dependencies {
     //paging
     implementation(libs.androidx.paging.runtime)
 
-    // firebase
-    implementation(platform(libs.google.firebase.bom))
-    implementation(libs.google.firebase.firestore)
-    implementation(libs.google.firebase.storage)
-    implementation(libs.google.firebase.auth)
+
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
