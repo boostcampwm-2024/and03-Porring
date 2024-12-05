@@ -20,7 +20,7 @@ import com.kolown.designsystem.ui.theme.Primary
 
 @Composable
 fun NotAvailableVersionScreen(
-    onExitAppButtonClicked: () -> Unit = {},
+    onExitAppButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(

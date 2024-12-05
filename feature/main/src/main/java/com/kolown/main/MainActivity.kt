@@ -1,5 +1,6 @@
 package com.kolown.main
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -15,6 +16,7 @@ import androidx.compose.runtime.setValue
 import com.kolown.common.component.LocalSnackBarBridge
 import com.kolown.common.component.SnackBarBridge
 import com.kolown.designsystem.ui.theme.PorringTheme
+import com.kolown.main.component.NotAvailableVersionScreen
 import com.kolown.main.navigation.MainNavigator
 import com.kolown.main.navigation.rememberMainNavigator
 import com.kolown.navigation.MainMenuRoute
@@ -41,18 +43,25 @@ class MainActivity : ComponentActivity() {
                 Route.DetailTheir.toString() -> false
                 else -> true
             }
-            val versionNameState = mainViewModel.versionNameFlow.collectAsState("")
+            val versionNameState by mainViewModel.versionNameFlow.collectAsState("")
 
-
+            val vName = this.packageManager.getPackageInfo(this.packageName, 0).versionName
             mainViewModel.getVersionName()
             val snackBarBridge = remember { SnackBarBridge(mainViewModel::postSnackBarData) }
             PorringTheme(isLightBars = isLightBars) {
-                CompositionLocalProvider(LocalSnackBarBridge.provides(snackBarBridge)) {
-                    MainScreen(
-                        navigator = navigator,
-                        mainViewModel
-                    )
+                if (vName != versionNameState) {
+                    NotAvailableVersionScreen(onExitAppButtonClicked = {
+                        finishAndRemoveTask()
+                    })
+                }else{
+                    CompositionLocalProvider(LocalSnackBarBridge.provides(snackBarBridge)) {
+                        MainScreen(
+                            navigator = navigator,
+                            mainViewModel
+                        )
+                    }
                 }
+
             }
         }
 //        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)

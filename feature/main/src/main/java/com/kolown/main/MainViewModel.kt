@@ -39,9 +39,7 @@ class MainViewModel @Inject constructor(
     @ApplicationContext
     lateinit var appContext: Context
 
-    private val _versionNameFlow = MutableSharedFlow<String>(
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
+    private val _versionNameFlow = MutableSharedFlow<String>()
 
     val versionNameFlow = _versionNameFlow.asSharedFlow()
 
