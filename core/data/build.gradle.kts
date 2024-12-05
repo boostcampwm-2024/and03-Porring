@@ -68,5 +68,6 @@ dependencies {
     implementation(libs.google.android.googleid)
 
     api(projects.core.model)
+    implementation(projects.core.datastore)
 }
 
