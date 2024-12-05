@@ -14,4 +14,9 @@
     <string name="string_gallery">갤러리</string>
     <string name="string_follow_cancel">취소하기</string>
     <string name="string_add_follow">팔로우 추가</string>
+
+
+    <!--not available version screen-->
+    <string name="description_not_available_version">사용 불가능한 이전 버전입니다.\n업데이트를 진행해주세요.</string>
+    <string name="button_exit_app"> 앱 종료</string>
 </resources>
