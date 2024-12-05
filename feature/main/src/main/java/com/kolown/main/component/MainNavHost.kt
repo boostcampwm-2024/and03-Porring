@@ -33,7 +33,7 @@ import kotlinx.coroutines.flow.Flow
 //@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 internal fun MainNavHost(
-    mainItems: Flow<List<PostContentModel>>,
+    mainItems: List<PostContentModel>,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
 
     detailFirstItem: PostContentModel,

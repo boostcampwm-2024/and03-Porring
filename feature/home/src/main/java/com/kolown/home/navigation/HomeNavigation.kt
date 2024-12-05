@@ -9,7 +9,6 @@ import com.kolown.home.HomeRoute
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.navigation.MainMenuRoute
-import kotlinx.coroutines.flow.Flow
 
 fun NavController.navigateHome(navOptions: NavOptions) {
     navigate(MainMenuRoute.Home, navOptions)
@@ -17,8 +16,8 @@ fun NavController.navigateHome(navOptions: NavOptions) {
 
 fun NavGraphBuilder.homeNavGraph(
     isLoggedIn: Boolean,
-    
-    mainItems: Flow<List<PostContentModel>>,
+
+    mainItems: List<PostContentModel>,
     onSelectReaction: (PostContentModel, Reactions) -> Unit,
     fetchDetailFirst: (PostContentModel) -> Unit,
     updateFollow: (String) -> Unit,
@@ -30,7 +29,7 @@ fun NavGraphBuilder.homeNavGraph(
     composable<MainMenuRoute.Home> {
         HomeRoute(
             isLoggedIn = isLoggedIn,
-            
+
             mainItems = mainItems,
             onSelectReaction = onSelectReaction,
             fetchDetailFirst = fetchDetailFirst,

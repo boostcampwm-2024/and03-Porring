@@ -46,7 +46,7 @@ class MainViewModel @Inject constructor(
     private var _uploadModel = MutableStateFlow(UploadModel("", "", emptyList()))
     val uploadModel = _uploadModel.asStateFlow()
 
-    private val _mainItems = MutableStateFlow<Flow<List<PostContentModel>>>(flow { })
+    private val _mainItems = MutableStateFlow<List<PostContentModel>>(emptyList())
     val mainItems = _mainItems.asStateFlow()
 
     private val _detailFirstItem =
@@ -137,7 +137,7 @@ class MainViewModel @Inject constructor(
             } ?: prev
         }
 
-        _mainItems.update { flow { emit(currentItems) } }
+        _mainItems.update { currentItems }
         currentItems.find { new.postId == it.postId }?.let { new ->
             _detailFirstItem.update { new }
         }
@@ -152,7 +152,7 @@ class MainViewModel @Inject constructor(
             }
         }
 
-        _mainItems.update { flow { emit(currentItems) } }
+        _mainItems.update { currentItems }
         currentItems.find { it.authorId == id }?.let { new ->
             _detailFirstItem.update { new }
         }
@@ -170,9 +170,15 @@ class MainViewModel @Inject constructor(
     }
 
     private fun loadImageItem() {
-        postRepository.getRandomPostList(10, randomType).let { flow ->
-            _mainItems.update { flow }
-            flow.onEach { currentItems = it }.launchIn(viewModelScope)
-        }
+        postRepository.getRandomPostList(10, randomType)
+            .onEach { items ->
+                currentItems = items.shuffled()
+                _mainItems.update { currentItems }
+            }
+            .catch {
+                Log.e("MainViewModel", "loadImageItem: $it")
+            }
+            .launchIn(viewModelScope)
+
     }
 }
