@@ -227,8 +227,9 @@ fun StateLazyGrid(
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier
-                        .size(36.dp)
+                        .size(48.dp)
                         .align(Alignment.Center),
+                    color = Primary
                 )
             }
         }

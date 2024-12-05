@@ -152,15 +152,10 @@ private fun ReelsContent(
     followerState: State<Pair<String, Boolean>?>,
     updateFollow: (String) -> Unit = {}
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
     val isReactionVisible = remember { mutableStateOf(false) }
     val isFollowDialogVisible = remember { mutableStateOf(false) }
     val isFollowed = rememberSaveable { mutableStateOf(imageItem.isFollower) }
-    val isLoading = remember { mutableStateOf(true) }
     val isError = remember { mutableStateOf(false) }
-
-    val coroutineScope = rememberCoroutineScope()
-
     val snackBarBridge = LocalSnackBarBridge.current
 
     LaunchedEffect(followerState.value) {
@@ -182,72 +177,26 @@ private fun ReelsContent(
     ) {
         val tags = imageItem.tags.joinToString(", ") { "#$it" }
 
-        Box(
+        NoRippleCoilImage(
             modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(4f / 5f)
-        ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current).data(imageItem.imageUrl)
-                    .crossfade(true)
-                    .build(),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .combinedClickable(
-                        indication = null,
-                        interactionSource = interactionSource,
-                        onClick = {
-                            if (isReactionVisible.value) {
-                                isReactionVisible.value = false
-                            }
-                        },
-                        onDoubleClick = {
-                            if (!isPopBackStack) {
-                                onDoubleTab()
-                            }
-                        }
-                    ),
-                contentDescription = "",
-                contentScale = ContentScale.Crop,
-                onLoading = {
-                    isLoading.value = true
-                    isError.value = false
-                },
-                onSuccess = {
-                    coroutineScope.launch {
-                        delay(3000)
-                        isLoading.value = false
-                    }
-                },
-                onError = {
-                    isLoading.value = false
-                    isError.value = true
+                .fillMaxWidth()
+                .aspectRatio(4f / 5f),
+            imageUrl = imageItem.imageUrl,
+            onClick = {
+                Log.e("클릭1","")
+                if (isReactionVisible.value) {
+                    isReactionVisible.value = false
                 }
-            )
+            },
+            onDoubleClick = {
+                Log.e("클릭2","")
+                if (!isPopBackStack && !isError.value) {
+                    onDoubleTab()
+                }
+            },
+            delay = 3000
+        )
 
-            if (isError.value) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(color = Surface2),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        modifier = Modifier.size(100.dp),
-                        painter = painterResource(R.drawable.icon_lost_image),
-                        tint = PrimaryUnActive,
-                        contentDescription = "no_image"
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = stringResource(R.string.string_can_not_load),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Primary
-                    )
-                }
-            }
-        }
         Box(
             modifier = Modifier.fillMaxWidth()
         ) {

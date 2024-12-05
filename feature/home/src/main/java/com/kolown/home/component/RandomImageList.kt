@@ -58,7 +58,6 @@ import com.kolown.model.SnackBarEvent
 internal fun RandomImageList(
     modifier: Modifier = Modifier,
     isLoggedIn: Boolean = false,
-
     pagerState: PagerState = rememberPagerState(pageCount = { 10 }),
     imageItems: List<PostContentModel> = emptyList(),
     isReactionDialogVisible: Boolean = false,
@@ -79,7 +78,6 @@ internal fun RandomImageList(
         ) {
             ImageCard(
                 isLoggedIn = isLoggedIn,
-
                 imageItem = imageItems[page],
                 isReactionDialogVisible = isReactionDialogVisible,
                 onFollowClick = onFollowClick,
@@ -102,7 +100,6 @@ internal fun RandomImageList(
 @Composable
 private fun ImageCard(
     isLoggedIn: Boolean,
-
     imageItem: PostContentModel,
     isReactionDialogVisible: Boolean,
     onFollowClick: (String, String) -> Unit,
@@ -261,20 +258,18 @@ private fun RandomImage(
     onClickImage: () -> Unit,
 ) {
 
-    Box {
-        Card(
-            modifier = Modifier.fillMaxSize(),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 8.dp
-            )
-        ) {
-            CoilImage(
-                imageUrl = imageUrl,
-                onClick = onClickImage
-            )
-        }
-        
+    Card(
+        modifier = Modifier.fillMaxSize(),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 8.dp
+        )
+    ) {
+        CoilImage(
+            imageUrl = imageUrl,
+            onClick = onClickImage
+        )
     }
+
 
 }
 

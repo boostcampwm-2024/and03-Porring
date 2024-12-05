@@ -124,16 +124,13 @@ internal fun FollowerRoute(
                 pagingItems.loadState.refresh is LoadState.Loading -> {
                     Column(
                         modifier = Modifier
-                            .padding(padding)
                             .fillMaxSize()
+                            .padding(padding)
                             .verticalScroll(rememberScrollState()),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .size(36.dp)
-                        )
+                        CircularProgressIndicator(modifier = Modifier.size(48.dp), color = Primary)
                     }
                 }
 

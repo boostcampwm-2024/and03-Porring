@@ -4,16 +4,13 @@ import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,7 +22,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,21 +36,20 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CoilImage(
+fun NoRippleCoilImage(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
+    onDoubleClick: () -> Unit = {},
     delay: Long = 0L,
     imageUrl: String,
     isTextExist: Boolean = true,
-    onDoubleClick: () -> Unit = {},
-    onClickEnabled: Boolean = true
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
     var isLoading by remember { mutableStateOf(true) }
     var isError by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val loadingModifier = modifier.shimmerEffect()
-
 
     if (isError) {
         Column(
@@ -83,18 +78,19 @@ fun CoilImage(
             }
         }
     } else {
-
         Box(
             modifier = if (isLoading) loadingModifier else modifier,
         ) {
             AsyncImage(
-                modifier = if (onClickEnabled) Modifier
+                modifier = Modifier
                     .fillMaxSize()
                     .combinedClickable(
+                        indication = null,
+                        interactionSource = interactionSource,
                         onClick = onClick,
                         onLongClick = onLongClick,
                         onDoubleClick = onDoubleClick
-                    ) else Modifier.fillMaxSize(),
+                    ),
                 model = imageUrl,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
@@ -115,7 +111,7 @@ fun CoilImage(
                     isError = true
                 }
             )
-
         }
     }
+
 }
