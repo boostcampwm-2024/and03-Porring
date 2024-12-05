@@ -23,6 +23,16 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
+class ProvideRepositoryModule{
+    @Provides
+    @Singleton
+    fun providesRemoteConfigRepository(): RemoteConfigRepository {
+        return RemoteConfigRepositoryImpl(RemoteConfigDataSource())
+    }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
     @Binds
     abstract fun providePostRepository(
@@ -48,11 +58,5 @@ abstract class RepositoryModule {
     abstract fun provideTagRepository(
         tagRepository: TagRepositoryImpl,
     ): TagRepository
-
-    @Provides
-    @Singleton
-    fun providesRemoteConfigRepository(): RemoteConfigRepository {
-        return RemoteConfigRepositoryImpl(RemoteConfigDataSource())
-    }
 
 }

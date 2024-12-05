@@ -17,13 +17,11 @@ import com.kolown.model.UploadModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -40,6 +38,13 @@ class MainViewModel @Inject constructor(
     @Inject
     @ApplicationContext
     lateinit var appContext: Context
+
+    private val _versionNameFlow = MutableSharedFlow<String>(
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+
+    val versionNameFlow = _versionNameFlow.asSharedFlow()
+
 
     private var _loginState = MutableStateFlow(false)
     val loginState = _loginState.asStateFlow()
@@ -73,6 +78,14 @@ class MainViewModel @Inject constructor(
         loadImageItem()
     }
 
+
+    fun getVersionName() {
+        viewModelScope.launch {
+            remoteConfigRepository.getVersionName()?.let {
+                _versionNameFlow.emit(it)
+            }
+        }
+    }
 
     fun postSnackBarData(data: SnackBarEvent) {
         viewModelScope.launch {
