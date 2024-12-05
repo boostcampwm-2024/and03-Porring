@@ -2,7 +2,6 @@ package com.kolown.data.di
 
 import com.kolown.data.datasource.fake.FakeGalleryDataSource
 import com.kolown.data.datasource.fake.GalleryDataSource
-import com.kolown.datastore.UserLocalDataSourceImpl
 import com.kolown.data.datasource.remote.AuthDataSource
 import com.kolown.data.datasource.remote.AuthDataSourceImpl
 import com.kolown.data.datasource.remote.FollowDataSource
@@ -15,8 +14,8 @@ import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.ReactionDataSourceImpl
 import com.kolown.data.datasource.remote.TagDataSource
 import com.kolown.data.datasource.remote.TagDataSourceImpl
-import com.kolown.data.datasource.remote.UserDataSource
 import com.kolown.data.datasource.remote.UserRemoteDataSource
+import com.kolown.datastore.UserLocalDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -27,52 +26,52 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 abstract class DataSourceModule {
+
     @Fake
     @Singleton
     @Binds
-    abstract fun provideFakeGalleryDataSource(
+    abstract fun bindFakeGalleryDataSource(
         galleryDataSource: FakeGalleryDataSource,
     ): GalleryDataSource
 
     @Binds
-    abstract fun provideImageDataSource(
+    abstract fun bindImageDataSource(
         imageDataSource: ImageDataSourceImpl,
     ): ImageDataSource
 
     @Binds
-    abstract fun providePostDataSource(
+    abstract fun bindPostDataSource(
         postDataSource: PostDataSourceImpl,
     ): PostDataSource
 
     @Binds
-    abstract fun provideTagDataSource(
+    abstract fun bindTagDataSource(
         tagDataSource: TagDataSourceImpl,
     ): TagDataSource
 
     @Binds
-    abstract fun provideReactionDataSource(
+    abstract fun bindReactionDataSource(
         reactionDataSource: ReactionDataSourceImpl,
     ): ReactionDataSource
 
     @Named("google")
     @Binds
-    abstract fun provideAuthDatsSource(
+    abstract fun bindsAuthDatsSource(
         authDataSource: AuthDataSourceImpl,
     ): AuthDataSource
 
     @Binds
-    abstract fun bindsUserDataSource(
+    abstract fun bindsUserRemoteDataSource(
         userDataSource: UserRemoteDataSource,
-    ): UserDataSource
-
-    @Named("LDS")
-    @Binds
-    abstract fun provideUserLocalDataSource(
-        userDataSource: com.kolown.datastore.UserLocalDataSourceImpl,
-    ): UserDataSource
+    ): UserRemoteDataSource
 
     @Binds
-    abstract fun provideUploadDataSource(
+    abstract fun bindsUserLocalDataSource(
+        userDataSource: UserLocalDataSource,
+    ): UserLocalDataSource
+
+    @Binds
+    abstract fun bindUploadDataSource(
         followDataSource: FollowDataSourceImpl,
     ): FollowDataSource
 
