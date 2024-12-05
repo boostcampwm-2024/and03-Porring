@@ -47,7 +47,6 @@ class PostRepositoryImpl @Inject constructor(
     private val postDataSource: PostDataSource,
     private val tagDataSource: TagDataSource,
     private val reactionDataSource: ReactionDataSource,
-    private val randomPagingDataSource: RandomPagingDataSource,
     @Named("google") private val googleAuthDataSource: AuthDataSource,
     private val followDataSource: FollowDataSource,
 ) : PostRepository {
@@ -186,7 +185,15 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun getRandomDetailPostList(): Flow<PagingData<PostContentModel>> {
         return Pager(
             config = PagingConfig(pageSize = DETAIL_PER_PAGE, enablePlaceholders = false),
-            pagingSourceFactory = { randomPagingDataSource }
+            pagingSourceFactory = {
+                RandomPagingDataSource(
+                    postDataSource,
+                    tagDataSource,
+                    reactionDataSource,
+                    followDataSource,
+                    googleAuthDataSource
+                )
+            }
         ).flow
     }
 

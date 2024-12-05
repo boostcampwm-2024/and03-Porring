@@ -159,7 +159,7 @@ private fun MainScreenContent(
     modifier: Modifier = Modifier,
     navigator: MainNavigator,
     snackBarHostState: SnackbarHostState,
-    mainItems: Flow<List<PostContentModel>>,
+    mainItems: List<PostContentModel>,
     isLoggedIn: Boolean,
     detailFirstItem: PostContentModel,
     updateLoginState: () -> Unit,

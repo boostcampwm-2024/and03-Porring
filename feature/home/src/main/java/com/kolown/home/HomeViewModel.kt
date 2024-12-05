@@ -57,18 +57,23 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun updateItems(result: Flow<List<PostContentModel>>) {
-        if (uiState.value is UiState.Success) {
-            result.onEach { new ->
-                if (uiState.value is UiState.Success) {
-                    val old = (uiState.value as UiState.Success<List<PostContentModel>>).data
-
-                    if (new != old) fetchNewPosts(result)
-                }
-            }.launchIn(viewModelScope)
-        } else {
-            fetchNewPosts(result)
+    fun updateItems(result: List<PostContentModel>) {
+        if(uiState.value is UiState.Success){
+            val old = (uiState.value as UiState.Success<List<PostContentModel>>).data
+            if(result == old) return
         }
+        _uiState.update { UiState.Success(result) }
+//        if (uiState.value is UiState.Success) {
+//            result.onEach { new ->
+//                if (uiState.value is UiState.Success) {
+//                    val old = (uiState.value as UiState.Success<List<PostContentModel>>).data
+//
+//                    if (new != old) fetchNewPosts(result)
+//                }
+//            }.launchIn(viewModelScope)
+//        } else {
+//            fetchNewPosts(result)
+//        }
     }
 
     private fun fetchNewPosts(result: Flow<List<PostContentModel>>) {
