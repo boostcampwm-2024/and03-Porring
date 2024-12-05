@@ -1,6 +1,5 @@
 package com.kolown.my
 
-import android.util.Log
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -73,7 +72,7 @@ internal fun MyRoute(
     viewModel: MyViewModel = hiltViewModel(),
 ) {
     val pagingItems = viewModel.galleryFlow.collectAsLazyPagingItems()
-    val isDeleteSuccess by viewModel.isDeleteSuccess.collectAsStateWithLifecycle(null)
+    val isDeleteSuccess by viewModel.isDeleteSuccess.collectAsStateWithLifecycle()
     val listState = rememberLazyStaggeredGridState()
     var isRefreshing by remember { mutableStateOf(false) }
     val refreshState = rememberPullToRefreshState()
@@ -87,13 +86,7 @@ internal fun MyRoute(
     }
 
     LaunchedEffect(isDeleteSuccess) {
-        Log.e("isDeleteSuccess", "$isDeleteSuccess")
-        isDeleteSuccess?.let { isSuccess ->
-            if (isSuccess) {
-                Log.e("isDeleteSuccess", "$isDeleteSuccess")
-                pagingItems.refresh()
-            }
-        }
+        pagingItems.refresh()
     }
     LaunchedEffect(pagingItems.loadState) {
         isRefreshing = false
@@ -206,7 +199,6 @@ fun StateLazyGrid(
             showErrorScreen = false
         }
     }
-
 
     when {
         showErrorScreen -> {
