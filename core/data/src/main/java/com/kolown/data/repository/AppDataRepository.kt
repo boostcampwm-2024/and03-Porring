@@ -1,6 +1,6 @@
 package com.kolown.data.repository
 
-import com.kolown.data.datasource.AppDataSource
+import com.kolown.datastore.AppDataSource
 import kotlinx.coroutines.flow.Flow
 
 interface AppDataRepository {

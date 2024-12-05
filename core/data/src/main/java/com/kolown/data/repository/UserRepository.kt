@@ -1,7 +1,8 @@
 package com.kolown.data.repository
 
 import com.kolown.data.datasource.remote.AuthDataSource
-import com.kolown.data.datasource.remote.UserDataSource
+import com.kolown.data.datasource.remote.RemoteUserDataSource
+import com.kolown.datastore.LocalUserDataSource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Named
@@ -15,13 +16,13 @@ interface UserRepository {
 
 class UserRepositoryImpl @Inject constructor(
     @Named("google") private val authDataSource: AuthDataSource,
-    @Named("google") private val userDataSource: UserDataSource,
-    @Named("LDS") private val localUserDataSource: UserDataSource,
+    private val remoteUserDataSource: RemoteUserDataSource,
+    private val localUserDataSource: LocalUserDataSource,
 ) : UserRepository {
     override suspend fun createUserData(): Result<Unit> {
         return kotlin.runCatching {
             authDataSource.getUserInfo().let {
-                userDataSource.createUserData(it)
+                remoteUserDataSource.createUserData(it)
             }
         }
     }
