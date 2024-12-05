@@ -16,11 +16,11 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class RandomPagingDataSource @Inject constructor(
-    private val postDataSource: com.kolown.network.PostDataSource,
-    private val tagDataSource: com.kolown.network.TagDataSource,
-    private val reactionDataSource: com.kolown.network.ReactionDataSource,
-    private val followDataSource: com.kolown.network.FollowDataSource,
-    @Named("google") private val googleAuthDataSource: com.kolown.network.AuthDataSource,
+    private val postDataSource: PostDataSource,
+    private val tagDataSource: TagDataSource,
+    private val reactionDataSource: ReactionDataSource,
+    private val followDataSource: FollowDataSource,
+    @Named("google") private val googleAuthDataSource: AuthDataSource,
 ) : PagingSource<Long, PostContentModel>() {
     private val randomSeed = (0..Long.MAX_VALUE).random()
 
