@@ -9,12 +9,10 @@ import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import com.kolown.model.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -58,30 +56,10 @@ class HomeViewModel @Inject constructor(
     }
 
     fun updateItems(result: List<PostContentModel>) {
-        if(uiState.value is UiState.Success){
+        if (uiState.value is UiState.Success) {
             val old = (uiState.value as UiState.Success<List<PostContentModel>>).data
-            if(result == old) return
+            if (result == old) return
         }
         _uiState.update { UiState.Success(result) }
-//        if (uiState.value is UiState.Success) {
-//            result.onEach { new ->
-//                if (uiState.value is UiState.Success) {
-//                    val old = (uiState.value as UiState.Success<List<PostContentModel>>).data
-//
-//                    if (new != old) fetchNewPosts(result)
-//                }
-//            }.launchIn(viewModelScope)
-//        } else {
-//            fetchNewPosts(result)
-//        }
-    }
-
-    private fun fetchNewPosts(result: Flow<List<PostContentModel>>) {
-        _uiState.update { UiState.Loading }
-        result.onEach { items ->
-            _uiState.update { UiState.Success(items.toList()) }
-        }.catch { e ->
-            _uiState.update { UiState.Failure(e) }
-        }.launchIn(viewModelScope)
     }
 }
