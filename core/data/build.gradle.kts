@@ -50,8 +50,8 @@ dependencies {
     ksp(libs.hilt.android.compiler)
 
     //datastore
-    implementation(libs.androidx.datastore)
-    implementation(libs.androidx.datastore.preferences)
+    //implementation(libs.androidx.datastore)
+    //implementation(libs.androidx.datastore.preferences)
 
     //paging
     implementation(libs.androidx.paging.runtime)
