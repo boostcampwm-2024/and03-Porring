@@ -6,10 +6,8 @@ import androidx.paging.cachedIn
 import com.kolown.data.repository.PostRepository
 import com.kolown.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -27,12 +25,12 @@ class MyViewModel @Inject constructor(
 
     private val currentUserId = MutableStateFlow("")
 
-    private val _isDeleteSuccess = MutableSharedFlow<Boolean>()
-    val isDeleteSuccess = _isDeleteSuccess.asSharedFlow()
+    private val _isDeleteSuccess = MutableStateFlow(false)
+    val isDeleteSuccess = _isDeleteSuccess.asStateFlow()
 
     val galleryFlow = currentUserId.flatMapLatest {
         postRepository.getUserPosts().cachedIn(viewModelScope)
-    }.cachedIn(viewModelScope)
+    }
 
     init {
         setUserId()
@@ -44,7 +42,7 @@ class MyViewModel @Inject constructor(
 
     fun setUserId() {
         val newId = userRepository.getUserData().getOrThrow()
-        if(currentUserId.value != newId) {
+        if (currentUserId.value != newId) {
             currentUserId.update { newId }
         }
     }
@@ -53,10 +51,7 @@ class MyViewModel @Inject constructor(
         viewModelScope.launch {
             postRepository.deletePost(postId)
                 .onEach {
-                    _isDeleteSuccess.emit(true)
-                }
-                .catch {
-                    _isDeleteSuccess.emit(false)
+                    _isDeleteSuccess.update { !it }
                 }
                 .launchIn(viewModelScope)
         }

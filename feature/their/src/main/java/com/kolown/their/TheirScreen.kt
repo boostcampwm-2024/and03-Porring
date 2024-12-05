@@ -53,6 +53,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.kolown.common.component.GalleryItem
 import com.kolown.designsystem.component.PorringCenterAlignTopAppBar
 import com.kolown.designsystem.component.PorringIconButton
+import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.model.PostContentModel
 import com.kolown.their.component.PageItemFooter
 import kotlinx.coroutines.delay
@@ -199,8 +200,9 @@ private fun StateLazyGrid(
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier
-                        .size(36.dp)
+                        .size(48.dp)
                         .align(Alignment.Center),
+                    color = Primary
                 )
             }
         }
