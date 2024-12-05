@@ -224,7 +224,6 @@ private fun DetailContent(
         DetailItem(
             isLoggedIn = isLoggedIn,
             isReelsMode = isReelsMode,
-            
             onChangeReelsMode = onChangeReelsMode,
             updateMainPostReaction = updateMainPostReaction,
             onSelectReaction = onSelectReaction,

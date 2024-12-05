@@ -7,6 +7,7 @@ import android.view.View
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -25,6 +26,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -68,8 +70,11 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.kolown.common.R
 import com.kolown.designsystem.ui.theme.Gray
+import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.designsystem.ui.theme.PrimaryContainerDark
 import com.kolown.designsystem.ui.theme.PrimaryDark
+import com.kolown.designsystem.ui.theme.PrimaryUnActive
+import com.kolown.designsystem.ui.theme.Surface2
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
 import kotlinx.coroutines.delay
@@ -152,6 +157,8 @@ private fun ReelsContent(
     val isFollowDialogVisible = remember { mutableStateOf(false) }
     val isFollowed = rememberSaveable { mutableStateOf(imageItem.isFollower) }
     val isLoading = remember { mutableStateOf(true) }
+    val isError = remember { mutableStateOf(false) }
+
     val coroutineScope = rememberCoroutineScope()
 
     val snackBarBridge = LocalSnackBarBridge.current
@@ -176,14 +183,9 @@ private fun ReelsContent(
         val tags = imageItem.tags.joinToString(", ") { "#$it" }
 
         Box(
-            modifier = if (!isLoading.value)
-                Modifier
+            modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(4f / 5f)
-            else Modifier 
-                .fillMaxWidth()
-                .aspectRatio(4f / 5f)
-                .shimmerEffect()
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current).data(imageItem.imageUrl)
@@ -209,14 +211,42 @@ private fun ReelsContent(
                 contentScale = ContentScale.Crop,
                 onLoading = {
                     isLoading.value = true
+                    isError.value = false
                 },
                 onSuccess = {
                     coroutineScope.launch {
                         delay(3000)
                         isLoading.value = false
                     }
+                },
+                onError = {
+                    isLoading.value = false
+                    isError.value = true
                 }
             )
+
+            if (isError.value) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = Surface2),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        modifier = Modifier.size(100.dp),
+                        painter = painterResource(R.drawable.icon_lost_image),
+                        tint = PrimaryUnActive,
+                        contentDescription = "no_image"
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = stringResource(R.string.string_can_not_load),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Primary
+                    )
+                }
+            }
         }
         Box(
             modifier = Modifier.fillMaxWidth()

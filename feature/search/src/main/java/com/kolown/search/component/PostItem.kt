@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.kolown.common.component.CoilImage
 import com.kolown.common.component.shimmerEffect
 import com.kolown.model.Post
 import com.kolown.model.PostContentModel
@@ -32,43 +33,18 @@ fun PostItem(
     post: PostContentModel,
     onClick: () -> Unit
 ) {
-    val isLoading = remember { mutableStateOf(false) }
-    val loadingModifier = Modifier
-        .fillMaxWidth()
-        .clip(RoundedCornerShape(10.dp))
-        .background(color = Color.LightGray)
-        .aspectRatio(1f)
-        .shimmerEffect()
-    val successModifier =
-        Modifier
+
+    Box(
+        modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
             .aspectRatio(1f)
-            .clickable {
-                onClick()
-            }
-    val coroutineScope = rememberCoroutineScope()
-
-    Box(
-        modifier = if(isLoading.value) loadingModifier else successModifier
     ) {
-        AsyncImage(
-            modifier = Modifier
-                .fillMaxSize(),
-            model = ImageRequest.Builder(LocalContext.current).data(post.imageUrl)
-                .crossfade(true)
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            onLoading = {
-                isLoading.value = true
-            },
-            onSuccess = {
-                coroutineScope.launch {
-                    delay(1500)
-                    isLoading.value = false
-                }
-            }
+        CoilImage(
+            onClick = onClick,
+            imageUrl = post.imageUrl,
+            delay = 1500,
+            isTextExist = false
         )
     }
 }

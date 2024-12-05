@@ -43,7 +43,6 @@ import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.designsystem.ui.theme.Surface2
 import com.kolown.model.PostContentModel
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GalleryItem(
     postContentModel: PostContentModel,
@@ -51,8 +50,6 @@ fun GalleryItem(
     onLongClickImage: () -> Unit = {},
     onClickImage: () -> Unit = {}
 ) {
-    var isLoading by remember { mutableStateOf(true) }
-    var isError by remember { mutableStateOf(false) }
 
     val heightNum = postContentModel.postId.filter { it.isDigit() }
         .takeIf { it.isNotEmpty() }?.toIntOrNull() ?: 0
@@ -66,62 +63,28 @@ fun GalleryItem(
             .clip(RoundedCornerShape(10.dp))
             .background(Surface2)
     ) {
-        AsyncImage(
-            modifier = Modifier
-                .fillMaxSize()
-                .combinedClickable(
-                    onClick = {
-                        onClickImage()
-                    },
-                    onLongClick = {
-                        isDialogVisible.value = true
-                    }
-                ),
-            model = postContentModel.imageUrl,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            onLoading = {
-                isLoading = true
-                isError = false
+        CoilImage(
+            onClick = {
+                onClickImage()
             },
-            onSuccess = {
-                isLoading = false
-                isError = false
+            onLongClick = {
+                isDialogVisible.value = true
             },
-            onError = {
-                isLoading = false
-                isError = true
+            imageUrl = postContentModel.imageUrl
+        )
+    }
+
+    if (isDialogVisible.value) {
+        DeleteDialog(
+            onClickCancel = { isDialogVisible.value = false },
+            onClickConfirm = {
+                onLongClickImage()
+                isDialogVisible.value = false
             }
         )
-
-        if (isLoading) {
-            CircularProgressIndicator(
-                color = Color.Gray,
-                modifier = Modifier
-                    .size(48.dp)
-                    .align(Alignment.Center)
-            )
-        }
-
-        if (isError) {
-            Text(
-                modifier = Modifier.align(Alignment.Center),
-                text = stringResource(R.string.string_can_not_load),
-                style = MaterialTheme.typography.labelMedium,
-            )
-        }
-
-        if (isDialogVisible.value) {
-            DeleteDialog(
-                onClickCancel = { isDialogVisible.value = false },
-                onClickConfirm = {
-                    onLongClickImage()
-                    isDialogVisible.value = false
-                }
-            )
-        }
     }
 }
+
 
 @Composable
 fun DeleteDialog(

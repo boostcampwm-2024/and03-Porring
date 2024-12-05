@@ -36,8 +36,7 @@ fun SearchResult(
             .background(Color.White)
             .animateContentSize()
             .width(if (focusState) 10000.dp else 0.dp)
-            .height(if (focusState) 10000.dp else 0.dp) //매우 크게 놓으면 사이즈에 맞게 출력됨.
-            .border(1.dp, Color.Black)
+            .height(if (focusState) 10000.dp else 0.dp)
     ) {
         if (text.isBlank()) {
             Text(
