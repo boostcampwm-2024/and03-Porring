@@ -9,7 +9,7 @@ import kotlinx.coroutines.tasks.await
 class RemoteConfigDataSource {
     private val remoteConfig = Firebase.remoteConfig
     private val configSettings = remoteConfigSettings {
-        minimumFetchIntervalInSeconds = 3600
+        minimumFetchIntervalInSeconds = 1
     }
 
     init {
