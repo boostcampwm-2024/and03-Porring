@@ -1,11 +1,13 @@
 package com.kolown.main
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,9 +30,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navigator: MainNavigator = rememberMainNavigator()
             var isLightBars by remember { mutableStateOf(false) }
-            var currentRoute by remember { mutableStateOf("") }
 
-            currentRoute = navigator.currentDestination?.route?.substringAfterLast(".").orEmpty()
+            val currentRoute =
+                navigator.currentDestination?.route?.substringAfterLast(".").orEmpty()
             isLightBars = when (currentRoute) {
                 MainMenuRoute.Detail.toString() -> false
                 MainMenuRoute.Camera.toString() -> false
@@ -39,6 +41,10 @@ class MainActivity : ComponentActivity() {
                 Route.DetailTheir.toString() -> false
                 else -> true
             }
+            val versionNameState = mainViewModel.versionNameFlow.collectAsState("")
+
+
+            mainViewModel.getVersionName()
             val snackBarBridge = remember { SnackBarBridge(mainViewModel::postSnackBarData) }
             PorringTheme(isLightBars = isLightBars) {
                 CompositionLocalProvider(LocalSnackBarBridge.provides(snackBarBridge)) {
