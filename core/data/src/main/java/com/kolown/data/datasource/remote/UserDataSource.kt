@@ -8,7 +8,7 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 
-class UserRemoteDataSource @Inject constructor(
+class RemoteUserDataSource @Inject constructor(
     firestore: FirebaseFirestore,
 ) {
     private val userCollection by lazy { firestore.collection("user") }

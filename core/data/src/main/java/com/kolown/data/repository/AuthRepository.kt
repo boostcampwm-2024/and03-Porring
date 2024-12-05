@@ -4,7 +4,7 @@ import androidx.credentials.Credential
 import androidx.credentials.CustomCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.kolown.data.datasource.remote.AuthDataSource
-import com.kolown.data.datasource.remote.UserDataSource
+import com.kolown.datastore.LocalUserDataSource
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -18,7 +18,7 @@ interface AuthRepository {
 
 class AuthRepositoryImpl @Inject constructor(
     @Named("google") private val googleAuthDataSource: AuthDataSource,
-    @Named("LDS") private val localUserDataSource: UserDataSource,
+    private val localUserDataSource: LocalUserDataSource,
 ) : AuthRepository {
     override suspend fun signInWithCredential(credential: Credential): Result<Unit> {
         return kotlin.runCatching {

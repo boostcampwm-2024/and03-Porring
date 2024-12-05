@@ -14,7 +14,7 @@ val Context.userDataStore by preferencesDataStore("user")
 val LATEST_USER_EMAIL = stringPreferencesKey("latest_user_email")
 val LATEST_USER_ID = stringPreferencesKey("latest_user_id")
 
-class UserLocalDataSource @Inject constructor(
+class LocalUserDataSource @Inject constructor(
     @ApplicationContext private val applicationContext: Context,
 ) {
     suspend fun createUserData(user: User): Result<Unit> {

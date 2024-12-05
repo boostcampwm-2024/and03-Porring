@@ -14,8 +14,8 @@ import com.kolown.data.datasource.remote.ReactionDataSource
 import com.kolown.data.datasource.remote.ReactionDataSourceImpl
 import com.kolown.data.datasource.remote.TagDataSource
 import com.kolown.data.datasource.remote.TagDataSourceImpl
-import com.kolown.data.datasource.remote.UserRemoteDataSource
-import com.kolown.datastore.UserLocalDataSource
+import com.kolown.data.datasource.remote.RemoteUserDataSource
+import com.kolown.datastore.LocalUserDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -60,15 +60,6 @@ abstract class DataSourceModule {
         authDataSource: AuthDataSourceImpl,
     ): AuthDataSource
 
-    @Binds
-    abstract fun bindsUserRemoteDataSource(
-        userDataSource: UserRemoteDataSource,
-    ): UserRemoteDataSource
-
-    @Binds
-    abstract fun bindsUserLocalDataSource(
-        userDataSource: UserLocalDataSource,
-    ): UserLocalDataSource
 
     @Binds
     abstract fun bindUploadDataSource(
