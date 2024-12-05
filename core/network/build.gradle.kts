@@ -51,6 +51,8 @@ dependencies {
     implementation(libs.google.firebase.storage)
     implementation(libs.google.firebase.auth)
 
+    implementation(libs.firebase.config)
+    implementation(libs.firebase.analytics)
 
     // credential, auth
     implementation(libs.androidx.credentials)
