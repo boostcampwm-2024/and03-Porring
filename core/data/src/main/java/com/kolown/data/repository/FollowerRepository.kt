@@ -21,10 +21,10 @@ interface FollowRepository {
 }
 
 class FollowRepositoryImpl @Inject constructor(
-    private val followDataSource: com.kolown.network.FollowDataSource,
-    private val followerDataSource: com.kolown.network.FollowDataSource,
-    private val postDataSource: com.kolown.network.PostDataSource,
-    @Named("google") private val googleAuthDataSource: com.kolown.network.AuthDataSource,
+    private val followDataSource: FollowDataSource,
+    private val followerDataSource: FollowDataSource,
+    private val postDataSource: PostDataSource,
+    @Named("google") private val googleAuthDataSource: AuthDataSource,
 ) : FollowRepository {
 
     override suspend fun getFollowerName(followerId: String): Flow<String> {

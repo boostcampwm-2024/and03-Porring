@@ -51,6 +51,13 @@ dependencies {
     implementation(libs.google.firebase.storage)
     implementation(libs.google.firebase.auth)
 
+
+    // credential, auth
+    implementation(libs.androidx.credentials)
+    implementation(libs.google.play.services.auth)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.google.android.googleid)
+
     //hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
