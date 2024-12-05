@@ -1,6 +1,6 @@
-package com.kolown.data.remote
+package com.kolown.model
 
-data class UserDto(
+data class User(
     val userId: String = "",
     val email: String = "",
 )

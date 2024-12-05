@@ -2,7 +2,7 @@ package com.kolown.data.di
 
 import com.kolown.data.datasource.fake.FakeGalleryDataSource
 import com.kolown.data.datasource.fake.GalleryDataSource
-import com.kolown.data.datasource.local.UserLocalDataSourceImpl
+import com.kolown.datastore.UserLocalDataSourceImpl
 import com.kolown.data.datasource.remote.AuthDataSource
 import com.kolown.data.datasource.remote.AuthDataSourceImpl
 import com.kolown.data.datasource.remote.FollowDataSource
@@ -16,7 +16,7 @@ import com.kolown.data.datasource.remote.ReactionDataSourceImpl
 import com.kolown.data.datasource.remote.TagDataSource
 import com.kolown.data.datasource.remote.TagDataSourceImpl
 import com.kolown.data.datasource.remote.UserDataSource
-import com.kolown.data.datasource.remote.UserDataSourceImpl
+import com.kolown.data.datasource.remote.UserRemoteDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -60,16 +60,15 @@ abstract class DataSourceModule {
         authDataSource: AuthDataSourceImpl,
     ): AuthDataSource
 
-    @Named("google")
     @Binds
-    abstract fun provideUserDataSource(
-        userDataSource: UserDataSourceImpl,
+    abstract fun bindsUserDataSource(
+        userDataSource: UserRemoteDataSource,
     ): UserDataSource
 
     @Named("LDS")
     @Binds
     abstract fun provideUserLocalDataSource(
-        userDataSource: UserLocalDataSourceImpl,
+        userDataSource: com.kolown.datastore.UserLocalDataSourceImpl,
     ): UserDataSource
 
     @Binds

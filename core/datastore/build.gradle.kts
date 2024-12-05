@@ -50,4 +50,6 @@ dependencies {
     //datastore
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.datastore.preferences)
+
+    implementation(projects.core.model)
 }
