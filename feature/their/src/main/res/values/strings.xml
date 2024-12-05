@@ -9,6 +9,6 @@
     <string name="string_fail">실패</string>
     <string name="string_loading">로딩</string>
     <string name="string_error">오류가 발생하였습니다!</string>
-    <string name="string_can_not_load">이미지를 로드할 수 없음.\n 다시 시도해주세요.</string>
+    <string name="string_can_not_load">이미지를 로드할 수 없습니다.</string>
     <string name="string_retry">Retry</string>
 </resources>

@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
+import com.kolown.common.component.CoilImage
 import com.kolown.common.component.FollowDialog
 import com.kolown.common.component.LocalSnackBarBridge
 import com.kolown.designsystem.ui.theme.Primary
@@ -259,60 +260,20 @@ private fun RandomImage(
     imageUrl: String = "https://echo.unicomm.fsu.edu/3.3/img/placeholders/ratio-4-5.png",
     onClickImage: () -> Unit,
 ) {
-    var isLoading by remember { mutableStateOf(true) }
-    var isError by remember { mutableStateOf(false) }
 
     Box {
         Card(
             modifier = Modifier.fillMaxSize(),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 8.dp
-            ),
-            onClick = onClickImage
+            )
         ) {
-            AsyncImage(
-                modifier = Modifier.fillMaxSize(),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(imageUrl)
-                    .diskCachePolicy(CachePolicy.ENABLED)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .build(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                onLoading = {
-                    isLoading = true
-                    isError = false
-                },
-                onSuccess = {
-                    isLoading = false
-                    isError = false
-                },
-                onError = {
-                    isLoading = false
-                    isError = true
-                }
+            CoilImage(
+                imageUrl = imageUrl,
+                onClick = onClickImage
             )
         }
-
-        if (isLoading) {
-            CircularProgressIndicator(
-                color = Color.Gray,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(48.dp)
-            )
-        }
-
-        if (isError) {
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Text(
-                    modifier = Modifier.align(Alignment.Center),
-                    text = stringResource(R.string.string_can_not_load)
-                )
-            }
-        }
+        
     }
 
 }

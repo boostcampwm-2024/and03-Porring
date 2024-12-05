@@ -1,9 +1,12 @@
 package com.kolown.follower
 
 import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,6 +61,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.kolown.common.component.CoilImage
 import com.kolown.common.component.RestrictedLoginContent
 import com.kolown.designsystem.component.PorringCenterAlignTopAppBar
 import com.kolown.designsystem.ui.theme.Primary
@@ -207,12 +211,14 @@ private fun FollowerScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun FollowContent(
     followerName: String,
     followAlbums: List<String>,
     navigateToTheir: () -> Unit,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -230,11 +236,9 @@ internal fun FollowContent(
                 color = Primary,
                 style = MaterialTheme.typography.titleLarge
             )
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(text = "Edit", color = Color.Black, style = MaterialTheme.typography.labelMedium)
         }
         Spacer(modifier = Modifier.height(10.dp))
-        LazyRow (
+        LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally),
@@ -247,16 +251,21 @@ internal fun FollowContent(
                 Card(
                     modifier = Modifier
                         .size(100.dp)
-                        .clip(RoundedCornerShape(10.dp)),
+                        .clip(RoundedCornerShape(10.dp))
+                        .combinedClickable(
+                            indication = null,
+                            interactionSource = interactionSource,
+                            onClick = {
+                                navigateToTheir()
+                            }
+                        ),
                     colors = CardDefaults.cardColors(containerColor = Color.LightGray)
                 ) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current).data(imageUrl)
-                            .crossfade(true).build(),
-                        modifier = Modifier.fillMaxSize(),
-                        contentDescription = "follower's image",
-                        contentScale = ContentScale.Crop,
+                    CoilImage(
+                        imageUrl = imageUrl,
+                        onClickEnabled = false
                     )
+
                 }
             }
         }

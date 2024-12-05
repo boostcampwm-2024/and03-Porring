@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
@@ -123,43 +124,62 @@ private fun SearchScreen(
             }
         )
 
-        if (searchText.isEmpty() && !focusState) Text(
-            text = stringResource(R.string.string_input_keyword),
-            color = Color.DarkGray,
-            modifier = Modifier.padding(vertical = 16.dp)
-        )
-
-
         Box(modifier = Modifier.fillMaxSize()) {
-            LazyVerticalGrid(
-                modifier = Modifier
-                    .fillMaxSize(),
-                columns = GridCells.Fixed(3),
-                contentPadding = PaddingValues(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                item(span = { GridItemSpan(3) }) {
-                    tag?.let {
-                        PostHeader(it)
-                    } ?: run {
-                        Log.e("test", "tag is null")
-                    }
-
-                }
-                items(searchResultPost.itemCount) { index ->
-                    searchResultPost[index]?.let { post ->
-                        PostItem(
-                            post,
-                            onClick = {
-                                setPage(index)
-                                navigateToSearchDetail()
+            when {
+                searchResultPost.loadState.refresh is LoadState.NotLoading -> {
+                    LazyVerticalGrid(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        columns = GridCells.Fixed(3),
+                        contentPadding = PaddingValues(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        item(span = { GridItemSpan(3) }) {
+                            tag?.let {
+                                PostHeader(it)
+                            } ?: run {
+                                Log.e("test", "tag is null")
                             }
-                        )
 
+                        }
+                        items(searchResultPost.itemCount) { index ->
+                            searchResultPost[index]?.let { post ->
+                                PostItem(
+                                    post,
+                                    onClick = {
+                                        setPage(index)
+                                        navigateToSearchDetail()
+                                    }
+                                )
+
+                            }
+                        }
                     }
                 }
+
+
+                searchResultPost.loadState.refresh is LoadState.Loading -> {
+                    if (searchText.isEmpty() && !focusState) {
+                        Text(
+                            text = stringResource(R.string.string_input_keyword),
+                            color = Color.Gray,
+                            modifier = Modifier
+                                .padding(vertical = 16.dp)
+                                .align(Alignment.Center)
+                        )
+                    } else {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
+
             }
+
 
             SearchResult(focusState, searchResultTag, searchText) {
                 setTag(it)
