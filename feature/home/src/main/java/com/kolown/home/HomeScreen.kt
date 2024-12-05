@@ -199,7 +199,6 @@ private fun HomeScreen(
                 RandomImageList(
                     modifier = modifier,
                     isLoggedIn = isLoggedIn,
-                    onShowLoginSnackBar = onShowLoginSnackBar,
                     pagerState = pagerState,
                     imageItems = images,
                     isReactionDialogVisible = isReactionDialogVisible,
