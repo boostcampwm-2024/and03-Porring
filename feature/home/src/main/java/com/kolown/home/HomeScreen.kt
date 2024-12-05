@@ -99,7 +99,7 @@ internal fun HomeRoute(
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(modifier = Modifier.size(64.dp), color = Primary)
+                CircularProgressIndicator(modifier = Modifier.size(48.dp), color = Primary)
             }
         }
 
@@ -111,7 +111,6 @@ internal fun HomeRoute(
             } else {
                 HomeScreen(
                     isLoggedIn = isLoggedIn,
-                    
                     padding = padding,
                     mainFeedImages = images,
                     onFollowClick = { id, name ->
@@ -144,7 +143,6 @@ private fun HomeScreen(
     isLoggedIn: Boolean = false,
     isRefreshing: Boolean = false,
     updateRefreshing: (Boolean) -> Unit = {},
-    
     padding: PaddingValues = PaddingValues(),
     mainFeedImages: List<PostContentModel> = emptyList(),
     onFollowClick: (String, String) -> Unit = { _, _ -> },
@@ -193,7 +191,6 @@ private fun HomeScreen(
                     .align(Alignment.Center)
                     .verticalScroll(rememberScrollState()),
                 isLoggedIn = isLoggedIn,
-                
                 pagerState = pagerState,
                 imageItems = mainFeedImages,
                 isReactionDialogVisible = isReactionDialogVisible,

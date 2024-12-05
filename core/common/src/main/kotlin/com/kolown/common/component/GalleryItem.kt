@@ -56,23 +56,22 @@ fun GalleryItem(
     val height = if (heightNum % 2 == 0) (width.value * 1.4).dp else width + 20.dp
     val isDialogVisible = remember { mutableStateOf(false) }
 
-    Box(
+
+    CoilImage(
         modifier = Modifier
             .fillMaxWidth()
             .height(height)
             .clip(RoundedCornerShape(10.dp))
-            .background(Surface2)
-    ) {
-        CoilImage(
-            onClick = {
-                onClickImage()
-            },
-            onLongClick = {
-                isDialogVisible.value = true
-            },
-            imageUrl = postContentModel.imageUrl
-        )
-    }
+            .background(Surface2),
+        onClick = {
+            onClickImage()
+        },
+        onLongClick = {
+            isDialogVisible.value = true
+        },
+        imageUrl = postContentModel.imageUrl
+    )
+
 
     if (isDialogVisible.value) {
         DeleteDialog(

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -37,12 +38,15 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.kolown.designsystem.ui.theme.Gray
+import com.kolown.designsystem.ui.theme.Primary
 import com.kolown.model.PostContentModel
 import com.kolown.model.Tag
 import com.kolown.search.component.PostHeader
@@ -125,6 +129,15 @@ private fun SearchScreen(
         )
 
         Box(modifier = Modifier.fillMaxSize()) {
+            if (searchText.isBlank()) {
+                Text(
+                    stringResource(R.string.string_input_keyword),
+                    fontSize = 16.sp,
+                    modifier = Modifier.align(Alignment.Center),
+                    color = Gray
+                )
+                return@Box
+            }
             when {
                 searchResultPost.loadState.refresh is LoadState.NotLoading -> {
                     LazyVerticalGrid(
@@ -160,26 +173,20 @@ private fun SearchScreen(
 
 
                 searchResultPost.loadState.refresh is LoadState.Loading -> {
-                    if (searchText.isEmpty() && !focusState) {
-                        Text(
-                            text = stringResource(R.string.string_input_keyword),
-                            color = Color.Gray,
-                            modifier = Modifier
-                                .padding(vertical = 16.dp)
-                                .align(Alignment.Center)
-                        )
-                    } else {
+                    if (!focusState && searchText.isNotEmpty()) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            CircularProgressIndicator()
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(48.dp),
+                                color = Primary
+                            )
                         }
                     }
                 }
 
             }
-
 
             SearchResult(focusState, searchResultTag, searchText) {
                 setTag(it)
