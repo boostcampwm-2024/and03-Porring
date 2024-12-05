@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        mainViewModel.getVersionName()
         setContent {
             val navigator: MainNavigator = rememberMainNavigator()
             var isLightBars by remember { mutableStateOf(false) }
@@ -47,14 +48,13 @@ class MainActivity : ComponentActivity() {
             val versionNameState by mainViewModel.versionNameFlow.collectAsState("")
 
             val vName = this.packageManager.getPackageInfo(this.packageName, 0).versionName
-            mainViewModel.getVersionName()
             val snackBarBridge = remember { SnackBarBridge(mainViewModel::postSnackBarData) }
             PorringTheme(isLightBars = isLightBars) {
-                if (vName != versionNameState) {
+                if (versionNameState.isNotBlank() && vName != versionNameState) {
                     NotAvailableVersionScreen(onExitAppButtonClicked = {
                         finishAndRemoveTask()
                     })
-                }else{
+                } else {
                     CompositionLocalProvider(LocalSnackBarBridge.provides(snackBarBridge)) {
                         MainScreen(
                             navigator = navigator,
