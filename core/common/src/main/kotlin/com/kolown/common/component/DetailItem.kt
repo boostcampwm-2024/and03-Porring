@@ -134,7 +134,6 @@ fun DetailItem(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ReelsContent(
     isLoggedIn: Boolean,

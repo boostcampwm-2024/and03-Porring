@@ -229,7 +229,8 @@ private fun StateLazyGrid(
                                     onClickImage = {
                                         navigateToDetailTheir()
                                         setPage(index)
-                                    }
+                                    },
+                                    longClickEnabled = false
                                 )
                             }
                         }
