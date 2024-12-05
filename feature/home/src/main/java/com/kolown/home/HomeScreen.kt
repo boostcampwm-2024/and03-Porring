@@ -156,7 +156,6 @@ private fun HomeScreen(
     isShowErrorScreen: Boolean = false,
     isReactionDialogVisible: Boolean = false,
     uiState: UiState<List<PostContentModel>> = UiState.Loading,
-    onShowLoginSnackBar: () -> Unit = {},
     padding: PaddingValues = PaddingValues(),
     onFollowClick: (String, String) -> Unit = { _, _ -> },
     onUnfollowClick: (String) -> Unit = {},
