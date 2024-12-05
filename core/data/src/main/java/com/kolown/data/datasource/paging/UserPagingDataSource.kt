@@ -1,13 +1,11 @@
 package com.kolown.data.datasource.paging
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.google.firebase.firestore.DocumentSnapshot
-import com.kolown.data.datasource.remote.AuthDataSource
-import com.kolown.data.datasource.remote.PostDataSource
-import com.kolown.data.datasource.remote.ReactionDataSource
-import com.kolown.data.datasource.remote.TagDataSource
+import com.kolown.network.AuthDataSource
+import com.kolown.network.PostDataSource
+import com.kolown.network.ReactionDataSource
+import com.kolown.network.TagDataSource
 import com.kolown.model.PostContentModel
 import com.kolown.model.PostModel
 import kotlinx.coroutines.async
@@ -22,10 +20,10 @@ data class UserPagingKey(
 )
 
 class UserPagingDataSource @Inject constructor(
-    private val postDataSource: PostDataSource,
-    private val tagDataSource: TagDataSource,
-    private val reactionDataSource: ReactionDataSource,
-    @Named("google") private val googleAuthDataSource: AuthDataSource,
+    private val postDataSource: com.kolown.network.PostDataSource,
+    private val tagDataSource: com.kolown.network.TagDataSource,
+    private val reactionDataSource: com.kolown.network.ReactionDataSource,
+    @Named("google") private val googleAuthDataSource: com.kolown.network.AuthDataSource,
     private val userId: String
 ) : PagingSource<UserPagingKey, PostContentModel>() {
     override fun getRefreshKey(state: PagingState<UserPagingKey, PostContentModel>): UserPagingKey? {

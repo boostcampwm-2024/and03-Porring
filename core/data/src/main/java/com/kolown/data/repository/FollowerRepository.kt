@@ -4,9 +4,9 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.kolown.data.datasource.paging.FollowerGalleryThumbnailPagingDataSource
-import com.kolown.data.datasource.remote.AuthDataSource
-import com.kolown.data.datasource.remote.FollowDataSource
-import com.kolown.data.datasource.remote.PostDataSource
+import com.kolown.network.AuthDataSource
+import com.kolown.network.FollowDataSource
+import com.kolown.network.PostDataSource
 import com.kolown.model.FollowerThumbnail
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -21,10 +21,10 @@ interface FollowRepository {
 }
 
 class FollowRepositoryImpl @Inject constructor(
-    private val followDataSource: FollowDataSource,
-    private val followerDataSource: FollowDataSource,
-    private val postDataSource: PostDataSource,
-    @Named("google") private val googleAuthDataSource: AuthDataSource,
+    private val followDataSource: com.kolown.network.FollowDataSource,
+    private val followerDataSource: com.kolown.network.FollowDataSource,
+    private val postDataSource: com.kolown.network.PostDataSource,
+    @Named("google") private val googleAuthDataSource: com.kolown.network.AuthDataSource,
 ) : FollowRepository {
 
     override suspend fun getFollowerName(followerId: String): Flow<String> {

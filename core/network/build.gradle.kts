@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -48,4 +50,8 @@ dependencies {
     implementation(libs.google.firebase.firestore)
     implementation(libs.google.firebase.storage)
     implementation(libs.google.firebase.auth)
+
+    //hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
 }

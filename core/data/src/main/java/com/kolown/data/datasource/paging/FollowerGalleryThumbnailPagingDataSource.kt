@@ -2,20 +2,18 @@ package com.kolown.data.datasource.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.kolown.data.datasource.remote.AuthDataSource
-import com.kolown.data.datasource.remote.FollowDataSource
-import com.kolown.data.datasource.remote.PostDataSource
+import com.kolown.network.FollowDataSource
+import com.kolown.network.PostDataSource
 import com.kolown.model.FollowerThumbnail
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import java.io.IOException
 import javax.inject.Inject
-import javax.inject.Named
 
 class FollowerGalleryThumbnailPagingDataSource @Inject constructor(
-    private val followerDataSource: FollowDataSource,
-    private val postDataSource: PostDataSource,
+    private val followerDataSource: com.kolown.network.FollowDataSource,
+    private val postDataSource: com.kolown.network.PostDataSource,
     private val currentUserId: String
 ) : PagingSource<String, FollowerThumbnail>() {
 

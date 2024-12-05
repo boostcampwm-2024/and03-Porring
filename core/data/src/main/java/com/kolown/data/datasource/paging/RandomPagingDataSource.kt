@@ -2,11 +2,11 @@ package com.kolown.data.datasource.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.kolown.data.datasource.remote.AuthDataSource
-import com.kolown.data.datasource.remote.FollowDataSource
-import com.kolown.data.datasource.remote.PostDataSource
-import com.kolown.data.datasource.remote.ReactionDataSource
-import com.kolown.data.datasource.remote.TagDataSource
+import com.kolown.network.AuthDataSource
+import com.kolown.network.FollowDataSource
+import com.kolown.network.PostDataSource
+import com.kolown.network.ReactionDataSource
+import com.kolown.network.TagDataSource
 import com.kolown.model.PostContentModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -16,11 +16,11 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class RandomPagingDataSource @Inject constructor(
-    private val postDataSource: PostDataSource,
-    private val tagDataSource: TagDataSource,
-    private val reactionDataSource: ReactionDataSource,
-    private val followDataSource: FollowDataSource,
-    @Named("google") private val googleAuthDataSource: AuthDataSource,
+    private val postDataSource: com.kolown.network.PostDataSource,
+    private val tagDataSource: com.kolown.network.TagDataSource,
+    private val reactionDataSource: com.kolown.network.ReactionDataSource,
+    private val followDataSource: com.kolown.network.FollowDataSource,
+    @Named("google") private val googleAuthDataSource: com.kolown.network.AuthDataSource,
 ) : PagingSource<Long, PostContentModel>() {
     private val randomSeed = (0..Long.MAX_VALUE).random()
 

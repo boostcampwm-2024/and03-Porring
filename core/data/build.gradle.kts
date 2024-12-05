@@ -65,5 +65,6 @@ dependencies {
 
     api(projects.core.model)
     implementation(projects.core.datastore)
+    implementation(projects.core.network)
 }
 
