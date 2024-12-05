@@ -30,7 +30,7 @@ class MyViewModel @Inject constructor(
 
     val galleryFlow = currentUserId.flatMapLatest {
         postRepository.getUserPosts().cachedIn(viewModelScope)
-    }
+    }.cachedIn(viewModelScope)
 
     init {
         setUserId()
