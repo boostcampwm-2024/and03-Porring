@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.kolown.common.component.NetworkStateManager
 import com.kolown.data.repository.AuthRepository
 import com.kolown.data.repository.PostRepository
+import com.kolown.data.repository.RemoteConfigRepository
 import com.kolown.model.InitUiState
 import com.kolown.model.PostContentModel
 import com.kolown.model.Reactions
@@ -33,6 +34,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val postRepository: PostRepository,
+    private val remoteConfigRepository: RemoteConfigRepository
 ) : ViewModel() {
 
     @Inject
