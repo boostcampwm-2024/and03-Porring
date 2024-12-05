@@ -6,14 +6,19 @@ import com.kolown.data.repository.FollowRepository
 import com.kolown.data.repository.FollowRepositoryImpl
 import com.kolown.data.repository.PostRepository
 import com.kolown.data.repository.PostRepositoryImpl
+import com.kolown.data.repository.RemoteConfigRepository
+import com.kolown.data.repository.RemoteConfigRepositoryImpl
 import com.kolown.data.repository.TagRepository
 import com.kolown.data.repository.TagRepositoryImpl
 import com.kolown.data.repository.UserRepository
 import com.kolown.data.repository.UserRepositoryImpl
+import com.kolown.network.RemoteConfigDataSource
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 
 @Module
@@ -43,5 +48,11 @@ abstract class RepositoryModule {
     abstract fun provideTagRepository(
         tagRepository: TagRepositoryImpl,
     ): TagRepository
+
+    @Provides
+    @Singleton
+    fun providesRemoteConfigRepository(): RemoteConfigRepository {
+        return RemoteConfigRepositoryImpl(RemoteConfigDataSource())
+    }
 
 }
