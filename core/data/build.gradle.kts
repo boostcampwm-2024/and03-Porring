@@ -57,11 +57,6 @@ dependencies {
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
-    // credential, auth
-    implementation(libs.androidx.credentials)
-    implementation(libs.google.play.services.auth)
-    implementation(libs.androidx.credentials.play.services.auth)
-    implementation(libs.google.android.googleid)
 
     api(projects.core.model)
     implementation(projects.core.datastore)
