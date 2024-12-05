@@ -1,4 +1,4 @@
-package com.kolown.data.remote
+package com.kolown.network.model
 
 import com.kolown.model.TagModel
 

@@ -5,9 +5,9 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
-import com.kolown.data.remote.FollowerDto
-import com.kolown.data.remote.toFollowerModel
 import com.kolown.model.FollowerModel
+import com.kolown.network.model.FollowerDto
+import com.kolown.network.model.toFollowerModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow

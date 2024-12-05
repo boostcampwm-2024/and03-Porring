@@ -15,8 +15,8 @@ interface UserRepository {
 }
 
 class UserRepositoryImpl @Inject constructor(
-    @Named("google") private val authDataSource: com.kolown.network.AuthDataSource,
-    private val remoteUserDataSource: com.kolown.network.RemoteUserDataSource,
+    @Named("google") private val authDataSource: AuthDataSource,
+    private val remoteUserDataSource: RemoteUserDataSource,
     private val localUserDataSource: LocalUserDataSource,
 ) : UserRepository {
     override suspend fun createUserData(): Result<Unit> {

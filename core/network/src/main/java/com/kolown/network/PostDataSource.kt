@@ -3,9 +3,9 @@ package com.kolown.network
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.kolown.data.remote.PostDto
-import com.kolown.data.remote.toPostModel
 import com.kolown.model.PostModel
+import com.kolown.network.model.PostDto
+import com.kolown.network.model.toPostModel
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -19,9 +19,10 @@ interface PostDataSource {
         count: Int,
         randomType: String
     ): Result<List<PostModel>>
+
     suspend fun getUserPost(uid: String, perPage: Long): Result<List<PostModel>>
     suspend fun getPostBySearch(
-        currentUserId : String,
+        currentUserId: String,
         postIds: List<String>,
         key: String?,
         perPage: Long
@@ -89,7 +90,7 @@ class PostDataSourceImpl @Inject constructor(
             val upload = PostDto(
                 authorId = authorId,
                 description = description,
-                registerAt = LocalDateTime.now().toString(),
+                registerAt = PorringDateTime.getNowDateTimeUTCString(),
             )
             postCollection.add(upload).await().let { documentReference ->
                 documentReference.update("postId", "post-${documentReference.id}")
@@ -149,7 +150,7 @@ class PostDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getPostBySearch(
-        currentUserId : String,
+        currentUserId: String,
         postIds: List<String>,
         key: String?,
         perPage: Long
