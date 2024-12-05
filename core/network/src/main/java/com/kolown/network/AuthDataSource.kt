@@ -1,4 +1,4 @@
-package com.kolown.data.datasource.remote
+package com.kolown.network
 
 import androidx.credentials.CustomCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential

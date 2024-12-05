@@ -1,11 +1,10 @@
-package com.kolown.data.datasource.remote
+package com.kolown.network
 
 import android.util.Log
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.toObject
 import com.kolown.data.remote.FollowerDto
 import com.kolown.data.remote.toFollowerModel
 import com.kolown.model.FollowerModel

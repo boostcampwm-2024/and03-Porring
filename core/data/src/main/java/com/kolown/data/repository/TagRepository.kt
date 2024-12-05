@@ -4,7 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.kolown.data.datasource.paging.TagPagingSource
-import com.kolown.data.datasource.remote.TagDataSource
+import com.kolown.network.TagDataSource
 import com.kolown.model.Tag
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -13,7 +13,7 @@ interface TagRepository {
     suspend fun getTagBySearch(search: String): Flow<PagingData<Tag>>
 }
 
-class TagRepositoryImpl  @Inject constructor(private val tagDataSource: TagDataSource) : TagRepository {
+class TagRepositoryImpl  @Inject constructor(private val tagDataSource: com.kolown.network.TagDataSource) : TagRepository {
 
     override suspend fun getTagBySearch(search: String): Flow<PagingData<Tag>> {
         return Pager(

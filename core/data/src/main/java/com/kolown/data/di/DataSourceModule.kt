@@ -2,20 +2,18 @@ package com.kolown.data.di
 
 import com.kolown.data.datasource.fake.FakeGalleryDataSource
 import com.kolown.data.datasource.fake.GalleryDataSource
-import com.kolown.data.datasource.remote.AuthDataSource
-import com.kolown.data.datasource.remote.AuthDataSourceImpl
-import com.kolown.data.datasource.remote.FollowDataSource
-import com.kolown.data.datasource.remote.FollowDataSourceImpl
-import com.kolown.data.datasource.remote.ImageDataSource
-import com.kolown.data.datasource.remote.ImageDataSourceImpl
-import com.kolown.data.datasource.remote.PostDataSource
-import com.kolown.data.datasource.remote.PostDataSourceImpl
-import com.kolown.data.datasource.remote.ReactionDataSource
-import com.kolown.data.datasource.remote.ReactionDataSourceImpl
-import com.kolown.data.datasource.remote.TagDataSource
-import com.kolown.data.datasource.remote.TagDataSourceImpl
-import com.kolown.data.datasource.remote.RemoteUserDataSource
-import com.kolown.datastore.LocalUserDataSource
+import com.kolown.network.AuthDataSource
+import com.kolown.network.AuthDataSourceImpl
+import com.kolown.network.FollowDataSource
+import com.kolown.network.FollowDataSourceImpl
+import com.kolown.network.ImageDataSource
+import com.kolown.network.ImageDataSourceImpl
+import com.kolown.network.PostDataSource
+import com.kolown.network.PostDataSourceImpl
+import com.kolown.network.ReactionDataSource
+import com.kolown.network.ReactionDataSourceImpl
+import com.kolown.network.TagDataSource
+import com.kolown.network.TagDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -36,34 +34,34 @@ abstract class DataSourceModule {
 
     @Binds
     abstract fun bindImageDataSource(
-        imageDataSource: ImageDataSourceImpl,
-    ): ImageDataSource
+        imageDataSource: com.kolown.network.ImageDataSourceImpl,
+    ): com.kolown.network.ImageDataSource
 
     @Binds
     abstract fun bindPostDataSource(
-        postDataSource: PostDataSourceImpl,
-    ): PostDataSource
+        postDataSource: com.kolown.network.PostDataSourceImpl,
+    ): com.kolown.network.PostDataSource
 
     @Binds
     abstract fun bindTagDataSource(
-        tagDataSource: TagDataSourceImpl,
-    ): TagDataSource
+        tagDataSource: com.kolown.network.TagDataSourceImpl,
+    ): com.kolown.network.TagDataSource
 
     @Binds
     abstract fun bindReactionDataSource(
-        reactionDataSource: ReactionDataSourceImpl,
-    ): ReactionDataSource
+        reactionDataSource: com.kolown.network.ReactionDataSourceImpl,
+    ): com.kolown.network.ReactionDataSource
 
     @Named("google")
     @Binds
     abstract fun bindsAuthDatsSource(
-        authDataSource: AuthDataSourceImpl,
-    ): AuthDataSource
+        authDataSource: com.kolown.network.AuthDataSourceImpl,
+    ): com.kolown.network.AuthDataSource
 
 
     @Binds
     abstract fun bindUploadDataSource(
-        followDataSource: FollowDataSourceImpl,
-    ): FollowDataSource
+        followDataSource: com.kolown.network.FollowDataSourceImpl,
+    ): com.kolown.network.FollowDataSource
 
 }
