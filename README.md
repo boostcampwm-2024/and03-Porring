@@ -40,6 +40,8 @@
 낯선 사람과 공유하는 나만의 순간들!<br>
 과잉 연결 시대 속 나만의 안식처 **포링**
 
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fboostcampwm-2024%2Fand03-Porring&count_bg=%23151D37&title_bg=%23598AFF&icon=android.svg&icon_color=%23FFFFFF&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
+
 </div>
 
 <br/>
