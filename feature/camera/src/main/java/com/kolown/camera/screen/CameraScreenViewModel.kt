@@ -30,6 +30,8 @@ class CameraScreenViewModel @Inject constructor(
     private val _uri = MutableStateFlow<Uri?>(null)
     val uri: StateFlow<Uri?> = _uri.asStateFlow()
 
+
+
     fun setUri(uri: Uri) {
         _uri.value = uri
     }

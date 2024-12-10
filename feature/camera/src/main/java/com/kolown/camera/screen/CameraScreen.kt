@@ -30,11 +30,10 @@ import com.kolown.designsystem.component.PorringTopAppBar
 
 
 @Composable
-internal fun CameraRoute(
+fun CameraRoute(
     navigateToUpload: (String) -> Unit = {},
     padding: PaddingValues = PaddingValues(),
     popBackStack: () -> Unit = {},
-    viewModel: CameraScreenViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -50,8 +49,7 @@ internal fun CameraRoute(
     val launcherMultiplePermissions = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { areGranted ->
-        Log.e("카메라", areGranted.toString())
-
+        Log.e("카메라","launched: $areGranted")
         cameraPermission = areGranted
     }
 
@@ -63,6 +61,7 @@ internal fun CameraRoute(
 
     LaunchedEffect(cameraPermission) {
         if (!cameraPermission) {
+            Log.e("카메라","permission not granted")
             launcherMultiplePermissions.launch(Manifest.permission.CAMERA)
         }
     }
