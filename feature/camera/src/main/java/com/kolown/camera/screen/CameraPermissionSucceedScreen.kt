@@ -1,6 +1,8 @@
 package com.kolown.camera.screen
 
+import android.graphics.Bitmap
 import android.media.MediaActionSound
+import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraState
 import androidx.camera.core.resolutionselector.AspectRatioStrategy
@@ -66,7 +68,9 @@ fun CameraPermissionSucceedScreen(
 
     val imageUri by viewModel.uri.collectAsStateWithLifecycle()
     var isCaptured by remember { mutableStateOf(false) }
-    var capturedImage: android.graphics.Bitmap? by remember { mutableStateOf(null) }
+    val capturedImage: Bitmap? by remember { mutableStateOf(null) }
+
+    var cameraType by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
 
     LaunchedEffect(imageUri) {
         imageUri?.let { navigateToUpload(it.toString()) }
@@ -75,7 +79,7 @@ fun CameraPermissionSucceedScreen(
     val cameraController = remember {
         LifecycleCameraController(context).apply {
             //어떤 카메라를 사용할 지 선택한다.
-            cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            cameraSelector = cameraType
             //이미지, 비디오 캡쳐를 위한 설정을 한다.(UseCase를 활성화 한다.)
             setEnabledUseCases(CameraController.IMAGE_CAPTURE)
             bindToLifecycle(lifecycle)
@@ -104,8 +108,9 @@ fun CameraPermissionSucceedScreen(
     }
 
 
-    LaunchedEffect(Unit) {
-        //카메라가 완료될 때 까지 대기
+    LaunchedEffect(cameraType) {
+        cameraController.cameraSelector = cameraType
+
         cameraController.initializationFuture.getSuspendedResult(context)
         //livedata 저장
         cameraStateLiveData = cameraController.cameraInfo?.cameraState
@@ -162,7 +167,8 @@ fun CameraPermissionSucceedScreen(
         } else {
             PreviewViewCompose(
                 cameraController,
-                modifier = Modifier.background(Color.Yellow)
+                modifier = Modifier
+                    .background(Color.Yellow)
                     .fillMaxWidth()
                     .aspectRatio(3f / 4f)
             )
@@ -176,7 +182,6 @@ fun CameraPermissionSucceedScreen(
         ) {
             CaptureButton {
                 cameraController.takePhoto(context) {
-                    //카메라가 완전히 OPEN 되어 있을 때만(모영민님 피드백)
                     if (cameraState?.type == CameraState.Type.OPEN && isCaptured.not() && imageUri == null) {
                         onShutterClick()
                         cameraController.takePhoto(context) {
@@ -189,7 +194,10 @@ fun CameraPermissionSucceedScreen(
         }
 
         Row(
-            modifier = Modifier.fillMaxWidth().height(48.dp).background(BackgroundDark),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .background(BackgroundDark),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -214,11 +222,10 @@ fun CameraPermissionSucceedScreen(
                     .size(48.dp),
                 onClick = {
                     val nowSelector = cameraController.cameraSelector
-                    if (nowSelector == CameraSelector.DEFAULT_BACK_CAMERA)
-                        cameraController.cameraSelector =
-                            CameraSelector.DEFAULT_FRONT_CAMERA
+                    cameraType = if (nowSelector == CameraSelector.DEFAULT_BACK_CAMERA)
+                        CameraSelector.DEFAULT_FRONT_CAMERA
                     else
-                        cameraController.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                        CameraSelector.DEFAULT_BACK_CAMERA
                 }
             ) {
                 Icon(
