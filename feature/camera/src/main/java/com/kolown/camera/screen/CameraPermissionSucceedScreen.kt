@@ -181,12 +181,10 @@ fun CameraPermissionSucceedScreen(
             contentAlignment = Alignment.Center
         ) {
             CaptureButton {
-                cameraController.takePhoto(context) {
-                    if (cameraState?.type == CameraState.Type.OPEN && isCaptured.not() && imageUri == null) {
-                        onShutterClick()
-                        cameraController.takePhoto(context) {
-                            viewModel.saveBitmapToCache(it)
-                        }
+                if (cameraState?.type == CameraState.Type.OPEN && isCaptured.not() && imageUri == null) {
+                    onShutterClick()
+                    cameraController.takePhoto(context) {
+                        viewModel.saveBitmapToCache(it)
                         isCaptured = true
                     }
                 }
